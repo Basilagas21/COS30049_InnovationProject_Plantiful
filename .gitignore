@@ -13,11 +13,7 @@ node_modules/
 out/
 dist/
 
-# Flutter (mobile app)
-.dart_tool/
-flutter_*.log
-.flutter-plugins
-.flutter-plugins-dependencies
+# Mobile (React Native) — native build output, keeps generic non-Dart patterns
 build/
 ios/Pods/
 android/.gradle/

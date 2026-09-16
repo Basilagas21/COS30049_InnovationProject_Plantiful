@@ -1,3 +1,35 @@
 # Personal / local-only files (agent persona, editor settings, private templates)
 Basilagas21/
 .vscode/
+
+# Secrets — never commit real keys (use .env.example with blank values)
+.env
+.env.*
+!.env.example
+
+# Node / Next.js (web app)
+node_modules/
+.next/
+out/
+dist/
+
+# Flutter (mobile app)
+.dart_tool/
+flutter_*.log
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+ios/Pods/
+android/.gradle/
+*.iml
+
+# Python (IoT service / scripts)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.log
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db

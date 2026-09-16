@@ -1,4 +1,4 @@
-# Smart Ground-Truthing and Digital Biodiversity System
+﻿# Smart Ground-Truthing and Digital Biodiversity System
 
 **Group 7**
 
@@ -192,7 +192,7 @@ Full detail on the tiers, components, and their interactions is provided in the 
 
 ### 1.1.3 Key Designs
 
-- **Mobile framework:** Flutter, chosen for its more mature offline-storage and camera/QR/GPS plugin ecosystem, which matters more here than code-sharing with the web app, since the two apps serve different user roles and workflows. (Either Flutter or React Native. Option still open)
+- **Mobile framework:** React Native, chosen so the whole team works in one language (TypeScript) across both the field app and the web knowledge system. A single language lets us share the QR/GPS/camera handling logic, and means every team member can contribute to either app instead of splitting into Dart and TypeScript camps. The mobile app still gets its offline-first local SQLite store, QR scanning, GPS and camera as required. (Flutter was the alternative, discarded for the language split and smaller plugin alignment with the chosen web stack)
 - **QR strategy:** each QR code encodes only a stable record ID, resolved against Supabase when online or a local synced cache when offline, so records can be corrected centrally without reprinting physical tags.
 - **Sync conflict resolution:** implemented in stages, last-write-wins first to establish a working sync pipeline, then a manual conflict queue routed to the conservation officer's web dashboard as an enhancement if time allows, falling back to last-write-wins alone if week 12 arrives before the queue is built.
 - **Central and offline database split:** Supabase (managed Postgres with an auto-generated REST API, authentication, row-level security, and file storage) as the central database, paired with SQLite on the mobile device as the offline-first local store; REST is the transport connecting SQLite to Supabase once connectivity returns, and is also how the web app and IoT service communicate with Supabase.
@@ -230,7 +230,7 @@ Using SMART (Specific, Measurable, Achievable, Relevant, Time-bound) can keep di
 
 | What it's for | Tool | Why |
 |---|---|---|
-| Mobile app | Flutter or React Native | One codebase for the offline field app (camera, GPS, QR scanning) |
+| Mobile app | React Native | One TypeScript codebase for the offline field app (camera, GPS, QR scanning) |
 | Web app | React / Next.js + Tailwind | The knowledge system conservation officers use |
 | Database & backend | Supabase (PostgreSQL) | Central database, auto-generates our APIs, handles login/security, stores files |
 | Offline storage | SQLite | Stores data on the phone before it syncs |

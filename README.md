@@ -32,7 +32,7 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 
 | Layer | Technology |
 |---|---|
-| Mobile | Flutter (offline-first, QR, GPS, camera) |
+| Mobile | React Native (offline-first, QR, GPS, camera) |
 | Web | React / Next.js + Tailwind |
 | Backend & DB | Supabase (PostgreSQL, auth, storage, auto-generated APIs) |
 | Offline storage | SQLite (on-device) |

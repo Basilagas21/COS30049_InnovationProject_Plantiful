@@ -50,7 +50,7 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 ### ER Diagram
 
 <p align="center">
-  <img src="Docs/Assets/ER_Diagram.png" alt="ER Diagram" width="700"/><br/>
+  <img src="Docs/Assets/ER_diagram.jpg" alt="ER Diagram" width="700"/><br/>
   <em>Sample/draft ER diagram — TODO: replace with final version</em>
 </p>
 

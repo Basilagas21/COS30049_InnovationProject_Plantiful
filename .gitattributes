@@ -1,0 +1,11 @@
+# Enforce consistent line endings across the team (all on Windows)
+* text=auto eol=lf
+
+# Binary assets — never treat as text
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.docx binary
+*.drawio binary

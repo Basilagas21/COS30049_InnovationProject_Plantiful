@@ -213,6 +213,23 @@ The tiers, components, and their interactions are captured in Figure 1, and the 
 - **IoT approach:** simulated sensors publishing over MQTT to a fixed topic and payload contract first, so the full pipeline (broker, ingestion service, database, dashboard, alerting) can be built and tested end to end; real ESP32 hardware publishing to the same topic and schema can then be swapped in or added alongside the simulator without changing any downstream component.
 - **Security approach:** threat modelling and secure design decisions made during the Section 6 design stage (this section), verified with an OWASP ZAP scan, remediation, and re-assessment pass in Week 11, in line with the Secure Software Development Lifecycle.
 
+#### The three core workflows
+
+<p align="center">
+  <img src="../Assets/UML_Sequence_Botanist.png" alt="UML Sequence — Botanist" width="600"/><br/>
+  <em>Figure 3: Botanist field capture flow — offline capture, QR, sync, review</em>
+</p>
+
+<p align="center">
+  <img src="../Assets/UML_Sequence_ConservationOfficer.png" alt="UML Sequence — Conservation Officer" width="600"/><br/>
+  <em>Figure 4: Conservation officer review and approval flow</em>
+</p>
+
+<p align="center">
+  <img src="../Assets/UML_Sequence_Admin.png" alt="UML Sequence — Admin" width="600"/><br/>
+  <em>Figure 5: Admin system administration flow</em>
+</p>
+
 ---
 
 ## 7.0 Quality Management

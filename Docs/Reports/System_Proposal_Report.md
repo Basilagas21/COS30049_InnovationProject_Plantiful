@@ -182,13 +182,19 @@ Option A doesn't actually fix the problem. Its slow, error-prone manual process 
 
 ## 6.0 Solution Direction
 
-Description of chosen solution direction, including a brief description of any alternatives and why they were discarded. Present the alternatives that have been discarded in a table. Provide the analysis and rationale for choosing the selected solution direction over the alternatives. The KoST analysis should help.
-
-Also included is a high level design of the chosen solution direction showing each tier and how they interact with each other. Also included is a brief description of these components, their roles and responsibilities.
-
 The chosen direction is **Option C** from Section 4.0: a purpose-built system, using a **hybrid architecture**. A single backend monolith handles records, the knowledge system, and authentication and role-based access control, while the IoT data pipeline runs as its own lightweight service, since sensor telemetry is naturally event-driven (arriving continuously over MQTT) rather than request-response like the rest of the system. This was chosen over a full microservices split, which would add service discovery, inter-service authentication, and separate deployments that a 5 to 7 person student team cannot reliably manage across a 13-week trimester, and over a single undivided monolith, which would awkwardly force a streaming data source through a request-response API pattern.
 
-Full detail on the tiers, components, and their interactions is provided in the accompanying architecture diagram and ER diagram (submitted alongside this document).
+<p align="center">
+  <img src="../Assets/System_Architecture.png" alt="System Architecture" width="750"/><br/>
+  <em>Figure 1: Plantiful system architecture — client, application, and data tiers</em>
+</p>
+
+The tiers, components, and their interactions are captured in Figure 1, and the underlying data model is shown in Figure 2.
+
+<p align="center">
+  <img src="../Assets/ER_diagram.jpg" alt="ER Diagram" width="750"/><br/>
+  <em>Figure 2: Plantiful data model (ER diagram)</em>
+</p>
 
 ### 6.1 Tier Summary
 

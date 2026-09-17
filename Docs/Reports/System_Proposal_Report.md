@@ -63,7 +63,13 @@ Having a general idea of what to build is not sufficient to ensure the project d
 - IoT sensors shall collect real-time environmental and location data (temperature, humidity, movement) near tagged rare/endangered plant species and shall trigger an automated alert to the administrator dashboard when unusual activity is detected.
 - Administrators shall be able to monitor sensor data and alerts through a centralised IoT dashboard, with historical data stored for long-term habitat condition analysis.
 
-<!-- TODO: insert table summarising section 2.2 -->
+| Functional area | Key requirement |
+|---|---|
+| Mobile field app | Offline-first plant record capture (QR, GPS, camera). Tagged plants are identified by scanning a stable QR record ID. |
+| Web knowledge system | Species records management, review/approval, search and reporting for conservation officers. |
+| Offline-to-cloud sync | Local SQLite store on the device; stable record ID resolves against the central database once connectivity returns; conflicts resolved to a defined strategy. |
+| IoT monitoring | Sensors collect temperature, humidity, and movement near tagged rare/endangered species; automated alerts raised for unusual activity. |
+| Security & privacy | Role-based access control; encrypted personal, plant, and assessment data; SSDLC-aligned vulnerability assessment and remediation. |
 
 ### 2.3 Constraints and Out-of-Scope Limitations
 
@@ -83,7 +89,13 @@ Having a general idea of what to build is not sufficient to ensure the project d
 - Physical deployment and long-term maintenance of IoT hardware in the field beyond the prototype/demo stage.
 - (Optional) The innovative ground-truthing workflow (Objective 5) is out of scope unless the team confirms with the supervisor that pursuing it is required or beneficial for full marks.
 
-<!-- TODO: insert table summarising section 2.3 -->
+| Type | Constraint / limitation | Implication for the project |
+|---|---|---|
+| Environmental | GPS accuracy reduced under dense forest canopy | Recorded plant locations are approximate; known limitation, not a defect |
+| Hardware | IoT sensors may not be available for field testing in time | Sensor data may be simulated; assumption clearly flagged in the final report |
+| Data integrity | Multiple botanists may edit the same record offline | Conflict-resolution strategy bounds how complex simultaneous edits can be |
+| Timeline | Single trimester for vulnerability assessment and remediation | Depth of testing is limited versus production deployment |
+| Out of scope | Public ecotourism app, ML/AI species identification, external government DB integration, physical IoT deployment | Not delivered; referenced only for context |
 
 ---
 
@@ -155,20 +167,16 @@ Option A doesn't actually fix the problem. Its slow, error-prone manual process 
 
 ### Initial Release Schedule
 
-| No. | Item | Dependencies | Business Value (1 least – 10 most) | Release Schedule (Sprint #) |
+| No. | Item | Dependencies | Business Value (1 least - 10 most) | Release Schedule (Sprint #) |
 |---|---|---|---|---|
-| 1 | Add a new food menu | — | 8 | Sprint #1 |
-| 2 | Edit a food menu record | 1 | 8 | |
-| 3 | Display food menu listing | 1 | 9 | |
-| 4 | << add some more here >> | | | |
-| 5 | … | | | |
-| 6 | … | | | |
-| 7 | … | | | |
-| 8 | … | | | |
-| 9 | … | | | |
-| 10 | … | | | |
-
-<!-- TODO: replace placeholder rows with actual sprint items -->
+| 1 | Set up Supabase project (PostgreSQL schema, auth, RBAC, storage) | — | 10 | Sprint #1 |
+| 2 | Deliver mobile offline-first field app: record capture (QR, GPS, camera) | 1 | 9 | Sprint #1 |
+| 3 | Deliver web knowledge system: species record CRUD + search | 1 | 9 | Sprint #1 |
+| 4 | Implement offline-to-cloud sync (SQLite → Supabase) with defined conflict strategy | 2 | 8 | Sprint #1 |
+| 5 | Add conservation officer review/approval workflow and searchable reporting | 3 | 8 | Sprint #2 |
+| 6 | Add IoT sensor ingestion, monitoring dashboard and automated alerts | 3 | 7 | Sprint #2 |
+| 7 | Complete security: vulnerability scan, remediation, re-verify before submission | 6 | 8 | Sprint #2 |
+| 8 | Final integration, system testing, documentation and demo | 1-7 | 7 | Sprint #2 |
 
 ---
 
@@ -182,7 +190,7 @@ The chosen direction is **Option C** from Section 4.0: a purpose-built system, u
 
 Full detail on the tiers, components, and their interactions is provided in the accompanying architecture diagram and ER diagram (submitted alongside this document).
 
-### 1.1.2 Tier Summary
+### 6.1 Tier Summary
 
 | Tier | Components | Responsibility |
 |---|---|---|
@@ -190,7 +198,7 @@ Full detail on the tiers, components, and their interactions is provided in the 
 | Application tier | Backend API monolith; IoT ingestion service | Business logic, authentication and RBAC, record CRUD, sync handling; sensor telemetry ingestion and alert evaluation |
 | Data tier | Supabase (Postgres, auth, storage); SQLite (on-device); MQTT broker | Central source of truth and file storage; offline buffer on the mobile device; transport for sensor telemetry |
 
-### 1.1.3 Key Designs
+### 6.2 Key Designs
 
 - **Mobile framework:** React Native, chosen so the whole team works in one language (TypeScript) across both the field app and the web knowledge system. A single language lets us share the QR/GPS/camera handling logic, and means every team member can contribute to either app instead of splitting into Dart and TypeScript camps. The mobile app still gets its offline-first local SQLite store, QR scanning, GPS and camera as required. (Flutter was the alternative, discarded for the language split and smaller plugin alignment with the chosen web stack)
 - **QR strategy:** each QR code encodes only a stable record ID, resolved against Supabase when online or a local synced cache when offline, so records can be corrected centrally without reprinting physical tags.

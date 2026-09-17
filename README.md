@@ -26,7 +26,7 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 | Muhammad Maqeel bin Muhammad Kahfi | 102782384 | Mobile App (Sync & Backend APIs) |
 | Ashley Wallen Anak Winston | 105806559 | Integration, PM & Documentation |
 | Basill Agas Anak Heatley Rogers | 102778888 | Mobile App (Field Data Capture) |
-| Jay | — | Support / Auxiliary |
+| Jay | — | |
 
 ## Tech Stack
 
@@ -51,7 +51,7 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 
 <p align="center">
   <img src="Docs/Assets/ER_diagram.jpg" alt="ER Diagram" width="700"/><br/>
-  <em>Sample/draft ER diagram — TODO: replace with final version</em>
+  <em>ER diagram — Plantiful data model</em>
 </p>
 
 ### UML Sequence Diagrams

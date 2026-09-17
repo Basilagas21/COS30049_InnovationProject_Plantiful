@@ -29,14 +29,14 @@ Initial Release Schedule of the Product backlog items
 Product Backlog Id. | Product Backlog Item | Dependencies (Product Backlog Id.) | Business Value
 (1 least – 10 most) | Release Schedule (Sprint #1 | 2 | 3 | …)
 --- | --- | --- | --- | ---
-1 | Add a new food menu |  | 8 | Sprint #1
-2 | Edit a food menu record | 1 | 8 | 
-3 | Display food menu listing | 1 | 9 | 
-4 | << add some more here >> |  |  | 
+1 | << backlog item >> |  |  | Sprint #1
+2 | … |  |  | 
+3 | … |  |  | 
+4 | … |  |  | 
 5 | … |  |  | 
 6 | … |  |  | 
 7 | … |  |  | 
-8 | …. |  |  | 
+8 | … |  |  | 
 9 | … |  |  | 
 10 | … |  |  | 
 … |  |  |  | 

@@ -13,6 +13,21 @@
 
 ---
 
+### Document Control
+
+| Version | Date | Author | Status | Notes |
+|---|---|---|---|---|
+| 1.0 | 19 September 2026 | Group 7 | Draft | Initial System Proposal, submitted to the unit tutor for review |
+
+### Executive Summary
+
+Niah National Park, managed by the Sarawak Forestry Corporation (SFC), holds a high diversity of plant species that must be documented and monitored for conservation research and ecotourism. Today that work is largely manual: botanists record observations on paper or basic digital forms in the field and later re-enter them centrally, while conservation officers manage biodiversity knowledge across disconnected sources)Skip — introducing delay, duplicated effort, and risk of data loss, and leaving rare and endangered species with no automated protection against threats such as poaching and habitat disturbance.
+
+This proposal is for a **Smart Ground-Truthing and Digital Biodiversity System** for NeuonAI and SFC: a QR-tagged, offline-first mobile application that lets botanists capture plant records (taxonomy, morphology, photographs, GPS) in the field with no connectivity, byte-safe syncing to a central Supabase/PostgreSQL database once back online; a web-based Digital Plant Knowledge System for conservation officers to review, approve, manage, searchable reporting and publish those records to researchers and the public; and an IoT monitoring layer with MQTT sensors and a dashboard that automatically alerts staff to unusual activity near vulnerable plant species. Security (role-based access control, encrypted sensitive data, an SSDLC-aligned OWASP ZAP vulnerability assessment) is designed in from the start.
+
+The report analyses the background problem (Section 1.0), project scope and requirements (Section 2.0), stakeholders (Section 3.0), and compares three solution options (Section 4.0), recommending **Option C — a purpose-built hybrid system** selected in Section 5.0. The chosen solution direction, architecture, key designsabb, quality attributes, resources, and a 13-week SSDLC-aligned schedule are then detailed in Sections 6.0-8.0, with approval signatures in Section 9.0.
+
+
 ## Table of Contents
 
 - [1.1 Background / Problem Description](#11-background--problem-description)
@@ -258,7 +273,7 @@ Using SMART (Specific, Measurable, Achievable, Relevant, Time-bound) can keep di
 
 ## 8.0 Resources
 
-### 1.2 Software / Tools
+### 8.1 Software / Tools
 
 | What it's for | Tool | Why |
 |---|---|---|
@@ -275,7 +290,7 @@ Using SMART (Specific, Measurable, Achievable, Relevant, Time-bound) can keep di
 | Hosting | Vercel/Render + Supabase | Where the app actually runs for the demo |
 | Planning/design | Figma, Word, draw.io | Wireframes, diagrams, writing docs |
 
-### 1.3 Hardware
+### 8.2 Hardware
 
 | What | Why |
 |---|---|
@@ -284,7 +299,7 @@ Using SMART (Specific, Measurable, Achievable, Relevant, Time-bound) can keep di
 | IoT sensors (or simulated) | For the plant protection module — real ones if we can get them, otherwise we simulate the data |
 | Patchy/offline internet for testing | To make sure offline sync actually works like it would in a forest |
 
-### 1.4 Plant Data Sources
+### 8.3 Plant Data Sources
 
 | Source | What we're using it for |
 |---|---|

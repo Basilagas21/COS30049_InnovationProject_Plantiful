@@ -1,4 +1,4 @@
-﻿# Smart Ground-Truthing and Digital Biodiversity System
+# Smart Ground-Truthing and Digital Biodiversity System
 
 **Group 7**
 

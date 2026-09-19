@@ -13,7 +13,7 @@
 
 ## Overview
 
-Plantiful is an integrated mobile and web platform that streamlines biodiversity documentation for Sarawak Forestry Corporation (SFC) at Niah National Park. Botanists scan QR-tagged plants and record species data offline in the field; conservation officers manage, review, and publish that data through a centralised web knowledge system. IoT sensors monitor rare and endangered species, alerting staff to threats in real time.
+Plantiful is an integrated mobile and web platform that streamlines biodiversity documentation for Sarawak Forestry Corporation (SFC) at Niah National Park. Botanists scan QR-tagged plants and record species data offline in the field, and conservation officers manage, review, and publish that data through a centralised web knowledge system. IoT sensors monitor rare and endangered species, alerting staff to threats in real time.
 
 **Industry partner:** NeuonAI (SFC's commercialisation partner)
 
@@ -26,7 +26,7 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 | Muhammad Maqeel bin Muhammad Kahfi | 102782384 | Mobile App (Sync & Backend APIs) |
 | Ashley Wallen Anak Winston | 105806559 | Integration, PM & Documentation |
 | Basill Agas Anak Heatley Rogers | 102778888 | Mobile App (Field Data Capture) |
-| Jay | | |
+| Jay | | IoT-Based Plant Protection (sensor data pipeline, alert/threat detection logic, monitoring dashboard) |
 
 ## Tech Stack
 
@@ -51,23 +51,23 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 
 <p align="center">
   <img src="Docs/Assets/ER_diagram.jpg" alt="ER Diagram" width="700"/><br/>
-  <em>ER diagram — Plantiful data model</em>
+  <em>ER diagram. Plantiful data model.</em>
 </p>
 
 ### UML Sequence Diagrams
 
 <p align="center">
-  <img src="Docs/Assets/UML_Sequence_Botanist.png" alt="UML Sequence — Botanist" width="600"/><br/>
+  <img src="Docs/Assets/UML_Sequence_Botanist.png" alt="UML Sequence - Botanist" width="600"/><br/>
   <strong>Botanist workflow</strong>
 </p>
 
 <p align="center">
-  <img src="Docs/Assets/UML_Sequence_ConservationOfficer.png" alt="UML Sequence — Conservation Officer" width="600"/><br/>
+  <img src="Docs/Assets/UML_Sequence_ConservationOfficer.png" alt="UML Sequence - Conservation Officer" width="600"/><br/>
   <strong>Conservation Officer workflow</strong>
 </p>
 
 <p align="center">
-  <img src="Docs/Assets/UML_Sequence_Admin.png" alt="UML Sequence — Admin" width="600"/><br/>
+  <img src="Docs/Assets/UML_Sequence_Admin.png" alt="UML Sequence - Admin" width="600"/><br/>
   <strong>Admin workflow</strong>
 </p>
 

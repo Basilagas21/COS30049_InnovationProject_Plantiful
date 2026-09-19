@@ -31,9 +31,32 @@ The report analyses the background problem (Section 1.0), project scope and requ
 ## Table of Contents
 
 - [1.1 Background / Problem Description](#11-background--problem-description)
-- [1.2 Software / Tools](#12-software--tools)
-- [1.3 Hardware](#13-hardware)
-- [1.4 Plant Data Sources](#14-plant-data-sources)
+  - [1.1.1 Problem Statement](#111-problem-statement)
+- [2.0 Scope](#20-scope)
+  - [2.1 Goals / Aims](#21-goals--aims)
+  - [2.2 Objectives](#22-objectives)
+  - [2.3 Constraints and Out-of-Scope Limitations](#23-constraints-and-out-of-scope-limitations)
+- [3.0 Stakeholders](#30-stakeholders)
+- [4.0 Possible Solution Analysis](#40-possible-solution-analysis)
+- [5.0 Deliverables and Schedule](#50-deliverables-and-schedule)
+  - [5.1 Deliverables](#51-deliverables)
+  - [5.2 Schedule](#52-schedule)
+  - [5.3 Initial Release Schedule](#53-initial-release-schedule)
+- [6.0 Solution Direction](#60-solution-direction)
+  - [6.1 Tier Summary](#61-tier-summary)
+  - [6.2 Key Designs](#62-key-designs)
+- [7.0 Quality Management](#70-quality-management)
+  - [7.1 Risk Register](#71-risk-register)
+  - [7.2 Acceptance Criteria and Test Strategy](#72-acceptance-criteria-and-test-strategy)
+- [8.0 Resources](#80-resources)
+  - [8.1 Software / Tools](#81-software--tools)
+  - [8.2 Hardware](#82-hardware)
+  - [8.3 Plant Data Sources](#83-plant-data-sources)
+- [9.0 Approval Signatures](#90-approval-signatures)
+- [10.0 References](#100-references)
+- [Appendix A: Glossary of Terms](#appendix-a-glossary-of-terms)
+- [Appendix B: Offline-First Sync and Conflict Resolution Rules](#appendix-b-offline-first-sync-and-conflict-resolution-rules)
+- [Appendix C: Security Testing Evidence (SSDLC)](#appendix-c-security-testing-evidence-ssdlc)
 
 ---
 
@@ -167,7 +190,7 @@ Option A doesn't actually fix the problem. Its slow, error-prone manual process 
 - Final report and presentation slides, with live demo
 - (Optional) Innovative ground-truthing workflow write-up and evaluation
 
-### Schedule
+### 5.2 Schedule
 
 | Phase | Weeks | Deliverable |
 |---|---|---|
@@ -181,7 +204,7 @@ Option A doesn't actually fix the problem. Its slow, error-prone manual process 
 | Integration & Testing | 12 | Stable full system |
 | Final Documentation & Demo | 13 | Final report + demo + Presentation |
 
-### Initial Release Schedule
+### 5.3 Initial Release Schedule
 
 | No. | Item | Dependencies | Business Value (1 least - 10 most) | Release Schedule (Sprint #) |
 |---|---|---|---|---|
@@ -269,6 +292,25 @@ Using SMART (Specific, Measurable, Achievable, Relevant, Time-bound) can keep di
 | Usability | Task complete rate (unassisted) | More than 90% across 5-user field-officer walkthrough | Moderated usability test using the draft user manual |
 | Data integrity | Mandatory field enforcement | 100% of required fields validated before sync | Backend validation testing |
 
+### 7.1 Risk Register
+
+| # | Risk | Likelihood | Impact | Mitigation | Owner |
+|---|---|---|---|---|---|
+| R1 | Data loss during offline-to-cloud sync | Medium | High | Byte-safe sync validation, conflict-resolution strategy, retry with last-write-wins fallback | Mobile App (Sync & Backend APIs) |
+| R2 | IoT hardware unavailable within the trimester | Medium | Medium | Use simulated sensors over MQTT with an identical topic/payload contract so real ESP32 devices can be swapped in without downstream change | Integration, PM & Documentation |
+| R3 | Poor or no connectivity in the field | High | Medium | Offline-first SQLite store with automatic background sync once connectivity returns | Mobile App (Field Data Capture) |
+| R4 | Security vulnerabilities discovered late in the cycle | Medium | High | SSDLC-aligned OWASP ZAP scan in Week 11 with remediation and re-assessment before submission | Team lead / Security owner |
+| R5 | Scope creep against the 13-week timeline | Medium | Medium | Prioritised Initial Release Schedule (Sprint #1/#2) with out-of-scope features tracked and re-baselined | Team lead |
+| R6 | Duplicate or inconsistent species records | Medium | Medium | Unique QR record ID, mandatory-field validation, and the review/approval workflow | Web Knowledge System (Records) |
+
+### 7.2 Acceptance Criteria and Test Strategy
+
+The system is accepted only when it meets the measurable targets in the Section 7.0 quality matrix. Verification is layered across Weeks 11-13:
+
+- **Acceptance criteria** — every requirement maps to a measurable target in the quality matrix; a criterion passes only if its metric is achieved in the verification run.
+- **Test strategy** — unit tests (backend API, mobile sync module), integration tests (offline sync to Supabase, MQTT ingestion), and system acceptance tests (offline-to-online sync round-trip, QR scan to record, role-based access control checks).
+- **Verification evidence** — OWASP ZAP report with remediation log and re-assessment (Week 11), integration results and sync-success-rate simulation report (Week 12), and usability walkthrough results (Week 13).
+
 ---
 
 ## 8.0 Resources
@@ -326,3 +368,46 @@ Using SMART (Specific, Measurable, Achievable, Relevant, Time-bound) can keep di
 | Tutor's name (on behalf of the client) | Signature |
 |---|---|
 | | |
+
+---
+
+## 10.0 References
+
+- Global Biodiversity Information Facility (GBIF). Plant occurrence records for Sarawak and Borneo. https://www.gbif.org
+- Sarawak Forestry Corporation (SFC). Niah National Park conservation and research resources.
+- MyBIS — Malaysian Biodiversity Information System. https://www.mybis.gov.my
+- React Native documentation. https://reactnative.dev
+- Supabase documentation (PostgreSQL, Auth, Storage, Row Level Security). https://supabase.com/docs
+- SQLite SQL syntax reference. https://sqlite.org/lang.html
+- MQTT 3.1.1 / 5.0 specification. https://mqtt.org
+- OWASP ZAP user guide. https://www.zaproxy.org/docs/desktop/start/
+- Secure Software Development Lifecycle (SSDLC) phases aligned to unit deliverables.
+- InfluxDB documentation. https://docs.influxdata.com
+- Additional sources cited during Weeks 11-13 testing will be appended here.
+
+## Appendix A: Glossary of Terms
+
+| Term | Definition |
+|---|---|
+| Botanist | Field researcher who captures plant records using the mobile app |
+| Conservation Officer | Staff member who reviews, approves and manages biodiversity records in the web knowledge system |
+| SFC | Sarawak Forestry Corporation |
+| SSDLC | Secure Software Development Lifecycle |
+| Supabase | Managed Postgres backend providing database, authentication, and storage |
+| MQTT | Lightweight publish/subscribe protocol for IoT sensor messaging |
+| RBAC | Role-Based Access Control |
+| QR | Quick Response code |
+
+## Appendix B: Offline-First Sync and Conflict Resolution Rules
+
+- Each record has a globally unique stable ID, encoded in its QR tag.
+- On capture offline, the record and photos are stored in local SQLite with a pending-sync status.
+- On reconnect, records sync in timestamp order; a record is marked synced only after the server acknowledges it.
+- If two botanists edit the same record offline, last-write-wins is used by default; a manual conflict queue is available to conservation officers as an enhancement.
+
+## Appendix C: Security Testing Evidence (SSDLC)
+
+- [ ] Week 11 — OWASP ZAP baseline scan results
+- [ ] Week 11 — Remediation log (vulnerability → fix → verification)
+- [ ] Week 11 — Re-assessment report showing 0 critical/high findings remaining
+- [ ] Week 12 — Integration test results (offline sync, MQTT ingestion, RBAC checks)

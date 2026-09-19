@@ -21,11 +21,11 @@
 
 ### Executive Summary
 
-Niah National Park, managed by the Sarawak Forestry Corporation (SFC), holds a high diversity of plant species that must be documented and monitored for conservation research and ecotourism. Today that work is largely manual: botanists record observations on paper or basic digital forms in the field and later re-enter them centrally, while conservation officers manage biodiversity knowledge across disconnected sources — introducing delay, duplicated effort, and risk of data loss, and leaving rare and endangered species with no automated protection against threats such as poaching and habitat disturbance.
+Niah National Park, managed by the Sarawak Forestry Corporation (SFC), is home to a high diversity of plant species. Those species need to be documented and monitored for conservation research and ecotourism, and today most of that work is done by hand. Botanists record their observations on paper or in simple digital forms while out in the field, then re-enter everything centrally once they are back. Conservation officers hold biodiversity knowledge across a number of disconnected sources. The result is delayed information, duplicated effort, and the risk of losing data. Rare and endangered species are also left with no automated protection against threats such as poaching and habitat disturbance.
 
-This proposal is for a **Smart Ground-Truthing and Digital Biodiversity System** for NeuonAI and SFC: a QR-tagged, offline-first mobile application that lets botanists capture plant records (taxonomy, morphology, photographs, GPS) in the field with no connectivity, byte-safe syncing to a central Supabase/PostgreSQL database once back online; a web-based Digital Plant Knowledge System for conservation officers to review, approve, manage, searchable reporting and publish those records to researchers and the public; and an IoT monitoring layer with MQTT sensors and a dashboard that automatically alerts staff to unusual activity near vulnerable plant species. Security (role-based access control, encrypted sensitive data, an SSDLC-aligned OWASP ZAP vulnerability assessment) is designed in from the start.
+This proposal presents a **Smart Ground-Truthing and Digital Biodiversity System** for NeuonAI and SFC. The system has three parts. A QR-tagged mobile application gives botanists an offline-first way to capture plant records in the field, covering taxonomy, morphology, photographs and GPS location without needing a connection. Once the phone is back online, everything syncs safely to a central Supabase database built on PostgreSQL. A web-based Digital Plant Knowledge System then lets conservation officers review and approve records, manage them, search and report, and publish information for researchers and the public. An IoT monitoring layer uses MQTT sensors and a dashboard to alert staff automatically when unusual activity is detected near vulnerable plant species. Security is designed in from the start through role-based access control, encrypted sensitive data, and an SSDLC-aligned vulnerability assessment using OWASP ZAP.
 
-The report analyses the background problem (Section 1.0), project scope and requirements (Section 2.0), stakeholders (Section 3.0), and compares three solution options (Section 4.0), recommending **Option C — a purpose-built hybrid system** selected in Section 5.0. The chosen solution direction, architecture, key design decisions, quality attributes, resources, and a 13-week SSDLC-aligned schedule are then detailed in Sections 6.0-8.0, with approval signatures in Section 9.0.
+The report sets out the background to the problem in Section 1.0, followed by the project scope and requirements in Section 2.0. Section 3.0 covers the stakeholders, and Section 4.0 compares three solution options. The recommended approach is Option C, a purpose-built hybrid system, and the reasons for that choice are presented in Section 5.0. Sections 6.0 to 8.0 then describe the solution direction, architecture, key design decisions, quality attributes, resources, and a 13-week schedule aligned to the SSDLC. Section 9.0 closes with the approval signatures.
 
 
 ## Table of Contents
@@ -62,7 +62,7 @@ The report analyses the background problem (Section 1.0), project scope and requ
 
 ## 1.1 Background / Problem Description
 
-Niah National Park, managed by Sarawak Forestry Corporation (SFC), is home to a highly diverse range of plant species that require continuous documentation and monitoring to support conservation research and ecotourism. Currently, botanists and conservation officers document these species using largely manual methods: physically tagging plants, recording observations on paper or basic digital forms, and later transferring this information into digital databases once back at the office. This process introduces delay, duplicated effort, and a high risk of information loss, especially across Niah's large and difficult-to-access forested terrain.
+Niah National Park, managed by the Sarawak Forestry Corporation (SFC), is home to a highly diverse range of plant species. These species need continuous documentation and monitoring to support conservation research and ecotourism. Today that work is mostly manual. Botanists physically tag plants, record observations on paper or in basic digital forms out in the field, and then transfer everything into digital databases later, once they are back at the office. The process is slow, it duplicates effort, and it carries a high risk of information loss, especially across Niah's large and difficult-to-access forested terrain.
 
 Beyond field documentation, researchers, conservation officers, local communities, and park visitors currently have limited access to consolidated, up-to-date biodiversity information. Species records, conservation statuses, and distribution data exist in scattered formats rather than a searchable central knowledge base, which weakens both scientific research and public conservation awareness. At the same time, rare and endangered plant species in the park remain vulnerable to threats such as poaching and habitat disturbance, with no automated system in place to detect and alert staff to unusual activity near these species.
 
@@ -72,7 +72,7 @@ In this project, Team Group 7 will build a smart ground-truthing and digital bio
 
 Botanists currently have no integrated way to scan, record, and geotag plant species while working offline in the field, and conservation officers have no centralised system to review, manage, and publish that data for researchers and the public. There is also no automated way to protect rare and endangered plant species from threats such as poaching or habitat disturbance while staff are not physically present.
 
-By considering the background of the project along with the list of issues and pain points that need to be solved, the team proposes an integrated system that lets botanists scan QR-tagged plants and record species data offline in the field, lets conservation officers manage and publish that data through a centralised digital knowledge system, and adds IoT-based sensors to automatically monitor and alert staff to threats near vulnerable plant species — solving both the field-documentation problem and the biodiversity-protection problem described above.
+Taken together, these issues point to a clear gap. The team proposes an integrated system that lets botanists scan QR-tagged plants and record species data offline in the field, lets conservation officers manage and publish that data through a centralised digital knowledge system, and adds IoT-based sensors that monitor the area near vulnerable plant species and alert staff to threats. This solves both the field-documentation problem and the biodiversity-protection problem described above.
 
 ---
 
@@ -84,11 +84,11 @@ This project will provide Niah National Park with an integrated web-based and mo
 
 This system will help Sarawak Forestry Corporation modernise how plant species are documented, managed, and protected in Niah National Park, replacing manual paper-based fieldwork and disconnected knowledge sources with an integrated digital platform.
 
-The system will let botanists scan QR-tagged plants and record species information — including taxonomy, morphology, photographs, and GPS location — directly on a mobile device, even without internet connectivity, syncing to the central database once connectivity is restored. Conservation officers will use a web-based knowledge system to review, approve, manage, and publish this data, making accurate biodiversity information available to researchers and park staff. To protect the park's most vulnerable plant species, IoT sensors will continuously monitor environmental conditions and detect unusual activity near tagged locations, alerting administrators in real time. Together, these components are intended to remove the delay, duplication, and data loss inherent in the current manual process while adding a layer of automated protection that did not exist before.
+The system will let botanists scan QR-tagged plants and record species information such as taxonomy, morphology, photographs, and GPS location directly on a mobile device. This works even without internet connectivity, and the data syncs to the central database once a connection is restored. Conservation officers will use a web-based knowledge system to review, approve, manage, and publish this data, so accurate biodiversity information is available to researchers and park staff. To protect the park's most vulnerable plant species, IoT sensors will continuously monitor environmental conditions and detect unusual activity near tagged locations, alerting administrators in real time. Together, these components remove the delay, duplication, and data loss inherent in the current manual process, and add a layer of automated protection that did not exist before.
 
 ### 2.2 Objectives
 
-Having a general idea of what to build is not sufficient to ensure the project develops smoothly; the project also needs specific, measurable objectives that define when each feature can be considered complete.
+Having a general idea of what to build is not enough. The project needs specific, measurable objectives that define when each feature can be considered complete.
 
 - Botanists shall be able to scan a QR-tagged plant and have its associated record load on the mobile device in under 5 seconds, even without internet connectivity.
 - The mobile app shall allow a botanist to fully register a new plant record (taxonomy, morphology, height, photographs, GPS location) offline, storing it locally until sync is possible.
@@ -114,9 +114,9 @@ Having a general idea of what to build is not sufficient to ensure the project d
 
 #### Constraints
 
-- GPS accuracy may be reduced under Niah National Park's dense forest canopy, which can affect the precision of recorded plant locations; this is a known environmental limitation rather than a system defect.
-- IoT hardware for real-time environmental sensing may not be available for testing within the unit timeline; sensor data may need to be simulated, with this assumption clearly flagged in the final report.
-- Offline-first mobile sync must handle cases where multiple botanists edit the same record before reconnecting; the conflict-resolution strategy chosen will directly limit how complex simultaneous field edits can be.
+- GPS accuracy may be reduced under Niah National Park's dense forest canopy. This affects the precision of recorded plant locations. It is a known environmental limitation rather than a system defect.
+- IoT hardware for real-time environmental sensing may not be available for testing within the unit timeline. Sensor data may need to be simulated, and this assumption would be clearly flagged in the final report.
+- Offline-first mobile sync must handle cases where multiple botanists edit the same record before reconnecting. The chosen conflict-resolution strategy will limit how complex simultaneous field edits can be.
 - The unit timeline (a single trimester) limits the depth of testing possible for the vulnerability assessment and remediation cycle compared to a production deployment.
 
 #### Out-of-Scope Features
@@ -156,9 +156,9 @@ Having a general idea of what to build is not sufficient to ensure the project d
 
 Before deciding on our final approach, we looked at three different ways to solve SFC's biodiversity documentation problem.
 
-- **Option A: Just digitize the paper records** — Keep the current manual process (paper forms, physical tags) but type the data into a spreadsheet or basic database afterward.
-- **Option B: Use an existing tool instead of building our own** — Tools like ArcGIS Field Maps, Survey123, or iNaturalist already exist for field data collection. We could try to configure one of these to fit SFC's needs instead of building custom software.
-- **Option C: Build our own system (mobile app + web app + IoT), tailored to SFC** — Design and build a system from scratch that matches exactly how SFC's botanists and conservation officers actually work such as QR tagging, offline recording, GPS, and sensor-based monitoring for endangered plants.
+- **Option A: Just digitize the paper records.** Keep the current manual process, still using paper forms and physical tags, but type the data into a spreadsheet or basic database afterward.
+- **Option B: Use an existing tool instead of building our own.** Tools like ArcGIS Field Maps, Survey123, and iNaturalist already exist for field data collection, so we could configure one of these to fit SFC's needs rather than building custom software.
+- **Option C: Build our own system, tailored to SFC.** Design and build a mobile app, web app, and IoT layer from scratch so the result matches exactly how SFC's botanists and conservation officers work, including QR tagging, offline recording, GPS, and sensor-based monitoring for endangered plants.
 
 | What matters | A: Just digitize | B: Use existing tool | C: Build our own |
 |---|---|---|---|
@@ -170,9 +170,9 @@ Before deciding on our final approach, we looked at three different ways to solv
 | Cost | Cheapest | Ongoing subscription fees | No license fees, just our time |
 | Can we build it in one trimester? | N/A, nothing to build | Fast to set up but shallow | Doable — we already have a 13-week plan for it |
 
-**Why we picked Option C:**
+**Why we picked Option C**
 
-Option A doesn't actually fix the problem. Its slow, error-prone manual process is still there — we'd just be typing it up later. Option B is quicker to set up, but most ready-made tools don't handle QR-based tagging the way SFC needs, and using someone else's platform means NeuonAI wouldn't end up with their own product to sell or grow — which matters since they're a commercialisation partner, not just a client. Option C takes more work, but it's the only one that actually solves the offline, security, and IoT requirements SFC asked for, and gives NeuonAI something real they can build on afterward (similar to their existing RoadPlus product).
+Option A does not actually fix the problem. The slow, error-prone manual process stays in place, and the team would simply be typing the data up later. Option B is quicker to set up, but most ready-made tools do not handle QR-based tagging the way SFC needs. Using someone else's platform also means NeuonAI would not end up with a product of its own to sell or grow, which matters because it is a commercialisation partner and not just a client. Option C takes more work, but it is the only option that solves the offline, security, and IoT requirements SFC asked for, and it gives NeuonAI something real to build on afterward, similar to its existing RoadPlus product.
 
 ---
 
@@ -221,11 +221,11 @@ Option A doesn't actually fix the problem. Its slow, error-prone manual process 
 
 ## 6.0 Solution Direction
 
-The chosen direction is **Option C** from Section 4.0: a purpose-built system, using a **hybrid architecture**. A single backend monolith handles records, the knowledge system, and authentication and role-based access control, while the IoT data pipeline runs as its own lightweight service, since sensor telemetry is naturally event-driven (arriving continuously over MQTT) rather than request-response like the rest of the system. This was chosen over a full microservices split, which would add service discovery, inter-service authentication, and separate deployments that a 5 to 7 person student team cannot reliably manage across a 13-week trimester, and over a single undivided monolith, which would awkwardly force a streaming data source through a request-response API pattern.
+The chosen direction is **Option C** from Section 4.0, a purpose-built system with a **hybrid architecture**. A single backend monolith handles records, the knowledge system, and authentication with role-based access control. The IoT data pipeline runs as its own lightweight service because sensor telemetry is naturally event-driven, arriving continuously over MQTT rather than as request-response calls like the rest of the system. This sits between two alternatives. A full microservices split would add service discovery, inter-service authentication, and separate deployments that a 5 to 7 person student team cannot reliably manage across a 13-week trimester. A single undivided monolith would awkwardly force a streaming data source through a request-response API pattern.
 
 <p align="center">
   <img src="../Assets/System_Architecture.png" alt="System Architecture" width="750"/><br/>
-  <em>Figure 1: Plantiful system architecture — client, application, and data tiers</em>
+  <em>Figure 1: Plantiful system architecture. Client, application, and data tiers.</em>
 </p>
 
 The tiers, components, and their interactions are captured in Figure 1, and the underlying data model is shown in Figure 2.
@@ -245,27 +245,27 @@ The tiers, components, and their interactions are captured in Figure 1, and the 
 
 ### 6.2 Key Designs
 
-- **Mobile framework:** React Native, chosen so the whole team works in one language (TypeScript) across both the field app and the web knowledge system. A single language lets us share the QR/GPS/camera handling logic, and means every team member can contribute to either app instead of splitting into Dart and TypeScript camps. The mobile app still gets its offline-first local SQLite store, QR scanning, GPS and camera as required. (Flutter was the alternative, discarded for the language split and smaller plugin alignment with the chosen web stack)
-- **QR strategy:** each QR code encodes only a stable record ID, resolved against Supabase when online or a local synced cache when offline, so records can be corrected centrally without reprinting physical tags.
-- **Sync conflict resolution:** implemented in stages, last-write-wins first to establish a working sync pipeline, then a manual conflict queue routed to the conservation officer's web dashboard as an enhancement if time allows, falling back to last-write-wins alone if week 12 arrives before the queue is built.
-- **Central and offline database split:** Supabase (managed Postgres with an auto-generated REST API, authentication, row-level security, and file storage) as the central database, paired with SQLite on the mobile device as the offline-first local store; REST is the transport connecting SQLite to Supabase once connectivity returns, and is also how the web app and IoT service communicate with Supabase.
-- **IoT approach:** simulated sensors publishing over MQTT to a fixed topic and payload contract first, so the full pipeline (broker, ingestion service, database, dashboard, alerting) can be built and tested end to end; real ESP32 hardware publishing to the same topic and schema can then be swapped in or added alongside the simulator without changing any downstream component.
-- **Security approach:** threat modelling and secure design decisions made during the Section 6 design stage (this section), verified with an OWASP ZAP scan, remediation, and re-assessment pass in Week 11, in line with the Secure Software Development Lifecycle.
+- **Mobile framework.** React Native is used so the whole team works in one language (TypeScript) across both the field app and the web knowledge system. A single language lets the team share QR, GPS, and camera handling logic, and means every member can contribute to either app instead of splitting into Dart and TypeScript camps. The mobile app still gets its offline-first local SQLite store, QR scanning, GPS, and camera as required. Flutter was the alternative, set aside because of the language split and its weaker plugin alignment with the chosen web stack.
+- **QR strategy.** Each QR code encodes only a stable record ID, resolved against Supabase when online or a local synced cache when offline. Records can then be corrected centrally without reprinting physical tags.
+- **Sync conflict resolution.** This is implemented in stages. Last-write-wins comes first to establish a working sync pipeline. A manual conflict queue routed to the conservation officer's web dashboard is added as an enhancement if time allows, falling back to last-write-wins alone if week 12 arrives before the queue is built.
+- **Central and offline database split.** Supabase (managed Postgres with an auto-generated REST API, authentication, row-level security, and file storage) serves as the central database, paired with SQLite on the mobile device as the offline-first local store. REST is the transport connecting SQLite to Supabase once connectivity returns, and is also how the web app and IoT service communicate with Supabase.
+- **IoT approach.** Simulated sensors publish over MQTT to a fixed topic and payload contract first, so the full pipeline through broker, ingestion service, database, dashboard, and alerting can be built and tested end to end. Real ESP32 hardware publishing to the same topic and schema can then be swapped in or added alongside the simulator without changing any downstream component.
+- **Security approach.** Threat modelling and secure design decisions are made during this Section 6 design stage, then verified with an OWASP ZAP scan, remediation, and re-assessment pass in Week 11, in line with the Secure Software Development Lifecycle.
 
 #### The three core workflows
 
 <p align="center">
-  <img src="../Assets/UML_Sequence_Botanist.png" alt="UML Sequence — Botanist" width="600"/><br/>
-  <em>Figure 3: Botanist field capture flow — offline capture, QR, sync, review</em>
+  <img src="../Assets/UML_Sequence_Botanist.png" alt="UML Sequence - Botanist" width="600"/><br/>
+  <em>Figure 3: Botanist field capture flow. Offline capture, QR, sync, and review.</em>
 </p>
 
 <p align="center">
-  <img src="../Assets/UML_Sequence_ConservationOfficer.png" alt="UML Sequence — Conservation Officer" width="600"/><br/>
+  <img src="../Assets/UML_Sequence_ConservationOfficer.png" alt="UML Sequence - Conservation Officer" width="600"/><br/>
   <em>Figure 4: Conservation officer review and approval flow</em>
 </p>
 
 <p align="center">
-  <img src="../Assets/UML_Sequence_Admin.png" alt="UML Sequence — Admin" width="600"/><br/>
+  <img src="../Assets/UML_Sequence_Admin.png" alt="UML Sequence - Admin" width="600"/><br/>
   <em>Figure 5: Admin system administration flow</em>
 </p>
 
@@ -273,15 +273,15 @@ The tiers, components, and their interactions are captured in Figure 1, and the 
 
 ## 7.0 Quality Management
 
-Quality is defined as five dimensions that ideas from SFC, NeuonAI and the end users of the system. Here are different types of quality management in the context of this project:
+Quality is looked at through five dimensions, based on what SFC, NeuonAI, and the end users expect from the system. Each dimension is described below.
 
-- **Functional quality** — the platform performs with the core workflow correctly such as QR scanning, field data capture with offline mode, synchronisation to the central database and review or approved by conversation officers without data loss or corruption at any stage.
-- **Data quality** — record species and entered the system that are accurate, complete and consistent record without any duplicate entries and no missing mandatory fields.
-- **Security quality** — role-based access controls correctly restrict that can create edit or approve records. The system meets the standards set out in SSDLC plan.
-- **Usability** — botanists or field officers can access with limited connectivity, gloves or bright outdoor light can operate the mobile app with minimal training beyond the provided user manual.
-- **Reliability** — the offline-first architecture behaves as intended under real field conditions with sync operations that either succeed completely or fail safely.
+- **Functional quality.** The platform performs the core workflow correctly. QR scanning, field data capture in offline mode, synchronisation to the central database, and review and approval by conservation officers all work without data loss or corruption at any stage.
+- **Data quality.** Species records entered into the system are accurate, complete, and consistent, with no duplicate entries and no missing mandatory fields.
+- **Security quality.** Role-based access control correctly limits who can create, edit, or approve records, and the system meets the standards set out in the SSDLC plan.
+- **Usability.** Botanists and field officers, even with limited connectivity, gloves, or bright outdoor light, can operate the mobile app with minimal training beyond the provided user manual.
+- **Reliability.** The offline-first architecture behaves as intended under real field conditions, with sync operations that either succeed completely or fail safely.
 
-Using SMART (Specific, Measurable, Achievable, Relevant, Time-bound) can keep dimensions measurable rather than aspirational.
+SMART (Specific, Measurable, Achievable, Relevant, Time-bound) criteria keep these dimensions measurable rather than aspirational.
 
 | Quality Attribute | Metric | Target | How Measured |
 |---|---|---|---|
@@ -305,11 +305,11 @@ Using SMART (Specific, Measurable, Achievable, Relevant, Time-bound) can keep di
 
 ### 7.2 Acceptance Criteria and Test Strategy
 
-The system is accepted only when it meets the measurable targets in the Section 7.0 quality matrix. Verification is layered across Weeks 11-13:
+The system is accepted only when it meets the measurable targets in the Section 7.0 quality matrix. Verification is layered across Weeks 11 to 13 in three ways:
 
-- **Acceptance criteria** — every requirement maps to a measurable target in the quality matrix; a criterion passes only if its metric is achieved in the verification run.
-- **Test strategy** — unit tests (backend API, mobile sync module), integration tests (offline sync to Supabase, MQTT ingestion), and system acceptance tests (offline-to-online sync round-trip, QR scan to record, role-based access control checks).
-- **Verification evidence** — OWASP ZAP report with remediation log and re-assessment (Week 11), integration results and sync-success-rate simulation report (Week 12), and usability walkthrough results (Week 13).
+- **Acceptance criteria.** Every requirement maps to a measurable target in the quality matrix. A criterion passes only if its metric is achieved in the verification run.
+- **Test strategy.** Unit tests cover the backend API and the mobile sync module. Integration tests cover offline sync to Supabase and MQTT ingestion. System acceptance tests cover the offline-to-online sync round-trip, QR scan to record, and role-based access control checks.
+- **Verification evidence.** This includes the OWASP ZAP report with a remediation log and re-assessment in Week 11, the integration results and sync-success-rate simulation report in Week 12, and the usability walkthrough results in Week 13.
 
 ---
 
@@ -375,7 +375,7 @@ The system is accepted only when it meets the measurable targets in the Section 
 
 - Global Biodiversity Information Facility (GBIF). Plant occurrence records for Sarawak and Borneo. https://www.gbif.org
 - Sarawak Forestry Corporation (SFC). Niah National Park conservation and research resources.
-- MyBIS — Malaysian Biodiversity Information System. https://www.mybis.gov.my
+- MyBIS, the Malaysian Biodiversity Information System. https://www.mybis.gov.my
 - React Native documentation. https://reactnative.dev
 - Supabase documentation (PostgreSQL, Auth, Storage, Row Level Security). https://supabase.com/docs
 - SQLite SQL syntax reference. https://sqlite.org/lang.html
@@ -402,12 +402,12 @@ The system is accepted only when it meets the measurable targets in the Section 
 
 - Each record has a globally unique stable ID, encoded in its QR tag.
 - On capture offline, the record and photos are stored in local SQLite with a pending-sync status.
-- On reconnect, records sync in timestamp order; a record is marked synced only after the server acknowledges it.
-- If two botanists edit the same record offline, last-write-wins is used by default; a manual conflict queue is available to conservation officers as an enhancement.
+- On reconnect, records sync in timestamp order. A record is marked synced only after the server acknowledges it.
+- If two botanists edit the same record offline, last-write-wins is used by default. A manual conflict queue is available to conservation officers as an enhancement.
 
 ## Appendix C: Security Testing Evidence (SSDLC)
 
-- [ ] Week 11 — OWASP ZAP baseline scan results
-- [ ] Week 11 — Remediation log (vulnerability → fix → verification)
-- [ ] Week 11 — Re-assessment report showing 0 critical/high findings remaining
-- [ ] Week 12 — Integration test results (offline sync, MQTT ingestion, RBAC checks)
+- [ ] Week 11. OWASP ZAP baseline scan results
+- [ ] Week 11. Remediation log (vulnerability → fix → verification)
+- [ ] Week 11. Re-assessment report showing 0 critical/high findings remaining
+- [ ] Week 12. Integration test results (offline sync, MQTT ingestion, RBAC checks)

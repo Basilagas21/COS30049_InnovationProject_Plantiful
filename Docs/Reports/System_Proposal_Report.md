@@ -4,11 +4,12 @@
 
 | # | Name | Student ID |
 |---|---|---|
-| 1 | Nathan Sebastian Learmonth | 102782258 |
-| 2 | Badrul Aliff Aiman bin Badrulmunirzaki | 102778273 |
-| 3 | Muhammad Maqeel bin Muhammad Kahfi | 102782384 |
-| 4 | Ashley Wallen Anak Winston | 105806559 |
-| 5 | Basill Agas Anak Heatley Rogers | 102778888 |
+| 1 | Muhammad Maqeel bin Muhammad Kahfi | 102782384 |
+| 2 | Nathan Sebastian Learmonth | 102782258 |
+| 3 | Badrul Aliff Aiman bin Badrulmunirzaki | 102778273 |
+| 4 | Gae Jayden MWINE | 104393610 |
+| 5 | Ashley Wallen | 105806559 |
+| 6 | Basill Agas | 102778888 |
 
 ---
 
@@ -298,11 +299,12 @@ Using SMART (Specific, Measurable, Achievable, Relevant, Time-bound) can keep di
 
 | # | Name | Student ID | Signature | Roles |
 |---|---|---|---|---|
-| 1 | Nathan Sebastian Learmonth | 102782258 | | Team lead, Web Knowledge System (Records) |
-| 2 | Badrul Aliff Aiman bin Badrulmunirzaki | 102778273 | | Web Knowledge System (Reporting & Maps) |
-| 3 | Muhammad Maqeel bin Muhammad Kahfi | 102782384 | | Mobile App (Sync & Backend APIs) |
-| 4 | Ashley Wallen Anak Winston | 105806559 | | Integration, PM & Documentation |
-| 5 | Basill Agas Anak Heatley Rogers | 102778888 | | Mobile App (Field Data Capture) |
+| 1 | Muhammad Maqeel bin Muhammad Kahfi | 102782384 | | Team lead, Web Knowledge System (Records) |
+| 2 | Nathan Sebastian Learmonth | 102782258 | | Web Knowledge System (Reporting & Maps) |
+| 3 | Badrul Aliff Aiman bin Badrulmunirzaki | 102778273 | | Mobile App (Sync & Backend APIs) |
+| 4 | Gae Jayden MWINE | 104393610 | | |
+| 5 | Ashley Wallen | 105806559 | | Integration, PM & Documentation |
+| 6 | Basill Agas | 102778888 | | Mobile App (Field Data Capture) |
 
 ### Project Sponsor [Your Tutor]
 

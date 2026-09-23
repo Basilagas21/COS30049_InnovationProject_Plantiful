@@ -1,6 +1,9 @@
 # Smart Ground-Truthing and Digital Biodiversity System
 
-**Group 7**
+**System Design Proposal**
+
+**Group Name:** Plantiful
+**Group No.:** Group 7
 
 | # | Name | Student ID |
 |---|---|---|
@@ -8,8 +11,8 @@
 | 2 | Nathan Sebastian Learmonth | 102782258 |
 | 3 | Badrul Aliff Aiman bin Badrulmunirzaki | 102778273 |
 | 4 | Gae Jayden MWINE | 104393610 |
-| 5 | Ashley Wallen | 105806559 |
-| 6 | Basill Agas | 102778888 |
+| 5 | Ashley Wallen Anak Winston | 105806559 |
+| 6 | Basill Agas Anak Heatley Rogers | 102778888 |
 
 ---
 
@@ -18,85 +21,107 @@
 | Version | Date | Author | Status | Notes |
 |---|---|---|---|---|
 | 1.0 | 19 September 2026 | Group 7 | Draft | Initial System Proposal, submitted to the unit tutor for review |
-| 1.1 | 21 September 2026 | Group 7 | Draft | Added SWOT analysis and Project Forces (force field) analysis to Section 4; added Existing Solutions and Motivation under Section 1.1; added Development Process, Standards and Conventions (Section 6.3) — aligning this document with the unit's process-marking rubric (Project Description, Project Planning, Deliverables and Schedule, System Architecture). |
-| 1.2 | 21 September 2026 | Group 7 | Draft | Added KoST Analysis (Knowledge, Skills, Technology) to Section 4.3, completing the four frameworks named in the rubric's Solution Analysis row (Project Forces, SWOT, KoST, SSDLC). |
+| 1.1 | 21 September 2026 | Group 7 | Draft | Added SWOT analysis and Project Forces (force field) analysis to Section 4; added Existing Solutions and Motivation under Section 1; added Development Process, Standards and Conventions (Section 6.3), aligning this document with the unit's rubric (Project Description, Project Planning, Deliverables and Schedule, System Architecture). |
+| 1.2 | 21 September 2026 | Group 7 | Draft | Added KoST Analysis (Knowledge, Skills, Technology) to Section 4, completing the frameworks named in the rubric's Solution Analysis row (Project Forces, SWOT, KoST, SSDLC). |
+| 1.3 | 23 September 2026 | Group 7 | Draft | Full content re-sync and structural cleanup: renumbered sections to match the unit's numbering (Sections 1-13), restored figures, and verified cross-references. |
+
+---
 
 ### Executive Summary
 
 Niah National Park, managed by the Sarawak Forestry Corporation (SFC), is home to a high diversity of plant species. Those species need to be documented and monitored for conservation research and ecotourism, and today most of that work is done by hand. Botanists record their observations on paper or in simple digital forms while out in the field, then re-enter everything centrally once they are back. Conservation officers hold biodiversity knowledge across a number of disconnected sources. The result is delayed information, duplicated effort, and the risk of losing data. Rare and endangered species are also left with no automated protection against threats such as poaching and habitat disturbance.
 
-This proposal presents a **Smart Ground-Truthing and Digital Biodiversity System** for NeuonAI and SFC. The system has three parts. A QR-tagged mobile application gives botanists an offline-first way to capture plant records in the field, covering taxonomy, morphology, photographs and GPS location without needing a connection. Once the phone is back online, everything syncs safely to a central Supabase database built on PostgreSQL. A web-based Digital Plant Knowledge System then lets conservation officers review and approve records, manage them, search and report, and publish information for researchers and the public. An IoT monitoring layer uses MQTT sensors and a dashboard to alert staff automatically when unusual activity is detected near vulnerable plant species. Security is designed in from the start through role-based access control, encrypted sensitive data, and an SSDLC-aligned vulnerability assessment using OWASP ZAP.
+This proposal presents a Smart Ground-Truthing and Digital Biodiversity System for NeuonAI and SFC. The system has three parts. A QR-tagged mobile application gives botanists an offline-first way to capture plant records in the field, covering taxonomy, morphology, photographs and GPS location without needing a connection. Once the phone is back online, everything syncs safely to a central Supabase database built on PostgreSQL. A web-based Digital Plant Knowledge System then lets conservation officers review and approve records, manage them, search and report, and publish information for researchers and the public. An IoT monitoring layer uses MQTT sensors and a dashboard to alert staff automatically when unusual activity is detected near vulnerable plant species. Security is designed in from the start through role-based access control, encrypted sensitive data, and an SSDLC-aligned vulnerability assessment using OWASP ZAP.
 
-The report sets out the background to the problem in Section 1.0, followed by the project scope and requirements in Section 2.0. Section 3.0 covers the stakeholders, and Section 4.0 compares three solution options and assesses the recommended one against a SWOT and a Project Forces analysis. The recommended approach is Option C, a purpose-built hybrid system, and the reasons for that choice are presented in Section 4.0. Sections 6.0 to 8.0 then describe the solution direction, architecture, key design decisions and development standards, quality attributes, resources, and a 13-week schedule aligned to the SSDLC. Section 9.0 closes with the approval signatures.
-
-
-## Table of Contents
-
-- [1.1 Background / Problem Description](#11-background--problem-description)
-  - [1.1.1 Problem Statement](#111-problem-statement)
-  - [1.1.2 Existing Solutions](#112-existing-solutions)
-  - [1.1.3 Motivation](#113-motivation)
-- [2.0 Scope](#20-scope)
-  - [2.1 Goals / Aims](#21-goals--aims)
-  - [2.2 Objectives](#22-objectives)
-  - [2.3 Constraints and Out-of-Scope Limitations](#23-constraints-and-out-of-scope-limitations)
-- [3.0 Stakeholders](#30-stakeholders)
-- [4.0 Possible Solution Analysis](#40-possible-solution-analysis)
-  - [4.1 SWOT Analysis (Option C)](#41-swot-analysis-option-c)
-  - [4.2 Project Forces Analysis (Force Field)](#42-project-forces-analysis-force-field)
-  - [4.3 KoST Analysis (Knowledge, Skills, Technology)](#43-kost-analysis-knowledge-skills-technology)
-- [5.0 Deliverables and Schedule](#50-deliverables-and-schedule)
-  - [5.1 Deliverables](#51-deliverables)
-  - [5.2 Schedule](#52-schedule)
-  - [5.3 Initial Release Schedule](#53-initial-release-schedule)
-- [6.0 Solution Direction](#60-solution-direction)
-  - [6.1 Tier Summary](#61-tier-summary)
-  - [6.2 Key Designs](#62-key-designs)
-  - [6.3 Development Process, Standards and Conventions](#63-development-process-standards-and-conventions)
-- [7.0 Quality Management](#70-quality-management)
-  - [7.1 Risk Register](#71-risk-register)
-  - [7.2 Acceptance Criteria and Test Strategy](#72-acceptance-criteria-and-test-strategy)
-- [8.0 Resources](#80-resources)
-  - [8.1 Software / Tools](#81-software--tools)
-  - [8.2 Hardware](#82-hardware)
-  - [8.3 Plant Data Sources](#83-plant-data-sources)
-- [9.0 Approval Signatures](#90-approval-signatures)
-- [10.0 References](#100-references)
-- [Appendix A: Glossary of Terms](#appendix-a-glossary-of-terms)
-- [Appendix B: Offline-First Sync and Conflict Resolution Rules](#appendix-b-offline-first-sync-and-conflict-resolution-rules)
-- [Appendix C: Security Testing Evidence (SSDLC)](#appendix-c-security-testing-evidence-ssdlc)
+The report sets out the background to the problem in Section 1.0, followed by the project scope and requirements in Section 2.0. Section 3.0 covers the stakeholders, and Section 4.0 compares three solution options and assesses the recommended one against a SWOT and a Project Forces analysis. The recommended approach is Option C, a purpose-built hybrid system, and the reasons for that choice are presented in Section 4.0. Section 5.0 sets out the deliverables and a 13-week schedule aligned to the SSDLC. Sections 6.0 to 8.0 then describe the solution direction and architecture, key design decisions and development standards, quality attributes, and resources. Section 9.0 closes with the approval signatures.
 
 ---
 
-## 1.1 Background / Problem Description
+## Table of Contents
 
-Niah National Park, managed by the Sarawak Forestry Corporation (SFC), is home to a highly diverse range of plant species. These species need continuous documentation and monitoring to support conservation research and ecotourism. Today that work is mostly manual. Botanists physically tag plants, record observations on paper or in basic digital forms out in the field, and then transfer everything into digital databases later, once they are back at the office. The process is slow, it duplicates effort, and it carries a high risk of information loss, especially across Niah's large and difficult-to-access forested terrain.
+- [1. Introduction](#1-introduction)
+  - [1.1 Background / Problem Description](#11-background--problem-description)
+  - [1.2 Problem Statement](#12-problem-statement)
+  - [1.3 Existing Solutions](#13-existing-solutions)
+  - [1.4 Motivation](#14-motivation)
+- [2. Scope](#2-scope)
+  - [2.1 Goals / Aims](#21-goals--aims)
+  - [2.2 Objectives](#22-objectives)
+  - [2.3 Constraints and Out-of-Scope Limitations](#23-constraints-and-out-of-scope-limitations)
+    - [2.3.1 Constraints](#231-constraints)
+    - [2.3.2 Out-of-Scope Features](#232-out-of-scope-features)
+- [3. Stakeholders](#3-stakeholders)
+- [4. Possible Solution Analysis](#4-possible-solution-analysis)
+  - [4.1 Justification for Selecting Option C](#41-justification-for-selecting-option-c)
+  - [4.2 SWOT Analysis (Option C)](#42-swot-analysis-option-c)
+    - [4.2.1 Strengths](#421-strengths)
+    - [4.2.2 Weaknesses](#422-weaknesses)
+    - [4.2.3 Opportunities](#423-opportunities)
+    - [4.2.4 Threats](#424-threats)
+  - [4.3 Project Forces Analysis (Force Field)](#43-project-forces-analysis-force-field)
+    - [4.3.1 Driving forces (for building Option C)](#431-driving-forces-for-building-option-c)
+    - [4.3.2 Restraining forces (against / risks)](#432-restraining-forces-against--risks)
+  - [4.4 KoST Analysis (Knowledge, Skills, Technology)](#44-kost-analysis-knowledge-skills-technology)
+    - [4.4.1 Knowledge](#441-knowledge)
+    - [4.4.2 Skills](#442-skills)
+    - [4.4.3 Technology](#443-technology)
+- [5. Deliverables and Schedule](#5-deliverables-and-schedule)
+  - [5.1 Deliverables](#51-deliverables)
+  - [5.2 Schedule](#52-schedule)
+  - [5.3 Initial Release Schedule](#53-initial-release-schedule)
+- [6. Solution Direction](#6-solution-direction)
+  - [6.1 Tier Summary](#61-tier-summary)
+  - [6.2 Key Designs](#62-key-designs)
+  - [6.3 Development Process, Standards and Conventions](#63-development-process-standards-and-conventions)
+  - [6.4 The three core workflows](#64-the-three-core-workflows)
+- [7. Quality Management](#7-quality-management)
+  - [7.1 Risk Register](#71-risk-register)
+  - [7.2 Acceptance Criteria and Test Strategy](#72-acceptance-criteria-and-test-strategy)
+- [8. Resources](#8-resources)
+  - [8.1 Software / Tools](#81-software--tools)
+  - [8.2 Hardware](#82-hardware)
+  - [8.3 Plant Data Sources](#83-plant-data-sources)
+- [9. Approval Signatures](#9-approval-signatures)
+  - [9.1 Project Team](#91-project-team)
+  - [9.2 Project Sponsor [Your Tutor]](#92-project-sponsor-your-tutor)
+- [10. References](#10-references)
+- [11. Appendix A: Glossary of Terms](#11-appendix-a-glossary-of-terms)
+- [12. Appendix B: Offline-First Sync and Conflict Resolution Rules](#12-appendix-b-offline-first-sync-and-conflict-resolution-rules)
+- [13. Appendix C: Security Testing Evidence (SSDLC)](#13-appendix-c-security-testing-evidence-ssdlc)
+
+---
+
+## 1. Introduction
+
+### 1.1 Background / Problem Description
+
+Niah National Park, managed by Sarawak Forestry Corporation (SFC), is home to a highly diverse range of plant species that require continuous documentation and monitoring to support conservation research and ecotourism. Currently, botanists and conservation officers document these species using largely manual methods: physically tagging plants, recording observations on paper or basic digital forms, and later transferring this information into digital databases once back at the office. This process introduces delay, duplicated effort, and a high risk of information loss, especially across Niah's large and difficult-to-access forested terrain.
 
 Beyond field documentation, researchers, conservation officers, local communities, and park visitors currently have limited access to consolidated, up-to-date biodiversity information. Species records, conservation statuses, and distribution data exist in scattered formats rather than a searchable central knowledge base, which weakens both scientific research and public conservation awareness. At the same time, rare and endangered plant species in the park remain vulnerable to threats such as poaching and habitat disturbance, with no automated system in place to detect and alert staff to unusual activity near these species.
 
 In this project, Team Group 7 will build a smart ground-truthing and digital biodiversity system that streamlines field data collection, centralises biodiversity knowledge, and adds IoT-based monitoring for the park's most vulnerable plant species.
 
-### 1.1.1 Problem Statement
+### 1.2 Problem Statement
 
 Botanists currently have no integrated way to scan, record, and geotag plant species while working offline in the field, and conservation officers have no centralised system to review, manage, and publish that data for researchers and the public. There is also no automated way to protect rare and endangered plant species from threats such as poaching or habitat disturbance while staff are not physically present.
 
 Taken together, these issues point to a clear gap. The team proposes an integrated system that lets botanists scan QR-tagged plants and record species data offline in the field, lets conservation officers manage and publish that data through a centralised digital knowledge system, and adds IoT-based sensors that monitor the area near vulnerable plant species and alert staff to threats. This solves both the field-documentation problem and the biodiversity-protection problem described above.
 
-### 1.1.2 Existing Solutions
+### 1.3 Existing Solutions
 
-Two categories of alternative approach already exist. The first is continuing with the paper-based and ad hoc digital methods SFC largely uses today — recording sightings on paper or in basic spreadsheets and manually entering the data later, which is slow, duplicative, and error-prone. The second is adopting a generic, off-the-shelf field data collection tool such as Esri's ArcGIS Field Maps, Survey123, or the citizen-science app iNaturalist. These tools are mature and well supported for general field survey work, but none of them are built for QR-based specimen tagging, an offline-first sync pipeline feeding a bespoke conservation-officer approval workflow, or IoT-based threat monitoring, and none would give SFC or NeuonAI ownership of the resulting system. A full side-by-side comparison of these alternatives against a purpose-built system is presented in Section 4.0.
+Two categories of alternative approach already exist. The first is continuing with the paper-based and ad hoc digital methods SFC uses today such as recording sightings on paper or in basic spreadsheets and manually entering the data later, which is slow, duplicative, and error-prone. The second is adopting a generic, off-the-shelf field data collection tool such as Esri's ArcGIS Field Maps, Survey123, or the citizen-science app iNaturalist. These tools are mature and well supported for general field survey work, but none of them are built for QR-based specimen tagging, an offline-first sync pipeline feeding a bespoke conservation-officer approval workflow, or IoT-based threat monitoring, and none would give SFC or NeuonAI ownership of the resulting system. A full side-by-side comparison of these alternatives against a purpose-built system is presented in Section 4.0.
 
-### 1.1.3 Motivation
+### 1.4 Motivation
 
 This project matters now for three reasons. First, Niah National Park's rare and endangered plant species face time-sensitive threats such as poaching and habitat disturbance that today's manual, disconnected record-keeping cannot help SFC respond to quickly. Second, SFC and NeuonAI have a live opportunity to end up with a validated, ownable product rather than an ongoing dependency on a third-party tool or subscription, similar to NeuonAI's existing RoadPlus system. Third, delivering this system gives Team Group 7 a concrete, full-stack, security-conscious engineering project — spanning mobile, web, IoT, and SSDLC-aligned testing — that directly satisfies COS30049's assessment requirements.
 
 ---
 
-## 2.0 Scope
+## 2. Scope
 
 This project will provide Niah National Park with an integrated web-based and mobile biodiversity documentation infrastructure. Conservation officials will use a web-based knowledge system to manage, assess, and disseminate the species data that botanists scan from QR-tagged plants, record offline in the field, and sync to a central database. To aid in the protection of rare and endangered plant species, the platform also has an IoT-based monitoring layer and role-based security controls.
 
-### 2.1 Goals/Aims
+### 2.1 Goals / Aims
 
 This system will help Sarawak Forestry Corporation modernise how plant species are documented, managed, and protected in Niah National Park, replacing manual paper-based fieldwork and disconnected knowledge sources with an integrated digital platform.
 
@@ -128,14 +153,14 @@ Having a general idea of what to build is not enough. The project needs specific
 
 ### 2.3 Constraints and Out-of-Scope Limitations
 
-#### Constraints
+#### 2.3.1 Constraints
 
 - GPS accuracy may be reduced under Niah National Park's dense forest canopy. This affects the precision of recorded plant locations. It is a known environmental limitation rather than a system defect.
 - IoT hardware for real-time environmental sensing may not be available for testing within the unit timeline. Sensor data may need to be simulated, and this assumption would be clearly flagged in the final report.
 - Offline-first mobile sync must handle cases where multiple botanists edit the same record before reconnecting. The chosen conflict-resolution strategy will limit how complex simultaneous field edits can be.
 - The unit timeline (a single trimester) limits the depth of testing possible for the vulnerability assessment and remediation cycle compared to a production deployment.
 
-#### Out-of-Scope Features
+#### 2.3.2 Out-of-Scope Features
 
 - Public-facing visitor mobile app or QR-based educational content for ecotourism (the mobile app in this project is scoped to the Botanist role only).
 - Facial or biometric recognition of park staff or visitors.
@@ -154,7 +179,7 @@ Having a general idea of what to build is not enough. The project needs specific
 
 ---
 
-## 3.0 Stakeholders
+## 3. Stakeholders
 
 | Stakeholder | Role | Interest |
 |---|---|---|
@@ -168,7 +193,7 @@ Having a general idea of what to build is not enough. The project needs specific
 
 ---
 
-## 4.0 Possible Solution Analysis
+## 4. Possible Solution Analysis
 
 Before deciding on our final approach, we looked at three different ways to solve SFC's biodiversity documentation problem.
 
@@ -186,51 +211,51 @@ Before deciding on our final approach, we looked at three different ways to solv
 | Cost | Cheapest | Ongoing subscription fees | No license fees, just our time |
 | Can we build it in one trimester? | N/A, nothing to build | Fast to set up but shallow | Doable — we already have a 13-week plan for it |
 
-**Why we picked Option C**
+### 4.1 Justification for Selecting Option C
 
 Option A does not actually fix the problem. The slow, error-prone manual process stays in place, and the team would simply be typing the data up later. Option B is quicker to set up, but most ready-made tools do not handle QR-based tagging the way SFC needs. Using someone else's platform also means NeuonAI would not end up with a product of its own to sell or grow, which matters because it is a commercialisation partner and not just a client. Option C takes more work, but it is the only option that solves the offline, security, and IoT requirements SFC asked for, and it gives NeuonAI something real to build on afterward, similar to its existing RoadPlus product.
 
-### 4.1 SWOT Analysis (Option C)
+### 4.2 SWOT Analysis (Option C)
 
 With Option C selected as the recommended direction, the team assessed it on its own merits using a SWOT analysis, to surface risks worth planning for rather than discovering them mid-build.
 
-**Strengths**
+#### 4.2.1 Strengths
 
 - Purpose-built to match SFC's actual QR-tagging, offline, and IoT workflow exactly, unlike Options A or B.
 - SFC and NeuonAI fully own the data and system, with no vendor lock-in or ongoing subscription cost.
 - Security and role-based access control are designed in from the start rather than retrofitted.
 - Built on proven, well-documented technology (Supabase, React/React Native, MQTT) with strong community support.
 
-**Weaknesses**
+#### 4.2.2 Weaknesses
 
 - Requires the team to design, build, and test every layer itself inside a single 13-week trimester — the most implementation-heavy option.
 - No prior production track record, unlike adopting an established platform such as ArcGIS Field Maps.
 - A 5-to-7-person student team has limited prior experience with mobile development, IoT, and formal security testing.
 
-**Opportunities**
+#### 4.2.3 Opportunities
 
 - Gives NeuonAI a validated product to commercialise, similar to its existing RoadPlus offering.
 - A working prototype could be extended to other national parks or genuinely adopted by SFC beyond the unit.
 - Establishes an internal SSDLC and security-testing practice the team can reuse on future projects.
 
-**Threats**
+#### 4.2.4 Threats
 
 - IoT hardware (ESP32 sensors) may not be available in time, forcing reliance on simulated data for the final demo.
 - Scope creep risk given the breadth of the system (mobile, web, IoT, and security) within a fixed trimester.
 - Offline sync conflict handling introduces genuine technical risk if edge cases aren't tested thoroughly.
 
-### 4.2 Project Forces Analysis (Force Field)
+### 4.3 Project Forces Analysis (Force Field)
 
 A force field analysis was used to weigh the forces pushing the team toward building Option C against the forces pushing back against it.
 
-**Driving forces (for building Option C)**
+#### 4.3.1 Driving forces (for building Option C)
 
 - SFC's explicit need for offline, QR-based tracking that off-the-shelf tools don't fully support.
 - NeuonAI's commercial interest in owning a purpose-built product rather than configuring someone else's.
 - The unit's requirement to demonstrate full SSDLC practice and original architecture design.
 - The team's existing familiarity with React/TypeScript across both mobile and web.
 
-**Restraining forces (against / risks)**
+#### 4.3.2 Restraining forces (against / risks)
 
 - The single-trimester timeline limits the engineering depth achievable compared with configuring an existing tool.
 - Team members have varying prior experience with mobile development, IoT, and security testing.
@@ -239,23 +264,23 @@ A force field analysis was used to weigh the forces pushing the team toward buil
 
 On balance, the driving forces outweigh the restraining forces: the restraining forces are manageable through mitigations already defined in the Section 7.1 Risk Register (simulated IoT sensors, a staged sync strategy, and a prioritised backlog), while the driving forces represent requirements Options A and B cannot meet at all.
 
-### 4.3 KoST Analysis (Knowledge, Skills, Technology)
+### 4.4 KoST Analysis (Knowledge, Skills, Technology)
 
 KoST assesses the team's readiness to deliver Option C across three dimensions: knowledge of the problem domain, the skills needed to build it, and the technology required to run it.
 
-**Knowledge**
+#### 4.4.1 Knowledge
 
 - The team understands SFC's field-data workflow (QR tagging, offline capture, conservation-officer review) from the client brief and the stakeholder analysis in Section 3.0.
 - SSDLC and security-by-design principles are understood at a conceptual level; practical experience running an OWASP ZAP scan will need to be built up before Week 11.
 - Deep domain knowledge of plant taxonomy and conservation status is limited within the team — mitigated by sourcing real records from GBIF and cross-checking against MyBIS/BRAHMS (Section 8.3) rather than relying on the team's own classifications.
 
-**Skills**
+#### 4.4.2 Skills
 
 - Existing familiarity with React/TypeScript covers both React Native (mobile) and Next.js (web), reducing the learning curve across two of the four mandatory delivery areas.
-- IoT integration (MQTT, sensor ingestion) and formal security testing are the weakest skill areas for the team, consistent with the Weaknesses identified in the Section 4.1 SWOT and with Risks R2 and R4 in the Section 7.1 Risk Register.
+- IoT integration (MQTT, sensor ingestion) and formal security testing are the weakest skill areas for the team, consistent with the Weaknesses identified in the Section 4.2 SWOT and with Risks R2 and R4 in the Section 7.1 Risk Register.
 - These gaps are mitigated rather than ignored: simulated sensors let the team build and test the IoT pipeline without needing hardware expertise up front (Section 6.2), and Section 6.3 schedules security testing as a gated milestone rather than a last-minute task.
 
-**Technology**
+#### 4.4.3 Technology
 
 - The core stack (Supabase, SQLite, React Native, MQTT/Mosquitto, OWASP ZAP) is free or has a generous free tier, so cost is not a readiness blocker (Section 8.1).
 - Real IoT hardware (ESP32 sensors) is the one technology dependency outside the team's control; the simulate-then-swap approach means the project can proceed on schedule without it (Section 2.3, Constraints).
@@ -265,7 +290,7 @@ KoST assesses the team's readiness to deliver Option C across three dimensions: 
 
 ---
 
-## 5.0 Deliverables and Schedule
+## 5. Deliverables and Schedule
 
 ### 5.1 Deliverables
 
@@ -295,7 +320,7 @@ KoST assesses the team's readiness to deliver Option C across three dimensions: 
 
 ### 5.3 Initial Release Schedule
 
-| No. | Item | Dependencies | Business Value (1 least - 10 most) | Release Schedule (Sprint #) |
+| No. | Item | Dependencies | Business Value (1 least – 10 most) | Release Schedule (Sprint #) |
 |---|---|---|---|---|
 | 1 | Set up Supabase project (PostgreSQL schema, auth, RBAC, storage) | — | 10 | Sprint #1 |
 | 2 | Deliver mobile offline-first field app: record capture (QR, GPS, camera) | 1 | 9 | Sprint #1 |
@@ -304,20 +329,20 @@ KoST assesses the team's readiness to deliver Option C across three dimensions: 
 | 5 | Add conservation officer review/approval workflow and searchable reporting | 3 | 8 | Sprint #2 |
 | 6 | Add IoT sensor ingestion, monitoring dashboard and automated alerts | 3 | 7 | Sprint #2 |
 | 7 | Complete security: vulnerability scan, remediation, re-verify before submission | 6 | 8 | Sprint #2 |
-| 8 | Final integration, system testing, documentation and demo | 1-7 | 7 | Sprint #2 |
+| 8 | Final integration, system testing, documentation and demo | 1–7 | 7 | Sprint #2 |
 
 ---
 
-## 6.0 Solution Direction
+## 6. Solution Direction
 
 The chosen direction is **Option C** from Section 4.0, a purpose-built system with a **hybrid architecture**. A single backend monolith handles records, the knowledge system, and authentication with role-based access control. The IoT data pipeline runs as its own lightweight service because sensor telemetry is naturally event-driven, arriving continuously over MQTT rather than as request-response calls like the rest of the system. This sits between two alternatives. A full microservices split would add service discovery, inter-service authentication, and separate deployments that a 5 to 7 person student team cannot reliably manage across a 13-week trimester. A single undivided monolith would awkwardly force a streaming data source through a request-response API pattern.
+
+The tiers, components, and their interactions are captured in Figure 1, and the underlying data model is shown in Figure 2.
 
 <p align="center">
   <img src="../Assets/System_Architecture.png" alt="System Architecture" width="750"/><br/>
   <em>Figure 1: Plantiful system architecture. Client, application, and data tiers.</em>
 </p>
-
-The tiers, components, and their interactions are captured in Figure 1, and the underlying data model is shown in Figure 2.
 
 <p align="center">
   <img src="../Assets/ER_diagram.jpg" alt="ER Diagram" width="750"/><br/>
@@ -343,7 +368,7 @@ The tiers, components, and their interactions are captured in Figure 1, and the 
 
 ### 6.3 Development Process, Standards and Conventions
 
-Beyond the technical architecture, the team follows a consistent set of process standards so the codebase and delivery stay coherent across six contributors.
+Beyond the technical architecture, the team follows a consistent set of process standards, so the codebase and delivery stay coherent across six contributors.
 
 - **Development approach.** Agile, delivered as the two sprints defined in Section 5.3 (Sprint #1 in Weeks 7–9, Sprint #2 in Weeks 10–12), with the backlog re-prioritised at each sprint boundary and the Section 7.1 risk register reviewed at the same time.
 - **Version control.** Git and GitHub (Section 8.1), using short-lived feature branches per backlog item, merged into main via pull request with at least one other team member's review before merging.
@@ -351,7 +376,7 @@ Beyond the technical architecture, the team follows a consistent set of process 
 - **Documentation standards.** A README per major component (mobile app, web app, backend API, IoT service) covering setup and key architecture decisions, inline comments on non-obvious logic such as sync conflict handling and alert thresholds, and this proposal plus the system design document kept as the source of truth for architecture decisions.
 - **Review and testing discipline.** The unit and integration tests defined in Section 7.2 run before a pull request is merged, and the OWASP ZAP scan and remediation cycle in Section 6.2 gate the security-testing milestone rather than being left to the final week.
 
-#### The three core workflows
+### 6.4 The three core workflows
 
 <p align="center">
   <img src="../Assets/UML_Sequence_Botanist.png" alt="UML Sequence - Botanist" width="600"/><br/>
@@ -370,7 +395,7 @@ Beyond the technical architecture, the team follows a consistent set of process 
 
 ---
 
-## 7.0 Quality Management
+## 7. Quality Management
 
 Quality is looked at through five dimensions, based on what SFC, NeuonAI, and the end users expect from the system. Each dimension is described below.
 
@@ -385,7 +410,7 @@ SMART (Specific, Measurable, Achievable, Relevant, Time-bound) criteria keep the
 | Quality Attribute | Metric | Target | How Measured |
 |---|---|---|---|
 | Reliability (Offline sync) | Sync success rate | More than 95% of test submissions sync without data loss after reconnecting | Field/offline simulation testing (Week 12, Integration & Testing phase) |
-| Functional performance | QR scan to record time | Less than 5 seconds average per second | Mobile app performance testing |
+| Functional performance | QR scan to record time | Less than 5 seconds average | Mobile app performance testing |
 | Security | Critical/high vulnerabilities after remediation | 0 remaining | OWASP ZAP re-assessment report (Week 11 per SSDLC deliverable) |
 | Code quality | Test coverage on backend API and mobile sync module | More than 80% | Unit or integration test suite results |
 | Usability | Task complete rate (unassisted) | More than 90% across 5-user field-officer walkthrough | Moderated usability test using the draft user manual |
@@ -398,7 +423,7 @@ SMART (Specific, Measurable, Achievable, Relevant, Time-bound) criteria keep the
 | R1 | Data loss during offline-to-cloud sync | Medium | High | Byte-safe sync validation, conflict-resolution strategy, retry with last-write-wins fallback | Mobile App (Sync & Backend APIs) |
 | R2 | IoT hardware unavailable within the trimester | Medium | Medium | Use simulated sensors over MQTT with an identical topic/payload contract so real ESP32 devices can be swapped in without downstream change | Integration, PM & Documentation |
 | R3 | Poor or no connectivity in the field | High | Medium | Offline-first SQLite store with automatic background sync once connectivity returns | Mobile App (Field Data Capture) |
-| R4 | Security vulnerabilities discovered late in the cycle | Medium | High | SSDLC-aligned OWASP ZAP scan in Week 11 with remediation and re-assessment before submission | Team lead / Security owner |
+| R4 | Security vulnerabilities discovered late in the cycle | Medium | High | SSDLC-aligned OWASP ZAP scan in Week 11 with remediation and re-assessment before submission | Shared by Team |
 | R5 | Scope creep against the 13-week timeline | Medium | Medium | Prioritised Initial Release Schedule (Sprint #1/#2) with out-of-scope features tracked and re-baselined | Team lead |
 | R6 | Duplicate or inconsistent species records | Medium | Medium | Unique QR record ID, mandatory-field validation, and the review/approval workflow | Web Knowledge System (Records) |
 
@@ -412,7 +437,7 @@ The system is accepted only when it meets the measurable targets in the Section 
 
 ---
 
-## 8.0 Resources
+## 8. Resources
 
 ### 8.1 Software / Tools
 
@@ -449,20 +474,20 @@ The system is accepted only when it meets the measurable targets in the Section 
 
 ---
 
-## 9.0 Approval Signatures
+## 9. Approval Signatures
 
-### Project Team
+### 9.1 Project Team
 
 | # | Name | Student ID | Signature | Roles |
 |---|---|---|---|---|
-| 1 | Nathan Sebastian Learmonth | 102782258 | | Team Lead, Web Knowledge System (Records) |
+| 1 | Nathan Sebastian Learmonth | 102782258 | | Web Knowledge System (Records) |
 | 2 | Badrul Aliff Aiman bin Badrulmunirzaki | 102778273 | | Web Knowledge System (Reporting & Maps) |
 | 3 | Muhammad Maqeel bin Muhammad Kahfi | 102782384 | | Mobile App (Sync & Backend APIs) |
 | 4 | Ashley Wallen Anak Winston | 105806559 | | Integration, PM & Documentation |
-| 5 | Basill Agas Anak Heatley Rogers | 102778888 | | Mobile App (Field Data Capture) |
-| 6 | Jay | 104393610 | | IoT-Based Plant Protection (sensor data pipeline, alert/threat detection logic, monitoring dashboard) |
+| 5 | Basill Agas Anak Heatley Rogers | 102778888 | | Team Lead, Mobile App (Field Data Capture) |
+| 6 | Gae Jayden MWINE | 104393610 | | IoT-Based Plant Protection (sensor data pipeline, alert/threat detection logic, monitoring dashboard) |
 
-### Project Sponsor [Your Tutor]
+### 9.2 Project Sponsor [Your Tutor]
 
 | Tutor's name (on behalf of the client) | Signature |
 |---|---|
@@ -470,7 +495,7 @@ The system is accepted only when it meets the measurable targets in the Section 
 
 ---
 
-## 10.0 References
+## 10. References
 
 - Global Biodiversity Information Facility (GBIF). Plant occurrence records for Sarawak and Borneo. https://www.gbif.org
 - Sarawak Forestry Corporation (SFC). Niah National Park conservation and research resources.
@@ -482,9 +507,10 @@ The system is accepted only when it meets the measurable targets in the Section 
 - OWASP ZAP user guide. https://www.zaproxy.org/docs/desktop/start/
 - Secure Software Development Lifecycle (SSDLC) phases aligned to unit deliverables.
 - InfluxDB documentation. https://docs.influxdata.com
-- Additional sources cited during Weeks 11-13 testing will be appended here.
 
-## Appendix A: Glossary of Terms
+---
+
+## 11. Appendix A: Glossary of Terms
 
 | Term | Definition |
 |---|---|
@@ -497,16 +523,16 @@ The system is accepted only when it meets the measurable targets in the Section 
 | RBAC | Role-Based Access Control |
 | QR | Quick Response code |
 
-## Appendix B: Offline-First Sync and Conflict Resolution Rules
+## 12. Appendix B: Offline-First Sync and Conflict Resolution Rules
 
 - Each record has a globally unique stable ID, encoded in its QR tag.
 - On capture offline, the record and photos are stored in local SQLite with a pending-sync status.
 - On reconnect, records sync in timestamp order. A record is marked synced only after the server acknowledges it.
 - If two botanists edit the same record offline, last-write-wins is used by default. A manual conflict queue is available to conservation officers as an enhancement.
 
-## Appendix C: Security Testing Evidence (SSDLC)
+## 13. Appendix C: Security Testing Evidence (SSDLC)
 
-- [ ] Week 11. OWASP ZAP baseline scan results
-- [ ] Week 11. Remediation log (vulnerability → fix → verification)
-- [ ] Week 11. Re-assessment report showing 0 critical/high findings remaining
-- [ ] Week 12. Integration test results (offline sync, MQTT ingestion, RBAC checks)
+- Week 11. OWASP ZAP baseline scan results
+- Week 11. Remediation log (vulnerability → fix → verification)
+- Week 11. Re-assessment report showing 0 critical/high findings remaining.
+- Week 12. Integration test results (offline sync, MQTT ingestion, RBAC checks)

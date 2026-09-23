@@ -21,12 +21,12 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 
 | Name | Student ID | Role |
 |---|---|---|
-| Nathan Sebastian Learmonth | 102782258 | Team Lead, Web Knowledge System (Records) |
+| Nathan Sebastian Learmonth | 102782258 | Web Knowledge System (Records) |
 | Badrul Aliff Aiman bin Badrulmunirzaki | 102778273 | Web Knowledge System (Reporting & Maps) |
 | Muhammad Maqeel bin Muhammad Kahfi | 102782384 | Mobile App (Sync & Backend APIs) |
 | Ashley Wallen Anak Winston | 105806559 | Integration, PM & Documentation |
-| Basill Agas Anak Heatley Rogers | 102778888 | Mobile App (Field Data Capture) |
-| Jay | | IoT-Based Plant Protection (sensor data pipeline, alert/threat detection logic, monitoring dashboard) |
+| Basill Agas Anak Heatley Rogers | 102778888 | Team Lead, Mobile App (Field Data Capture) |
+| Gae Jayden MWINE | 104393610 | IoT-Based Plant Protection (sensor data pipeline, alert/threat detection logic, monitoring dashboard) |
 
 ## Tech Stack
 

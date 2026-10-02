@@ -17,54 +17,34 @@ import {
 import { colors } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 
-export default function RegisterScreen() {
+export default function SignInScreen() {
   const router = useRouter();
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  async function register() {
+  async function signIn() {
     if (!supabase) return;
 
-    if (password.length < 6) {
-      Alert.alert('Password too short', 'Use at least 6 characters.');
-      return;
-    }
-    if (password !== confirm) {
-      Alert.alert('Passwords do not match', 'Confirm your password again.');
+    if (!email.trim() || !password) {
+      Alert.alert('Missing details', 'Enter your email and password.');
       return;
     }
 
     setBusy(true);
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
-      options: {
-        data: { name: name.trim() || email.split('@')[0] },
-      },
     });
     setBusy(false);
 
     if (error) {
-      Alert.alert('Sign up failed', error.message);
+      Alert.alert('Sign in failed', error.message);
       return;
     }
 
-    if (!data.session) {
-      Alert.alert(
-        'Account created',
-        'Check your inbox for a confirmation email, then sign in.',
-        [{ text: 'OK', onPress: () => router.replace('/signin') }],
-      );
-      return;
-    }
-
-    Alert.alert('Welcome to Plantiful', 'Your account is ready.', [
-      { text: 'OK', onPress: () => router.replace('/') },
-    ]);
+    router.replace('/');
   }
 
   if (!isSupabaseConfigured) {
@@ -99,20 +79,12 @@ export default function RegisterScreen() {
         />
 
         <View style={styles.card}>
-          <Text style={styles.title}>Create your account</Text>
+          <Text style={styles.title}>Sign in to Plantiful</Text>
           <Text style={styles.hint}>
-            New botanists start here. You will need to confirm your email before signing in.
+            Authenticate to capture and sync plant observations as a botanist.
           </Text>
 
           <View style={styles.form}>
-            <TextInput
-              style={styles.input}
-              placeholder="Name"
-              placeholderTextColor={colors.muted}
-              value={name}
-              onChangeText={setName}
-              autoCorrect={false}
-            />
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -144,27 +116,19 @@ export default function RegisterScreen() {
                 />
               </Pressable>
             </View>
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm password"
-              placeholderTextColor={colors.muted}
-              value={confirm}
-              onChangeText={setConfirm}
-              secureTextEntry={!showPassword}
-            />
-            <Pressable style={styles.button} onPress={register} disabled={busy}>
+            <Pressable style={styles.button} onPress={signIn} disabled={busy}>
               {busy ? (
                 <ActivityIndicator color={colors.white} />
               ) : (
-                <Text style={styles.buttonText}>Create account</Text>
+                <Text style={styles.buttonText}>Sign in</Text>
               )}
             </Pressable>
           </View>
         </View>
 
-        <Pressable style={styles.backRow} onPress={() => router.replace('/signin')}>
-          <Ionicons name="log-in-outline" size={20} color={colors.emerald} />
-          <Text style={styles.backText}>Already have an account? Sign in</Text>
+        <Pressable style={styles.backRow} onPress={() => router.replace('/register')}>
+          <Ionicons name="person-add-outline" size={20} color={colors.emerald} />
+          <Text style={styles.backText}>New here? Create an account</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -178,15 +142,15 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
+    justifyContent: 'center',
     padding: 16,
     gap: 16,
     paddingBottom: 40,
   },
   logo: {
-    width: 180,
-    height: 130,
+    width: 200,
+    height: 145,
     alignSelf: 'center',
-    marginTop: 16,
   },
   card: {
     alignItems: 'center',

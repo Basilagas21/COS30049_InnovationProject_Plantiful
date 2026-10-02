@@ -1,4 +1,5 @@
-import { getServerSupabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export type RecordListItem = {
   id: string;
@@ -150,6 +151,7 @@ function toListItem(row: {
   approval_status: "pending" | "approved" | "rejected";
   status: "draft" | "submitted";
   created_at: string;
+  reviewed_at: string | null;
   synced_at: string | null;
   device_id: string | null;
   species: {
@@ -177,20 +179,21 @@ function toListItem(row: {
     status: row.status,
     isPublished: row.species?.is_published ?? false,
     createdAt: row.created_at,
-    reviewedAt: null,
+    reviewedAt: row.reviewed_at,
     syncedAt: row.synced_at,
     deviceId: row.device_id,
   };
 }
 
 export async function fetchRecords(): Promise<RecordDetail[]> {
-  const supabase = await getServerSupabase();
-  if (!supabase) return mockRecords;
+  if (!isSupabaseConfigured) return mockRecords;
+
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("plant_records")
     .select(
-      `record_id, qr_code, gps_lat, gps_lng, height_cm, approval_status, status, created_at, synced_at, device_id,
+      `record_id, qr_code, gps_lat, gps_lng, height_cm, approval_status, status, created_at, reviewed_at, synced_at, device_id,
        species (
          species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published
        )`,
@@ -202,15 +205,16 @@ export async function fetchRecords(): Promise<RecordDetail[]> {
 }
 
 export async function fetchRecordById(id: string): Promise<RecordDetail | null> {
-  const supabase = await getServerSupabase();
-  if (!supabase) {
+  if (!isSupabaseConfigured) {
     return mockRecords.find((r) => r.id === id) ?? null;
   }
+
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("plant_records")
     .select(
-      `record_id, qr_code, gps_lat, gps_lng, height_cm, approval_status, status, created_at, synced_at, device_id,
+      `record_id, qr_code, gps_lat, gps_lng, height_cm, approval_status, status, created_at, reviewed_at, synced_at, device_id,
        species (
          species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published
        )`,

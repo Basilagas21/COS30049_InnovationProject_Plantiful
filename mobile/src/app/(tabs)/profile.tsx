@@ -147,6 +147,9 @@ export default function ProfileScreen() {
               <Pressable style={styles.button} onPress={signIn} disabled={busy}>
                 <Text style={styles.buttonText}>{busy ? 'Signing in…' : 'Sign in'}</Text>
               </Pressable>
+              <Pressable style={styles.createAccount} onPress={() => router.push('/register')}>
+                <Text style={styles.createAccountText}>New here? Create an account</Text>
+              </Pressable>
             </View>
           </View>
 
@@ -271,5 +274,14 @@ const styles = StyleSheet.create({
     color: colors.danger,
     fontSize: 15,
     fontWeight: '700',
+  },
+  createAccount: {
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  createAccountText: {
+    color: colors.emerald,
+    fontSize: 13,
+    fontWeight: '600',
   },
 });

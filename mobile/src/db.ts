@@ -63,10 +63,51 @@ CREATE TABLE IF NOT EXISTS sync_queue (
   }
 }
 
-export async function openDatabase() {
-  const db = await SQLite.openDatabaseAsync(DATABASE_NAME);
+let openDatabasePromise: Promise<SQLite.SQLiteDatabase> | null = null;
+
+export function openDatabase(): Promise<SQLite.SQLiteDatabase> {
+  if (!openDatabasePromise) {
+    openDatabasePromise = openDatabaseWithRecovery().catch((error) => {
+      openDatabasePromise = null;
+      throw error;
+    });
+  }
+  return openDatabasePromise;
+}
+
+async function openDatabaseWithRecovery(): Promise<SQLite.SQLiteDatabase> {
+  try {
+    return await openDatabaseRaw(false);
+  } catch (error) {
+    if (!isPoisonedConnectionError(error)) {
+      throw error;
+    }
+    // Known expo-sqlite Android bug: after a runtime teardown the shared native
+    // connection is poisoned and every prepareAsync/getFirstAsync fails with a bare
+    // NullPointerException. A plain reopen returns the same dead handle, so force a
+    // brand-new connection to recover.
+    return await openDatabaseRaw(true);
+  }
+}
+
+async function openDatabaseRaw(useNewConnection: boolean): Promise<SQLite.SQLiteDatabase> {
+  const db = await SQLite.openDatabaseAsync(
+    DATABASE_NAME,
+    useNewConnection ? { useNewConnection } : undefined
+  );
   await migrateDbIfNeeded(db);
   return db;
+}
+
+function isPoisonedConnectionError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  const message = error.message;
+  return (
+    (message.includes('NativeDatabase') || message.includes('NativeStatement')) &&
+    message.includes('NullPointerException')
+  );
 }
 
 export type LocalRecord = {

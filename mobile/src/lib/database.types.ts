@@ -76,7 +76,10 @@ export interface Database {
           qr_code: string | null;
           gps_lat: number | null;
           gps_lng: number | null;
+          gps_accuracy_m: number | null;
           height_cm: number | null;
+          morphology: string | null;
+          notes: string | null;
           status: "draft" | "submitted";
           approval_status: "pending" | "approved" | "rejected";
           reviewed_by: string | null;
@@ -93,7 +96,10 @@ export interface Database {
           qr_code?: string | null;
           gps_lat?: number | null;
           gps_lng?: number | null;
+          gps_accuracy_m?: number | null;
           height_cm?: number | null;
+          morphology?: string | null;
+          notes?: string | null;
           status?: "draft" | "submitted";
           approval_status?: "pending" | "approved" | "rejected";
           reviewed_by?: string | null;

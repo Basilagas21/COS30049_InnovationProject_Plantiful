@@ -68,10 +68,14 @@ export default function SyncScreen() {
           .from('plant_records')
           .insert({
             botanist_id: session.session.user.id,
+            species_id: row.species_id,
             qr_code: row.qr_code,
             gps_lat: row.gps_lat,
             gps_lng: row.gps_lng,
+            gps_accuracy_m: row.gps_accuracy_m,
             height_cm: row.height_cm,
+            morphology: row.morphology,
+            notes: row.notes,
             status: 'submitted',
             approval_status: 'pending',
             device_id: row.record_id,

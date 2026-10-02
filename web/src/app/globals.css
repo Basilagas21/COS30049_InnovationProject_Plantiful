@@ -1,22 +1,25 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Plantiful palette (Option 1, light botanical) */
+  --color-cream: #fffdee;
+  --color-sprout: #e2fbce;
+  --color-chartreuse: #e3ef26;
+  --color-emerald: #076653;
+  --color-pine: #0c342c;
+  --color-sand: #f3f0e3;
+  --color-moss: #6b7568;
+  --color-danger: #b54a3b;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #fffdee;
+  --foreground: #0c342c;
 }
 
 body {

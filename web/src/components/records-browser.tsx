@@ -182,7 +182,7 @@ export function RecordsBrowser({ records, officer }: Props) {
                 <div className="mt-4 flex items-center justify-between text-sm">
                   <span className="text-moss">
                     {record.gpsLat?.toFixed(4)}, {record.gpsLng?.toFixed(4)} ·{" "}
-                    {new Date(record.createdAt).toLocaleDateString()}
+                    {new Date(record.createdAt).toLocaleDateString("en-GB")}
                   </span>
                   <span
                     className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${

@@ -6,6 +6,7 @@ export type RecordListItem = {
   qrCode: string | null;
   scientificName: string;
   commonName: string | null;
+  provisionalName: string | null;
   conservationStatus: string | null;
   gpsLat: number | null;
   gpsLng: number | null;
@@ -34,6 +35,7 @@ const mockRecords: RecordDetail[] = [
     qrCode: "PLT-0001",
     scientificName: "Nepenthes lowii",
     commonName: "Low's pitcher plant",
+    provisionalName: null,
     taxonomy: "Caryophyllales · Nepenthaceae",
     conservationStatus: "Endangered",
     description:
@@ -58,6 +60,7 @@ const mockRecords: RecordDetail[] = [
     qrCode: "PLT-0002",
     scientificName: "Rafflesia tuan-mudae",
     commonName: "Tuan Muda's rafflesia",
+    provisionalName: null,
     taxonomy: "Malpighiales · Rafflesiaceae",
     conservationStatus: "Endangered",
     description: null,
@@ -81,6 +84,7 @@ const mockRecords: RecordDetail[] = [
     qrCode: "PLT-0003",
     scientificName: "Dipterocarpus grandiflorus",
     commonName: "Keruing",
+    provisionalName: null,
     taxonomy: "Malvales · Dipterocarpaceae",
     conservationStatus: "Vulnerable",
     description: null,
@@ -104,6 +108,7 @@ const mockRecords: RecordDetail[] = [
     qrCode: "PLT-0004",
     scientificName: "Calanthe triplicata",
     commonName: "Christmas orchid",
+    provisionalName: null,
     taxonomy: "Asparagales · Orchidaceae",
     conservationStatus: null,
     description: null,
@@ -127,6 +132,7 @@ const mockRecords: RecordDetail[] = [
     qrCode: "PLT-0005",
     scientificName: "Begonia sarawakensis",
     commonName: "Begonia",
+    provisionalName: null,
     taxonomy: "Cucurbitales · Begoniaceae",
     conservationStatus: null,
     description: null,
@@ -150,6 +156,7 @@ const mockRecords: RecordDetail[] = [
     qrCode: "PLT-0006",
     scientificName: "Eugenia palembanica",
     commonName: "Keruntun tree",
+    provisionalName: null,
     taxonomy: "Myrtales · Myrtaceae",
     conservationStatus: "Endangered",
     description: null,
@@ -173,6 +180,7 @@ const mockRecords: RecordDetail[] = [
 function toListItem(row: {
   record_id: string;
   qr_code: string | null;
+  provisional_name: string | null;
   gps_lat: number | null;
   gps_lng: number | null;
   gps_accuracy_m: number | null;
@@ -201,8 +209,9 @@ function toListItem(row: {
   return {
     id: row.record_id,
     qrCode: row.qr_code,
-    scientificName: row.species?.scientific_name ?? "Unknown species",
+    scientificName: row.species?.scientific_name ?? row.provisional_name ?? "Unknown species",
     commonName: row.species?.common_name ?? null,
+    provisionalName: row.provisional_name ?? null,
     taxonomy: row.species?.taxonomy ?? null,
     conservationStatus: row.species?.conservation_status ?? null,
     description: row.species?.description ?? null,
@@ -231,7 +240,7 @@ export async function fetchRecords(): Promise<RecordDetail[]> {
   const { data, error } = await supabase
     .from("plant_records")
     .select(
-      `record_id, qr_code, gps_lat, gps_lng, gps_accuracy_m, height_cm, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id,
+      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id,
        species (
          species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published
        ),
@@ -253,7 +262,7 @@ export async function fetchRecordById(id: string): Promise<RecordDetail | null> 
   const { data, error } = await supabase
     .from("plant_records")
     .select(
-      `record_id, qr_code, gps_lat, gps_lng, gps_accuracy_m, height_cm, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id,
+      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id,
        species (
          species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published
        ),

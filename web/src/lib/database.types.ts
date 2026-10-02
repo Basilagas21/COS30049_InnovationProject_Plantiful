@@ -74,6 +74,7 @@ export interface Database {
           species_id: string | null;
           botanist_id: string | null;
           qr_code: string | null;
+          provisional_name: string | null;
           gps_lat: number | null;
           gps_lng: number | null;
           gps_accuracy_m: number | null;
@@ -94,6 +95,7 @@ export interface Database {
           species_id?: string | null;
           botanist_id?: string | null;
           qr_code?: string | null;
+          provisional_name?: string | null;
           gps_lat?: number | null;
           gps_lng?: number | null;
           gps_accuracy_m?: number | null;

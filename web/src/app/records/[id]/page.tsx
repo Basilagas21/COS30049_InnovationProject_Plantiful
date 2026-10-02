@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fetchRecordById } from "@/lib/records";
+import { isOfficer } from "@/lib/auth";
+import { ApproveRejectButtons } from "@/components/approve-reject";
 
 export default async function RecordDetailPage({
   params,
@@ -8,6 +10,8 @@ export default async function RecordDetailPage({
   const { id } = await params;
   const record = await fetchRecordById(id);
   if (!record) notFound();
+
+  const officer = await isOfficer();
 
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
@@ -79,13 +83,38 @@ export default async function RecordDetailPage({
             </div>
           )}
 
+          {officer && record.approvalStatus === "pending" && (
+            <div className="rounded-2xl border border-chartreuse/60 bg-chartreuse/10 p-5">
+              <h2 className="font-semibold text-pine">Review submission</h2>
+              <p className="mt-1 text-sm text-moss">
+                Approving publishes this observation; rejecting flags it for
+                follow-up by the botanist.
+              </p>
+              <div className="mt-4">
+                <ApproveRejectButtons recordId={record.id} />
+              </div>
+            </div>
+          )}
+
+          {record.reviewedAt && (
+            <div className="flex items-center justify-between rounded-2xl bg-sprout px-5 py-4 text-sm">
+              <span className="text-moss">
+                {record.approvalStatus === "approved" ? "Approved" : "Reviewed"} ·{" "}
+                {new Date(record.reviewedAt).toLocaleString()}
+              </span>
+              <span className="font-semibold text-emerald">ID {record.id}</span>
+            </div>
+          )}
+
           <div className="flex items-center justify-between rounded-2xl bg-sand px-5 py-4 text-sm">
             <span className="text-moss">
               {record.syncedAt
                 ? `Synced · ${new Date(record.syncedAt).toLocaleString()}`
                 : "Synced from field device"}
             </span>
-            <span className="font-semibold text-emerald">ID {record.id}</span>
+            {!record.reviewedAt && (
+              <span className="font-semibold text-emerald">ID {record.id}</span>
+            )}
           </div>
         </div>
       </div>

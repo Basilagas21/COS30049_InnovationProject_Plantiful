@@ -47,20 +47,26 @@ backend/
    supabase db push
    ```
 
+   Without the CLI, open Dashboard > SQL Editor and run `001_schema.sql` then `002_rls.sql` in order.
+
 4. **Enable auth** (issue #3): email/password provider, then run `seed.sql` to create officer and admin users and set their roles.
 5. **Create the storage bucket** and apply its policies (issue #4).
 6. **Verify security** (issue #26): run `scripts/verify_public_write_block.sql` and confirm anonymous inserts, updates, and deletes are rejected and no record can be published before it is approved (R7).
 
 ## Data model
 
-Mirrors the mobile SQLite schema (`mobile/src/db.ts`) and adds the review-publish columns used by web and public portal.
+Applied in `supabase/migrations/001_schema.sql`. Field records are captured on the mobile device, synced into `plant_records`, linked to a species, and pass through officer approval before the species is published.
 
 | Table | Purpose | Key columns |
 |---|---|---|
-| `plants` | Plant records captured in the field | `id` (stable QR ID), `species_name`, `latitude`, `longitude`, `accuracy`, `owner_id`, `approved`, `published`, `reviewed_by`, `reviewed_ts`, `sync_status` |
-| `photos` | Photo attachments linked to a plant | `plant_id`, `storage_path` |
-| `species_catalog` | Offline species reference list | `name`, `scientific_name` |
-| `sync_queue` | Offline sync bookkeeping | `record_id`, `sync_status`, `updated_at` |
+| `user_profiles` | Roles tied to Supabase auth | `user_id` (FK `auth.users`), `role` (`botanist` / `conservation_officer` / `admin`) |
+| `species` | Species catalog with publish flag | `scientific_name`, `conservation_status`, `is_published` |
+| `species_photos` | Photos per species | `species_id`, `photo_url` |
+| `plant_records` | Field observations | `species_id`, `botanist_id`, `qr_code`, `gps_lat/lng`, `height_cm`, `status`, `approval_status`, `reviewed_by`, `version`, `device_id` |
+| `plant_record_photos` | Photos per record | `record_id`, `photo_url` |
+| `sync_log` | Offline sync bookkeeping | `record_id`, `device_id`, `sync_status`, `conflict_flag` |
+| `sensors` / `sensor_readings` / `alerts` | IoT monitoring | `gps_lat/lng`, `temperature`, `humidity`, `movement`, `severity` |
+| `reports` | Officer export artifacts | `report_type`, `file_url`, `is_published` |
 
 ## Security rules
 

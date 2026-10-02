@@ -193,6 +193,22 @@ export async function getLocalRecords(db: SQLite.SQLiteDatabase): Promise<LocalR
   );
 }
 
+export async function getLocalRecord(
+  db: SQLite.SQLiteDatabase,
+  recordId: string
+): Promise<LocalRecordWithPhoto | null> {
+  return db.getFirstAsync<LocalRecordWithPhoto>(
+    `SELECT
+       r.record_id, r.species_id, r.qr_code, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
+       r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
+       r.sync_error, r.created_at,
+       (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
+     FROM local_records r
+     WHERE r.record_id = ?`,
+    recordId
+  );
+}
+
 export async function getPendingRecords(db: SQLite.SQLiteDatabase): Promise<LocalRecord[]> {
   return db.getAllAsync<LocalRecord>(
     `SELECT * FROM local_records WHERE sync_status = 'pending' ORDER BY capture_ts ASC`

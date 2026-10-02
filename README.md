@@ -75,15 +75,88 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 
 ```
 COS30049_InnovationProject_Plantiful/
+├── mobile/                ← React Native / Expo app (offline field data capture)
+│   └── src/app/           ← Expo Router screens (scan, capture, records, sync, profile)
+├── web/                   ← Next.js web knowledge system for conservation officers
+│   └── src/app/           ← App Router pages (records, records/[id], profile, settings)
+├── backend/
+│   └── supabase/
+│       ├── migrations/    ← 001_schema.sql, 002_rls.sql, 003_workflow_triggers.sql, apply_project.sql
+│       └── seed.sql       ← seed officer/admin users and role assignments
+├── iot/                   ← IoT sensor pipeline (MQTT → InfluxDB) and alerts
 ├── Docs/
-│   ├── Assets/              ← logo, diagrams, images
-│   ├── Design/              ← architecture, ER diagrams (.drawio), wireframes
+│   ├── Assets/            ← logo, diagrams, images
+│   ├── Design/            ← architecture, ER diagrams (.drawio), wireframes
 │   │   └── Wireframes/
-│   ├── Reports/             ← proposal, final report
-│   └── Templates/           ← docx + md templates
-├── .gitattributes
+│   ├── Reports/           ← proposal, final report
+│   └── Templates/         ← docx + md templates
 ├── .gitignore
 └── README.md
+```
+
+## How to Run
+
+### Prerequisites
+
+- Node.js 20+ and npm
+- The Expo Go app on a phone (Android or iOS), or an Android emulator
+- A Supabase project (free tier is enough) with the Project URL and anon key
+
+### 1. Configure environment
+
+Copy the env templates and fill in the Supabase Project URL and anon key. These are only used on the client and are safe to expose. Values come from Supabase Dashboard > Project Settings > API.
+
+```
+cp mobile/.env.example mobile/.env
+cp web/.env.example web/.env.local
+```
+
+### 2. Set up the backend (one time)
+
+1. Create a project in Supabase.
+2. Enable Supabase Auth with email/password.
+3. Open Dashboard > SQL Editor and run `backend/supabase/migrations/001_schema.sql`, then `002_rls.sql`, then `003_workflow_triggers.sql`. Alternatively run `apply_project.sql`, which combines an idempotent version of all of them.
+4. Run `backend/supabase/seed.sql` to create officer and admin users and assign roles.
+5. Invite your own test users in Dashboard > Authentication > Users and tick "Email confirmed" (email confirmation is on).
+6. The `record-photos` storage bucket and its policies are created by `apply_project.sql`. If you applied the files individually, create the bucket and policies manually.
+
+### 3. Run the web app
+
+```
+cd web
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). Sign in with an officer or admin account to see all records, approve or reject pending ones, and open record details. Search species in the records page with the suggestion box.
+
+### 4. Run the mobile app
+
+```
+cd mobile
+npm install --legacy-peer-deps
+npx expo start
+```
+
+Scan the QR code shown by Expo with Expo Go on your phone, or press `a` for an Android emulator. Then:
+
+1. Sign in on the Profile tab with a botanist account.
+2. Scan a plant QR tag on the Scan tab.
+3. Use the flashlight toggle in dark environments.
+4. Fill in the capture details (species, height, morphology, notes), take photos, and save.
+5. Go to Sync and tap "Sync now" to push offline captures to the central database as submitted records.
+
+### 5. Verify the full loop
+
+- A record captured on mobile shows up as Pending on the web for an officer.
+- An officer approves or rejects it. Approved records become visible to the public portal.
+- Botanists can see their own records on the web (including pending ones) after the `apply_project.sql` policy is applied.
+
+### Checks
+
+```
+cd web && npm run lint && npm run build
+cd mobile && npx tsc --noEmit && npx expo lint
 ```
 
 ## Docs

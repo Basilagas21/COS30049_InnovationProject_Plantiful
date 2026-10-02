@@ -40,19 +40,21 @@ export default function NewCaptureScreen() {
   const [capturing, setCapturing] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const loadSpecies = useCallback(async () => {
-    try {
-      const db = await openDatabase();
-      const options = await getSpeciesOptions(db);
-      setSpeciesOptions(options);
-    } catch {
-      setSpeciesOptions([]);
-    }
-  }, []);
-
   useEffect(() => {
-    loadSpecies();
-  }, [loadSpecies]);
+    let active = true;
+    (async () => {
+      try {
+        const db = await openDatabase();
+        const options = await getSpeciesOptions(db);
+        if (active) setSpeciesOptions(options);
+      } catch {
+        if (active) setSpeciesOptions([]);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const captureLocation = useCallback(async () => {
     setLocating(true);
@@ -285,7 +287,7 @@ export default function NewCaptureScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select species</Text>
               <Pressable onPress={() => setPickerOpen(false)} hitSlop={10}>
-                <Ionicons name="close" size={24} color={colors.moss} />
+                <Ionicons name="close" size={24} color={colors.muted} />
               </Pressable>
             </View>
             <ScrollView style={styles.modalList}>
@@ -529,6 +531,6 @@ const styles = StyleSheet.create({
   },
   speciesRowCommon: {
     fontSize: 13,
-    color: colors.moss,
+    color: colors.muted,
   },
 });

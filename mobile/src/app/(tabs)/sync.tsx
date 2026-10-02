@@ -15,6 +15,27 @@ import {
 
 type SyncState = 'idle' | 'syncing' | 'done' | 'error';
 
+const PHOTO_BUCKET = 'record-photos';
+
+async function uploadPhoto(
+  userId: string,
+  recordId: string,
+  photo: { id: string; local_uri: string }
+): Promise<string | null> {
+  try {
+    const res = await fetch(photo.local_uri);
+    const blob = await res.blob();
+    const path = `${userId}/${recordId}/${photo.id}.jpg`;
+    const { data, error } = await supabase!.storage
+      .from(PHOTO_BUCKET)
+      .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+    if (error) throw error;
+    return supabase!.storage.from(PHOTO_BUCKET).getPublicUrl(data.path).data.publicUrl;
+  } catch {
+    return null;
+  }
+}
+
 export default function SyncScreen() {
   const router = useRouter();
   const [state, setState] = useState<SyncState>('idle');
@@ -98,9 +119,10 @@ export default function SyncScreen() {
 
         const photos = await getPhotosForRecord(db, row.record_id);
         for (const photo of photos) {
+          const photoUrl = await uploadPhoto(session.session.user.id, inserted.record_id, photo);
           await supabase.from('plant_record_photos').insert({
             record_id: inserted.record_id,
-            photo_url: photo.local_uri,
+            photo_url: photoUrl ?? photo.local_uri,
           });
         }
 

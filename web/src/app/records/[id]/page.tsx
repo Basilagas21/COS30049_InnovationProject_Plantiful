@@ -21,7 +21,18 @@ export default async function RecordDetailPage({
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         <div>
-          <div className="aspect-[4/5] w-full rounded-3xl bg-gradient-to-br from-sprout to-cream" />
+          <div className="relative">
+          {record.photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={record.photoUrl}
+              alt={record.scientificName}
+              className="aspect-[4/5] w-full rounded-3xl object-cover"
+            />
+          ) : (
+            <div className="aspect-[4/5] w-full rounded-3xl bg-gradient-to-br from-sprout to-cream" />
+          )}
+        </div>
         </div>
 
         <div className="flex flex-col gap-6">
@@ -57,7 +68,9 @@ export default async function RecordDetailPage({
               {
                 label: "Coordinates",
                 value: record.gpsLat != null && record.gpsLng != null
-                  ? `${record.gpsLat.toFixed(4)}° N, ${record.gpsLng.toFixed(4)}° E`
+                  ? `${record.gpsLat.toFixed(4)}° N, ${record.gpsLng.toFixed(4)}° E${
+                      record.gpsAccuracyM != null ? ` (±${record.gpsAccuracyM.toFixed(1)} m)` : ""
+                    }`
                   : "—",
               },
               {
@@ -80,6 +93,20 @@ export default async function RecordDetailPage({
             <div className="rounded-2xl border border-pine/10 bg-white p-5">
               <h2 className="font-semibold text-pine">Species notes</h2>
               <p className="mt-2 text-sm leading-7 text-moss">{record.description}</p>
+            </div>
+          )}
+
+          {record.morphology && (
+            <div className="rounded-2xl border border-pine/10 bg-white p-5">
+              <h2 className="font-semibold text-pine">Morphology</h2>
+              <p className="mt-2 text-sm leading-7 text-moss">{record.morphology}</p>
+            </div>
+          )}
+
+          {record.notes && (
+            <div className="rounded-2xl border border-pine/10 bg-white p-5">
+              <h2 className="font-semibold text-pine">Field notes</h2>
+              <p className="mt-2 text-sm leading-7 text-moss">{record.notes}</p>
             </div>
           )}
 

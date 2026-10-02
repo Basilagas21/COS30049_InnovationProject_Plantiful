@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme';
@@ -22,6 +22,7 @@ function syncLabel(status: string) {
 }
 
 export default function RecordsScreen() {
+  const router = useRouter();
   const [records, setRecords] = useState<LocalRecordWithPhoto[]>([]);
 
   const refresh = useCallback(async () => {
@@ -66,13 +67,20 @@ export default function RecordsScreen() {
         renderItem={({ item }) => {
           const pill = syncLabel(item.sync_status);
           return (
-            <View style={styles.card}>
+            <Pressable
+              style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+              onPress={() => router.push({ pathname: '/record/[id]', params: { id: item.record_id } })}
+            >
               <View style={styles.cardHeader}>
                 <View style={styles.cardTitleWrap}>
                   <Text style={styles.cardTitle}>{item.qr_code ?? 'Untagged'}</Text>
                   {item.species_id && <Text style={styles.cardMeta}>species: {item.species_id}</Text>}
                 </View>
-                <Pressable onPress={() => removeRecord(item.record_id, item.qr_code ?? 'record')}>
+                <Pressable
+                  onPress={() => removeRecord(item.record_id, item.qr_code ?? 'record')}
+                  hitSlop={8}
+                  accessibilityLabel="Delete record"
+                >
                   <Ionicons name="trash-outline" size={18} color={colors.danger} />
                 </Pressable>
               </View>
@@ -94,7 +102,7 @@ export default function RecordsScreen() {
                   <Text numberOfLines={1} style={styles.syncError}>{item.sync_error}</Text>
                 ) : null}
               </View>
-            </View>
+            </Pressable>
           );
         }}
       />
@@ -132,6 +140,9 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     gap: 4,
+  },
+  cardPressed: {
+    opacity: 0.7,
   },
   cardHeader: {
     flexDirection: 'row',

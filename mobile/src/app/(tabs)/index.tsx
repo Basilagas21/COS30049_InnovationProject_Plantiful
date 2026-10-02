@@ -3,11 +3,14 @@ import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'ex
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/theme';
 
 export default function CaptureScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [permission, requestPermission] = useCameraPermissions();
+  const [torchOn, setTorchOn] = useState(false);
   const [lastScan, setLastScan] = useState<{ id: string; type: string; data: string } | null>(null);
 
   function onBarcodeScanned(result: BarcodeScanningResult) {
@@ -51,10 +54,20 @@ export default function CaptureScreen() {
       <CameraView
         style={StyleSheet.absoluteFill}
         facing="back"
+        enableTorch={torchOn}
         barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
         onBarcodeScanned={onBarcodeScanned}
         active
       />
+
+      <Pressable
+        style={[styles.torchButton, { top: insets.top + 16 }]}
+        onPress={() => setTorchOn((on) => !on)}
+        accessibilityRole="button"
+        accessibilityLabel={torchOn ? 'Turn flashlight off' : 'Turn flashlight on'}
+      >
+        <Ionicons name={torchOn ? 'flashlight' : 'flashlight-outline'} size={24} color={colors.white} />
+      </Pressable>
 
       <View style={styles.finder} pointerEvents="none">
         <View style={[styles.corner, styles.topLeft]} />
@@ -132,6 +145,18 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderColor: colors.white,
+  },
+  torchButton: {
+    position: 'absolute',
+    right: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(12, 52, 44, 0.6)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   topLeft: { top: 0, left: 0, borderTopWidth: 4, borderLeftWidth: 4, borderTopLeftRadius: 12 },
   topRight: { top: 0, right: 0, borderTopWidth: 4, borderRightWidth: 4, borderTopRightRadius: 12 },

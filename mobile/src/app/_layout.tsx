@@ -8,6 +8,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="capture/new" options={{ headerShown: true, title: 'New capture' }} />
+        <Stack.Screen name="settings" options={{ headerShown: true, title: 'Settings' }} />
       </Stack>
     </>
   );

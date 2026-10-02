@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { NavAuth } from "@/components/nav-auth";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -48,12 +49,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                   {link.label}
                 </Link>
               ))}
-              <Link
-                href="/signin"
-                className="rounded-full bg-emerald px-4 py-2 text-cream transition-colors hover:bg-pine"
-              >
-                Sign in
-              </Link>
+              <NavAuth />
             </nav>
           </div>
         </header>

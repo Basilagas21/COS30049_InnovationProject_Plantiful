@@ -12,6 +12,7 @@ export default function ProfileScreen() {
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!supabase) return;
@@ -122,14 +123,27 @@ export default function ProfileScreen() {
                 autoCorrect={false}
                 keyboardType="email-address"
               />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor={colors.muted}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
+              <View style={styles.passwordWrap}>
+                <TextInput
+                  style={[styles.input, styles.passwordInput]}
+                  placeholder="Password"
+                  placeholderTextColor={colors.muted}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                />
+                <Pressable
+                  style={styles.eyeButton}
+                  onPress={() => setShowPassword((v) => !v)}
+                  hitSlop={8}
+                >
+                  <Ionicons
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={20}
+                    color={colors.muted}
+                  />
+                </Pressable>
+              </View>
               <Pressable style={styles.button} onPress={signIn} disabled={busy}>
                 <Text style={styles.buttonText}>{busy ? 'Signing in…' : 'Sign in'}</Text>
               </Pressable>
@@ -225,6 +239,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     fontSize: 14,
     color: colors.pine,
+  },
+  passwordWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  passwordInput: {
+    flex: 1,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 12,
+    padding: 4,
   },
   button: {
     backgroundColor: colors.emerald,

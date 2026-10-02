@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme';
@@ -14,6 +15,7 @@ import {
 type SyncState = 'idle' | 'syncing' | 'done' | 'error';
 
 export default function SyncScreen() {
+  const router = useRouter();
   const [state, setState] = useState<SyncState>('idle');
   const [pending, setPending] = useState(0);
   const [synced, setSynced] = useState(0);
@@ -52,7 +54,7 @@ export default function SyncScreen() {
     if (!session.session) {
       setState('error');
       setNeedsAuth(true);
-      setMessage('Sign-in required. Botanist authentication on mobile is coming next — it will unlock syncing.');
+      setMessage('Sign in on the Profile tab to unlock syncing.');
       return;
     }
 
@@ -65,6 +67,7 @@ export default function SyncScreen() {
         const { data: inserted, error } = await supabase
           .from('plant_records')
           .insert({
+            botanist_id: session.session.user.id,
             qr_code: row.qr_code,
             gps_lat: row.gps_lat,
             gps_lng: row.gps_lng,
@@ -144,6 +147,12 @@ export default function SyncScreen() {
           </Text>
         </Pressable>
 
+        {needsAuth ? (
+          <Pressable style={styles.ghostButton} onPress={() => router.navigate('/profile')}>
+            <Text style={styles.ghostButtonText}>Go to Profile to sign in</Text>
+          </Pressable>
+        ) : null}
+
         {message || state === 'idle' ? (
           <Text style={styles.lastSync}>
             {message || 'Last sync: never'}
@@ -209,6 +218,18 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 16,
     fontWeight: '700',
+  },
+  ghostButton: {
+    alignSelf: 'stretch',
+    backgroundColor: colors.sand,
+    borderRadius: 24,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  ghostButtonText: {
+    color: colors.pine,
+    fontSize: 14,
+    fontWeight: '600',
   },
   buttonBusy: {
     opacity: 0.6,

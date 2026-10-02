@@ -1,76 +1,157 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+import {
+  getPendingRecords,
+  getPhotosForRecord,
+  markRecordFailed,
+  markRecordSynced,
+  openDatabase,
+} from '@/db';
 
-type SyncState = 'idle' | 'checking' | 'connected' | 'error';
+type SyncState = 'idle' | 'syncing' | 'done' | 'error';
 
 export default function SyncScreen() {
   const [state, setState] = useState<SyncState>('idle');
-  const [remoteCount, setRemoteCount] = useState<number | null>(null);
+  const [pending, setPending] = useState(0);
+  const [synced, setSynced] = useState(0);
+  const [failed, setFailed] = useState(0);
   const [message, setMessage] = useState('');
+  const [needsAuth, setNeedsAuth] = useState(false);
 
-  const runCheck = useCallback(async () => {
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const db = await openDatabase();
+      const rows = await getPendingRecords(db);
+      if (!cancelled) setPending(rows.length);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const runSync = useCallback(async () => {
     if (!isSupabaseConfigured || !supabase) {
       setState('error');
       setMessage('Supabase is not configured. Add EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY to mobile/.env');
       return;
     }
 
-    setState('checking');
-    const { count, error } = await supabase
-      .from('plant_records')
-      .select('*', { count: 'exact', head: true });
-
-    if (error) {
-      setState('error');
-      setMessage(`Connection failed: ${error.message}`);
+    const db = await openDatabase();
+    const rows = await getPendingRecords(db);
+    if (rows.length === 0) {
+      setState('done');
+      setMessage('Nothing to sync. Captures made offline appear here as pending.');
       return;
     }
 
-    setState('connected');
-    setRemoteCount(count ?? 0);
-    setMessage(`Connected to Supabase. ${count ?? 0} record(s) in the central database.`);
-  }, []);
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session) {
+      setState('error');
+      setNeedsAuth(true);
+      setMessage('Sign-in required. Botanist authentication on mobile is coming next — it will unlock syncing.');
+      return;
+    }
 
-  const connected = state === 'connected';
+    setState('syncing');
+    setSynced(0);
+    setFailed(0);
+
+    for (const row of rows) {
+      try {
+        const { data: inserted, error } = await supabase
+          .from('plant_records')
+          .insert({
+            qr_code: row.qr_code,
+            gps_lat: row.gps_lat,
+            gps_lng: row.gps_lng,
+            height_cm: row.height_cm,
+            status: 'submitted',
+            approval_status: 'pending',
+            device_id: row.record_id,
+          })
+          .select('record_id')
+          .single();
+
+        if (error) throw error;
+
+        await markRecordSynced(db, row.record_id, inserted.record_id);
+
+        const photos = await getPhotosForRecord(db, row.record_id);
+        for (const photo of photos) {
+          await supabase.from('plant_record_photos').insert({
+            record_id: inserted.record_id,
+            photo_url: photo.local_uri,
+          });
+        }
+
+        setSynced((n) => n + 1);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Unknown sync error';
+        await markRecordFailed(db, row.record_id, msg);
+        setFailed((n) => n + 1);
+      }
+    }
+
+    const remaining = await getPendingRecords(db);
+    setPending(remaining.length);
+    setState(failed > 0 ? 'error' : 'done');
+    setMessage(failed > 0
+      ? `Synced ${synced}, ${failed} failed. Tap a failed record in Records for the reason.`
+      : `All done — ${synced} record(s) pushed to the central database as submitted.`);
+  }, [synced, failed]);
+
+  const connected = isSupabaseConfigured && supabase !== null;
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
         <Ionicons
-          name={connected ? 'cloud-done-outline' : 'cloud-upload-outline'}
+          name={state === 'error' && needsAuth ? 'lock-closed-outline' : 'cloud-done-outline'}
           size={40}
-          color={connected ? colors.emerald : colors.pine}
+          color={state === 'error' && needsAuth ? colors.danger : colors.emerald}
         />
         <Text style={styles.title}>Sync centre</Text>
         <Text style={styles.hint}>
-          {state === 'idle' && 'Connectivity check against your Supabase project.'}
-          {state === 'checking' && 'Testing connection…'}
-          {connected && 'Connected. Offline records will upload here from the field app.'}
-          {state === 'error' && message}
+          Offline captures are pushed to the central Supabase database as submitted records, ready for an officer to review.
         </Text>
 
         <View style={styles.statRow}>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>{remoteCount ?? '–'}</Text>
-            <Text style={styles.statLabel}>Remote records</Text>
+            <Text style={styles.statValue}>{pending}</Text>
+            <Text style={styles.statLabel}>Pending</Text>
           </View>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>{connected ? 'Live' : '–'}</Text>
-            <Text style={styles.statLabel}>Database</Text>
+            <Text style={styles.statValue}>{synced}</Text>
+            <Text style={styles.statLabel}>Synced</Text>
+          </View>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{failed}</Text>
+            <Text style={styles.statLabel}>Failed</Text>
           </View>
         </View>
 
-        <Pressable style={styles.primaryButton} onPress={runCheck} disabled={state === 'checking'}>
+        <Pressable
+          style={[styles.primaryButton, state === 'syncing' && styles.buttonBusy]}
+          onPress={runSync}
+          disabled={state === 'syncing'}
+        >
           <Text style={styles.primaryButtonText}>
-            {state === 'checking' ? 'Checking…' : 'Check connection'}
+            {state === 'syncing' ? 'Syncing…' : 'Sync now'}
           </Text>
         </Pressable>
-        <Text style={styles.lastSync}>
-          {connected ? 'Backed by Supabase (central database)' : 'Last check: never'}
-        </Text>
+
+        {message || state === 'idle' ? (
+          <Text style={styles.lastSync}>
+            {message || 'Last sync: never'}
+          </Text>
+        ) : null}
+        {!connected ? (
+          <Text style={styles.lastSync}>Supabase not configured — add env vars to mobile/.env</Text>
+        ) : null}
       </View>
     </View>
   );
@@ -129,8 +210,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  buttonBusy: {
+    opacity: 0.6,
+  },
   lastSync: {
     fontSize: 12,
     color: colors.muted,
+    textAlign: 'center',
   },
 });

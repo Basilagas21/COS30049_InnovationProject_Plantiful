@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -37,9 +38,13 @@ export default function SignInPage() {
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6 py-16">
       <div className="rounded-3xl border border-pine/10 bg-white p-8">
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald text-sprout">
-          ✿
-        </span>
+        <Image
+          src="/plantiful_logo.jpg"
+          alt="Plantiful logo"
+          width={858}
+          height={620}
+          className="h-14 w-auto object-contain"
+        />
         <h1 className="mt-5 text-2xl font-bold tracking-tight text-pine">
           Sign in to Plantiful
         </h1>

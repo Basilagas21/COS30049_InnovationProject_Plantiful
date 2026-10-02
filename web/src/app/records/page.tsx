@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { fetchRecords } from "@/lib/records";
+import { isOfficer } from "@/lib/auth";
+import { ApproveRejectButtons } from "@/components/approve-reject";
 
 export default async function RecordsPage() {
   const records = await fetchRecords();
+  const officer = await isOfficer();
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
@@ -15,9 +18,11 @@ export default async function RecordsPage() {
             {records.length} field observations synced from the mobile app
           </p>
         </div>
-        <span className="inline-flex w-fit rounded-full bg-sprout px-3 py-1 text-sm font-semibold text-emerald">
-          Officer view
-        </span>
+        {officer && (
+          <span className="inline-flex w-fit rounded-full bg-sprout px-3 py-1 text-sm font-semibold text-emerald">
+            Officer view
+          </span>
+        )}
       </div>
 
       <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -47,51 +52,60 @@ export default async function RecordsPage() {
 
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {records.map((record) => (
-          <Link
+          <div
             key={record.id}
-            href={`/records/${record.id}`}
-            className="group overflow-hidden rounded-2xl border border-pine/10 bg-white transition-shadow hover:shadow-lg"
+            className="group flex flex-col overflow-hidden rounded-2xl border border-pine/10 bg-white transition-shadow hover:shadow-lg"
           >
-            <div className="aspect-[4/3] w-full rounded-t-2xl bg-sprout/70 transition-colors group-hover:bg-sprout">
-              {(record.approvalStatus === "pending" ||
-                record.approvalStatus === "rejected") && (
-                <span className="m-3 inline-block rounded-full bg-chartreuse px-3 py-1 text-xs font-bold text-pine">
-                  {record.approvalStatus === "pending" ? "Review" : "Rejected"}
-                </span>
-              )}
-            </div>
-            <div className="p-5">
-              <p className="text-xs font-medium uppercase tracking-wide text-emerald">
-                {record.commonName ?? record.scientificName}
-              </p>
-              <h3 className="mt-1 text-lg font-semibold text-pine">
-                {record.scientificName}
-              </h3>
-              <div className="mt-4 flex items-center justify-between text-sm">
-                <span className="text-moss">
-                  {record.gpsLat?.toFixed(4)}, {record.gpsLng?.toFixed(4)} ·{" "}
-                  {new Date(record.createdAt).toLocaleDateString()}
-                </span>
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                    record.approvalStatus === "approved"
-                      ? record.isPublished
-                        ? "bg-sprout text-emerald"
-                        : "bg-chartreuse/60 text-pine"
-                      : "bg-sand text-moss"
-                  }`}
-                >
-                  {record.isPublished
-                    ? "Published"
-                    : record.approvalStatus === "approved"
-                      ? "Approved"
-                      : record.approvalStatus === "pending"
-                        ? "Pending"
-                        : "Rejected"}
-                </span>
+            <Link
+              href={`/records/${record.id}`}
+              className="flex flex-1 flex-col"
+            >
+              <div className="aspect-[4/3] w-full rounded-t-2xl bg-sprout/70 transition-colors group-hover:bg-sprout">
+                {(record.approvalStatus === "pending" ||
+                  record.approvalStatus === "rejected") && (
+                  <span className="m-3 inline-block rounded-full bg-chartreuse px-3 py-1 text-xs font-bold text-pine">
+                    {record.approvalStatus === "pending" ? "Review" : "Rejected"}
+                  </span>
+                )}
               </div>
-            </div>
-          </Link>
+              <div className="p-5">
+                <p className="text-xs font-medium uppercase tracking-wide text-emerald">
+                  {record.commonName ?? record.scientificName}
+                </p>
+                <h3 className="mt-1 text-lg font-semibold text-pine">
+                  {record.scientificName}
+                </h3>
+                <div className="mt-4 flex items-center justify-between text-sm">
+                  <span className="text-moss">
+                    {record.gpsLat?.toFixed(4)}, {record.gpsLng?.toFixed(4)} ·{" "}
+                    {new Date(record.createdAt).toLocaleDateString()}
+                  </span>
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                      record.approvalStatus === "approved"
+                        ? record.isPublished
+                          ? "bg-sprout text-emerald"
+                          : "bg-chartreuse/60 text-pine"
+                        : "bg-sand text-moss"
+                    }`}
+                  >
+                    {record.isPublished
+                      ? "Published"
+                      : record.approvalStatus === "approved"
+                        ? "Approved"
+                        : record.approvalStatus === "pending"
+                          ? "Pending"
+                          : "Rejected"}
+                  </span>
+                </div>
+              </div>
+            </Link>
+            {officer && record.approvalStatus === "pending" && (
+              <div className="border-t border-pine/10 p-4 pt-3">
+                <ApproveRejectButtons recordId={record.id} />
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </div>

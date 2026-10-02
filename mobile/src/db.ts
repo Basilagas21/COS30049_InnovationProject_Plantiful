@@ -234,6 +234,44 @@ export async function deleteLocalRecord(db: SQLite.SQLiteDatabase, recordId: str
   await db.runAsync('DELETE FROM local_records WHERE record_id = ?', recordId);
 }
 
+export type SpeciesOption = {
+  species_id: string;
+  scientific_name: string;
+  common_name: string | null;
+  conservation_status: string | null;
+};
+
+export async function getSpeciesOptions(db: SQLite.SQLiteDatabase): Promise<SpeciesOption[]> {
+  return db.getAllAsync<SpeciesOption>(
+    `SELECT species_id, scientific_name, common_name, conservation_status
+     FROM species_catalog
+     ORDER BY scientific_name ASC`
+  );
+}
+
+export async function upsertSpeciesCatalog(
+  db: SQLite.SQLiteDatabase,
+  species: SpeciesOption[]
+) {
+  const now = new Date().toISOString();
+  for (const s of species) {
+    await db.runAsync(
+      `INSERT INTO species_catalog (species_id, scientific_name, common_name, conservation_status, synced_at)
+       VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT(species_id) DO UPDATE SET
+         scientific_name = excluded.scientific_name,
+         common_name = excluded.common_name,
+         conservation_status = excluded.conservation_status,
+         synced_at = excluded.synced_at`,
+      s.species_id,
+      s.scientific_name,
+      s.common_name ?? null,
+      s.conservation_status ?? null,
+      now
+    );
+  }
+}
+
 // Keep for compatibility with the old in-progress UI until fully replaced.
 export type TestRecord = {
   id: string;

@@ -1,10 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions, type CameraCapturedPicture } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -14,7 +15,7 @@ import {
   View,
 } from 'react-native';
 import { colors } from '@/theme';
-import { openDatabase, insertLocalRecord, addLocalPhoto } from '@/db';
+import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, type SpeciesOption } from '@/db';
 import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 
 export default function NewCaptureScreen() {
@@ -27,6 +28,9 @@ export default function NewCaptureScreen() {
 
   const [stage, setStage] = useState<'form' | 'camera'>('form');
   const [qrCode, setQrCode] = useState(qr ?? '');
+  const [speciesOptions, setSpeciesOptions] = useState<SpeciesOption[]>([]);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [selectedSpecies, setSelectedSpecies] = useState<SpeciesOption | null>(null);
   const [morphology, setMorphology] = useState('');
   const [heightCm, setHeightCm] = useState('');
   const [notes, setNotes] = useState('');
@@ -35,6 +39,20 @@ export default function NewCaptureScreen() {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const loadSpecies = useCallback(async () => {
+    try {
+      const db = await openDatabase();
+      const options = await getSpeciesOptions(db);
+      setSpeciesOptions(options);
+    } catch {
+      setSpeciesOptions([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadSpecies();
+  }, [loadSpecies]);
 
   const captureLocation = useCallback(async () => {
     setLocating(true);
@@ -76,6 +94,7 @@ export default function NewCaptureScreen() {
     try {
       const recordId = await insertLocalRecord(db, {
         qr_code: qrCode.trim() || null,
+        species_id: selectedSpecies?.species_id ?? null,
         gps_lat: location?.lat ?? null,
         gps_lng: location?.lng ?? null,
         gps_accuracy_m: location?.accuracyM ?? null,
@@ -94,7 +113,7 @@ export default function NewCaptureScreen() {
     } finally {
       setSaving(false);
     }
-  }, [qrCode, morphology, heightCm, notes, location, photoUri, router]);
+  }, [qrCode, selectedSpecies, morphology, heightCm, notes, location, photoUri, router]);
 
   if (!permission) {
     return (
@@ -162,6 +181,25 @@ export default function NewCaptureScreen() {
             autoCapitalize="characters"
             autoCorrect={false}
           />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.sectionLabel}>SPECIES</Text>
+          <Pressable style={styles.ghostButton} onPress={() => setPickerOpen(true)}>
+            <Ionicons name="leaf-outline" size={18} color={colors.pine} />
+            <Text style={[styles.ghostButtonText, selectedSpecies && styles.speciesSelected]}>
+              {selectedSpecies
+                ? `${selectedSpecies.common_name ?? selectedSpecies.scientific_name} (${selectedSpecies.scientific_name})`
+                : speciesOptions.length === 0
+                  ? 'No species catalog — sync once while signed in'
+                  : 'Select species…'}
+            </Text>
+          </Pressable>
+          {selectedSpecies?.conservation_status && (
+            <Text style={styles.locationMeta}>
+              Conservation status: {selectedSpecies.conservation_status}
+            </Text>
+          )}
         </View>
 
         <View style={styles.card}>
@@ -235,6 +273,47 @@ export default function NewCaptureScreen() {
           Saved as a draft on this device and synced to the central database when you press Sync now.
         </Text>
       </ScrollView>
+
+      <Modal
+        visible={pickerOpen}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setPickerOpen(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalSheet}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select species</Text>
+              <Pressable onPress={() => setPickerOpen(false)} hitSlop={10}>
+                <Ionicons name="close" size={24} color={colors.moss} />
+              </Pressable>
+            </View>
+            <ScrollView style={styles.modalList}>
+              {speciesOptions.length === 0 ? (
+                <Text style={styles.hint}>
+                  The species catalog is empty. Open Sync and press Sync now while signed in to download it.
+                </Text>
+              ) : (
+                speciesOptions.map((species) => (
+                  <Pressable
+                    key={species.species_id}
+                    style={[styles.speciesRow, selectedSpecies?.species_id === species.species_id && styles.speciesRowSelected]}
+                    onPress={() => {
+                      setSelectedSpecies(species);
+                      setPickerOpen(false);
+                    }}
+                  >
+                    <Text style={styles.speciesRowName}>{species.scientific_name}</Text>
+                    {species.common_name ? (
+                      <Text style={styles.speciesRowCommon}>{species.common_name}</Text>
+                    ) : null}
+                  </Pressable>
+                ))
+              )}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
@@ -397,5 +476,59 @@ const styles = StyleSheet.create({
   },
   shutterBusy: {
     opacity: 0.4,
+  },
+  speciesSelected: {
+    color: colors.emerald,
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'flex-end',
+  },
+  modalSheet: {
+    backgroundColor: colors.cream,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 24,
+    maxHeight: '70%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.sand,
+  },
+  modalTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: colors.pine,
+  },
+  modalList: {
+    padding: 12,
+  },
+  speciesRow: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.sand,
+    padding: 14,
+    marginBottom: 8,
+    gap: 2,
+  },
+  speciesRowSelected: {
+    borderColor: colors.emerald,
+    backgroundColor: colors.sprout,
+  },
+  speciesRowName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.pine,
+    fontStyle: 'italic',
+  },
+  speciesRowCommon: {
+    fontSize: 13,
+    color: colors.moss,
   },
 });

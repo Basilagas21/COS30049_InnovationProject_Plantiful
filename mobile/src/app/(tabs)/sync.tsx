@@ -10,6 +10,7 @@ import {
   markRecordFailed,
   markRecordSynced,
   openDatabase,
+  upsertSpeciesCatalog,
 } from '@/db';
 
 type SyncState = 'idle' | 'syncing' | 'done' | 'error';
@@ -43,18 +44,26 @@ export default function SyncScreen() {
     }
 
     const db = await openDatabase();
-    const rows = await getPendingRecords(db);
-    if (rows.length === 0) {
-      setState('done');
-      setMessage('Nothing to sync. Captures made offline appear here as pending.');
-      return;
-    }
 
     const { data: session } = await supabase.auth.getSession();
     if (!session.session) {
       setState('error');
       setNeedsAuth(true);
       setMessage('Sign in on the Profile tab to unlock syncing.');
+      return;
+    }
+
+    const { data: species } = await supabase
+      .from('species')
+      .select('species_id, scientific_name, common_name, conservation_status');
+    if (species && species.length > 0) {
+      await upsertSpeciesCatalog(db, species);
+    }
+
+    const rows = await getPendingRecords(db);
+    if (rows.length === 0) {
+      setState('done');
+      setMessage('Nothing to sync. Captures made offline appear here as pending.');
       return;
     }
 

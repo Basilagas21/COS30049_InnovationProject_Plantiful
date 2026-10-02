@@ -1,31 +1,77 @@
-# Personal / local-only files (agent persona, editor settings, private templates)
-Basilagas21/
-.vscode/
+# Dependencies (web + mobile)
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Next.js (web)
+.next/
+out/
+next-env.d.ts
+
+# Expo / React Native (mobile)
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+.metro-health-check*
+.kotlin/
+
+# Native build output (CNG generates ios/ and android/)
+ios/
+android/
+
+# Build / test output
+build/
+coverage/
+*.tsbuildinfo
 
 # Secrets — never commit real keys (use .env.example with blank values)
 .env
 .env.*
+.env*.local
 !.env.example
 
-# Node / Next.js (web app)
-node_modules/
-.next/
-out/
-dist/
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+*.orig.*
 
-# Mobile (React Native) — native build output, keeps generic non-Dart patterns
-build/
-ios/Pods/
-android/.gradle/
-*.iml
+# Signing / credentials
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Vercel
+.vercel
 
 # Python (IoT service / scripts)
 __pycache__/
 *.py[cod]
 .venv/
 venv/
-*.log
+
+# Personal / local-only files (agent persona, editor settings, private templates)
+Basilagas21/
+.vscode/
+*.iml
+
+# Agent instruction files (AGENTS.md / CLAUDE.md inside app folders)
+mobile/AGENTS.md
+mobile/CLAUDE.md
+web/AGENTS.md
+web/CLAUDE.md
 
 # OS / editor cruft
 .DS_Store
 Thumbs.db
+*.pem

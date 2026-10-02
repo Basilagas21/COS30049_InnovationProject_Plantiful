@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/theme';
+import { getLocalRecordByQR, openDatabase } from '@/db';
 
 export default function CaptureScreen() {
   const router = useRouter();
@@ -13,11 +14,16 @@ export default function CaptureScreen() {
   const [torchOn, setTorchOn] = useState(false);
   const [lastScan, setLastScan] = useState<{ id: string; type: string; data: string } | null>(null);
 
-  function onBarcodeScanned(result: BarcodeScanningResult) {
+  async function onBarcodeScanned(result: BarcodeScanningResult) {
     if (result.type !== 'qr') return;
     const data = result.data.trim();
     if (!data) return;
+    const db = await openDatabase();
+    const existing = await getLocalRecordByQR(db, data);
     setLastScan({ id: data, type: result.type, data });
+    if (existing) {
+      router.push({ pathname: '/record/[id]', params: { id: existing.record_id } });
+    }
   }
 
   function openRecord(id: string) {
@@ -98,6 +104,16 @@ export default function CaptureScreen() {
             <Text style={styles.cardMeta}>A scanned tag will appear here</Text>
           </>
         )}
+
+        <View style={styles.divider} />
+
+        <Pressable
+          style={[styles.ghostButton, styles.discoverButton]}
+          onPress={() => router.push('/capture/discover')}
+        >
+          <Ionicons name="leaf-outline" size={18} color={colors.emerald} />
+          <Text style={styles.ghostButtonText}>Tag a new plant (no tag yet?)</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -195,6 +211,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     marginTop: 12,
+    width: '100%',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.sand,
+    width: '100%',
+    marginVertical: 14,
+  },
+  discoverButton: {
     width: '100%',
   },
   primaryButton: {

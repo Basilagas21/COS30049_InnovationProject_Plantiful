@@ -31,7 +31,9 @@ async function uploadPhoto(
       .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
     if (error) throw error;
     return supabase!.storage.from(PHOTO_BUCKET).getPublicUrl(data.path).data.publicUrl;
-  } catch {
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : 'unknown error';
+    console.warn(`[sync] photo upload failed for ${recordId}: ${detail}`);
     return null;
   }
 }
@@ -99,6 +101,7 @@ export default function SyncScreen() {
           .insert({
             botanist_id: session.session.user.id,
             species_id: row.species_id,
+            provisional_name: row.provisional_name,
             qr_code: row.qr_code,
             gps_lat: row.gps_lat,
             gps_lng: row.gps_lng,
@@ -115,16 +118,19 @@ export default function SyncScreen() {
 
         if (error) throw error;
 
-        await markRecordSynced(db, row.record_id, inserted.record_id);
-
         const photos = await getPhotosForRecord(db, row.record_id);
         for (const photo of photos) {
           const photoUrl = await uploadPhoto(session.session.user.id, inserted.record_id, photo);
+          if (!photoUrl) {
+            throw new Error('Photo upload failed — check your connection and try again.');
+          }
           await supabase.from('plant_record_photos').insert({
             record_id: inserted.record_id,
-            photo_url: photoUrl ?? photo.local_uri,
+            photo_url: photoUrl,
           });
         }
+
+        await markRecordSynced(db, row.record_id, inserted.record_id);
 
         setSynced((n) => n + 1);
       } catch (e) {

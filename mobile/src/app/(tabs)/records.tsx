@@ -73,7 +73,8 @@ export default function RecordsScreen() {
             >
               <View style={styles.cardHeader}>
                 <View style={styles.cardTitleWrap}>
-                  <Text style={styles.cardTitle}>{item.qr_code ?? 'Untagged'}</Text>
+                  <Text style={styles.cardTitle}>{item.provisional_name ?? item.qr_code ?? 'Untagged'}</Text>
+                  {item.provisional_name ? <Text style={styles.cardMeta}>Tag {item.qr_code}</Text> : null}
                   {item.species_id && <Text style={styles.cardMeta}>species: {item.species_id}</Text>}
                 </View>
                 <Pressable

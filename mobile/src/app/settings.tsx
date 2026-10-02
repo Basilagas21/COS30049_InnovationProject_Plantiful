@@ -1,11 +1,30 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { Alert, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import { colors } from '@/theme';
+import { openDatabase, deleteLocalRecord, getLocalRecords } from '@/db';
 
 export default function SettingsScreen() {
+  const router = useRouter();
   const [offlineMode, setOfflineMode] = useState(true);
   const [autoScan, setAutoScan] = useState(true);
+
+  async function clearAll() {
+    const db = await openDatabase();
+    const records = await getLocalRecords(db);
+    for (const record of records) {
+      await deleteLocalRecord(db, record.record_id);
+    }
+    Alert.alert('Cleared', `${records.length} local record(s) removed from this device.`);
+  }
+
+  function confirmClear() {
+    Alert.alert('Clear all local records?', 'This cannot be undone.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Clear', style: 'destructive', onPress: clearAll },
+    ]);
+  }
 
   return (
     <View style={styles.container}>
@@ -35,7 +54,7 @@ export default function SettingsScreen() {
         />
       </View>
 
-      <View style={styles.aboutBox}>
+      <Pressable style={styles.aboutBox} onPress={confirmClear}>
         <Text style={styles.aboutTitle}>Plantiful</Text>
         <Text style={styles.aboutText}>
           Smart ground-truthing and digital biodiversity system for plant species documentation at Niah
@@ -44,7 +63,15 @@ export default function SettingsScreen() {
         <Pressable style={styles.ghostButton}>
           <Text style={styles.ghostButtonText}>Clear all local records</Text>
         </Pressable>
-      </View>
+      </Pressable>
+
+      <Pressable style={styles.row} onPress={() => router.back()}>
+        <Ionicons name="person-circle-outline" size={22} color={colors.pine} />
+        <View style={styles.rowBody}>
+          <Text style={styles.rowTitle}>Back to profile</Text>
+          <Text style={styles.rowHint}>Return to account</Text>
+        </View>
+      </Pressable>
     </View>
   );
 }

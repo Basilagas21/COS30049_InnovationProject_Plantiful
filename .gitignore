@@ -30,11 +30,10 @@ build/
 coverage/
 *.tsbuildinfo
 
-# Secrets — never commit real keys (use .env.example with blank values)
+# Secrets — never commit real keys. All .env files (incl. .env.example) ignored.
 .env
 .env.*
 .env*.local
-!.env.example
 *.secret
 service-account.json
 *.service-account.json

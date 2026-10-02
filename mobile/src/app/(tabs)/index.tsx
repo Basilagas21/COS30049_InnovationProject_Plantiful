@@ -1,10 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme';
 
 export default function CaptureScreen() {
+  const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
   const [lastScan, setLastScan] = useState<{ id: string; type: string; data: string } | null>(null);
 
@@ -16,11 +18,11 @@ export default function CaptureScreen() {
   }
 
   function openRecord(id: string) {
-    Alert.alert('Record found', `Opening record for tag ${id}`);
+    router.navigate(`/capture/new?qr=${encodeURIComponent(id)}`);
   }
 
   function createRecord(id: string) {
-    Alert.alert('New record', `Creating a new record for tag ${id}`);
+    router.push(`/capture/new?qr=${encodeURIComponent(id)}`);
   }
 
   if (!permission) {
@@ -59,7 +61,7 @@ export default function CaptureScreen() {
         <View style={[styles.corner, styles.topRight]} />
         <View style={[styles.corner, styles.bottomLeft]} />
         <View style={[styles.corner, styles.bottomRight]} />
-        <Text style={styles.finderLabel}>Point at the plant's QR tag</Text>
+        <Text style={styles.finderLabel}>Point at the plant&apos;s QR tag</Text>
       </View>
 
       <View style={styles.bottomCard}>

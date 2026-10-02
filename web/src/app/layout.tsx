@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import { NavAuth } from "@/components/nav-auth";
 import "./globals.css";
@@ -35,10 +36,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <header className="sticky top-0 z-10 border-b border-pine/10 bg-cream/90 backdrop-blur">
           <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold text-pine">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald text-sprout">
-                ✿
-              </span>
-              Plantiful
+              <Image
+                src="/plantiful_logo.jpg"
+                alt="Plantiful logo"
+                width={858}
+                height={620}
+                className="h-9 w-auto object-contain"
+                priority
+              />
             </Link>
             <nav className="flex items-center gap-6 text-sm font-medium">
               {navLinks.map((link) => (

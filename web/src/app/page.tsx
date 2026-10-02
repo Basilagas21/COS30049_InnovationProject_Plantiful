@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -48,10 +49,16 @@ export default function Home() {
           </div>
 
           <div className="relative">
-            <div className="rounded-3xl bg-gradient-to-br from-sprout to-cream p-10">
-              <div className="aspect-[4/5] w-full rounded-2xl bg-sprout/60" />
+            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-sprout to-cream p-4 shadow-md">
+              <Image
+                src="/plantiful_logo.jpg"
+                alt="Plantiful logo"
+                width={858}
+                height={620}
+                className="aspect-[858/620] w-full rounded-2xl object-cover"
+              />
             </div>
-            <div className="absolute left-4 top-8 rounded-2xl bg-white/90 p-3 shadow-md backdrop-blur">
+            <div className="absolute left-4 top-10 rounded-2xl bg-white/90 p-3 shadow-md backdrop-blur">
               <p className="text-xs text-moss">Identity</p>
               <p className="text-sm font-semibold text-pine">Confirmed</p>
             </div>

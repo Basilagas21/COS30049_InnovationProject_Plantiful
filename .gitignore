@@ -35,6 +35,20 @@ coverage/
 .env.*
 .env*.local
 !.env.example
+*.secret
+service-account.json
+*.service-account.json
+*service_account*.json
+credentials.json
+secret*.json
+id_rsa*
+*.pem
+*.ppk
+
+# Supabase CLI local state (can carry project URLs / auth tokens)
+supabase/.temp/
+supabase/.branches/
+.supabase/
 
 # Debug logs
 npm-debug.log*
@@ -81,4 +95,3 @@ web/CLAUDE.md
 # OS / editor cruft
 .DS_Store
 Thumbs.db
-*.pem

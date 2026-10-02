@@ -1,18 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(supabase ? true : false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [busy, setBusy] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!supabase) return;
@@ -30,30 +26,27 @@ export default function ProfileScreen() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  async function signIn() {
-    if (!supabase) return;
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
-    setBusy(false);
-    if (error) {
-      Alert.alert('Sign in failed', error.message);
-      return;
-    }
-    setEmail('');
-    setPassword('');
-  }
-
   async function signOut() {
     if (!supabase) return;
     await supabase.auth.signOut();
   }
 
+  function confirmSignOut() {
+    Alert.alert('Sign out?', 'You will need to sign in again to sync records.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Sign out', style: 'destructive', onPress: signOut },
+    ]);
+  }
+
   if (!isSupabaseConfigured) {
     return (
       <View style={styles.container}>
+        <Image
+          source={require('../../../assets/plantiful_logo.jpg')}
+          style={styles.logo}
+          resizeMode="contain"
+          accessibilityLabel="Plantiful logo"
+        />
         <View style={styles.card}>
           <Ionicons name="cloud-offline-outline" size={40} color={colors.muted} />
           <Text style={styles.title}>No connection configured</Text>
@@ -73,96 +66,63 @@ export default function ProfileScreen() {
     );
   }
 
+  if (!userEmail) {
+    return (
+      <View style={styles.container}>
+        <Image
+          source={require('../../../assets/plantiful_logo.jpg')}
+          style={styles.logo}
+          resizeMode="contain"
+          accessibilityLabel="Plantiful logo"
+        />
+        <View style={styles.card}>
+          <Ionicons name="person-circle-outline" size={40} color={colors.emerald} />
+          <Text style={styles.title}>Sign in to sync</Text>
+          <Text style={styles.hint}>
+            Authenticate to push offline captures to the central database as a botanist.
+          </Text>
+          <Pressable style={styles.button} onPress={() => router.replace('/signin')}>
+            <Text style={styles.buttonText}>Sign in</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {userEmail ? (
-        <>
-          <View style={styles.card}>
-            <View style={styles.avatar}>
-              <Ionicons name="person" size={28} color={colors.white} />
-            </View>
-            <Text style={styles.title}>Signed in</Text>
-            <Text style={styles.email}>{userEmail}</Text>
-            <Pressable style={[styles.button, styles.ghost]} onPress={signOut}>
-              <Text style={styles.ghostText}>Sign out</Text>
-            </Pressable>
-          </View>
+      <Image
+        source={require('../../../assets/plantiful_logo.jpg')}
+        style={styles.logo}
+        resizeMode="contain"
+        accessibilityLabel="Plantiful logo"
+      />
 
-          <Pressable style={styles.row} onPress={() => router.push('/settings')}>
-            <Ionicons name="settings-outline" size={22} color={colors.pine} />
-            <View style={styles.rowBody}>
-              <Text style={styles.rowTitle}>Settings</Text>
-              <Text style={styles.rowHint}>Offline capture, clears local records</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.muted} />
-          </Pressable>
+      <View style={styles.card}>
+        <View style={styles.avatar}>
+          <Ionicons name="person" size={28} color={colors.white} />
+        </View>
+        <Text style={styles.title}>Signed in</Text>
+        <Text style={styles.email}>{userEmail}</Text>
+        <Pressable style={[styles.button, styles.ghost]} onPress={confirmSignOut}>
+          <Text style={styles.ghostText}>Sign out</Text>
+        </Pressable>
+      </View>
 
-          <View style={styles.card}>
-            <Text style={styles.hint}>
-              Records you sync are stamped with your botanist account so officers can verify them.
-            </Text>
-          </View>
-        </>
-      ) : (
-        <>
-          <View style={styles.card}>
-            <Ionicons name="person-circle-outline" size={40} color={colors.emerald} />
-            <Text style={styles.title}>Sign in to sync</Text>
-            <Text style={styles.hint}>
-              Authenticate to push offline captures to the central database as a botanist.
-            </Text>
+      <Pressable style={styles.row} onPress={() => router.push('/settings')}>
+        <Ionicons name="settings-outline" size={22} color={colors.pine} />
+        <View style={styles.rowBody}>
+          <Text style={styles.rowTitle}>Settings</Text>
+          <Text style={styles.rowHint}>Offline capture, clears local records</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+      </Pressable>
 
-            <View style={styles.form}>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor={colors.muted}
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-              />
-              <View style={styles.passwordWrap}>
-                <TextInput
-                  style={[styles.input, styles.passwordInput]}
-                  placeholder="Password"
-                  placeholderTextColor={colors.muted}
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry={!showPassword}
-                />
-                <Pressable
-                  style={styles.eyeButton}
-                  onPress={() => setShowPassword((v) => !v)}
-                  hitSlop={8}
-                >
-                  <Ionicons
-                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                    size={20}
-                    color={colors.muted}
-                  />
-                </Pressable>
-              </View>
-              <Pressable style={styles.button} onPress={signIn} disabled={busy}>
-                <Text style={styles.buttonText}>{busy ? 'Signing in…' : 'Sign in'}</Text>
-              </Pressable>
-              <Pressable style={styles.createAccount} onPress={() => router.push('/register')}>
-                <Text style={styles.createAccountText}>New here? Create an account</Text>
-              </Pressable>
-            </View>
-          </View>
-
-          <Pressable style={styles.row} onPress={() => router.push('/settings')}>
-            <Ionicons name="settings-outline" size={22} color={colors.pine} />
-            <View style={styles.rowBody}>
-              <Text style={styles.rowTitle}>Settings</Text>
-              <Text style={styles.rowHint}>Offline capture, clears local records</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.muted} />
-          </Pressable>
-        </>
-      )}
+      <View style={styles.card}>
+        <Text style={styles.hint}>
+          Records you sync are stamped with your botanist account so officers can verify them.
+        </Text>
+      </View>
     </View>
   );
 }
@@ -173,6 +133,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cream,
     padding: 16,
     gap: 12,
+  },
+  logo: {
+    width: 140,
+    height: 101,
+    alignSelf: 'center',
+    marginTop: 8,
   },
   card: {
     alignItems: 'center',
@@ -228,34 +194,8 @@ const styles = StyleSheet.create({
     color: colors.muted,
     marginTop: 2,
   },
-  form: {
-    alignSelf: 'stretch',
-    gap: 10,
-    marginTop: 6,
-  },
-  input: {
-    height: 46,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.sand,
-    backgroundColor: colors.white,
-    paddingHorizontal: 14,
-    fontSize: 14,
-    color: colors.pine,
-  },
-  passwordWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  passwordInput: {
-    flex: 1,
-  },
-  eyeButton: {
-    position: 'absolute',
-    right: 12,
-    padding: 4,
-  },
   button: {
+    alignSelf: 'stretch',
     backgroundColor: colors.emerald,
     borderRadius: 24,
     paddingVertical: 14,
@@ -267,21 +207,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   ghost: {
-    alignSelf: 'stretch',
     backgroundColor: colors.sand,
   },
   ghostText: {
     color: colors.danger,
     fontSize: 15,
     fontWeight: '700',
-  },
-  createAccount: {
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  createAccountText: {
-    color: colors.emerald,
-    fontSize: 13,
-    fontWeight: '600',
   },
 });

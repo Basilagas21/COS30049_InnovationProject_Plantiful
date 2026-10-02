@@ -30,6 +30,12 @@
       "expo-sqlite",
       "expo-router",
       [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow Plantiful to use your location to record where each plant is found."
+        }
+      ],
+      [
         "expo-camera",
         {
           "cameraPermission": "Allow Plantiful to use your camera to scan plant tags and capture photos.",

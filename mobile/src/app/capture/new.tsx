@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions, type CameraCapturedPicture } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -88,6 +89,31 @@ export default function NewCaptureScreen() {
       setCapturing(false);
     }
   }, []);
+
+  const openLibrary = useCallback(async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.6,
+      allowsEditing: false,
+    });
+    if (result.canceled) return;
+    const asset = result.assets[0];
+    if (!asset?.uri) return;
+    try {
+      const permanentUri = await persistCapturedPhoto(asset.uri);
+      setPhotoUri(permanentUri);
+    } catch {
+      Alert.alert('Photo failed', 'Could not attach the photo. Please try again.');
+    }
+  }, []);
+
+  const choosePhotoSource = useCallback(() => {
+    Alert.alert('Add a photo', 'How do you want to attach a photo of this plant?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Choose from gallery', onPress: openLibrary },
+      { text: 'Take a photo', onPress: () => setStage('camera') },
+    ]);
+  }, [openLibrary]);
 
   const saveDraft = useCallback(async () => {
     const db = await openDatabase();
@@ -252,14 +278,14 @@ export default function NewCaptureScreen() {
         <View style={styles.card}>
           <Text style={styles.sectionLabel}>PHOTO</Text>
           {photoUri ? (
-            <Pressable style={styles.photoPreviewBtn} onPress={() => setStage('camera')}>
+            <Pressable style={styles.photoPreviewBtn} onPress={choosePhotoSource}>
               <Ionicons name="image" size={18} color={colors.pine} />
               <Text style={styles.ghostButtonText}>Photo attached — replace</Text>
             </Pressable>
           ) : (
-            <Pressable style={styles.ghostButton} onPress={() => setStage('camera')}>
+            <Pressable style={styles.ghostButton} onPress={choosePhotoSource}>
               <Ionicons name="camera-outline" size={18} color={colors.pine} />
-              <Text style={styles.ghostButtonText}>Take photo</Text>
+              <Text style={styles.ghostButtonText}>Add photo</Text>
             </Pressable>
           )}
         </View>

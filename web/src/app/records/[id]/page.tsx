@@ -41,12 +41,16 @@ export default async function RecordDetailPage({
               className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${
                 record.isPublished
                   ? "bg-sprout text-emerald"
-                  : "bg-chartreuse/70 text-pine"
+                  : record.provisionalName
+                    ? "bg-chartreuse/70 text-pine"
+                    : "bg-chartreuse/70 text-pine"
               }`}
             >
-              {record.isPublished
-                ? "Published"
-                : `Pending ${record.approvalStatus}`}
+              {record.provisionalName
+                ? "New discovery · unconfirmed species"
+                : record.isPublished
+                  ? "Published"
+                  : `Pending ${record.approvalStatus}`}
             </span>
             <h1 className="mt-3 text-4xl font-bold tracking-tight text-pine">
               {record.scientificName}

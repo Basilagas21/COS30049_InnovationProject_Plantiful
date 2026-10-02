@@ -84,6 +84,12 @@ export default function RecordDetailScreen() {
           </View>
         </View>
 
+        {rec.provisional_name ? (
+          <>
+            <Text style={styles.provisionalName}>{rec.provisional_name}</Text>
+            <Text style={styles.meta}>Provisional name — awaiting species confirmation</Text>
+          </>
+        ) : null}
         {rec.species_id && <Text style={styles.meta}>species: {rec.species_id}</Text>}
 
         <View style={styles.divider} />
@@ -178,6 +184,12 @@ const styles = StyleSheet.create({
   meta: {
     fontSize: 13,
     color: colors.muted,
+  },
+  provisionalName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.pine,
+    fontStyle: 'italic',
   },
   photo: {
     width: '100%',

@@ -1,13 +1,13 @@
 import * as SQLite from 'expo-sqlite';
 
 const DATABASE_NAME = 'plantiful.db';
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 
 async function migrateDbIfNeeded(db: SQLite.SQLiteDatabase) {
   const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
   let currentDbVersion = result?.user_version ?? 0;
 
-  if (currentDbVersion < SCHEMA_VERSION) {
+  if (currentDbVersion < 2) {
     await db.execAsync(`
 PRAGMA journal_mode = 'wal';
 PRAGMA foreign_keys = ON;
@@ -59,8 +59,19 @@ CREATE TABLE IF NOT EXISTS sync_queue (
   created_ts TEXT NOT NULL
 );
 `);
-    await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION}`);
+    currentDbVersion = 2;
   }
+
+  if (currentDbVersion < 3) {
+    const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(local_records)');
+    const hasProvisional = columns.some((column) => column.name === 'provisional_name');
+    if (!hasProvisional) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN provisional_name TEXT');
+    }
+    currentDbVersion = 3;
+  }
+
+  await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION}`);
 }
 
 let openDatabasePromise: Promise<SQLite.SQLiteDatabase> | null = null;
@@ -114,6 +125,7 @@ export type LocalRecord = {
   record_id: string;
   species_id: string | null;
   qr_code: string | null;
+  provisional_name: string | null;
   gps_lat: number | null;
   gps_lng: number | null;
   gps_accuracy_m: number | null;
@@ -134,6 +146,7 @@ export async function insertLocalRecord(
   input: {
     qr_code?: string | null;
     species_id?: string | null;
+    provisional_name?: string | null;
     gps_lat?: number | null;
     gps_lng?: number | null;
     gps_accuracy_m?: number | null;
@@ -146,12 +159,13 @@ export async function insertLocalRecord(
   const now = new Date().toISOString();
   await db.runAsync(
     `INSERT INTO local_records (
-      record_id, species_id, qr_code, gps_lat, gps_lng, gps_accuracy_m, height_cm,
+      record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm,
       morphology, notes, capture_ts, sync_status, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`,
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`,
     recordId,
     input.species_id ?? null,
     input.qr_code ?? null,
+    input.provisional_name ?? null,
     input.gps_lat ?? null,
     input.gps_lng ?? null,
     input.gps_accuracy_m ?? null,
@@ -184,7 +198,8 @@ export async function addLocalPhoto(
 export async function getLocalRecords(db: SQLite.SQLiteDatabase): Promise<LocalRecordWithPhoto[]> {
   return db.getAllAsync<LocalRecordWithPhoto>(
     `SELECT
-       r.record_id, r.species_id, r.qr_code, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
+       r.record_id, r.species_id, r.qr_code, r.provisional_name,
+       r.gps_lat, r.gps_lng, r.gps_accuracy_m,
        r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
        r.sync_error, r.created_at,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
@@ -199,13 +214,29 @@ export async function getLocalRecord(
 ): Promise<LocalRecordWithPhoto | null> {
   return db.getFirstAsync<LocalRecordWithPhoto>(
     `SELECT
-       r.record_id, r.species_id, r.qr_code, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
+       r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
        r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
        r.sync_error, r.created_at,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
      WHERE r.record_id = ?`,
     recordId
+  );
+}
+
+export async function getLocalRecordByQR(
+  db: SQLite.SQLiteDatabase,
+  qrCode: string
+): Promise<LocalRecordWithPhoto | null> {
+  return db.getFirstAsync<LocalRecordWithPhoto>(
+    `SELECT
+       r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
+       r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
+       r.sync_error, r.created_at,
+       (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
+     FROM local_records r
+     WHERE r.qr_code = ?`,
+    qrCode
   );
 }
 

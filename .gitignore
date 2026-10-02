@@ -54,6 +54,10 @@ yarn-error.log*
 # Vercel
 .vercel
 
+# Backend (supabase config, migrations, scripts) — keep only the README
+backend/*
+!backend/README.md
+
 # Python (IoT service / scripts)
 __pycache__/
 *.py[cod]

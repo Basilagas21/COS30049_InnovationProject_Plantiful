@@ -1,21 +1,32 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme';
 import {
-  deleteTestRecords,
-  getTestRecords,
-  insertTestRecord,
+  deleteLocalRecord,
+  getLocalRecords,
   openDatabase,
-  type TestRecord,
+  type LocalRecordWithPhoto,
 } from '@/db';
 
+function syncLabel(status: string) {
+  switch (status) {
+    case 'synced':
+      return { text: 'Synced', color: colors.emerald };
+    case 'failed':
+      return { text: 'Failed', color: colors.danger };
+    default:
+      return { text: 'Pending', color: colors.pine };
+  }
+}
+
 export default function RecordsScreen() {
-  const [records, setRecords] = useState<TestRecord[]>([]);
+  const [records, setRecords] = useState<LocalRecordWithPhoto[]>([]);
 
   const refresh = useCallback(async () => {
     const db = await openDatabase();
-    setRecords(await getTestRecords(db));
+    setRecords(await getLocalRecords(db));
   }, []);
 
   useFocusEffect(
@@ -24,50 +35,69 @@ export default function RecordsScreen() {
     }, [refresh])
   );
 
-  async function addRecord() {
-    const db = await openDatabase();
-    await insertTestRecord(db);
-    await refresh();
-  }
-
-  async function clearRecords() {
-    const db = await openDatabase();
-    await deleteTestRecords(db);
-    await refresh();
+  async function removeRecord(recordId: string, species: string) {
+    Alert.alert('Delete local record?', `${species} will be removed from this device only.`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          const db = await openDatabase();
+          await deleteLocalRecord(db, recordId);
+          await refresh();
+        },
+      },
+    ]);
   }
 
   return (
     <View style={styles.container}>
       <FlatList
         data={records}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.record_id}
         contentContainerStyle={styles.list}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyTitle}>No records yet</Text>
-            <Text style={styles.emptyHint}>Capture a plant in the field or add a test record below.</Text>
+            <Ionicons name="leaf-outline" size={48} color={colors.sand} />
+            <Text style={styles.emptyTitle}>No offline records</Text>
+            <Text style={styles.emptyHint}>Scan a plant tag and save a capture — it will appear here.</Text>
           </View>
         }
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.cardName}>{item.species_name}</Text>
-            <Text style={styles.cardMeta}>ID: {item.id}</Text>
-            <Text style={styles.cardMeta}>Captured: {item.capture_ts}</Text>
-            <View style={styles.syncPill}>
-              <Text style={styles.syncPillText}>{item.sync_status}</Text>
-            </View>
-          </View>
-        )}
-      />
+        renderItem={({ item }) => {
+          const pill = syncLabel(item.sync_status);
+          return (
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <View style={styles.cardTitleWrap}>
+                  <Text style={styles.cardTitle}>{item.qr_code ?? 'Untagged'}</Text>
+                  {item.species_id && <Text style={styles.cardMeta}>species: {item.species_id}</Text>}
+                </View>
+                <Pressable onPress={() => removeRecord(item.record_id, item.qr_code ?? 'record')}>
+                  <Ionicons name="trash-outline" size={18} color={colors.danger} />
+                </Pressable>
+              </View>
 
-      <View style={styles.actions}>
-        <Pressable style={styles.primaryButton} onPress={addRecord}>
-          <Text style={styles.primaryButtonText}>Add test record</Text>
-        </Pressable>
-        <Pressable style={styles.ghostButton} onPress={clearRecords}>
-          <Text style={styles.ghostButtonText}>Clear</Text>
-        </Pressable>
-      </View>
+              <Text style={styles.cardMeta}>Captured: {item.capture_ts}</Text>
+              {item.gps_lat != null && item.gps_lng != null && (
+                <Text style={styles.cardMeta}>
+                  {item.gps_lat.toFixed(5)}, {item.gps_lng.toFixed(5)}
+                </Text>
+              )}
+              {item.height_cm != null && <Text style={styles.cardMeta}>{item.height_cm} cm</Text>}
+              {item.morphology ? <Text style={styles.cardMeta}>{item.morphology}</Text> : null}
+
+              <View style={styles.cardFooter}>
+                <View style={[styles.syncPill, { backgroundColor: pill.color }]}>
+                  <Text style={styles.syncPillText}>{pill.text}</Text>
+                </View>
+                {item.sync_error ? (
+                  <Text numberOfLines={1} style={styles.syncError}>{item.sync_error}</Text>
+                ) : null}
+              </View>
+            </View>
+          );
+        }}
+      />
     </View>
   );
 }
@@ -83,6 +113,7 @@ const styles = StyleSheet.create({
   },
   empty: {
     alignItems: 'center',
+    justifyContent: 'center',
     padding: 48,
     gap: 8,
   },
@@ -102,57 +133,46 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 4,
   },
-  cardName: {
-    fontSize: 16,
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  cardTitleWrap: {
+    flex: 1,
+    gap: 2,
+  },
+  cardTitle: {
+    fontSize: 17,
     fontWeight: '700',
     color: colors.pine,
-    fontStyle: 'italic',
+    letterSpacing: 0.3,
   },
   cardMeta: {
     fontSize: 12,
     color: colors.muted,
   },
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 8,
+  },
   syncPill: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.chartreuse,
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 3,
-    marginTop: 6,
   },
   syncPillText: {
     fontSize: 11,
     fontWeight: '700',
-    color: colors.pine,
+    color: colors.white,
     textTransform: 'uppercase',
   },
-  actions: {
-    flexDirection: 'row',
-    gap: 10,
-    padding: 16,
-  },
-  primaryButton: {
+  syncError: {
     flex: 1,
-    backgroundColor: colors.emerald,
-    borderRadius: 24,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  primaryButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  ghostButton: {
-    backgroundColor: colors.sand,
-    borderRadius: 24,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-  },
-  ghostButtonText: {
-    color: colors.pine,
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 11,
+    color: colors.danger,
   },
 });

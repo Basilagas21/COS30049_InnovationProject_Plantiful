@@ -71,6 +71,9 @@ mobile/CLAUDE.md
 web/AGENTS.md
 web/CLAUDE.md
 
+# Claude Code local config
+.claude/
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db

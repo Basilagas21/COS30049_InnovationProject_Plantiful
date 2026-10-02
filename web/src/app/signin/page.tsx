@@ -120,7 +120,13 @@ export default function SignInPage() {
           </button>
         </form>
 
-        <Link href="/" className="mt-6 inline-block text-sm font-medium text-emerald hover:underline">
+        <p className="mt-6 text-sm text-moss">
+          New to Plantiful?{" "}
+          <Link href="/register" className="font-semibold text-emerald hover:underline">
+            Create an account
+          </Link>
+        </p>
+        <Link href="/" className="mt-4 inline-block text-sm font-medium text-emerald hover:underline">
           ← Back to home
         </Link>
       </div>

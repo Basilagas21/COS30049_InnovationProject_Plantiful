@@ -69,6 +69,10 @@ export function SpeciesMap({ points }: Props) {
     import("maplibre-gl").then((maplibregl) => {
       if (disposed) return;
 
+      // Turbopack rewrites import.meta.url, so MapLibre's default worker path
+      // 404s; serve the worker from our own route instead.
+      maplibregl.setWorkerUrl("/maplibre-worker");
+
       const lngs = points.map((p) => p.lng);
       const lats = points.map((p) => p.lat);
       const center: [number, number] = [

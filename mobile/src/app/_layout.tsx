@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { supabase } from '@/lib/supabase';
+import { NavLogger } from '@/lib/interactionLog';
 import { colors } from '@/theme';
 
 export default function RootLayout() {
@@ -44,6 +45,7 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="dark" />
+      <NavLogger />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={authed}>
           <Stack.Screen name="(tabs)" />

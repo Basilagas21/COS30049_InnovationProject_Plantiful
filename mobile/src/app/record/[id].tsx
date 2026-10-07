@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable } from '@/lib/interactionLog';
 import QRCode from 'react-native-qrcode-svg';
 import { colors } from '@/theme';
 import { deleteLocalRecord, getLocalRecord, openDatabase, type LocalRecordWithPhoto } from '@/db';

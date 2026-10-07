@@ -3,17 +3,15 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
+import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
 import { colors } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 

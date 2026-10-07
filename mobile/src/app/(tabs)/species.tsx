@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { Pressable, TextInput } from '@/lib/interactionLog';
 import { colors } from '@/theme';
 import { openDatabase, getSpeciesOptions, type SpeciesOption } from '@/db';
 

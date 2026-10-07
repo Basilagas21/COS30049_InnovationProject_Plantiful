@@ -5,16 +5,14 @@ import QRCode from 'react-native-qrcode-svg';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
+import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
 import { colors } from '@/theme';
 import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, isTagInUse, type SpeciesOption } from '@/db';
 import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/lib/location';

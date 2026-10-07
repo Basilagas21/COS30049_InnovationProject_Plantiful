@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable } from '@/lib/interactionLog';
 import { colors } from '@/theme';
 import { countUnsyncedRecords, deleteLocalRecord, getLocalRecords, openDatabase } from '@/db';
 

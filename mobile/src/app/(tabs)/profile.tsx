@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable } from '@/lib/interactionLog';
 import { colors } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { countUnsyncedRecords, openDatabase } from '@/db';

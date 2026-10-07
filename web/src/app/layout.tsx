@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { isOfficer } from "@/lib/auth";
 import { NavAuth } from "@/components/nav-auth";
+import { InteractionLogger } from "@/components/interaction-logger";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -38,6 +39,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-pine">
+        <InteractionLogger />
         <header className="sticky top-0 z-10 border-b border-pine/10 bg-cream/90 backdrop-blur">
           <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold text-pine">

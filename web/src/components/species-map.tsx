@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { MapPoint } from "@/lib/map";
+import { reportInteraction } from "@/lib/interactionLog";
 
 type Props = {
   points: MapPoint[];
@@ -204,6 +205,9 @@ export function SpeciesMap({ points }: Props) {
         map.on("click", "observations-circle", (e) => {
           const feature = e.features?.[0];
           if (!feature?.properties) return;
+          const props = feature.properties as Record<string, unknown>;
+          const name = String(props.commonName ?? props.label ?? "observation");
+          reportInteraction(`map marker "${name}" -> /records/${String(props.id)}`);
           router.push(`/records/${String(feature.properties.id)}`);
         });
 

@@ -22,7 +22,7 @@ backend/
 | Database | Supabase (PostgreSQL) |
 | Auth | Supabase Auth (email/password, JWT) |
 | Roles | `botanist`, `conservation_officer`, `admin`, `anon` |
-| Storage | Supabase Storage bucket `record-photos` |
+| Storage | Supabase Storage buckets `record-photos` (field photos), `species-photos`, `reports` |
 | Access control | Row Level Security (RLS) |
 | API | Supabase auto-generated REST (PostgREST) |
 
@@ -50,8 +50,8 @@ backend/
    Without the CLI, open Dashboard > SQL Editor and run `001_schema.sql` then `002_rls.sql` in order.
 
 4. **Enable auth** (issue #3): email/password provider, then run `seed.sql` to create officer and admin users and set their roles.
-5. **Create the storage bucket** and apply its policies (issue #4).
-6. **Verify security** (issue #26): run `scripts/verify_public_write_block.sql` and confirm anonymous inserts, updates, and deletes are rejected and no record can be published before it is approved (R7).
+5. **Create the storage buckets and apply their policies.** For a fresh project, run `001_schema.sql`, `002_rls.sql`, and `003_workflow_triggers.sql`; for the live project, run the consolidated `supabase/migrations/apply_project.sql` (contains schema backfill, RLS, triggers, and the `record-photos`, `species-photos`, and `reports` bucket policies).
+6. **Verify security** (issue #26): run `scripts/verify_public_write_block.sql` in the SQL editor and confirm every check passes — anonymous inserts, updates, and deletes are rejected, anonymous reads return only approved and published data, and no species can be published before it has an approved record (R7).
 
 ## Data model
 

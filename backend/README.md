@@ -50,7 +50,7 @@ backend/
    Without the CLI, open Dashboard > SQL Editor and run `001_schema.sql` then `002_rls.sql` in order.
 
 4. **Enable auth** (issue #3): email/password provider, then run `seed.sql` to create officer and admin users and set their roles.
-5. **Create the storage buckets and apply their policies.** For a fresh project, run `001_schema.sql`, `002_rls.sql`, and `003_workflow_triggers.sql`; for the live project, run the consolidated `supabase/migrations/apply_project.sql` (contains schema backfill, RLS, triggers, and the `record-photos`, `species-photos`, and `reports` bucket policies).
+5. **Create the storage buckets and apply their policies.** For a fresh project, run `001_schema.sql`, `002_rls.sql`, and `003_workflow_triggers.sql`; for the live project, run the consolidated `supabase/migrations/apply_project.sql` (contains schema backfill, RLS, triggers, and the `record-photos`, `species-photos`, and `reports` bucket policies). Upgrades are incremental: run `004_photo_visibility.sql` on a project created before it (photo reads now follow record approval instead of species publication).
 6. **Verify security** (issue #26): run `scripts/verify_public_write_block.sql` in the SQL editor and confirm every check passes — anonymous inserts, updates, and deletes are rejected, anonymous reads return only approved and published data, and no species can be published before it has an approved record (R7).
 
 ## Data model

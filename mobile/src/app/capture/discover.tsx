@@ -18,6 +18,7 @@ import {
 import { colors } from '@/theme';
 import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, type SpeciesOption } from '@/db';
 import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/lib/location';
+import { parseHeightCm } from '@/lib/validation';
 
 function generateTagId(): string {
   const stamp = Date.now().toString(36).toUpperCase();
@@ -46,6 +47,14 @@ export default function DiscoverPlantScreen() {
   const [speciesOptions, setSpeciesOptions] = useState<SpeciesOption[]>([]);
   const [checkQuery, setCheckQuery] = useState('');
   const [checkOpen, setCheckOpen] = useState(false);
+  const [selectedSpecies, setSelectedSpecies] = useState<SpeciesOption | null>(null);
+
+  const pickSpecies = useCallback((species: SpeciesOption) => {
+    setSelectedSpecies(species);
+    setCommonName(species.common_name ?? species.scientific_name);
+    setScientificName(species.scientific_name);
+    setCheckOpen(false);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -140,20 +149,30 @@ export default function DiscoverPlantScreen() {
       return;
     }
 
+    const height = parseHeightCm(heightCm);
+    if (height === undefined) {
+      Alert.alert('Check the height', 'Enter the height as a positive number of centimetres, e.g. 120 or 12.5.');
+      return;
+    }
+
     const db = await openDatabase();
-    const height = heightCm.trim();
     setSaving(true);
     try {
       const recordId = await insertLocalRecord(db, {
         qr_code: tagId,
-        provisional_name: name,
+        // A known species needs no provisional name; officers only confirm new discoveries.
+        species_id: selectedSpecies?.species_id ?? null,
+        provisional_name: selectedSpecies ? null : name,
         gps_lat: location?.lat ?? null,
         gps_lng: location?.lng ?? null,
         gps_accuracy_m: location?.accuracyM ?? null,
-        height_cm: height ? Number(height) : null,
+        height_cm: height,
         morphology: morphology.trim() || null,
         notes:
-          [scientificName.trim() && `Suggested scientific name: ${scientificName.trim()}`, notes.trim()]
+          [
+            !selectedSpecies && scientificName.trim() && `Suggested scientific name: ${scientificName.trim()}`,
+            notes.trim(),
+          ]
             .filter(Boolean)
             .join('\n') || null,
       });
@@ -168,7 +187,7 @@ export default function DiscoverPlantScreen() {
     } finally {
       setSaving(false);
     }
-  }, [tagId, commonName, scientificName, morphology, heightCm, notes, location, photoUri, router]);
+  }, [tagId, commonName, scientificName, selectedSpecies, morphology, heightCm, notes, location, photoUri, router]);
 
   if (!permission) {
     return (
@@ -227,9 +246,9 @@ export default function DiscoverPlantScreen() {
     >
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <View style={styles.card}>
-          <Text style={styles.sectionLabel}>ALREADY TAGGED? CHECK FIRST</Text>
+          <Text style={styles.sectionLabel}>KNOWN SPECIES? CHECK FIRST</Text>
           <Text style={styles.hint}>
-            Search the catalogue below. If the plant is already documented, scan its existing tag instead.
+            Search the species catalogue. If this plant already has a QR tag, scan it on the Capture tab instead.
           </Text>
           <TextInput
             style={styles.input}
@@ -246,23 +265,29 @@ export default function DiscoverPlantScreen() {
           {checkOpen && matches.length > 0 ? (
             <View style={styles.matchList}>
               {matches.map((species) => (
-                <View key={species.species_id} style={styles.matchRow}>
+                <Pressable
+                  key={species.species_id}
+                  style={styles.matchRow}
+                  onPress={() => pickSpecies(species)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Use ${species.scientific_name}`}
+                >
                   <View style={styles.matchBody}>
                     <Text style={styles.matchName}>{species.scientific_name}</Text>
                     {species.common_name ? (
                       <Text style={styles.matchCommon}>{species.common_name}</Text>
                     ) : null}
                   </View>
-                  <Ionicons name="checkmark-circle" size={18} color={colors.emerald} />
-                </View>
+                  <Ionicons
+                    name={selectedSpecies?.species_id === species.species_id ? 'checkmark-circle' : 'add-circle-outline'}
+                    size={18}
+                    color={colors.emerald}
+                  />
+                </Pressable>
               ))}
               <Text style={styles.matchNote}>
-                This plant is already tagged. Go back and scan its QR tag on the Capture tab.
+                This species is already in the catalogue. Tap it to tag this individual plant as that species.
               </Text>
-              <Pressable style={styles.ghostButton} onPress={() => router.back()}>
-                <Ionicons name="scan-outline" size={18} color={colors.pine} />
-                <Text style={styles.ghostButtonText}>Open scanner</Text>
-              </Pressable>
             </View>
           ) : checkQuery.trim() && checkOpen ? (
             <View style={styles.matchList}>
@@ -278,6 +303,16 @@ export default function DiscoverPlantScreen() {
 
         <View style={styles.card}>
           <Text style={styles.sectionLabel}>NAME THE PLANT</Text>
+          {selectedSpecies ? (
+            <Pressable
+              style={styles.ghostButton}
+              onPress={() => setSelectedSpecies(null)}
+              accessibilityLabel="Clear selected species"
+            >
+              <Ionicons name="close-circle-outline" size={18} color={colors.pine} />
+              <Text style={styles.ghostButtonText}>Species: {selectedSpecies.scientific_name} (tap to clear)</Text>
+            </Pressable>
+          ) : null}
           <TextInput
             style={styles.input}
             placeholder="Common name (required)"
@@ -291,7 +326,9 @@ export default function DiscoverPlantScreen() {
             onChangeText={setScientificName}
           />
           <Text style={styles.hint}>
-            This is a provisional name. An officer will confirm the species and publish it to the catalogue.
+            {selectedSpecies
+              ? 'Recorded as a known species. An officer will review the observation.'
+              : 'This is a provisional name. An officer will confirm the species and publish it to the catalogue.'}
           </Text>
         </View>
 

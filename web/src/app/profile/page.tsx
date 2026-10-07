@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import type { UserRole } from "@/lib/auth";
 
 const roleLabels: Record<UserRole, string> = {
@@ -15,11 +16,12 @@ const roleLabels: Record<UserRole, string> = {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(isSupabaseConfigured);
   const [email, setEmail] = useState<string | null>(null);
   const [role, setRole] = useState<UserRole | null>(null);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
     const supabase = createClient();
     let active = true;
 

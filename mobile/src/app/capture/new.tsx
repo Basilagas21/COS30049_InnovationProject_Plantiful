@@ -16,7 +16,15 @@ import {
   View,
 } from 'react-native';
 import { colors } from '@/theme';
-import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, type SpeciesOption } from '@/db';
+import {
+  openDatabase,
+  insertLocalRecord,
+  addLocalPhoto,
+  getLocalRecordByQR,
+  getSpeciesOptions,
+  type SpeciesOption,
+} from '@/db';
+import { parseHeightCm } from '@/lib/validation';
 import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 
 export default function NewCaptureScreen() {
@@ -116,17 +124,39 @@ export default function NewCaptureScreen() {
   }, [openLibrary]);
 
   const saveDraft = useCallback(async () => {
+    const tag = qrCode.trim();
+    if (!tag) {
+      Alert.alert('Tag required', 'Scan or type the plant\'s QR tag before saving.');
+      return;
+    }
+    const height = parseHeightCm(heightCm);
+    if (height === undefined) {
+      Alert.alert('Check the height', 'Enter the height as a positive number of centimetres, e.g. 120 or 12.5.');
+      return;
+    }
+
     const db = await openDatabase();
-    const height = heightCm.trim();
+    const existing = await getLocalRecordByQR(db, tag);
+    if (existing) {
+      Alert.alert('Tag already recorded', `Tag ${tag} already has a record on this device.`, [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Open record',
+          onPress: () => router.replace({ pathname: '/record/[id]', params: { id: existing.record_id } }),
+        },
+      ]);
+      return;
+    }
+
     setSaving(true);
     try {
       const recordId = await insertLocalRecord(db, {
-        qr_code: qrCode.trim() || null,
+        qr_code: tag,
         species_id: selectedSpecies?.species_id ?? null,
         gps_lat: location?.lat ?? null,
         gps_lng: location?.lng ?? null,
         gps_accuracy_m: location?.accuracyM ?? null,
-        height_cm: height ? Number(height) : null,
+        height_cm: height,
         morphology: morphology.trim() || null,
         notes: notes.trim() || null,
       });

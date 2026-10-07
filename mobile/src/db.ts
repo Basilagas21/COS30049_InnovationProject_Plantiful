@@ -1,3 +1,4 @@
+import { File } from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
 const DATABASE_NAME = 'plantiful.db';
@@ -139,7 +140,10 @@ export type LocalRecord = {
   created_at: string;
 };
 
-export type LocalRecordWithPhoto = LocalRecord & { photo_uri: string | null };
+export type LocalRecordWithPhoto = LocalRecord & {
+  photo_uri: string | null;
+  species_name: string | null;
+};
 
 export async function insertLocalRecord(
   db: SQLite.SQLiteDatabase,
@@ -202,8 +206,10 @@ export async function getLocalRecords(db: SQLite.SQLiteDatabase): Promise<LocalR
        r.gps_lat, r.gps_lng, r.gps_accuracy_m,
        r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
        r.sync_error, r.created_at,
+       COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
+     LEFT JOIN species_catalog s ON s.species_id = r.species_id
      ORDER BY r.capture_ts DESC`
   );
 }
@@ -217,8 +223,10 @@ export async function getLocalRecord(
        r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
        r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
        r.sync_error, r.created_at,
+       COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
+     LEFT JOIN species_catalog s ON s.species_id = r.species_id
      WHERE r.record_id = ?`,
     recordId
   );
@@ -233,27 +241,52 @@ export async function getLocalRecordByQR(
        r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
        r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
        r.sync_error, r.created_at,
+       COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
+     LEFT JOIN species_catalog s ON s.species_id = r.species_id
      WHERE r.qr_code = ?`,
     qrCode
   );
 }
 
+// Records still to push: new captures plus earlier attempts that failed, so a
+// lost connection mid-sync is retried on the next "Sync now".
 export async function getPendingRecords(db: SQLite.SQLiteDatabase): Promise<LocalRecord[]> {
   return db.getAllAsync<LocalRecord>(
-    `SELECT * FROM local_records WHERE sync_status = 'pending' ORDER BY capture_ts ASC`
+    `SELECT * FROM local_records WHERE sync_status IN ('pending', 'failed') ORDER BY capture_ts ASC`
   );
+}
+
+export async function countUnsyncedRecords(db: SQLite.SQLiteDatabase): Promise<number> {
+  const row = await db.getFirstAsync<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM local_records WHERE sync_status != 'synced'"
+  );
+  return row?.n ?? 0;
 }
 
 export async function getPhotosForRecord(
   db: SQLite.SQLiteDatabase,
   recordId: string
-): Promise<{ id: string; local_uri: string; capture_ts: string }[]> {
+): Promise<{ id: string; local_uri: string; capture_ts: string; sync_status: string }[]> {
   return db.getAllAsync(
-    'SELECT id, local_uri, capture_ts FROM local_photos WHERE record_id = ? ORDER BY capture_ts ASC',
+    'SELECT id, local_uri, capture_ts, sync_status FROM local_photos WHERE record_id = ? ORDER BY capture_ts ASC',
     recordId
   );
+}
+
+export async function markPhotoSynced(db: SQLite.SQLiteDatabase, photoId: string, serverUrl: string) {
+  await db.runAsync(
+    "UPDATE local_photos SET sync_status = 'synced', server_url = ? WHERE id = ?",
+    serverUrl,
+    photoId
+  );
+}
+
+// Remember the server row as soon as it exists, so a retry after a failed photo
+// upload reuses it instead of inserting a duplicate record.
+export async function setRecordServerId(db: SQLite.SQLiteDatabase, recordId: string, serverId: string) {
+  await db.runAsync('UPDATE local_records SET server_id = ? WHERE record_id = ?', serverId, recordId);
 }
 
 export async function markRecordSynced(
@@ -277,6 +310,18 @@ export async function markRecordFailed(db: SQLite.SQLiteDatabase, recordId: stri
 }
 
 export async function deleteLocalRecord(db: SQLite.SQLiteDatabase, recordId: string) {
+  const photos = await db.getAllAsync<{ local_uri: string }>(
+    'SELECT local_uri FROM local_photos WHERE record_id = ?',
+    recordId
+  );
+  for (const photo of photos) {
+    try {
+      const file = new File(photo.local_uri);
+      if (file.exists) file.delete();
+    } catch {
+      // A missing or unreadable file shouldn't block deleting the record.
+    }
+  }
   await db.runAsync('DELETE FROM local_photos WHERE record_id = ?', recordId);
   await db.runAsync('DELETE FROM local_records WHERE record_id = ?', recordId);
 }
@@ -317,37 +362,4 @@ export async function upsertSpeciesCatalog(
       now
     );
   }
-}
-
-// Keep for compatibility with the old in-progress UI until fully replaced.
-export type TestRecord = {
-  id: string;
-  species_name: string;
-  capture_ts: string;
-  sync_status: string;
-};
-
-export async function insertTestRecord(db: SQLite.SQLiteDatabase) {
-  const payload: TestRecord = {
-    id: `test-${Date.now()}`,
-    species_name: 'Rafflesia arnoldii',
-    capture_ts: new Date().toISOString(),
-    sync_status: 'pending',
-  };
-  await db.runAsync(
-    'INSERT INTO species_catalog (species_id, scientific_name) VALUES (?, ?)',
-    payload.id,
-    payload.species_name
-  );
-  return payload;
-}
-
-export async function getTestRecords(db: SQLite.SQLiteDatabase) {
-  return db.getAllAsync<TestRecord>(
-    "SELECT species_id AS id, scientific_name AS species_name, created_at AS capture_ts, 'pending' AS sync_status FROM species_catalog WHERE species_id LIKE 'test-%' ORDER BY created_at DESC"
-  );
-}
-
-export async function deleteTestRecords(db: SQLite.SQLiteDatabase) {
-  await db.runAsync("DELETE FROM species_catalog WHERE species_id LIKE 'test-%'");
 }

@@ -1,14 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme';
-import { openDatabase, deleteLocalRecord, getLocalRecords } from '@/db';
+import { countUnsyncedRecords, deleteLocalRecord, getLocalRecords, openDatabase } from '@/db';
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const [offlineMode, setOfflineMode] = useState(true);
-  const [autoScan, setAutoScan] = useState(true);
 
   async function clearAll() {
     const db = await openDatabase();
@@ -19,8 +16,13 @@ export default function SettingsScreen() {
     Alert.alert('Cleared', `${records.length} local record(s) removed from this device.`);
   }
 
-  function confirmClear() {
-    Alert.alert('Clear all local records?', 'This cannot be undone.', [
+  async function confirmClear() {
+    const db = await openDatabase();
+    const unsynced = await countUnsyncedRecords(db);
+    const warning = unsynced > 0
+      ? `${unsynced} record(s) have not been synced and will be lost permanently. This cannot be undone.`
+      : 'This cannot be undone.';
+    Alert.alert('Clear all local records?', warning, [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Clear', style: 'destructive', onPress: clearAll },
     ]);
@@ -28,42 +30,16 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.row}>
-        <Ionicons name="cloud-offline-outline" size={22} color={colors.pine} />
-        <View style={styles.rowBody}>
-          <Text style={styles.rowTitle}>Offline-first capture</Text>
-          <Text style={styles.rowHint}>Store records on device and sync later</Text>
-        </View>
-        <Switch
-          value={offlineMode}
-          onValueChange={setOfflineMode}
-          trackColor={{ true: colors.emerald, false: colors.sand }}
-        />
-      </View>
-
-      <View style={styles.row}>
-        <Ionicons name="scan-outline" size={22} color={colors.pine} />
-        <View style={styles.rowBody}>
-          <Text style={styles.rowTitle}>Auto-continue after scan</Text>
-          <Text style={styles.rowHint}>Ready for the next tag once the record is saved</Text>
-        </View>
-        <Switch
-          value={autoScan}
-          onValueChange={setAutoScan}
-          trackColor={{ true: colors.emerald, false: colors.sand }}
-        />
-      </View>
-
-      <Pressable style={styles.aboutBox} onPress={confirmClear}>
+      <View style={styles.aboutBox}>
         <Text style={styles.aboutTitle}>Plantiful</Text>
         <Text style={styles.aboutText}>
           Smart ground-truthing and digital biodiversity system for plant species documentation at Niah
-          National Park, Sarawak.
+          National Park, Sarawak. Captures are stored on this device and pushed when you press Sync now.
         </Text>
-        <Pressable style={styles.ghostButton}>
+        <Pressable style={styles.ghostButton} onPress={confirmClear} accessibilityRole="button">
           <Text style={styles.ghostButtonText}>Clear all local records</Text>
         </Pressable>
-      </Pressable>
+      </View>
 
       <Pressable style={styles.row} onPress={() => router.back()}>
         <Ionicons name="person-circle-outline" size={22} color={colors.pine} />

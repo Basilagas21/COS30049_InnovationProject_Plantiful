@@ -104,11 +104,22 @@ COS30049_InnovationProject_Plantiful/
 
 ### 1. Configure environment
 
-Copy the env templates and fill in the Supabase Project URL and anon key. These are only used on the client and are safe to expose. Values come from Supabase Dashboard > Project Settings > API.
+Create these two files (both are git-ignored) with the Supabase Project URL and anon key. These are only used on the client and are safe to expose. Values come from Supabase Dashboard > Project Settings > API.
+
+`mobile/.env`:
 
 ```
-cp mobile/.env.example mobile/.env
-cp web/.env.example web/.env.local
+EXPO_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=<anon key>
+# Optional, defaults to record-photos
+EXPO_PUBLIC_SUPABASE_PHOTO_BUCKET=record-photos
+```
+
+`web/.env.local`:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 ```
 
 ### 2. Set up the backend (one time)

@@ -36,8 +36,11 @@ export default function RecordsScreen() {
     }, [refresh])
   );
 
-  async function removeRecord(recordId: string, species: string) {
-    Alert.alert('Delete local record?', `${species} will be removed from this device only.`, [
+  async function removeRecord(recordId: string, label: string, syncStatus: string) {
+    const warning = syncStatus === 'synced'
+      ? `${label} will be removed from this device only.`
+      : `${label} has not been synced yet. Deleting it loses it permanently.`;
+    Alert.alert('Delete local record?', warning, [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete',
@@ -73,12 +76,15 @@ export default function RecordsScreen() {
             >
               <View style={styles.cardHeader}>
                 <View style={styles.cardTitleWrap}>
-                  <Text style={styles.cardTitle}>{item.provisional_name ?? item.qr_code ?? 'Untagged'}</Text>
-                  {item.provisional_name ? <Text style={styles.cardMeta}>Tag {item.qr_code}</Text> : null}
-                  {item.species_id && <Text style={styles.cardMeta}>species: {item.species_id}</Text>}
+                  <Text style={styles.cardTitle}>
+                    {item.provisional_name ?? item.species_name ?? item.qr_code ?? 'Untagged'}
+                  </Text>
+                  {item.provisional_name || item.species_name ? (
+                    <Text style={styles.cardMeta}>Tag {item.qr_code ?? '—'}</Text>
+                  ) : null}
                 </View>
                 <Pressable
-                  onPress={() => removeRecord(item.record_id, item.qr_code ?? 'record')}
+                  onPress={() => removeRecord(item.record_id, item.qr_code ?? 'This record', item.sync_status)}
                   hitSlop={8}
                   accessibilityLabel="Delete record"
                 >
@@ -86,7 +92,7 @@ export default function RecordsScreen() {
                 </Pressable>
               </View>
 
-              <Text style={styles.cardMeta}>Captured: {item.capture_ts}</Text>
+              <Text style={styles.cardMeta}>Captured: {new Date(item.capture_ts).toLocaleString()}</Text>
               {item.gps_lat != null && item.gps_lng != null && (
                 <Text style={styles.cardMeta}>
                   {item.gps_lat.toFixed(5)}, {item.gps_lng.toFixed(5)}

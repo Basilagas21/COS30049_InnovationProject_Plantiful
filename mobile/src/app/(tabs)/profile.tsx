@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+import { countUnsyncedRecords, openDatabase } from '@/db';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -31,8 +32,13 @@ export default function ProfileScreen() {
     await supabase.auth.signOut();
   }
 
-  function confirmSignOut() {
-    Alert.alert('Sign out?', 'You will need to sign in again to sync records.', [
+  async function confirmSignOut() {
+    const db = await openDatabase();
+    const unsynced = await countUnsyncedRecords(db);
+    const message = unsynced > 0
+      ? `${unsynced} record(s) on this device are not synced yet. Sync them first: whoever signs in next would upload them under their account.`
+      : 'You will need to sign in again to sync records.';
+    Alert.alert('Sign out?', message, [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Sign out', style: 'destructive', onPress: signOut },
     ]);

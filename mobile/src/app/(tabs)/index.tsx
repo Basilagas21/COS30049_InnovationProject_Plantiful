@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/theme';
@@ -12,22 +12,39 @@ export default function CaptureScreen() {
   const insets = useSafeAreaInsets();
   const [permission, requestPermission] = useCameraPermissions();
   const [torchOn, setTorchOn] = useState(false);
-  const [lastScan, setLastScan] = useState<{ id: string; type: string; data: string } | null>(null);
+  const [lastScan, setLastScan] = useState<{ data: string; recordId: string | null } | null>(null);
+  // The scanner fires on every frame while a tag is in view; only handle each tag once.
+  const handlingRef = useRef(false);
+  const lastHandledRef = useRef<string | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Coming back to this tab: allow the same tag to be scanned again.
+      lastHandledRef.current = null;
+      setLastScan(null);
+    }, [])
+  );
 
   async function onBarcodeScanned(result: BarcodeScanningResult) {
     if (result.type !== 'qr') return;
     const data = result.data.trim();
-    if (!data) return;
-    const db = await openDatabase();
-    const existing = await getLocalRecordByQR(db, data);
-    setLastScan({ id: data, type: result.type, data });
-    if (existing) {
-      router.push({ pathname: '/record/[id]', params: { id: existing.record_id } });
+    if (!data || handlingRef.current || lastHandledRef.current === data) return;
+    handlingRef.current = true;
+    lastHandledRef.current = data;
+    try {
+      const db = await openDatabase();
+      const existing = await getLocalRecordByQR(db, data);
+      setLastScan({ data, recordId: existing?.record_id ?? null });
+      if (existing) {
+        router.push({ pathname: '/record/[id]', params: { id: existing.record_id } });
+      }
+    } finally {
+      handlingRef.current = false;
     }
   }
 
-  function openRecord(id: string) {
-    router.navigate(`/capture/new?qr=${encodeURIComponent(id)}`);
+  function openRecord(recordId: string) {
+    router.push({ pathname: '/record/[id]', params: { id: recordId } });
   }
 
   function createRecord(id: string) {
@@ -86,15 +103,23 @@ export default function CaptureScreen() {
       <View style={styles.bottomCard}>
         {lastScan ? (
           <>
-            <Text style={styles.cardTitle}>Tag detected</Text>
+            <Text style={styles.cardTitle}>
+              {lastScan.recordId ? 'Tag detected' : 'New tag detected'}
+            </Text>
             <Text style={styles.cardMeta}>ID: {lastScan.data}</Text>
             <View style={styles.cardActions}>
-              <Pressable style={[styles.ghostButton, { flex: 1 }]} onPress={() => createRecord(lastScan.data)}>
-                <Text style={styles.ghostButtonText}>New record</Text>
-              </Pressable>
-              <Pressable style={[styles.primaryButton, { flex: 1 }]} onPress={() => openRecord(lastScan.data)}>
-                <Text style={styles.primaryButtonText}>Open record</Text>
-              </Pressable>
+              {lastScan.recordId ? (
+                <Pressable
+                  style={[styles.primaryButton, { flex: 1 }]}
+                  onPress={() => openRecord(lastScan.recordId!)}
+                >
+                  <Text style={styles.primaryButtonText}>Open record</Text>
+                </Pressable>
+              ) : (
+                <Pressable style={[styles.primaryButton, { flex: 1 }]} onPress={() => createRecord(lastScan.data)}>
+                  <Text style={styles.primaryButtonText}>New record</Text>
+                </Pressable>
+              )}
             </View>
           </>
         ) : (

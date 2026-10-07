@@ -15,6 +15,10 @@ export default function CaptureScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [torchOn, setTorchOn] = useState(false);
   const [lastScan, setLastScan] = useState<{ data: string; recordId: string | null } | null>(null);
+  // Android keeps handing the camera to whichever screen asks last; release it
+  // while this tab is blurred so a pushed camera screen doesn't leave a black
+  // frozen preview behind it.
+  const [focused, setFocused] = useState(false);
   // The scanner fires on every frame while a tag is in view; only handle each tag once.
   const handlingRef = useRef(false);
   const lastHandledRef = useRef<string | null>(null);
@@ -24,6 +28,8 @@ export default function CaptureScreen() {
       // Coming back to this tab: allow the same tag to be scanned again.
       lastHandledRef.current = null;
       setLastScan(null);
+      setFocused(true);
+      return () => setFocused(false);
     }, [])
   );
 
@@ -82,7 +88,7 @@ const data = normalizeTag(result.data);
         enableTorch={torchOn}
         barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
         onBarcodeScanned={onBarcodeScanned}
-        active
+        active={focused}
       />
 
       <Pressable

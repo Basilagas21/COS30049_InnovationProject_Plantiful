@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { File } from 'expo-file-system';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -8,9 +9,12 @@ import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import {
   getPendingRecords,
   getPhotosForRecord,
+  getSyncedPhotos,
+  markPhotoPending,
   markPhotoSynced,
   getRecordsByStatus,
   markRecordFailed,
+  markRecordPendingForRepair,
   markRecordSynced,
   openDatabase,
   setRecordServerId,
@@ -46,25 +50,54 @@ function describeSyncError(error: unknown, tag: string | null): string {
   return raw;
 }
 
+// True only when the object exists and is a plausible image. Earlier builds
+// uploaded a 14-byte "File not found" text page instead of photo bytes, so
+// size is checked before a photo is trusted as synced.
+async function isRemotePhotoHealthy(folder: string, name: string): Promise<boolean> {
+  try {
+    const { data, error } = await supabase!.storage
+      .from(PHOTO_BUCKET)
+      .list(folder, { search: name });
+    if (error) return false;
+    const object = data?.find((entry) => entry.name === name);
+    const size = object?.metadata?.size;
+    return Boolean(object) && typeof size === 'number' && size >= 1024;
+  } catch {
+    return false;
+  }
+}
+
+// Reads the captured file from disk and uploads its bytes directly. Never use
+// fetch() on a file URI here: it happily resolves to an error page and stores
+// that as the "photo".
 async function uploadPhoto(
   userId: string,
   recordId: string,
   photo: { id: string; local_uri: string }
-): Promise<string | null> {
-  try {
-    const response = await fetch(photo.local_uri);
-    const blob = await response.blob();
-    const path = `${userId}/${recordId}/${photo.id}.jpg`;
-    const { data, error } = await supabase!.storage
-      .from(PHOTO_BUCKET)
-      .upload(path, blob, { contentType: blob.type || 'image/jpeg', upsert: true });
-    if (error) throw error;
-    return supabase!.storage.from(PHOTO_BUCKET).getPublicUrl(data.path).data.publicUrl;
-  } catch (e) {
-    const detail = e instanceof Error ? e.message : 'unknown error';
-    console.warn(`[sync] photo upload failed for ${recordId}: ${detail}`);
-    return null;
+): Promise<string> {
+  if (!photo.local_uri.startsWith('file:')) {
+    throw new Error('Photo is not stored on this device — open the record and attach the photo again.');
   }
+
+  const file = new File(photo.local_uri);
+  if (!file.exists || (file.size ?? 0) < 1024) {
+    throw new Error('Photo file is missing on this device — open the record and attach the photo again.');
+  }
+
+  const bytes = await file.bytes();
+  const isJpeg = bytes[0] === 0xff && bytes[1] === 0xd8;
+  const isPng = bytes[0] === 0x89 && bytes[1] === 0x50;
+  if (!isJpeg && !isPng) {
+    throw new Error('Stored photo is not a valid image — attach the photo again.');
+  }
+
+  const contentType = isPng ? 'image/png' : 'image/jpeg';
+  const path = `${userId}/${recordId}/${photo.id}.jpg`;
+  const { data, error } = await supabase!.storage
+    .from(PHOTO_BUCKET)
+    .upload(path, new Blob([bytes], { type: contentType }), { contentType, upsert: true });
+  if (error) throw new Error(`Photo upload failed: ${error.message}`);
+  return supabase!.storage.from(PHOTO_BUCKET).getPublicUrl(data.path).data.publicUrl;
 }
 
 export default function SyncScreen() {
@@ -130,16 +163,32 @@ export default function SyncScreen() {
       await upsertSpeciesCatalog(db, species);
     }
 
+    setState('syncing');
+    setSynced(0);
+    setFailed(0);
+
+    // Self-heal pass: check photos already flagged synced against the bucket.
+    // A missing or truncated object (older builds uploaded an error page
+    // instead of image bytes) re-queues its record so the loop below
+    // re-uploads the real photo bytes with upsert.
+    try {
+      const syncedPhotos = await getSyncedPhotos(db);
+      for (const photo of syncedPhotos) {
+        const folder = `${session.session.user.id}/${photo.server_id}`;
+        if (await isRemotePhotoHealthy(folder, `${photo.id}.jpg`)) continue;
+        await markPhotoPending(db, photo.id);
+        await markRecordPendingForRepair(db, photo.record_id);
+      }
+    } catch (e) {
+      console.warn('[sync] photo repair scan failed:', e instanceof Error ? e.message : e);
+    }
+
     const rows = await getPendingRecords(db);
     if (rows.length === 0) {
       setState('done');
       setMessage('Nothing to sync. Captures made offline appear here as pending.');
       return;
     }
-
-    setState('syncing');
-    setSynced(0);
-    setFailed(0);
 
     // Count locally: the synced/failed state values are stale inside this callback.
     let syncedCount = 0;
@@ -202,13 +251,14 @@ export default function SyncScreen() {
         }
 
         const photos = await getPhotosForRecord(db, row.record_id);
+        const photoFolder = `${session.session.user.id}/${serverRecordId!}`;
         for (const photo of photos) {
           if (photo.sync_status === 'synced') continue;
 
-          const expectedPath = `${session.session.user.id}/${serverRecordId}/${photo.id}.jpg`;
+          const photoName = `${photo.id}.jpg`;
           const expectedUrl = supabase!.storage
             .from(PHOTO_BUCKET)
-            .getPublicUrl(expectedPath).data.publicUrl;
+            .getPublicUrl(`${photoFolder}/${photoName}`).data.publicUrl;
 
           const existingPhoto = await supabase
             .from('plant_record_photos')
@@ -217,17 +267,21 @@ export default function SyncScreen() {
             .eq('photo_url', expectedUrl)
             .maybeSingle();
 
-          if (existingPhoto.data) continue;
-
-          const photoUrl = await uploadPhoto(session.session.user.id, serverRecordId!, photo);
-          if (!photoUrl) {
-            throw new Error('Photo upload failed — check your connection and try again.');
+          const remoteHealthy = await isRemotePhotoHealthy(photoFolder, photoName);
+          if (existingPhoto.data && remoteHealthy) {
+            await markPhotoSynced(db, photo.id, expectedUrl);
+            continue;
           }
-          const { error: photoError } = await supabase.from('plant_record_photos').insert({
-            record_id: serverRecordId!,
-            photo_url: photoUrl,
-          });
-          if (photoError) throw photoError;
+
+          // Upload the real file bytes; upsert overwrites a broken object.
+          const photoUrl = await uploadPhoto(session.session.user.id, serverRecordId!, photo);
+          if (!existingPhoto.data) {
+            const { error: photoError } = await supabase.from('plant_record_photos').insert({
+              record_id: serverRecordId!,
+              photo_url: photoUrl,
+            });
+            if (photoError) throw photoError;
+          }
           await markPhotoSynced(db, photo.id, photoUrl);
         }
 

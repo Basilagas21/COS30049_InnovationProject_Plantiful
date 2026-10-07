@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { Alert, Pressable } from '@/lib/interactionLog';
+import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
 import { colors } from '@/theme';
 import {
   deleteLocalRecord,
@@ -10,6 +10,16 @@ import {
   openDatabase,
   type LocalRecordWithPhoto,
 } from '@/db';
+
+type SortKey = 'newest' | 'oldest';
+type StatusFilter = 'all' | 'pending' | 'synced' | 'failed';
+
+const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'pending', label: 'Pending' },
+  { key: 'synced', label: 'Synced' },
+  { key: 'failed', label: 'Failed' },
+];
 
 function syncLabel(status: string) {
   switch (status) {
@@ -25,6 +35,25 @@ function syncLabel(status: string) {
 export default function RecordsScreen() {
   const router = useRouter();
   const [records, setRecords] = useState<LocalRecordWithPhoto[]>([]);
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState<SortKey>('newest');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+
+  const filteredRecords = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const list = records.filter((item) => {
+      if (statusFilter !== 'all' && item.sync_status !== statusFilter) return false;
+      if (!q) return true;
+      const haystack = `${item.provisional_name ?? ''} ${item.species_name ?? ''} ${item.qr_code ?? ''}`;
+      return haystack.toLowerCase().includes(q);
+    });
+    list.sort((a, b) =>
+      sort === 'newest'
+        ? b.capture_ts.localeCompare(a.capture_ts)
+        : a.capture_ts.localeCompare(b.capture_ts)
+    );
+    return list;
+  }, [records, search, sort, statusFilter]);
 
   const refresh = useCallback(async () => {
     const db = await openDatabase();
@@ -57,15 +86,71 @@ export default function RecordsScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.toolbar}>
+        <View style={styles.searchWrap}>
+          <Ionicons name="search-outline" size={16} color={colors.muted} />
+          <TextInput
+            value={search}
+            onChangeText={setSearch}
+            placeholder="Search name or tag…"
+            placeholderTextColor={colors.muted}
+            style={styles.searchInput}
+            autoCapitalize="none"
+            autoCorrect={false}
+            returnKeyType="search"
+          />
+          {search ? (
+            <Pressable onPress={() => setSearch('')} hitSlop={8} accessibilityLabel="Clear search">
+              <Ionicons name="close-circle" size={16} color={colors.muted} />
+            </Pressable>
+          ) : null}
+        </View>
+
+        <Pressable
+          onPress={() => setSort((value) => (value === 'newest' ? 'oldest' : 'newest'))}
+          style={styles.sortButton}
+          accessibilityLabel={`Sorted ${sort === 'newest' ? 'newest first' : 'oldest first'}`}
+        >
+          <Ionicons
+            name={sort === 'newest' ? 'arrow-down' : 'arrow-up'}
+            size={14}
+            color={colors.emerald}
+          />
+          <Text style={styles.sortButtonText}>{sort === 'newest' ? 'Newest' : 'Oldest'}</Text>
+        </Pressable>
+
+        <View style={styles.chipRow}>
+          {STATUS_FILTERS.map((option) => (
+            <Pressable
+              key={option.key}
+              onPress={() => setStatusFilter(option.key)}
+              style={[styles.chip, statusFilter === option.key && styles.chipActive]}
+            >
+              <Text
+                style={[styles.chipText, statusFilter === option.key && styles.chipTextActive]}
+              >
+                {option.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
       <FlatList
-        data={records}
+        data={filteredRecords}
         keyExtractor={(item) => item.record_id}
         contentContainerStyle={styles.list}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="leaf-outline" size={48} color={colors.sand} />
-            <Text style={styles.emptyTitle}>No offline records</Text>
-            <Text style={styles.emptyHint}>Scan a plant tag and save a capture — it will appear here.</Text>
+            <Text style={styles.emptyTitle}>
+              {records.length === 0 ? 'No offline records' : 'No matches'}
+            </Text>
+            <Text style={styles.emptyHint}>
+              {records.length === 0
+                ? 'Scan a plant tag and save a capture — it will appear here.'
+                : 'Try a different search term or clear the filters above.'}
+            </Text>
           </View>
         }
         renderItem={({ item }) => {
@@ -123,6 +208,72 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,
+  },
+  toolbar: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 4,
+    gap: 10,
+  },
+  searchWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: colors.white,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.sand,
+    paddingHorizontal: 14,
+    height: 40,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.pine,
+    paddingVertical: 0,
+  },
+  sortButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 6,
+    backgroundColor: colors.sprout,
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    height: 34,
+  },
+  sortButtonText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.emerald,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  chip: {
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.sand,
+    backgroundColor: colors.white,
+    paddingHorizontal: 14,
+    height: 32,
+    justifyContent: 'center',
+  },
+  chipActive: {
+    backgroundColor: colors.emerald,
+    borderColor: colors.emerald,
+  },
+  chipText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  chipTextActive: {
+    color: colors.white,
   },
   list: {
     padding: 16,

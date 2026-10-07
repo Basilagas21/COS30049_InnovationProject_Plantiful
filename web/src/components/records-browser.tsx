@@ -10,12 +10,43 @@ type Props = {
   officer: boolean;
 };
 
+type SortKey = "newest" | "oldest";
+type StatusKey = "all" | "pending" | "approved" | "rejected";
+type RangeKey = "all" | "7d" | "30d" | "year";
+
+const STATUS_OPTIONS: { key: StatusKey; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "pending", label: "Pending" },
+  { key: "approved", label: "Approved" },
+  { key: "rejected", label: "Rejected" },
+];
+
+const RANGE_OPTIONS: { key: RangeKey; label: string }[] = [
+  { key: "all", label: "Any date" },
+  { key: "7d", label: "Last 7 days" },
+  { key: "30d", label: "Last 30 days" },
+  { key: "year", label: "This year" },
+];
+
+function rangeCutoff(range: RangeKey): number | null {
+  const now = Date.now();
+  if (range === "7d") return now - 7 * 86_400_000;
+  if (range === "30d") return now - 30 * 86_400_000;
+  if (range === "year") return new Date(new Date().getFullYear(), 0, 1).getTime();
+  return null;
+}
+
 export function RecordsBrowser({ records, officer }: Props) {
   const [query, setQuery] = useState("");
   // Scientific name of the picked species; the input shows the longer label.
   const [selected, setSelected] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [sort, setSort] = useState<SortKey>("newest");
+  const [status, setStatus] = useState<StatusKey>("all");
+  const [conservation, setConservation] = useState<string>("all");
+  const [range, setRange] = useState<RangeKey>("all");
+  const [photoOnly, setPhotoOnly] = useState(false);
 
   const speciesOptions = useMemo(() => {
     const seen = new Map<string, { key: string; label: string; match: string }>();
@@ -42,10 +73,38 @@ export function RecordsBrowser({ records, officer }: Props) {
       .slice(0, 8);
   }, [query, selected, speciesOptions]);
 
+  const conservationOptions = useMemo(() => {
+    const seen = new Set<string>();
+    for (const record of records) {
+      if (record.conservationStatus) seen.add(record.conservationStatus);
+    }
+    return [...seen].sort();
+  }, [records]);
+
+  const filtersActive =
+    status !== "all" ||
+    conservation !== "all" ||
+    range !== "all" ||
+    photoOnly ||
+    sort !== "newest";
+
   const visibleRecords = useMemo(() => {
-    if (!selected) return records;
-    return records.filter((record) => record.scientificName === selected);
-  }, [records, selected]);
+    const cutoff = rangeCutoff(range);
+    const list = records.filter((record) => {
+      if (selected && record.scientificName !== selected) return false;
+      if (status !== "all" && record.approvalStatus !== status) return false;
+      if (conservation !== "all" && record.conservationStatus !== conservation) return false;
+      if (cutoff != null && new Date(record.createdAt).getTime() < cutoff) return false;
+      if (photoOnly && !record.photoUrl) return false;
+      return true;
+    });
+    list.sort((a, b) =>
+      sort === "newest"
+        ? b.createdAt.localeCompare(a.createdAt)
+        : a.createdAt.localeCompare(b.createdAt)
+    );
+    return list;
+  }, [records, selected, status, conservation, range, photoOnly, sort]);
 
   function pick(option: { key: string; label: string }) {
     setSelected(option.key);
@@ -67,6 +126,14 @@ export function RecordsBrowser({ records, officer }: Props) {
     setSelected(null);
     setOpen(false);
     inputRef.current?.focus();
+  }
+
+  function clearFilters() {
+    setSort("newest");
+    setStatus("all");
+    setConservation("all");
+    setRange("all");
+    setPhotoOnly(false);
   }
 
   return (
@@ -146,11 +213,107 @@ export function RecordsBrowser({ records, officer }: Props) {
 
         <span className="ml-auto text-sm text-moss">
           {visibleRecords.length} {visibleRecords.length === 1 ? "record" : "records"}
-          {selected ? " filtered" : ""}
+          {selected || filtersActive ? " filtered" : ""}
         </span>
       </div>
 
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <label className="inline-flex h-10 items-center gap-2 rounded-full border border-pine/15 bg-white pl-4 pr-2 text-sm text-pine">
+          <span className="text-moss">Sort</span>
+          <select
+            aria-label="Sort records"
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            className="h-full rounded-full bg-transparent pr-2 font-semibold outline-none"
+          >
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </label>
+
+        <div className="inline-flex h-10 items-center rounded-full border border-pine/15 bg-white p-1">
+          {STATUS_OPTIONS.map((option) => (
+            <button
+              key={option.key}
+              type="button"
+              onClick={() => setStatus(option.key)}
+              className={`h-8 rounded-full px-3.5 text-xs font-semibold transition-colors ${
+                status === option.key
+                  ? "bg-emerald text-cream"
+                  : "text-moss hover:text-pine"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+
+        {conservationOptions.length > 0 && (
+          <label className="inline-flex h-10 items-center gap-2 rounded-full border border-pine/15 bg-white pl-4 pr-2 text-sm text-pine">
+            <span className="text-moss">Status</span>
+            <select
+              aria-label="Filter by conservation status"
+              value={conservation}
+              onChange={(e) => setConservation(e.target.value)}
+              className="h-full rounded-full bg-transparent pr-2 font-semibold outline-none"
+            >
+              <option value="all">Any</option>
+              {conservationOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+
+        <label className="inline-flex h-10 items-center gap-2 rounded-full border border-pine/15 bg-white pl-4 pr-2 text-sm text-pine">
+          <span className="text-moss">Date</span>
+          <select
+            aria-label="Filter by date range"
+            value={range}
+            onChange={(e) => setRange(e.target.value as RangeKey)}
+            className="h-full rounded-full bg-transparent pr-2 font-semibold outline-none"
+          >
+            {RANGE_OPTIONS.map((option) => (
+              <option key={option.key} value={option.key}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <button
+          type="button"
+          onClick={() => setPhotoOnly((value) => !value)}
+          aria-pressed={photoOnly}
+          className={`inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors ${
+            photoOnly
+              ? "border-emerald bg-emerald text-cream"
+              : "border-pine/15 bg-white text-moss hover:text-pine"
+          }`}
+        >
+          With photo
+        </button>
+
+        {filtersActive && (
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="inline-flex h-10 items-center gap-2 rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse"
+          >
+            Reset filters
+            <span aria-hidden="true">✕</span>
+          </button>
+        )}
+      </div>
+
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {visibleRecords.length === 0 && (
+          <div className="col-span-full rounded-2xl border border-pine/10 bg-white px-5 py-10 text-center text-sm text-moss">
+            No records match the current filters.
+          </div>
+        )}
         {visibleRecords.map((record) => (
           <div
             key={record.id}

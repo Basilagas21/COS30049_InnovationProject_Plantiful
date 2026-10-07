@@ -365,6 +365,36 @@ export async function markPhotoSynced(db: SQLite.SQLiteDatabase, photoId: string
   );
 }
 
+export type SyncedPhoto = {
+  id: string;
+  record_id: string;
+  server_id: string;
+};
+
+// Photos already flagged synced, joined to their server record id, so a sync
+// can verify the storage object really exists before trusting the flag.
+export async function getSyncedPhotos(db: SQLite.SQLiteDatabase): Promise<SyncedPhoto[]> {
+  return db.getAllAsync<SyncedPhoto>(
+    `SELECT p.id, p.record_id, r.server_id
+     FROM local_photos p
+     JOIN local_records r ON r.record_id = p.record_id
+     WHERE p.sync_status = 'synced' AND r.server_id IS NOT NULL`
+  );
+}
+
+export async function markPhotoPending(db: SQLite.SQLiteDatabase, photoId: string) {
+  await db.runAsync("UPDATE local_photos SET sync_status = 'pending' WHERE id = ?", photoId);
+}
+
+// Queues a record for re-upload after a repair WITHOUT touching `edited` —
+// re-sending a photo must not reset officer approval on the server row.
+export async function markRecordPendingForRepair(db: SQLite.SQLiteDatabase, recordId: string) {
+  await db.runAsync(
+    "UPDATE local_records SET sync_status = 'pending', sync_error = NULL WHERE record_id = ?",
+    recordId
+  );
+}
+
 // Remember the server row as soon as it exists, so a retry after a failed photo
 // upload reuses it instead of inserting a duplicate record.
 export async function setRecordServerId(db: SQLite.SQLiteDatabase, recordId: string, serverId: string) {

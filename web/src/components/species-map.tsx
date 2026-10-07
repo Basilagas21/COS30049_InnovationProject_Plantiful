@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import "maplibre-gl/dist/maplibre-gl.css";
 import type { MapPoint } from "@/lib/map";
 
 type Props = {
@@ -21,41 +22,193 @@ function statusColor(status: string | null): string {
   return "#076653";
 }
 
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (ch) => {
+    switch (ch) {
+      case "&":
+        return "&amp;";
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case '"':
+        return "&quot;";
+      default:
+        return "&#39;";
+    }
+  });
+}
+
 export function SpeciesMap({ points }: Props) {
-  const [hovered, setHovered] = useState<MapPoint | null>(null);
+  const router = useRouter();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
-  const bounds = useMemo(() => {
-    if (points.length === 0) return null;
-    const lats = points.map((p) => p.lat);
-    const lngs = points.map((p) => p.lng);
-    const minLat = Math.min(...lats);
-    const maxLat = Math.max(...lats);
-    const minLng = Math.min(...lngs);
-    const maxLng = Math.max(...lngs);
+  const observations = useMemo(
+    () => ({
+      type: "FeatureCollection" as const,
+      features: points.map((point) => ({
+        type: "Feature" as const,
+        geometry: {
+          type: "Point" as const,
+          coordinates: [point.lng, point.lat] as [number, number],
+        },
+        properties: { ...point, color: statusColor(point.conservationStatus) },
+      })),
+    }),
+    [points]
+  );
 
-    const padLat = Math.max((maxLat - minLat) * 0.2, 0.0005);
-    const padLng = Math.max((maxLng - minLng) * 0.2, 0.0005);
-    return {
-      minLat: minLat - padLat,
-      maxLat: maxLat + padLat,
-      minLng: minLng - padLng,
-      maxLng: maxLng + padLng,
-    };
-  }, [points]);
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-  const spaced = useMemo(() => {
-    const used = new Set<string>();
-    return points.map((point) => {
-      const key = `${point.lat.toFixed(4)}|${point.lng.toFixed(4)}`;
-      if (used.has(key)) {
-        return { ...point, offset: (used.size % 3) * 4 - 4 };
-      }
-      used.add(key);
-      return { ...point, offset: 0 };
+    let disposed = false;
+    let mapInstance: import("maplibre-gl").Map | null = null;
+
+    import("maplibre-gl").then((maplibregl) => {
+      if (disposed) return;
+
+      const lngs = points.map((p) => p.lng);
+      const lats = points.map((p) => p.lat);
+      const center: [number, number] = [
+        (Math.min(...lngs) + Math.max(...lngs)) / 2,
+        (Math.min(...lats) + Math.max(...lats)) / 2,
+      ];
+
+      const map = new maplibregl.Map({
+        container,
+        style: "https://tiles.openfreemap.org/styles/liberty",
+        center,
+        zoom: points.length === 1 ? 11 : 7,
+        pitch: 55,
+        bearing: -12,
+        maxPitch: 75,
+        attributionControl: { compact: true },
+      });
+      mapInstance = map;
+
+      map.addControl(
+        new maplibregl.NavigationControl({ visualizePitch: true, showCompass: true }),
+        "top-right"
+      );
+
+      const popup = new maplibregl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        offset: 14,
+        className: "species-popup",
+      });
+
+      map.on("load", () => {
+        if (disposed) return;
+
+        map.setProjection({ type: "globe" });
+
+        // Real 3D relief from the AWS Open Data elevation tiles (no key needed).
+        map.addSource("terrain-dem", {
+          type: "raster-dem",
+          encoding: "terrarium",
+          tiles: [
+            "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+          ],
+          tileSize: 256,
+          maxzoom: 15,
+          attribution: "Elevation: AWS Open Data (Terrarium)",
+        });
+        map.setTerrain({ source: "terrain-dem", exaggeration: 1.5 });
+
+        map.addSource("observations", { type: "geojson", data: observations });
+        map.addLayer({
+          id: "observations-circle",
+          type: "circle",
+          source: "observations",
+          paint: {
+            "circle-color": ["get", "color"],
+            "circle-radius": 7,
+            "circle-stroke-width": 2,
+            "circle-stroke-color": "#ffffff",
+          },
+        });
+
+        if (points.length > 1) {
+          const bounds = new maplibregl.LngLatBounds(
+            [Math.min(...lngs), Math.min(...lats)],
+            [Math.max(...lngs), Math.max(...lats)]
+          );
+          map.fitBounds(bounds, { padding: 64, maxZoom: 12, duration: 0 });
+        }
+
+        const showPopup = (feature: GeoJSON.Feature) => {
+          const props = feature.properties as Record<string, unknown>;
+          const label = String(props.label ?? "Observation");
+          const commonName = props.commonName ? String(props.commonName) : null;
+          const status = props.conservationStatus
+            ? String(props.conservationStatus)
+            : null;
+          const meta = [
+            props.heightCm != null ? `${props.heightCm} cm` : null,
+            props.createdAt ? new Date(String(props.createdAt)).toLocaleDateString() : null,
+          ]
+            .filter(Boolean)
+            .join(" · ");
+
+          const rows = [
+            `<strong>${escapeHtml(label)}</strong>`,
+            commonName ? escapeHtml(commonName) : "",
+            status
+              ? `<span style="color:${statusColor(status)}">${escapeHtml(status)}</span>`
+              : "",
+          ].filter(Boolean);
+
+          popup
+            .setHTML(
+              `${rows.join("<br/>")}${
+                meta
+                  ? `<br/><span style="color:#6b7568;font-size:11px">${escapeHtml(meta)}</span>`
+                  : ""
+              }`
+            )
+            .addTo(map);
+        };
+
+        map.on("mouseenter", "observations-circle", (e) => {
+          map.getCanvas().style.cursor = "pointer";
+          const feature = e.features?.[0];
+          if (!feature) return;
+          popup.setLngLat(e.lngLat);
+          showPopup(feature);
+        });
+
+        map.on("mousemove", "observations-circle", (e) => {
+          if (popup.isOpen()) popup.setLngLat(e.lngLat);
+        });
+
+        map.on("mouseleave", "observations-circle", () => {
+          map.getCanvas().style.cursor = "";
+          popup.remove();
+        });
+
+        map.on("click", "observations-circle", (e) => {
+          const feature = e.features?.[0];
+          if (!feature?.properties) return;
+          router.push(`/records/${String(feature.properties.id)}`);
+        });
+
+        setLoaded(true);
+      });
     });
-  }, [points]);
 
-  if (!bounds || points.length === 0) {
+    return () => {
+      disposed = true;
+      mapInstance?.remove();
+      mapInstance = null;
+    };
+  }, [observations, points, router]);
+
+  const speciesCount = new Set(points.map((p) => p.label)).size;
+
+  if (points.length === 0) {
     return (
       <div className="relative min-h-[420px] overflow-hidden rounded-3xl border border-pine/10 bg-sprout/50">
         <div className="flex h-full min-h-[420px] items-center justify-center p-8">
@@ -68,119 +221,22 @@ export function SpeciesMap({ points }: Props) {
     );
   }
 
-  const WIDTH = 720;
-  const HEIGHT = 420;
-  const MARGIN = 24;
-  const viewport = bounds;
-
-  function toXY(lat: number, lng: number) {
-    const x =
-      MARGIN +
-      ((lng - viewport.minLng) / (viewport.maxLng - viewport.minLng)) * (WIDTH - MARGIN * 2);
-    const y =
-      MARGIN +
-      ((viewport.maxLat - lat) / (viewport.maxLat - viewport.minLat)) * (HEIGHT - MARGIN * 2);
-    return { x, y };
-  }
-
-  const speciesCount = new Set(points.map((p) => p.label)).size;
-
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div className="relative min-h-[420px] overflow-hidden rounded-3xl border border-pine/10 bg-sprout/50">
-        <svg
-          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-          className="h-[420px] w-full"
-          role="img"
-          aria-label="Species distribution map"
-        >
-          {/* Grid */}
-          {Array.from({ length: 8 }, (_, i) => {
-            const gx = (i / 7) * WIDTH;
-            const gy = (i / 7) * HEIGHT;
-            return (
-              <g key={i}>
-                <line
-                  x1={gx}
-                  y1={0}
-                  x2={gx}
-                  y2={HEIGHT}
-                  stroke="#076653"
-                  strokeOpacity={0.06}
-                />
-                <line
-                  x1={0}
-                  y1={gy}
-                  x2={WIDTH}
-                  y2={gy}
-                  stroke="#076653"
-                  strokeOpacity={0.06}
-                />
-              </g>
-            );
-          })}
+        <div ref={containerRef} className="h-[420px] w-full" />
+        {!loaded && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-sprout/60">
+            <p className="text-sm text-moss">Loading 3D terrain map…</p>
+          </div>
+        )}
 
-          {/* Points */}
-          {spaced.map((point) => {
-            const { x, y } = toXY(point.lat, point.lng);
-            const r = point.conservationStatus ? 7 : 5.5;
-            return (
-              <g
-                key={`${point.id}-${point.offset}`}
-                onMouseEnter={() => setHovered(point)}
-                onMouseLeave={() => setHovered(null)}
-              >
-                <Link href={`/records/${point.id}`} tabIndex={-1}>
-                  <circle
-                    cx={x + point.offset}
-                    cy={y + point.offset}
-                    r={r + 4}
-                    fill="transparent"
-                  />
-                  <circle
-                    cx={x + point.offset}
-                    cy={y + point.offset}
-                    r={r}
-                    fill={statusColor(point.conservationStatus)}
-                    stroke="#fff"
-                    strokeWidth={2}
-                  />
-                </Link>
-              </g>
-            );
-          })}
-
-          {hovered && (
-            <g transform="translate(16,16)">
-              <rect rx={10} width={220} height={86} fill="#fff" opacity={0.96} />
-              <text x={14} y={26} fontSize={13} fontWeight="700" fill="#0c342c">
-                {hovered.label.length > 28
-                  ? `${hovered.label.slice(0, 28)}…`
-                  : hovered.label}
-              </text>
-              {hovered.commonName && (
-                <text x={14} y={44} fontSize={12} fill="#6b7568">
-                  {hovered.commonName}
-                </text>
-              )}
-              {hovered.conservationStatus && (
-                <text x={14} y={62} fontSize={12} fontWeight="600" fill="#b54a3b">
-                  {hovered.conservationStatus}
-                </text>
-              )}
-              <text x={14} y={78} fontSize={11} fill="#6b7568">
-                {hovered.heightCm != null ? `${hovered.heightCm} cm · ` : ""}
-                {new Date(hovered.createdAt).toLocaleDateString()}
-              </text>
-            </g>
-          )}
-        </svg>
-
-        <div className="absolute top-4 left-4 flex flex-col gap-2 rounded-2xl bg-white/90 px-4 py-3 shadow-md backdrop-blur">
+        <div className="absolute top-4 left-4 flex flex-col gap-1 rounded-2xl bg-white/90 px-4 py-3 shadow-md backdrop-blur">
           <p className="text-xs font-semibold uppercase tracking-wide text-moss">
             {points.length} observations
           </p>
           <p className="text-lg font-bold text-pine">{speciesCount} species</p>
+          <p className="text-[11px] text-moss">3D terrain · OSM</p>
         </div>
       </div>
 
@@ -221,6 +277,11 @@ export function SpeciesMap({ points }: Props) {
               <span className="inline-block h-3 w-3 rounded-full bg-[#076653]" /> Not threatened
             </li>
           </ul>
+        </div>
+
+        <div className="rounded-2xl border border-pine/10 bg-white p-5 text-xs text-moss">
+          Drag to tilt, scroll to zoom, click a marker to open its record.
+          Basemap © OpenStreetMap contributors · MapLibre · OpenFreeMap.
         </div>
       </aside>
     </div>

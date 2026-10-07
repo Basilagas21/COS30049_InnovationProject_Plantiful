@@ -22,7 +22,7 @@ backend/
 | Database | Supabase (PostgreSQL) |
 | Auth | Supabase Auth (email/password, JWT) |
 | Roles | `botanist`, `conservation_officer`, `admin`, `anon` |
-| Storage | Supabase Storage bucket `plant-photos` |
+| Storage | Supabase Storage bucket `record-photos` |
 | Access control | Row Level Security (RLS) |
 | API | Supabase auto-generated REST (PostgREST) |
 

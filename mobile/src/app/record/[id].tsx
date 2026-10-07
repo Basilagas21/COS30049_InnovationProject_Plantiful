@@ -50,7 +50,9 @@ export default function RecordDetailScreen() {
   function confirmDelete() {
     Alert.alert(
       'Delete local record?',
-      `${rec.qr_code ?? 'This record'} will be removed from this device only.`,
+      rec.sync_status === 'synced'
+        ? `${rec.qr_code ?? 'This record'} will be removed from this device only.`
+        : `${rec.qr_code ?? 'This record'} has not been synced yet. Deleting it loses it permanently.`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -90,7 +92,7 @@ export default function RecordDetailScreen() {
             <Text style={styles.meta}>Provisional name — awaiting species confirmation</Text>
           </>
         ) : null}
-        {rec.species_id && <Text style={styles.meta}>species: {rec.species_id}</Text>}
+        {rec.species_name ? <Text style={styles.meta}>Species: {rec.species_name}</Text> : null}
 
         <View style={styles.divider} />
 

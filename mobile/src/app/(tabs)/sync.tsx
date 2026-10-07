@@ -1,21 +1,24 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import {
   getPendingRecords,
   getPhotosForRecord,
+  markPhotoSynced,
   markRecordFailed,
   markRecordSynced,
   openDatabase,
+  setRecordServerId,
   upsertSpeciesCatalog,
 } from '@/db';
 
 type SyncState = 'idle' | 'syncing' | 'done' | 'error';
 
-const PHOTO_BUCKET = 'record-photos';
+// Must match the Supabase Storage bucket created for record photos.
+const PHOTO_BUCKET = process.env.EXPO_PUBLIC_SUPABASE_PHOTO_BUCKET || 'record-photos';
 
 async function uploadPhoto(
   userId: string,
@@ -47,17 +50,19 @@ export default function SyncScreen() {
   const [message, setMessage] = useState('');
   const [needsAuth, setNeedsAuth] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const db = await openDatabase();
-      const rows = await getPendingRecords(db);
-      if (!cancelled) setPending(rows.length);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      (async () => {
+        const db = await openDatabase();
+        const rows = await getPendingRecords(db);
+        if (!cancelled) setPending(rows.length);
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, [])
+  );
 
   const runSync = useCallback(async () => {
     if (!isSupabaseConfigured || !supabase) {
@@ -94,59 +99,73 @@ export default function SyncScreen() {
     setSynced(0);
     setFailed(0);
 
+    // Count locally: the synced/failed state values are stale inside this callback.
+    let syncedCount = 0;
+    let failedCount = 0;
+
     for (const row of rows) {
       try {
-        const { data: inserted, error } = await supabase
-          .from('plant_records')
-          .insert({
-            botanist_id: session.session.user.id,
-            species_id: row.species_id,
-            provisional_name: row.provisional_name,
-            qr_code: row.qr_code,
-            gps_lat: row.gps_lat,
-            gps_lng: row.gps_lng,
-            gps_accuracy_m: row.gps_accuracy_m,
-            height_cm: row.height_cm,
-            morphology: row.morphology,
-            notes: row.notes,
-            status: 'submitted',
-            approval_status: 'pending',
-            device_id: row.record_id,
-          })
-          .select('record_id')
-          .single();
+        let serverId = row.server_id;
+        if (!serverId) {
+          const { data: inserted, error } = await supabase
+            .from('plant_records')
+            .insert({
+              botanist_id: session.session.user.id,
+              species_id: row.species_id,
+              provisional_name: row.provisional_name,
+              qr_code: row.qr_code,
+              gps_lat: row.gps_lat,
+              gps_lng: row.gps_lng,
+              gps_accuracy_m: row.gps_accuracy_m,
+              height_cm: row.height_cm,
+              morphology: row.morphology,
+              notes: row.notes,
+              status: 'submitted',
+              approval_status: 'pending',
+              device_id: row.record_id,
+            })
+            .select('record_id')
+            .single();
 
-        if (error) throw error;
+          if (error) throw error;
+          serverId = inserted.record_id;
+          await setRecordServerId(db, row.record_id, serverId);
+        }
 
         const photos = await getPhotosForRecord(db, row.record_id);
         for (const photo of photos) {
-          const photoUrl = await uploadPhoto(session.session.user.id, inserted.record_id, photo);
+          if (photo.sync_status === 'synced') continue;
+          const photoUrl = await uploadPhoto(session.session.user.id, serverId, photo);
           if (!photoUrl) {
             throw new Error('Photo upload failed — check your connection and try again.');
           }
-          await supabase.from('plant_record_photos').insert({
-            record_id: inserted.record_id,
+          const { error: photoError } = await supabase.from('plant_record_photos').insert({
+            record_id: serverId,
             photo_url: photoUrl,
           });
+          if (photoError) throw photoError;
+          await markPhotoSynced(db, photo.id, photoUrl);
         }
 
-        await markRecordSynced(db, row.record_id, inserted.record_id);
+        await markRecordSynced(db, row.record_id, serverId);
 
-        setSynced((n) => n + 1);
+        syncedCount += 1;
+        setSynced(syncedCount);
       } catch (e) {
         const msg = e instanceof Error ? e.message : 'Unknown sync error';
         await markRecordFailed(db, row.record_id, msg);
-        setFailed((n) => n + 1);
+        failedCount += 1;
+        setFailed(failedCount);
       }
     }
 
     const remaining = await getPendingRecords(db);
     setPending(remaining.length);
-    setState(failed > 0 ? 'error' : 'done');
-    setMessage(failed > 0
-      ? `Synced ${synced}, ${failed} failed. Tap a failed record in Records for the reason.`
-      : `All done — ${synced} record(s) pushed to the central database as submitted.`);
-  }, [synced, failed]);
+    setState(failedCount > 0 ? 'error' : 'done');
+    setMessage(failedCount > 0
+      ? `Synced ${syncedCount}, ${failedCount} failed. Failed records retry next time you press Sync now; tap one in Records for the reason.`
+      : `All done — ${syncedCount} record(s) pushed to the central database as submitted.`);
+  }, []);
 
   const connected = isSupabaseConfigured && supabase !== null;
 

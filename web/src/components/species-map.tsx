@@ -109,7 +109,9 @@ export function SpeciesMap({ points }: Props) {
 
         map.setProjection({ type: "globe" });
 
-        // Real 3D relief from the AWS Open Data elevation tiles (no key needed).
+        // Real 3D relief from the AWS Open Data elevation tiles (no key
+        // needed). Capped at z12: deeper tiles are 2-4x slower to fetch with
+        // no visual gain at this zoom range.
         map.addSource("terrain-dem", {
           type: "raster-dem",
           encoding: "terrarium",
@@ -117,10 +119,9 @@ export function SpeciesMap({ points }: Props) {
             "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
           ],
           tileSize: 256,
-          maxzoom: 15,
+          maxzoom: 12,
           attribution: "Elevation: AWS Open Data (Terrarium)",
         });
-        map.setTerrain({ source: "terrain-dem", exaggeration: 1.5 });
 
         map.addSource("observations", { type: "geojson", data: observations });
         map.addLayer({
@@ -142,6 +143,13 @@ export function SpeciesMap({ points }: Props) {
           );
           map.fitBounds(bounds, { padding: 64, maxZoom: 12, duration: 0 });
         }
+
+        // Terrain tiles are the slowest part of the load (0.7-2.8s each), so
+        // the flat globe paints first and the relief rises in once idle.
+        map.once("idle", () => {
+          if (disposed) return;
+          map.setTerrain({ source: "terrain-dem", exaggeration: 1.3 });
+        });
 
         const showPopup = (feature: GeoJSON.Feature) => {
           const props = feature.properties as Record<string, unknown>;

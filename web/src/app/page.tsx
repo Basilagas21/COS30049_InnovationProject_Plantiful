@@ -21,10 +21,10 @@ export default function Home() {
             </p>
             <div className="mt-9 flex flex-col gap-4 text-base font-medium sm:flex-row">
               <Link
-                href="/records"
+                href="/explore"
                 className="flex h-12 items-center justify-center rounded-full bg-emerald px-8 text-cream transition-colors hover:bg-pine"
               >
-                Browse plant records
+                Explore the plant guide
               </Link>
               <Link
                 href="/map"

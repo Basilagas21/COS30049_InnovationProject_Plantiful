@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import { isOfficer } from "@/lib/auth";
 import { NavAuth } from "@/components/nav-auth";
 import "./globals.css";
 
@@ -20,13 +21,17 @@ export const metadata: Metadata = {
   description: "Rapid biodiversity assessment knowledge system",
 };
 
-const navLinks = [
-  { href: "/records", label: "Records" },
-  { href: "/map", label: "Map" },
-  { href: "/profile", label: "Profile" },
-];
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const officer = await isOfficer();
+  const navLinks = [
+    { href: "/explore", label: "Explore" },
+    { href: "/species", label: "Species" },
+    { href: "/map", label: "Map" },
+    { href: "/records", label: "Records" },
+    { href: "/profile", label: "Profile" },
+    ...(officer ? [{ href: "/reports", label: "Reports" }] : []),
+  ];
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"

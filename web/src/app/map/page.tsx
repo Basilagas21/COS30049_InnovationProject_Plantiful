@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { fetchRecords } from "@/lib/records";
+import { fetchMapPoints } from "@/lib/map";
+import { SpeciesMap } from "@/components/species-map";
 
 export default async function MapPage() {
   const { records, error, usingSampleData } = await fetchRecords();
+  const points = await fetchMapPoints();
   const located = records.filter((r) => r.gpsLat != null && r.gpsLng != null);
   const speciesCount = new Set(records.map((r) => r.scientificName)).size;
   const pendingCount = records.filter((r) => r.approvalStatus === "pending").length;
@@ -13,7 +16,7 @@ export default async function MapPage() {
         Species map
       </h1>
       <p className="mt-2 text-moss">
-        Field observations by GPS coordinate
+        Approved field observations plotted by GPS coordinate
         {usingSampleData ? " (sample data)" : ""}
       </p>
 
@@ -23,10 +26,14 @@ export default async function MapPage() {
         </div>
       )}
 
+      <div className="mt-8">
+        <SpeciesMap points={points} />
+      </div>
+
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="overflow-hidden rounded-3xl border border-pine/10 bg-white">
           <div className="border-b border-pine/10 bg-sprout/50 px-5 py-3 text-sm text-moss">
-            Interactive map coming soon. Located observations are listed below.
+            Located observations
           </div>
           {located.length === 0 ? (
             <p className="px-5 py-6 text-sm text-moss">No observations with GPS yet.</p>

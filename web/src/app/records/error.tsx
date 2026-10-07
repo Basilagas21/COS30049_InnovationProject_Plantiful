@@ -14,7 +14,14 @@ export default function RecordsError({
       <h1 className="text-2xl font-bold tracking-tight text-pine">
         Something went wrong
       </h1>
-      <p className="mt-3 text-sm text-danger">{error.message}</p>
+      {/* Production builds hide server error messages, so show a fixed hint. */}
+      <p className="mt-3 text-sm text-danger">
+        Could not load this record. Check the connection to the database and
+        try again.
+      </p>
+      {error.digest && (
+        <p className="mt-1 text-xs text-moss">Error reference: {error.digest}</p>
+      )}
       <div className="mt-6 flex gap-3">
         <button
           type="button"

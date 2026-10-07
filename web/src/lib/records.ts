@@ -261,7 +261,7 @@ export async function fetchRecords(): Promise<RecordsResult> {
   if (error || !data) {
     return {
       records: [],
-      error: error?.message ?? "Could not load records.",
+      error: error?.message || "Could not reach Supabase.",
       usingSampleData: false,
     };
   }
@@ -288,7 +288,7 @@ export async function fetchRecordById(id: string): Promise<RecordDetail | null> 
     .maybeSingle();
 
   if (error) {
-    throw new Error(`Could not load record: ${error.message}`);
+    throw new Error(`Could not load record: ${error.message || "could not reach Supabase"}`);
   }
   return data ? toListItem(data) : null;
 }

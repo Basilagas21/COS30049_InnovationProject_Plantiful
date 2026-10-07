@@ -12,16 +12,18 @@ type Props = {
 
 export function RecordsBrowser({ records, officer }: Props) {
   const [query, setQuery] = useState("");
+  // Scientific name of the picked species; the input shows the longer label.
   const [selected, setSelected] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const speciesOptions = useMemo(() => {
-    const seen = new Map<string, { label: string; match: string }>();
+    const seen = new Map<string, { key: string; label: string; match: string }>();
     for (const record of records) {
       const key = record.scientificName;
       if (!seen.has(key)) {
         seen.set(key, {
+          key,
           label: record.commonName
             ? `${record.scientificName} (${record.commonName})`
             : record.scientificName,
@@ -34,7 +36,7 @@ export function RecordsBrowser({ records, officer }: Props) {
 
   const suggestions = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q || selected === query.trim()) return [];
+    if (!q || selected) return [];
     return speciesOptions
       .filter((option) => option.match.includes(q))
       .slice(0, 8);
@@ -45,9 +47,9 @@ export function RecordsBrowser({ records, officer }: Props) {
     return records.filter((record) => record.scientificName === selected);
   }, [records, selected]);
 
-  function pick(label: string) {
-    setSelected(label);
-    setQuery(label);
+  function pick(option: { key: string; label: string }) {
+    setSelected(option.key);
+    setQuery(option.label);
     setOpen(false);
   }
 
@@ -56,7 +58,7 @@ export function RecordsBrowser({ records, officer }: Props) {
       setOpen(false);
     }
     if (e.key === "Enter" && suggestions.length > 0) {
-      pick(suggestions[0].label);
+      pick(suggestions[0]);
     }
   }
 
@@ -73,12 +75,14 @@ export function RecordsBrowser({ records, officer }: Props) {
         <div className="relative w-full sm:w-80">
           <input
             ref={inputRef}
-            type="search"
+            type="text"
+            inputMode="search"
+            aria-label="Search species"
             value={query}
             placeholder="Search species…"
             onChange={(e) => {
               setQuery(e.target.value);
-              if (e.target.value.trim().length === 0) setSelected(null);
+              setSelected(null);
               setOpen(true);
             }}
             onFocus={() => setOpen(true)}
@@ -117,7 +121,7 @@ export function RecordsBrowser({ records, officer }: Props) {
                   <button
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => pick(option.label)}
+                    onClick={() => pick(option)}
                     className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm transition-colors hover:bg-sprout"
                   >
                     <span className="font-medium text-pine">{option.label}</span>
@@ -135,7 +139,7 @@ export function RecordsBrowser({ records, officer }: Props) {
             onClick={clearSearch}
             className="inline-flex h-10 items-center gap-2 rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse"
           >
-            {selected.split(" (")[0]}
+            {selected}
             <span aria-hidden="true">✕</span>
           </button>
         )}
@@ -181,7 +185,9 @@ export function RecordsBrowser({ records, officer }: Props) {
                 </h3>
                 <div className="mt-4 flex items-center justify-between text-sm">
                   <span className="text-moss">
-                    {record.gpsLat?.toFixed(4)}, {record.gpsLng?.toFixed(4)} ·{" "}
+                    {record.gpsLat != null && record.gpsLng != null
+                      ? `${record.gpsLat.toFixed(4)}, ${record.gpsLng.toFixed(4)} · `
+                      : "No GPS · "}
                     {new Date(record.createdAt).toLocaleDateString("en-GB")}
                   </span>
                   <span

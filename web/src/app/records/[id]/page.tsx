@@ -50,7 +50,11 @@ export default async function RecordDetailPage({
                 ? "New discovery · unconfirmed species"
                 : record.isPublished
                   ? "Published"
-                  : `Pending ${record.approvalStatus}`}
+                  : record.approvalStatus === "pending"
+                    ? "Pending review"
+                    : record.approvalStatus === "approved"
+                      ? "Approved"
+                      : "Rejected"}
             </span>
             <h1 className="mt-3 text-4xl font-bold tracking-tight text-pine">
               {record.scientificName}
@@ -72,7 +76,7 @@ export default async function RecordDetailPage({
               {
                 label: "Coordinates",
                 value: record.gpsLat != null && record.gpsLng != null
-                  ? `${record.gpsLat.toFixed(4)}° N, ${record.gpsLng.toFixed(4)}° E${
+                  ? `${Math.abs(record.gpsLat).toFixed(4)}° ${record.gpsLat >= 0 ? "N" : "S"}, ${Math.abs(record.gpsLng).toFixed(4)}° ${record.gpsLng >= 0 ? "E" : "W"}${
                       record.gpsAccuracyM != null ? ` (±${record.gpsAccuracyM.toFixed(1)} m)` : ""
                     }`
                   : "—",
@@ -118,8 +122,8 @@ export default async function RecordDetailPage({
             <div className="rounded-2xl border border-chartreuse/60 bg-chartreuse/10 p-5">
               <h2 className="font-semibold text-pine">Review submission</h2>
               <p className="mt-1 text-sm text-moss">
-                Approving publishes this observation; rejecting flags it for
-                follow-up by the botanist.
+                Approving marks this observation as verified; rejecting flags
+                it for follow-up by the botanist.
               </p>
               <div className="mt-4">
                 <ApproveRejectButtons recordId={record.id} />

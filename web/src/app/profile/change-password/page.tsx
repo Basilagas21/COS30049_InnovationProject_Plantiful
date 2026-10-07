@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export default function ChangePasswordPage() {
   const [password, setPassword] = useState("");
@@ -14,6 +15,10 @@ export default function ChangePasswordPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!isSupabaseConfigured) {
+      setError("Supabase is not configured. Add the env vars listed in web/README.md.");
+      return;
+    }
     setError(null);
     setNotice(null);
 

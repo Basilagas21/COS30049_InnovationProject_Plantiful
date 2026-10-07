@@ -232,8 +232,18 @@ function toListItem(row: {
   };
 }
 
-export async function fetchRecords(): Promise<RecordDetail[]> {
-  if (!isSupabaseConfigured) return mockRecords;
+export type RecordsResult = {
+  records: RecordDetail[];
+  // Set when Supabase is configured but the query failed. Sample data is never
+  // shown in that case, so officers can't mistake it for real observations.
+  error: string | null;
+  usingSampleData: boolean;
+};
+
+export async function fetchRecords(): Promise<RecordsResult> {
+  if (!isSupabaseConfigured) {
+    return { records: mockRecords, error: null, usingSampleData: true };
+  }
 
   const supabase = await createClient();
 
@@ -248,8 +258,14 @@ export async function fetchRecords(): Promise<RecordDetail[]> {
     )
     .order("created_at", { ascending: false });
 
-  if (error || !data) return mockRecords;
-  return data.map(toListItem);
+  if (error || !data) {
+    return {
+      records: [],
+      error: error?.message ?? "Could not load records.",
+      usingSampleData: false,
+    };
+  }
+  return { records: data.map(toListItem), error: null, usingSampleData: false };
 }
 
 export async function fetchRecordById(id: string): Promise<RecordDetail | null> {
@@ -271,8 +287,8 @@ export async function fetchRecordById(id: string): Promise<RecordDetail | null> 
     .eq("record_id", id)
     .maybeSingle();
 
-  if (error || !data) {
-    return mockRecords.find((r) => r.id === id) ?? null;
+  if (error) {
+    throw new Error(`Could not load record: ${error.message}`);
   }
-  return toListItem(data);
+  return data ? toListItem(data) : null;
 }

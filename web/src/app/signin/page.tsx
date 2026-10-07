@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -16,6 +17,10 @@ export default function SignInPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!isSupabaseConfigured) {
+      setError("Supabase is not configured. Add the env vars listed in web/README.md.");
+      return;
+    }
     setError(null);
     setLoading(true);
 

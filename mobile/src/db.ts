@@ -2,7 +2,7 @@ import { File } from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
 const DATABASE_NAME = 'plantiful.db';
-const SCHEMA_VERSION = 3;
+const SCHEMA_VERSION = 5;
 
 async function migrateDbIfNeeded(db: SQLite.SQLiteDatabase) {
   const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -72,6 +72,98 @@ CREATE TABLE IF NOT EXISTS sync_queue (
     currentDbVersion = 3;
   }
 
+  // Repair the species catalog on EVERY open (not version-gated): it is a
+  // server-backed cache, so if a stale table from an older build lacks
+  // species_id it is dropped and rebuilt so no query can prepare against a
+  // mismatched schema.
+  {
+    const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(species_catalog)');
+    if (!columns.some((column) => column.name === 'species_id')) {
+      await db.execAsync('DROP TABLE IF EXISTS species_catalog');
+      await db.execAsync(`
+CREATE TABLE species_catalog (
+  species_id TEXT PRIMARY KEY NOT NULL,
+  scientific_name TEXT NOT NULL,
+  common_name TEXT,
+  taxonomy TEXT,
+  conservation_status TEXT,
+  description TEXT,
+  synced_at TEXT
+);
+`);
+    }
+  }
+
+  if (currentDbVersion < 4) {
+    // Repair stale local_records schemas left by older app builds.
+    const recalc = async (table: string) => {
+      const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(' + table + ')');
+      return !columns.some((column) => column.name === 'species_id');
+    };
+    if (await recalc('local_records')) {
+      await db.execAsync('DROP TABLE IF EXISTS local_photos');
+      await db.execAsync('DROP TABLE IF EXISTS sync_queue');
+      await db.execAsync('DROP TABLE IF EXISTS local_records');
+      await db.execAsync(`
+CREATE TABLE local_records (
+  record_id TEXT PRIMARY KEY NOT NULL,
+  species_id TEXT,
+  qr_code TEXT,
+  gps_lat REAL,
+  gps_lng REAL,
+  gps_accuracy_m REAL,
+  height_cm REAL,
+  morphology TEXT,
+  notes TEXT,
+  provisional_name TEXT,
+  capture_ts TEXT NOT NULL,
+  sync_status TEXT NOT NULL DEFAULT 'pending',
+  server_id TEXT,
+  sync_error TEXT,
+  created_at TEXT NOT NULL
+);
+`);
+      await db.execAsync(`
+CREATE TABLE local_photos (
+  id TEXT PRIMARY KEY NOT NULL,
+  record_id TEXT NOT NULL REFERENCES local_records(record_id) ON DELETE CASCADE,
+  local_uri TEXT NOT NULL,
+  capture_ts TEXT NOT NULL,
+  sync_status TEXT NOT NULL DEFAULT 'pending',
+  server_url TEXT
+);
+`);
+      await db.execAsync(`
+CREATE TABLE sync_queue (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  entity_type TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  operation TEXT NOT NULL,
+  payload TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',
+  error TEXT,
+  created_ts TEXT NOT NULL
+);
+`);
+    }
+    currentDbVersion = 4;
+  }
+
+  if (currentDbVersion < 5) {
+    currentDbVersion = 5;
+  }
+
+  // `edited` marks a locally edited record so the next sync pushes an UPDATE to
+  // the existing server row instead of creating a duplicate. Repaired on EVERY
+  // open rather than version-gated, so a half-applied migration can never leave
+  // the column missing and break saving.
+  {
+    const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(local_records)');
+    if (!columns.some((column) => column.name === 'edited')) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN edited INTEGER NOT NULL DEFAULT 0');
+    }
+  }
+
   await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION}`);
 }
 
@@ -137,6 +229,7 @@ export type LocalRecord = {
   sync_status: string;
   server_id: string | null;
   sync_error: string | null;
+  edited: number;
   created_at: string;
 };
 
@@ -222,7 +315,7 @@ export async function getLocalRecord(
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
        r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
-       r.sync_error, r.created_at,
+       r.sync_error, r.edited, r.created_at,
        COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
@@ -232,29 +325,18 @@ export async function getLocalRecord(
   );
 }
 
-export async function getLocalRecordByQR(
-  db: SQLite.SQLiteDatabase,
-  qrCode: string
-): Promise<LocalRecordWithPhoto | null> {
-  return db.getFirstAsync<LocalRecordWithPhoto>(
-    `SELECT
-       r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
-       r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
-       r.sync_error, r.created_at,
-       COALESCE(s.common_name, s.scientific_name) AS species_name,
-       (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
-     FROM local_records r
-     LEFT JOIN species_catalog s ON s.species_id = r.species_id
-     WHERE r.qr_code = ?`,
-    qrCode
-  );
-}
-
 // Records still to push: new captures plus earlier attempts that failed, so a
 // lost connection mid-sync is retried on the next "Sync now".
 export async function getPendingRecords(db: SQLite.SQLiteDatabase): Promise<LocalRecord[]> {
   return db.getAllAsync<LocalRecord>(
     `SELECT * FROM local_records WHERE sync_status IN ('pending', 'failed') ORDER BY capture_ts ASC`
+  );
+}
+
+export async function getRecordsByStatus(db: SQLite.SQLiteDatabase, status: string): Promise<LocalRecord[]> {
+  return db.getAllAsync<LocalRecord>(
+    `SELECT * FROM local_records WHERE sync_status = ? ORDER BY capture_ts ASC`,
+    [status]
   );
 }
 
@@ -295,7 +377,7 @@ export async function markRecordSynced(
   serverId: string
 ) {
   await db.runAsync(
-    "UPDATE local_records SET sync_status = 'synced', server_id = ?, sync_error = NULL WHERE record_id = ?",
+    "UPDATE local_records SET sync_status = 'synced', server_id = ?, sync_error = NULL, edited = 0 WHERE record_id = ?",
     serverId,
     recordId
   );
@@ -326,16 +408,109 @@ export async function deleteLocalRecord(db: SQLite.SQLiteDatabase, recordId: str
   await db.runAsync('DELETE FROM local_records WHERE record_id = ?', recordId);
 }
 
+/** Finds a saved record by its plant tag, matching the stored normalised form. */
+export async function getRecordByTag(
+  db: SQLite.SQLiteDatabase,
+  tag: string
+): Promise<LocalRecordWithPhoto | null> {
+  const normalized = tag.trim().toUpperCase();
+  return db.getFirstAsync<LocalRecordWithPhoto>(
+    `SELECT
+       r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
+       r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
+       r.sync_error, r.edited, r.created_at,
+       (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
+     FROM local_records r
+     WHERE r.qr_code = ? LIMIT 1`,
+    normalized
+  );
+}
+
+/**
+ * True when the tag is already used by another record on this device. Catches
+ * clashes at save time instead of letting them surface as a sync failure.
+ */
+export async function isTagInUse(
+  db: SQLite.SQLiteDatabase,
+  tag: string,
+  exceptRecordId?: string
+): Promise<boolean> {
+  const normalized = tag.trim().toUpperCase();
+  const row = await db.getFirstAsync<{ record_id: string }>(
+    'SELECT record_id FROM local_records WHERE qr_code = ? AND record_id != ? LIMIT 1',
+    normalized,
+    exceptRecordId ?? ''
+  );
+  return row !== null;
+}
+
+/**
+ * Applies an edit to a saved record. Editing re-queues the record for sync so
+ * the correction is pushed to the central database; if the record had already
+ * been synced it is returned to 'pending' and flagged as edited so the next
+ * sync updates the existing server row instead of duplicating it.
+ */
+export async function updateLocalRecord(
+  db: SQLite.SQLiteDatabase,
+  recordId: string,
+  patch: {
+    qr_code?: string | null;
+    species_id?: string | null;
+    provisional_name?: string | null;
+    gps_lat?: number | null;
+    gps_lng?: number | null;
+    gps_accuracy_m?: number | null;
+    height_cm?: number | null;
+    morphology?: string | null;
+    notes?: string | null;
+  }
+) {
+  await db.runAsync(
+    `UPDATE local_records SET
+       qr_code = ?,
+       species_id = ?,
+       provisional_name = ?,
+       gps_lat = ?,
+       gps_lng = ?,
+       gps_accuracy_m = ?,
+       height_cm = ?,
+       morphology = ?,
+       notes = ?,
+       sync_status = 'pending',
+       sync_error = NULL,
+       edited = 1
+     WHERE record_id = ?`,
+    patch.qr_code ?? null,
+    patch.species_id ?? null,
+    patch.provisional_name ?? null,
+    patch.gps_lat ?? null,
+    patch.gps_lng ?? null,
+    patch.gps_accuracy_m ?? null,
+    patch.height_cm ?? null,
+    patch.morphology ?? null,
+    patch.notes ?? null,
+    recordId
+  );
+}
+
+export async function deleteLocalPhoto(db: SQLite.SQLiteDatabase, photoId: string) {
+  await db.runAsync('DELETE FROM local_photos WHERE id = ?', photoId);
+}
+
 export type SpeciesOption = {
   species_id: string;
   scientific_name: string;
   common_name: string | null;
   conservation_status: string | null;
+  taxonomy: string | null;
+  description: string | null;
 };
+
+export type SpeciesReference = SpeciesOption;
 
 export async function getSpeciesOptions(db: SQLite.SQLiteDatabase): Promise<SpeciesOption[]> {
   return db.getAllAsync<SpeciesOption>(
-    `SELECT species_id, scientific_name, common_name, conservation_status
+    `SELECT species_id, scientific_name, common_name, conservation_status, taxonomy, description
      FROM species_catalog
      ORDER BY scientific_name ASC`
   );
@@ -348,17 +523,21 @@ export async function upsertSpeciesCatalog(
   const now = new Date().toISOString();
   for (const s of species) {
     await db.runAsync(
-      `INSERT INTO species_catalog (species_id, scientific_name, common_name, conservation_status, synced_at)
-       VALUES (?, ?, ?, ?, ?)
+      `INSERT INTO species_catalog (species_id, scientific_name, common_name, conservation_status, taxonomy, description, synced_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(species_id) DO UPDATE SET
          scientific_name = excluded.scientific_name,
          common_name = excluded.common_name,
          conservation_status = excluded.conservation_status,
+         taxonomy = excluded.taxonomy,
+         description = excluded.description,
          synced_at = excluded.synced_at`,
       s.species_id,
       s.scientific_name,
       s.common_name ?? null,
       s.conservation_status ?? null,
+      s.taxonomy ?? null,
+      s.description ?? null,
       now
     );
   }

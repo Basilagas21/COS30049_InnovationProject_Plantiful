@@ -2,8 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
 import { colors } from '@/theme';
 import { deleteLocalRecord, getLocalRecord, openDatabase, type LocalRecordWithPhoto } from '@/db';
+import { TAG_LABEL } from '@/lib/tags';
 
 function syncLabel(status: string) {
   switch (status) {
@@ -51,8 +53,8 @@ export default function RecordDetailScreen() {
     Alert.alert(
       'Delete local record?',
       rec.sync_status === 'synced'
-        ? `${rec.qr_code ?? 'This record'} will be removed from this device only.`
-        : `${rec.qr_code ?? 'This record'} has not been synced yet. Deleting it loses it permanently.`,
+        ? `${rec.qr_code ?? rec.provisional_name ?? 'This record'} will be removed from this device only.`
+        : `${rec.qr_code ?? rec.provisional_name ?? 'This record'} has not been synced yet. Deleting it loses it permanently.`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -78,25 +80,40 @@ export default function RecordDetailScreen() {
         </View>
       )}
 
-      <View style={styles.card}>
-        <View style={styles.titleRow}>
-          <Text style={styles.title}>{rec.qr_code ?? 'Untagged'}</Text>
-          <View style={[styles.syncPill, { backgroundColor: pill.color }]}>
-            <Text style={styles.syncPillText}>{pill.text}</Text>
+<View style={styles.card}>
+          <View style={styles.titleRow}>
+            <Text style={styles.title}>{rec.provisional_name ?? 'Unnamed plant'}</Text>
+            <View style={[styles.syncPill, { backgroundColor: pill.color }]}>
+              <Text style={styles.syncPillText}>{pill.text}</Text>
+            </View>
           </View>
-        </View>
 
-        {rec.provisional_name ? (
-          <>
-            <Text style={styles.provisionalName}>{rec.provisional_name}</Text>
+          {rec.provisional_name ? (
             <Text style={styles.meta}>Provisional name — awaiting species confirmation</Text>
-          </>
-        ) : null}
+          ) : null}
         {rec.species_name ? <Text style={styles.meta}>Species: {rec.species_name}</Text> : null}
+        <Text style={styles.meta}>Captured {formatTimestamp(rec.capture_ts)}</Text>
+
+        {rec.qr_code ? (
+            <View style={styles.qrCard}>
+              <View style={styles.tagRow}>
+                <Ionicons name="pricetag-outline" size={18} color={colors.pine} />
+                <View>
+                  <Text style={styles.qrLabel}>{TAG_LABEL}</Text>
+                  <Text style={styles.qrCode}>{rec.qr_code}</Text>
+                </View>
+              </View>
+              <QRCode value={rec.qr_code} size={132} color={colors.pine} backgroundColor={colors.white} />
+              <Text style={styles.qrHint}>Scan this on the Capture tab to reopen the record.</Text>
+            </View>
+          ) : (
+            <View style={styles.qrCard}>
+              <Text style={styles.qrHint}>No plant tag recorded for this plant.</Text>
+            </View>
+          )}
 
         <View style={styles.divider} />
 
-        <Field icon="time-outline" label="Captured" value={formatTimestamp(rec.capture_ts)} />
         {rec.gps_lat != null && rec.gps_lng != null && (
           <Field
             icon="location-outline"
@@ -115,6 +132,17 @@ export default function RecordDetailScreen() {
         <Field icon="document-text-outline" label="Notes" value={rec.notes || '—'} last />
 
         {rec.sync_error ? <Text style={styles.syncError}>Sync error: {rec.sync_error}</Text> : null}
+
+        <Pressable style={styles.editButton} onPress={() => router.push(`/record/edit/${rec.record_id}`)}>
+          <Ionicons name="create-outline" size={18} color={colors.pine} />
+          <Text style={styles.editText}>Edit record</Text>
+        </Pressable>
+        {rec.sync_status === 'synced' ? (
+          <Text style={styles.editHint}>
+            Editing keeps the record on this device and re-queues it — press Sync now to push the
+            correction. An approved record returns to pending for officer re-review.
+          </Text>
+        ) : null}
 
         <Pressable style={styles.deleteButton} onPress={confirmDelete}>
           <Ionicons name="trash-outline" size={18} color={colors.danger} />
@@ -222,6 +250,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 3,
   },
+  tagRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    alignSelf: 'stretch',
+  },
+  qrCard: {
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.cream,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.sand,
+  },
+  qrLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    color: colors.muted,
+  },
+  qrCode: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.pine,
+  },
+  qrHint: {
+    fontSize: 12,
+    color: colors.muted,
+    textAlign: 'center',
+  },
   syncPillText: {
     fontSize: 11,
     fontWeight: '700',
@@ -261,6 +321,27 @@ const styles = StyleSheet.create({
   syncError: {
     fontSize: 12,
     color: colors.danger,
+  },
+  editButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.pine,
+    marginTop: 4,
+  },
+  editText: {
+    color: colors.pine,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  editHint: {
+    fontSize: 12,
+    color: colors.muted,
+    lineHeight: 17,
   },
   deleteButton: {
     flexDirection: 'row',

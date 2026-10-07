@@ -16,15 +16,10 @@ import {
   View,
 } from 'react-native';
 import { colors } from '@/theme';
-import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, type SpeciesOption } from '@/db';
+import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, isTagInUse, type SpeciesOption } from '@/db';
 import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 import { parseHeightCm } from '@/lib/validation';
-
-function generateTagId(): string {
-  const stamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `PLT-${stamp}${random}`;
-}
+import { generateTag, TAG_LABEL } from '@/lib/tags';
 
 export default function DiscoverPlantScreen() {
   const router = useRouter();
@@ -32,7 +27,7 @@ export default function DiscoverPlantScreen() {
   const cameraRef = useRef<CameraView>(null);
 
   const [stage, setStage] = useState<'form' | 'camera'>('form');
-  const [tagId, setTagId] = useState(() => generateTagId());
+  const [tagId, setTagId] = useState(() => generateTag());
   const [commonName, setCommonName] = useState('');
   const [scientificName, setScientificName] = useState('');
   const [morphology, setMorphology] = useState('');
@@ -156,10 +151,19 @@ export default function DiscoverPlantScreen() {
     }
 
     const db = await openDatabase();
+    let tag = tagId;
+    for (let attempt = 0; attempt < 5 && (await isTagInUse(db, tag)); attempt += 1) {
+      tag = generateTag();
+    }
+    if (await isTagInUse(db, tag)) {
+      Alert.alert('Could not mint a tag', 'Please try again to generate a different tag.');
+      return;
+    }
+
     setSaving(true);
     try {
       const recordId = await insertLocalRecord(db, {
-        qr_code: tagId,
+        qr_code: tag,
         // A known species needs no provisional name; officers only confirm new discoveries.
         species_id: selectedSpecies?.species_id ?? null,
         provisional_name: selectedSpecies ? null : name,
@@ -179,7 +183,7 @@ export default function DiscoverPlantScreen() {
       if (photoUri) {
         await addLocalPhoto(db, recordId, photoUri);
       }
-      Alert.alert('New plant tagged', `Tag ${tagId} was saved for "${name}". It will sync when you press Sync now.`, [
+      Alert.alert('New plant tagged', `Tag ${tag} was saved for "${name}". It will sync when you press Sync now.`, [
         { text: 'Done', onPress: () => router.back() },
       ]);
     } catch {
@@ -333,7 +337,7 @@ export default function DiscoverPlantScreen() {
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.sectionLabel}>NEW TAG</Text>
+          <Text style={styles.sectionLabel}>{TAG_LABEL.toUpperCase()}</Text>
           <View style={styles.qrRow}>
             <View style={styles.qrBox}>
               <QRCode value={tagId} size={132} color={colors.pine} backgroundColor={colors.white} />
@@ -347,7 +351,7 @@ export default function DiscoverPlantScreen() {
           </View>
           <Pressable
             style={styles.ghostButton}
-            onPress={() => setTagId(generateTagId())}
+            onPress={() => setTagId(generateTag())}
           >
             <Ionicons name="refresh-outline" size={18} color={colors.pine} />
             <Text style={styles.ghostButtonText}>Generate a different tag</Text>

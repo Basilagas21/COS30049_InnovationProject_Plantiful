@@ -8,11 +8,13 @@ import {
   getPendingRecords,
   getPhotosForRecord,
   markPhotoSynced,
+  getRecordsByStatus,
   markRecordFailed,
   markRecordSynced,
   openDatabase,
   setRecordServerId,
   upsertSpeciesCatalog,
+  type LocalRecord,
 } from '@/db';
 
 type SyncState = 'idle' | 'syncing' | 'done' | 'error';
@@ -20,18 +22,41 @@ type SyncState = 'idle' | 'syncing' | 'done' | 'error';
 // Must match the Supabase Storage bucket created for record photos.
 const PHOTO_BUCKET = process.env.EXPO_PUBLIC_SUPABASE_PHOTO_BUCKET || 'record-photos';
 
+/**
+ * Turns a Supabase/PostgREST failure into something a botanist can act on.
+ * The plant_tags uniqueness clash is the common case: tags are generated on
+ * the device while offline, so two devices can mint the same code and the
+ * central database rejects the second one.
+ */
+function describeSyncError(error: unknown, tag: string | null): string {
+  const raw = error instanceof Error ? error.message : String(error);
+  const code = (error as { code?: string } | null)?.code ?? '';
+  const tagText = tag ? ` (${tag})` : '';
+
+  if (code === '23505' && raw.toLowerCase().includes('qr_code')) {
+    return `Plant tag${tagText} is already registered on the central database. Edit the record and use a different tag.`;
+  }
+  if (code === '23505') {
+    return `Duplicate value rejected by the central database${tagText}.`;
+  }
+  if (code === '42501' || raw.toLowerCase().includes('row-level security')) {
+    return 'The central database rejected this write under its access rules.';
+  }
+  return raw;
+}
+
 async function uploadPhoto(
   userId: string,
   recordId: string,
   photo: { id: string; local_uri: string }
 ): Promise<string | null> {
   try {
-    const res = await fetch(photo.local_uri);
-    const blob = await res.blob();
+    const response = await fetch(photo.local_uri);
+    const blob = await response.blob();
     const path = `${userId}/${recordId}/${photo.id}.jpg`;
     const { data, error } = await supabase!.storage
       .from(PHOTO_BUCKET)
-      .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+      .upload(path, blob, { contentType: blob.type || 'image/jpeg', upsert: true });
     if (error) throw error;
     return supabase!.storage.from(PHOTO_BUCKET).getPublicUrl(data.path).data.publicUrl;
   } catch (e) {
@@ -49,19 +74,35 @@ export default function SyncScreen() {
   const [failed, setFailed] = useState(0);
   const [message, setMessage] = useState('');
   const [needsAuth, setNeedsAuth] = useState(false);
+  const [pendingList, setPendingList] = useState<LocalRecord[]>([]);
+  const [failedList, setFailedList] = useState<LocalRecord[]>([]);
+  const [syncedList, setSyncedList] = useState<LocalRecord[]>([]);
+
+  const loadCounts = useCallback(async () => {
+    const db = await openDatabase();
+    const [pendingRows, failedRows, syncedRows] = await Promise.all([
+      getRecordsByStatus(db, 'pending'),
+      getRecordsByStatus(db, 'failed'),
+      getRecordsByStatus(db, 'synced'),
+    ]);
+    setPendingList(pendingRows);
+    setFailedList(failedRows);
+    setSyncedList(syncedRows);
+    setPending(pendingRows.length);
+    setFailed(failedRows.length);
+    setSynced(syncedRows.length);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
       (async () => {
-        const db = await openDatabase();
-        const rows = await getPendingRecords(db);
-        if (!cancelled) setPending(rows.length);
+        if (!cancelled) await loadCounts();
       })();
       return () => {
         cancelled = true;
       };
-    }, [])
+    }, [loadCounts])
   );
 
   const runSync = useCallback(async () => {
@@ -83,7 +124,7 @@ export default function SyncScreen() {
 
     const { data: species } = await supabase
       .from('species')
-      .select('species_id, scientific_name, common_name, conservation_status');
+      .select('species_id, scientific_name, common_name, conservation_status, taxonomy, description');
     if (species && species.length > 0) {
       await upsertSpeciesCatalog(db, species);
     }
@@ -105,21 +146,48 @@ export default function SyncScreen() {
 
     for (const row of rows) {
       try {
-        let serverId = row.server_id;
-        if (!serverId) {
+        const observation = {
+          species_id: row.species_id,
+          provisional_name: row.provisional_name,
+          qr_code: row.qr_code ? row.qr_code.trim().toUpperCase() : null,
+          gps_lat: row.gps_lat,
+          gps_lng: row.gps_lng,
+          gps_accuracy_m: row.gps_accuracy_m,
+          height_cm: row.height_cm,
+          morphology: row.morphology,
+          notes: row.notes,
+        };
+
+        // Idempotent push: a failed retry may already have inserted the row
+        // server-side (e.g. upload succeeded then a photo failed), so match on
+        // device_id before inserting to avoid duplicates.
+        const { data: existing } = await supabase
+          .from('plant_records')
+          .select('record_id')
+          .eq('device_id', row.record_id)
+          .maybeSingle();
+
+        let serverRecordId = existing?.record_id ?? row.server_id ?? null;
+
+        if (serverRecordId && row.edited) {
+          // Locally edited after syncing: push the correction to the same
+          // record and reset it for officer re-review, because the approved
+          // data no longer matches what was reviewed.
+          const { error: updateError } = await supabase
+            .from('plant_records')
+            .update({
+              ...observation,
+              status: 'submitted',
+              approval_status: 'pending',
+            })
+            .eq('record_id', serverRecordId);
+          if (updateError) throw updateError;
+        } else if (!serverRecordId) {
           const { data: inserted, error } = await supabase
             .from('plant_records')
             .insert({
               botanist_id: session.session.user.id,
-              species_id: row.species_id,
-              provisional_name: row.provisional_name,
-              qr_code: row.qr_code,
-              gps_lat: row.gps_lat,
-              gps_lng: row.gps_lng,
-              gps_accuracy_m: row.gps_accuracy_m,
-              height_cm: row.height_cm,
-              morphology: row.morphology,
-              notes: row.notes,
+              ...observation,
               status: 'submitted',
               approval_status: 'pending',
               device_id: row.record_id,
@@ -128,31 +196,46 @@ export default function SyncScreen() {
             .single();
 
           if (error) throw error;
-          serverId = inserted.record_id;
-          await setRecordServerId(db, row.record_id, serverId);
+          serverRecordId = inserted.record_id;
+          await setRecordServerId(db, row.record_id, serverRecordId);
         }
 
         const photos = await getPhotosForRecord(db, row.record_id);
         for (const photo of photos) {
           if (photo.sync_status === 'synced') continue;
-          const photoUrl = await uploadPhoto(session.session.user.id, serverId, photo);
+
+          const expectedPath = `${session.session.user.id}/${serverRecordId}/${photo.id}.jpg`;
+          const expectedUrl = supabase!.storage
+            .from(PHOTO_BUCKET)
+            .getPublicUrl(expectedPath).data.publicUrl;
+
+          const existingPhoto = await supabase
+            .from('plant_record_photos')
+            .select('photo_id')
+            .eq('record_id', serverRecordId!)
+            .eq('photo_url', expectedUrl)
+            .maybeSingle();
+
+          if (existingPhoto.data) continue;
+
+          const photoUrl = await uploadPhoto(session.session.user.id, serverRecordId!, photo);
           if (!photoUrl) {
             throw new Error('Photo upload failed — check your connection and try again.');
           }
           const { error: photoError } = await supabase.from('plant_record_photos').insert({
-            record_id: serverId,
+            record_id: serverRecordId!,
             photo_url: photoUrl,
           });
           if (photoError) throw photoError;
           await markPhotoSynced(db, photo.id, photoUrl);
         }
 
-        await markRecordSynced(db, row.record_id, serverId);
+        await markRecordSynced(db, row.record_id, serverRecordId!);
 
         syncedCount += 1;
         setSynced(syncedCount);
       } catch (e) {
-        const msg = e instanceof Error ? e.message : 'Unknown sync error';
+        const msg = describeSyncError(e, row.qr_code);
         await markRecordFailed(db, row.record_id, msg);
         failedCount += 1;
         setFailed(failedCount);
@@ -161,11 +244,12 @@ export default function SyncScreen() {
 
     const remaining = await getPendingRecords(db);
     setPending(remaining.length);
+    await loadCounts();
     setState(failedCount > 0 ? 'error' : 'done');
     setMessage(failedCount > 0
       ? `Synced ${syncedCount}, ${failedCount} failed. Failed records retry next time you press Sync now; tap one in Records for the reason.`
       : `All done — ${syncedCount} record(s) pushed to the central database as submitted.`);
-  }, []);
+  }, [loadCounts]);
 
   const connected = isSupabaseConfigured && supabase !== null;
 
@@ -211,6 +295,42 @@ export default function SyncScreen() {
           <Pressable style={styles.ghostButton} onPress={() => router.navigate('/profile')}>
             <Text style={styles.ghostButtonText}>Go to Profile to sign in</Text>
           </Pressable>
+        ) : null}
+
+        {pendingList.length > 0 ? (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Pending ({pendingList.length})</Text>
+            {pendingList.map((r) => (
+              <Text key={r.record_id} style={styles.listItem}>
+                • {r.provisional_name || r.species_id || 'Unknown'} — {new Date(r.capture_ts).toLocaleString()}
+              </Text>
+            ))}
+          </View>
+        ) : null}
+
+        {failedList.length > 0 ? (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Failed ({failedList.length})</Text>
+            {failedList.map((r) => (
+              <View key={r.record_id} style={styles.listBlock}>
+                <Text style={styles.listItem}>
+                  • {r.provisional_name || r.species_id || 'Unknown'} — {new Date(r.capture_ts).toLocaleString()}
+                </Text>
+                {r.sync_error ? <Text style={styles.errorText}>{r.sync_error}</Text> : null}
+              </View>
+            ))}
+          </View>
+        ) : null}
+
+        {syncedList.length > 0 ? (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Synced ({syncedList.length})</Text>
+            {syncedList.map((r) => (
+              <Text key={r.record_id} style={styles.listItem}>
+                • {r.provisional_name || r.species_id || 'Unknown'} — {new Date(r.capture_ts).toLocaleString()}
+              </Text>
+            ))}
+          </View>
         ) : null}
 
         {message || state === 'idle' ? (
@@ -298,5 +418,29 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.muted,
     textAlign: 'center',
+  },
+  section: {
+    alignSelf: 'stretch',
+    marginTop: 12,
+    paddingTop: 8,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.muted,
+    gap: 4,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.pine,
+  },
+  listItem: {
+    fontSize: 12,
+    color: colors.pine,
+  },
+  listBlock: {
+    gap: 2,
+  },
+  errorText: {
+    fontSize: 11,
+    color: colors.danger,
   },
 });

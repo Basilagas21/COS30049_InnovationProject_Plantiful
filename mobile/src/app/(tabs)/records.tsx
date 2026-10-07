@@ -77,10 +77,11 @@ export default function RecordsScreen() {
               <View style={styles.cardHeader}>
                 <View style={styles.cardTitleWrap}>
                   <Text style={styles.cardTitle}>
-                    {item.provisional_name ?? item.species_name ?? item.qr_code ?? 'Untagged'}
+                    {item.provisional_name ?? item.species_name ?? 'Unnamed plant'}
                   </Text>
-                  {item.provisional_name || item.species_name ? (
-                    <Text style={styles.cardMeta}>Tag {item.qr_code ?? '—'}</Text>
+                  {item.qr_code ? <Text style={styles.cardMeta}>Tag {item.qr_code}</Text> : null}
+                  {!item.provisional_name && !item.species_name && item.species_id ? (
+                    <Text style={styles.cardMeta}>Species {item.species_id}</Text>
                   ) : null}
                 </View>
                 <Pressable

@@ -5,6 +5,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
+  Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -17,29 +18,34 @@ import {
 } from 'react-native';
 import { colors } from '@/theme';
 import {
-  openDatabase,
-  insertLocalRecord,
   addLocalPhoto,
-  getRecordByTag,
+  deleteLocalPhoto,
+  getLocalRecord,
+  getPhotosForRecord,
   getSpeciesOptions,
   isTagInUse,
+  openDatabase,
+  updateLocalRecord,
   type SpeciesOption,
 } from '@/db';
-import { parseHeightCm } from '@/lib/validation';
 import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 import { generateTag, isValidTag, normalizeTag, TAG_LABEL } from '@/lib/tags';
 
-export default function NewCaptureScreen() {
+type PhotoRow = { id: string; local_uri: string };
+
+export default function EditRecordScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ qr?: string }>();
-  const qr = typeof params.qr === 'string' ? params.qr : undefined;
+  const params = useLocalSearchParams<{ id: string }>();
+  const recordId = typeof params.id === 'string' ? params.id : undefined;
 
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
 
+  const [loading, setLoading] = useState(true);
   const [stage, setStage] = useState<'form' | 'camera'>('form');
-  const [alreadyTagged, setAlreadyTagged] = useState(qr ? 'yes' : 'no');
-  const [tagCode, setTagCode] = useState(qr ? normalizeTag(qr) : '');
+  const [alreadyTagged, setAlreadyTagged] = useState<'yes' | 'no'>('yes');
+  const [tagCode, setTagCode] = useState('');
+  const [provisionalName, setProvisionalName] = useState('');
   const [speciesOptions, setSpeciesOptions] = useState<SpeciesOption[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [selectedSpecies, setSelectedSpecies] = useState<SpeciesOption | null>(null);
@@ -48,25 +54,54 @@ export default function NewCaptureScreen() {
   const [notes, setNotes] = useState('');
   const [location, setLocation] = useState<LocationFix | null>(null);
   const [locating, setLocating] = useState(false);
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [photos, setPhotos] = useState<PhotoRow[]>([]);
   const [capturing, setCapturing] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     let active = true;
     (async () => {
+      if (!recordId) {
+        setLoading(false);
+        return;
+      }
       try {
         const db = await openDatabase();
-        const options = await getSpeciesOptions(db);
-        if (active) setSpeciesOptions(options);
+        const [rec, options, photoRows] = await Promise.all([
+          getLocalRecord(db, recordId),
+          getSpeciesOptions(db),
+          getPhotosForRecord(db, recordId),
+        ]);
+        if (!active) return;
+        if (rec) {
+          setTagCode(rec.qr_code ?? '');
+          setAlreadyTagged(rec.qr_code ? 'yes' : 'no');
+          setProvisionalName(rec.provisional_name ?? '');
+          setMorphology(rec.morphology ?? '');
+          setHeightCm(rec.height_cm != null ? String(rec.height_cm) : '');
+          setNotes(rec.notes ?? '');
+          if (rec.gps_lat != null && rec.gps_lng != null) {
+            setLocation({
+              lat: rec.gps_lat,
+              lng: rec.gps_lng,
+              accuracyM: rec.gps_accuracy_m,
+            });
+          }
+          const match = options.find((option) => option.species_id === rec.species_id);
+          setSelectedSpecies(match ?? null);
+        }
+        setSpeciesOptions(options);
+        setPhotos(photoRows.map((p) => ({ id: p.id, local_uri: p.local_uri })));
       } catch {
-        if (active) setSpeciesOptions([]);
+        if (active) Alert.alert('Load failed', 'Could not open this record for editing.');
+      } finally {
+        if (active) setLoading(false);
       }
     })();
     return () => {
       active = false;
     };
-  }, []);
+  }, [recordId]);
 
   const captureLocation = useCallback(async () => {
     setLocating(true);
@@ -84,22 +119,27 @@ export default function NewCaptureScreen() {
     }
   }, []);
 
+  const attachPhoto = useCallback(async (uri: string) => {
+    const db = await openDatabase();
+    if (!recordId) return;
+    const photoId = await addLocalPhoto(db, recordId, uri);
+    setPhotos((prev) => [...prev, { id: photoId, local_uri: uri }]);
+  }, [recordId]);
+
   const takePhoto = useCallback(async () => {
     if (!cameraRef.current) return;
     setCapturing(true);
     try {
-      const pic: CameraCapturedPicture = await cameraRef.current.takePictureAsync({
-        quality: 0.6,
-      });
+      const pic: CameraCapturedPicture = await cameraRef.current.takePictureAsync({ quality: 0.6 });
       const permanentUri = await persistCapturedPhoto(pic.uri);
-      setPhotoUri(permanentUri);
+      await attachPhoto(permanentUri);
       setStage('form');
     } catch {
       Alert.alert('Photo failed', 'Could not capture the photo. Please try again.');
     } finally {
       setCapturing(false);
     }
-  }, []);
+  }, [attachPhoto]);
 
   const openLibrary = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -112,11 +152,11 @@ export default function NewCaptureScreen() {
     if (!asset?.uri) return;
     try {
       const permanentUri = await persistCapturedPhoto(asset.uri);
-      setPhotoUri(permanentUri);
+      await attachPhoto(permanentUri);
     } catch {
       Alert.alert('Photo failed', 'Could not attach the photo. Please try again.');
     }
-  }, []);
+  }, [attachPhoto]);
 
   const choosePhotoSource = useCallback(() => {
     Alert.alert('Add a photo', 'How do you want to attach a photo of this plant?', [
@@ -126,64 +166,72 @@ export default function NewCaptureScreen() {
     ]);
   }, [openLibrary]);
 
-  const saveDraft = useCallback(async () => {
-    const height = parseHeightCm(heightCm);
-    if (height === undefined) {
-      Alert.alert('Check the height', 'Enter the height as a positive number of centimetres, e.g. 120 or 12.5.');
-      return;
-    }
+  const removePhoto = useCallback((photoId: string) => {
+    Alert.alert('Remove photo?', 'It will be removed from this record.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Remove',
+        style: 'destructive',
+        onPress: async () => {
+          const db = await openDatabase();
+          await deleteLocalPhoto(db, photoId);
+          setPhotos((prev) => prev.filter((photo) => photo.id !== photoId));
+        },
+      },
+    ]);
+  }, []);
 
-    const db = await openDatabase();
+  const save = useCallback(async () => {
+    if (!recordId) return;
 
-    let tag = alreadyTagged === 'yes' ? normalizeTag(tagCode) : generateTag();
+    let tag: string;
     if (alreadyTagged === 'yes') {
+      tag = normalizeTag(tagCode);
       if (!isValidTag(tag)) {
         Alert.alert('Check the tag', 'Enter the code printed on the plant tag, for example PLT-7F3K92.');
         return;
       }
-      const existing = await getRecordByTag(db, tag);
-      if (existing) {
-        Alert.alert('Tag already recorded', `Tag ${tag} already has a record on this device.`, [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Open record',
-            onPress: () => router.replace({ pathname: '/record/[id]', params: { id: existing.record_id } }),
-          },
-        ]);
-        return;
-      }
     } else {
-      for (let attempt = 0; attempt < 5 && (await isTagInUse(db, tag)); attempt += 1) {
+      const db = await openDatabase();
+      tag = generateTag();
+      for (let attempt = 0; attempt < 5 && (await isTagInUse(db, tag, recordId)); attempt += 1) {
         tag = generateTag();
       }
     }
 
+    if (await isTagInUse(await openDatabase(), tag, recordId)) {
+      Alert.alert('Tag already used', `${tag} is already recorded on this device. Pick a different tag.`);
+      return;
+    }
+
     setSaving(true);
     try {
-      const recordId = await insertLocalRecord(db, {
+      const db = await openDatabase();
+      const height = heightCm.trim();
+      await updateLocalRecord(db, recordId, {
         qr_code: tag,
         species_id: selectedSpecies?.species_id ?? null,
+        provisional_name: provisionalName.trim() || null,
         gps_lat: location?.lat ?? null,
         gps_lng: location?.lng ?? null,
         gps_accuracy_m: location?.accuracyM ?? null,
-        height_cm: height,
+        height_cm: height ? Number(height) : null,
         morphology: morphology.trim() || null,
         notes: notes.trim() || null,
       });
-      if (photoUri) {
-        await addLocalPhoto(db, recordId, photoUri);
-      }
       Alert.alert(
-        'Saved offline',
-        `Record stored on this device under tag ${tag}. It will sync when you press Sync now.`,
+        'Record updated',
+        'Saved on this device. Press Sync now to push the correction to the central database.',
         [{ text: 'Done', onPress: () => router.back() }]
       );
-    } catch {
-      Alert.alert('Save failed', 'Could not save the record locally.');
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : 'unknown error';
+      console.warn(`[edit] save failed for ${recordId}: ${detail}`);
+      Alert.alert('Save failed', detail);
     } finally {
       setSaving(false);
     }
-  }, [alreadyTagged, tagCode, selectedSpecies, morphology, heightCm, notes, location, photoUri, router]);
+  }, [recordId, alreadyTagged, tagCode, selectedSpecies, provisionalName, location, heightCm, morphology, notes, router]);
 
   if (!permission) {
     return (
@@ -193,16 +241,19 @@ export default function NewCaptureScreen() {
     );
   }
 
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.hint}>Loading record…</Text>
+      </View>
+    );
+  }
+
   if (stage === 'camera') {
     return (
       <View style={styles.cameraWrap}>
         {permission.granted ? (
-          <CameraView
-            ref={cameraRef}
-            style={StyleSheet.absoluteFill}
-            facing="back"
-            active
-          />
+          <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing="back" active />
         ) : (
           <View style={styles.center}>
             <Ionicons name="camera-outline" size={56} color={colors.emerald} />
@@ -215,21 +266,15 @@ export default function NewCaptureScreen() {
         )}
 
         {permission.granted && (
-          <>
-            <View style={styles.cameraHud}>
-              <Pressable style={styles.hudGhost} onPress={() => setStage('form')}>
-                <Ionicons name="close" size={28} color={colors.white} />
-              </Pressable>
-              <Pressable
-                style={styles.shutter}
-                onPress={takePhoto}
-                disabled={capturing}
-              >
-                <View style={[styles.shutterInner, capturing && styles.shutterBusy]} />
-              </Pressable>
-              <View style={styles.hudSpacer} />
-            </View>
-          </>
+          <View style={styles.cameraHud}>
+            <Pressable style={styles.hudGhost} onPress={() => setStage('form')}>
+              <Ionicons name="close" size={28} color={colors.white} />
+            </Pressable>
+            <Pressable style={styles.shutter} onPress={takePhoto} disabled={capturing}>
+              <View style={[styles.shutterInner, capturing && styles.shutterBusy]} />
+            </Pressable>
+            <View style={styles.hudSpacer} />
+          </View>
         )}
       </View>
     );
@@ -268,33 +313,36 @@ export default function NewCaptureScreen() {
                 color={alreadyTagged === 'no' ? colors.emerald : colors.pine}
               />
               <Text style={[styles.choiceText, alreadyTagged === 'no' && styles.choiceTextSelected]}>
-                Not tagged yet
+                Generate new tag
               </Text>
             </Pressable>
           </View>
 
           {alreadyTagged === 'yes' ? (
-            <>
-              <TextInput
-                style={styles.input}
-                placeholder="Scan or type the tag code"
-                value={tagCode}
-                onChangeText={setTagCode}
-                autoCapitalize="characters"
-                autoCorrect={false}
-              />
-              <Text style={styles.tagHint}>
-                {qr
-                  ? 'Filled in from the tag you scanned.'
-                  : 'Scan it on the Capture tab, or type the code printed on the tag.'}
-              </Text>
-            </>
+            <TextInput
+              style={styles.input}
+              placeholder="Tag code printed on the plant tag"
+              value={tagCode}
+              onChangeText={setTagCode}
+              autoCapitalize="characters"
+              autoCorrect={false}
+            />
           ) : (
             <Text style={styles.tagHint}>
-              A new tag will be generated for this plant when you save. You can write it on the
-              physical tag afterwards.
+              A different tag will be generated for this plant when you save, and pushed to the
+              central database on the next sync.
             </Text>
           )}
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.sectionLabel}>PROVISIONAL NAME</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Name used before species confirmation"
+            value={provisionalName}
+            onChangeText={setProvisionalName}
+          />
         </View>
 
         <View style={styles.card}>
@@ -329,7 +377,7 @@ export default function NewCaptureScreen() {
               )}
             </View>
           ) : (
-            <Text style={styles.hint}>No GPS fix yet. Tap below to record this spot.</Text>
+            <Text style={styles.hint}>No GPS fix recorded. Tap below to capture this spot.</Text>
           )}
           <Pressable style={styles.ghostButton} onPress={captureLocation} disabled={locating}>
             <Ionicons name="locate-outline" size={18} color={colors.pine} />
@@ -362,29 +410,35 @@ export default function NewCaptureScreen() {
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.sectionLabel}>PHOTO</Text>
-          {photoUri ? (
-            <Pressable style={styles.photoPreviewBtn} onPress={choosePhotoSource}>
-              <Ionicons name="image" size={18} color={colors.pine} />
-              <Text style={styles.ghostButtonText}>Photo attached — replace</Text>
-            </Pressable>
-          ) : (
-            <Pressable style={styles.ghostButton} onPress={choosePhotoSource}>
-              <Ionicons name="camera-outline" size={18} color={colors.pine} />
-              <Text style={styles.ghostButtonText}>Add photo</Text>
-            </Pressable>
-          )}
+          <Text style={styles.sectionLabel}>PHOTOS ({photos.length})</Text>
+          {photos.map((photo) => (
+            <View key={photo.id} style={styles.photoRow}>
+              <Image source={{ uri: photo.local_uri }} style={styles.photoThumb} />
+              <Pressable style={styles.removePhoto} onPress={() => removePhoto(photo.id)}>
+                <Ionicons name="trash-outline" size={16} color={colors.danger} />
+                <Text style={styles.removePhotoText}>Remove</Text>
+              </Pressable>
+            </View>
+          ))}
+          <Pressable style={styles.ghostButton} onPress={choosePhotoSource}>
+            <Ionicons name="camera-outline" size={18} color={colors.pine} />
+            <Text style={styles.ghostButtonText}>Add photo</Text>
+          </Pressable>
         </View>
 
         <Pressable
           style={[styles.primaryButton, saving && styles.buttonBusy]}
-          onPress={saveDraft}
+          onPress={save}
           disabled={saving}
         >
-          <Text style={styles.primaryButtonText}>{saving ? 'Saving…' : 'Save offline record'}</Text>
+          <Text style={styles.primaryButtonText}>{saving ? 'Saving…' : 'Save changes'}</Text>
+        </Pressable>
+        <Pressable style={styles.cancelButton} onPress={() => router.back()} disabled={saving}>
+          <Text style={styles.cancelText}>Cancel</Text>
         </Pressable>
         <Text style={styles.offlineNote}>
-          Saved as a draft on this device and synced to the central database when you press Sync now.
+          Saving keeps the record on this device and re-queues it for sync. Press Sync now to push the
+          correction; an already approved record returns to pending for officer re-review.
         </Text>
       </ScrollView>
 
@@ -487,13 +541,6 @@ const styles = StyleSheet.create({
     color: colors.muted,
     lineHeight: 17,
   },
-  tagError: {
-    fontSize: 12,
-    color: colors.danger,
-  },
-  inputError: {
-    borderColor: colors.danger,
-  },
   choiceRow: {
     flexDirection: 'row',
     gap: 10,
@@ -557,14 +604,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
   },
-  photoPreviewBtn: {
+  photoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: colors.chartreuse,
-    borderRadius: 20,
-    paddingVertical: 12,
+    gap: 12,
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.sand,
+    padding: 8,
+  },
+  photoThumb: {
+    width: 72,
+    height: 72,
+    borderRadius: 8,
+    backgroundColor: colors.sand,
+  },
+  removePhoto: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.danger,
+  },
+  removePhotoText: {
+    color: colors.danger,
+    fontSize: 13,
+    fontWeight: '600',
   },
   primaryButton: {
     backgroundColor: colors.emerald,
@@ -579,6 +648,15 @@ const styles = StyleSheet.create({
   },
   buttonBusy: {
     opacity: 0.6,
+  },
+  cancelButton: {
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  cancelText: {
+    color: colors.pine,
+    fontSize: 15,
+    fontWeight: '600',
   },
   offlineNote: {
     fontSize: 12,

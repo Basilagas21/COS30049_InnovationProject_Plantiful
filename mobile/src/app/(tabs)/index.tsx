@@ -5,7 +5,8 @@ import { useCallback, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/theme';
-import { getLocalRecordByQR, openDatabase } from '@/db';
+import { getRecordByTag, openDatabase } from '@/db';
+import { normalizeTag, TAG_LABEL } from '@/lib/tags';
 
 export default function CaptureScreen() {
   const router = useRouter();
@@ -27,13 +28,13 @@ export default function CaptureScreen() {
 
   async function onBarcodeScanned(result: BarcodeScanningResult) {
     if (result.type !== 'qr') return;
-    const data = result.data.trim();
+const data = normalizeTag(result.data);
     if (!data || handlingRef.current || lastHandledRef.current === data) return;
     handlingRef.current = true;
     lastHandledRef.current = data;
     try {
       const db = await openDatabase();
-      const existing = await getLocalRecordByQR(db, data);
+      const existing = await getRecordByTag(db, data);
       setLastScan({ data, recordId: existing?.record_id ?? null });
       if (existing) {
         router.push({ pathname: '/record/[id]', params: { id: existing.record_id } });
@@ -64,7 +65,7 @@ export default function CaptureScreen() {
       <View style={styles.center}>
         <Ionicons name="camera-outline" size={56} color={colors.emerald} />
         <Text style={styles.title}>Camera access needed</Text>
-        <Text style={styles.hint}>Plantiful scans the QR tag on each plant to open its record.</Text>
+        <Text style={styles.hint}>Plantiful scans the tag on each plant to open its record.</Text>
         <Pressable style={styles.primaryButton} onPress={requestPermission}>
           <Text style={styles.primaryButtonText}>Grant camera access</Text>
         </Pressable>
@@ -97,7 +98,7 @@ export default function CaptureScreen() {
         <View style={[styles.corner, styles.topRight]} />
         <View style={[styles.corner, styles.bottomLeft]} />
         <View style={[styles.corner, styles.bottomRight]} />
-        <Text style={styles.finderLabel}>Point at the plant&apos;s QR tag</Text>
+        <Text style={styles.finderLabel}>Point at the plant&apos;s tag</Text>
       </View>
 
       <View style={styles.bottomCard}>
@@ -106,7 +107,7 @@ export default function CaptureScreen() {
             <Text style={styles.cardTitle}>
               {lastScan.recordId ? 'Tag detected' : 'New tag detected'}
             </Text>
-            <Text style={styles.cardMeta}>ID: {lastScan.data}</Text>
+            <Text style={styles.cardMeta}>{TAG_LABEL}: {lastScan.data}</Text>
             <View style={styles.cardActions}>
               {lastScan.recordId ? (
                 <Pressable

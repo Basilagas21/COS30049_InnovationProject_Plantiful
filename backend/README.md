@@ -49,9 +49,15 @@ backend/
 
    Without the CLI, open Dashboard > SQL Editor and run `001_schema.sql` then `002_rls.sql` in order.
 
-4. **Enable auth** (issue #3): email/password provider, then run `seed.sql` to create officer and admin users and set their roles.
-5. **Create the storage buckets and apply their policies.** For a fresh project, run `001_schema.sql`, `002_rls.sql`, and `003_workflow_triggers.sql`; for the live project, run the consolidated `supabase/migrations/apply_project.sql` (contains schema backfill, RLS, triggers, and the `record-photos`, `species-photos`, and `reports` bucket policies). Upgrades are incremental: run `004_photo_visibility.sql` on a project created before it (photo reads now follow record approval instead of species publication).
+4. **Enable auth** (issue #3): email/password provider, then run `seed.sql` to promote the officer and admin users (set your real emails in its two `update` statements first).
+5. **Create the storage buckets and apply their policies.** For a fresh project, run `001_schema.sql` first and then the incremental migrations below in order; for the live project, run the consolidated `supabase/migrations/apply_project.sql` instead — it is idempotent and covers `002_rls.sql` through `008_species_knowledge_fields.sql` (schema backfills, RLS policies, workflow triggers, the botanist approval gate, the private `reports` bucket, and the `record-photos`, `species-photos`, and `reports` bucket policies). Upgrades are incremental:
+   - `004_photo_visibility.sql` — photo reads follow record approval instead of species publication. Run it on any project created before it.
+   - `005_record_photo_sync.sql` — **required for the mobile photo sync to complete.** It adds the missing `UPDATE`/`DELETE` policies on `record-photos` (without the `UPDATE` policy, the app's repair upload with `upsert: true` is rejected by RLS and the sync reports "The central database rejected this write under its access rules"), enforces the `<user id>/` path prefix on writes, and fixes an unqualified-column bug in `botanist_manage_own_photos`.
+   - `006_record_approval_gate.sql` — the approval gate: requires `approval_status = 'pending'` and a null `reviewed_by` on botanist inserts and updates, so only officers can approve a record. Already inside `apply_project.sql`; run it on its own only when you are not re-running the consolidated file.
+   - `007_reports_bucket_private.sql` — **required.** Flips the `reports` bucket to `public = false`. A public bucket bypasses RLS on `storage.objects`, so the officer CSVs (GPS of sensitive species) were readable by anyone with the URL even though `officer_read_reports` looks officer-only; also folded into `apply_project.sql`.
+   - `008_species_knowledge_fields.sql` — **required.** Adds the nullable `species.ecology` and `species.cultural_significance` knowledge columns; also folded into `apply_project.sql`.
 6. **Verify security** (issue #26): run `scripts/verify_public_write_block.sql` in the SQL editor and confirm every check passes — anonymous inserts, updates, and deletes are rejected, anonymous reads return only approved and published data, and no species can be published before it has an approved record (R7).
+7. **Verify the photo write path:** run `scripts/verify_record_photo_write.sql`. Every line must read `PASS` (or `SKIP` where noted) before pressing **Sync now** on a device; otherwise photo uploads fail with an access-rules error.
 
 ## Data model
 

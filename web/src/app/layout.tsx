@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { isOfficer } from "@/lib/auth";
+import { isOfficer, isAdmin } from "@/lib/auth";
 import { NavAuth } from "@/components/nav-auth";
 import { InteractionLogger } from "@/components/interaction-logger";
 import "./globals.css";
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const officer = await isOfficer();
+  const [officer, admin] = await Promise.all([isOfficer(), isAdmin()]);
   const navLinks = [
     { href: "/explore", label: "Explore" },
     { href: "/species", label: "Species" },
@@ -36,6 +36,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           { href: "/alerts", label: "Alerts" },
         ]
       : []),
+    ...(admin ? [{ href: "/users", label: "Users" }] : []),
   ];
 
   return (

@@ -13,7 +13,7 @@
 
 ## Overview
 
-Plantiful is an integrated mobile and web platform that streamlines biodiversity documentation for Sarawak Forestry Corporation (SFC) at Niah National Park. Botanists scan QR-tagged plants and record species data offline in the field, and conservation officers manage, review, and publish that data through a centralised web knowledge system. IoT sensors monitor rare and endangered species, alerting staff to threats in real time.
+Plantiful is an integrated mobile and web platform that streamlines biodiversity documentation for Sarawak Forestry Corporation (SFC) at Niah National Park. Botanists scan QR-tagged plants and record species data offline in the field, and conservation officers manage, review, and publish that data through a centralised web knowledge system. An IoT monitoring layer — currently a simulated sensor feed — records environmental conditions around monitored field sites and raises alerts that conservation officers review in the web dashboard.
 
 **Industry partner:** NeuonAI (SFC's commercialisation partner)
 
@@ -36,7 +36,7 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 | Web | React / Next.js + Tailwind |
 | Backend & DB | Supabase (PostgreSQL, auth, storage, auto-generated APIs) |
 | Offline storage | SQLite (on-device) |
-| IoT | MQTT (Mosquitto) + simulated sensors → InfluxDB |
+| IoT | Python sensor simulator + threat-rule evaluator → Supabase (`sensors`, `sensor_readings`, `alerts`) → officer alert dashboard |
 | Security testing | OWASP ZAP |
 | Version control | Git + GitHub |
 | Hosting | Vercel / Render + Supabase |
@@ -78,16 +78,14 @@ COS30049_InnovationProject_Plantiful/
 ├── mobile/                ← React Native / Expo app (offline field data capture)
 │   └── src/app/           ← Expo Router screens (scan, capture, records, sync, profile)
 ├── web/                   ← Next.js web knowledge system for conservation officers
-│   └── src/app/           ← App Router pages (records, records/[id], profile, settings)
+│   └── src/app/           ← App Router pages (explore, species, map, records, reports, alerts, profile)
 ├── backend/
 │   └── supabase/
-│       ├── migrations/    ← 001_schema.sql, 002_rls.sql, 003_workflow_triggers.sql, apply_project.sql
-│       └── seed.sql       ← seed officer/admin users and role assignments
-├── iot/                   ← IoT sensor pipeline (MQTT → InfluxDB) and alerts
+│       ├── migrations/    ← 001_schema.sql, per-feature migrations 002–008, and apply_project.sql (consolidated)
+│       └── seed.sql       ← assigns officer/admin roles by email + sample species catalogue
+├── iot/                   ← Python sensor simulator + threat-rule evaluator (writes alerts to Supabase)
 ├── Docs/
 │   ├── Assets/            ← logo, diagrams, images
-│   ├── Design/            ← architecture, ER diagrams (.drawio), wireframes
-│   │   └── Wireframes/
 │   ├── Reports/           ← proposal, final report
 │   └── Templates/         ← docx + md templates
 ├── .gitignore
@@ -126,10 +124,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 
 1. Create a project in Supabase.
 2. Enable Supabase Auth with email/password.
-3. Open Dashboard > SQL Editor and run `backend/supabase/migrations/001_schema.sql`, then `002_rls.sql`, then `003_workflow_triggers.sql`. Alternatively run `apply_project.sql`, which combines an idempotent version of all of them.
-4. Run `backend/supabase/seed.sql` to create officer and admin users and assign roles.
+3. Open Dashboard > SQL Editor and run `backend/supabase/migrations/001_schema.sql` first. Then run `apply_project.sql` from the same folder — it is a consolidated, idempotent script covering `002_rls.sql` through `008`: RLS policies and schema backfills, workflow triggers, photo visibility, the botanist approval gate, the private reports bucket, and storage-bucket creation. If you prefer the individual files, run `002`–`006` in order and then `007_reports_bucket_private.sql` and `008_species_knowledge_fields.sql` — these last two are already included in `apply_project.sql`, so skip them when using the consolidated script.
+4. Run `backend/supabase/seed.sql` to assign officer and admin roles by email — edit its two `update` statements to your own addresses first — and to load the sample species catalogue.
 5. Invite your own test users in Dashboard > Authentication > Users and tick "Email confirmed" (email confirmation is on).
-6. The `record-photos` storage bucket and its policies are created by `apply_project.sql`. If you applied the files individually, create the bucket and policies manually.
+6. Verify the setup with the scripts under `backend/scripts/`: `verify_public_write_block.sql` should show anonymous writes rejected and anonymous reads limited to approved and published data, and `verify_record_photo_write.sql` must report `PASS` on every line before the mobile Sync now button is used.
 
 ### 3. Run the web app
 
@@ -162,6 +160,15 @@ Scan the QR code shown by Expo with Expo Go on your phone, or press `a` for an A
 - A record captured on mobile shows up as Pending on the web for an officer.
 - An officer approves or rejects it. Approved records become visible to the public portal.
 - Botanists can see their own records on the web (including pending ones) after the `apply_project.sql` policy is applied.
+
+### 6. Run the IoT monitor (optional demo)
+
+```
+python iot/publisher.py --once
+python iot/evaluate.py
+```
+
+The publisher registers simulated sensors and pushes synthetic readings; the evaluator applies threat rules and raises alerts. Officers review the output at `/alerts` in the web app. There is no physical hardware — details in [`iot/README.md`](iot/README.md).
 
 ### Checks
 

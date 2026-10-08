@@ -307,11 +307,18 @@ export default function NewCaptureScreen() {
                   : 'Select species…'}
             </Text>
           </Pressable>
-          {selectedSpecies?.conservation_status && (
-            <Text style={styles.locationMeta}>
-              Conservation status: {selectedSpecies.conservation_status}
-            </Text>
-          )}
+          {selectedSpecies ? (
+            <View style={styles.speciesMeta}>
+              {selectedSpecies.taxonomy ? (
+                <Text style={styles.locationMeta}>{selectedSpecies.taxonomy}</Text>
+              ) : null}
+              {selectedSpecies.conservation_status ? (
+                <Text style={styles.locationMeta}>
+                  Conservation status: {selectedSpecies.conservation_status}
+                </Text>
+              ) : null}
+            </View>
+          ) : null}
         </View>
 
         <View style={styles.card}>
@@ -631,6 +638,9 @@ const styles = StyleSheet.create({
   },
   speciesSelected: {
     color: colors.emerald,
+  },
+  speciesMeta: {
+    gap: 2,
   },
   modalBackdrop: {
     flex: 1,

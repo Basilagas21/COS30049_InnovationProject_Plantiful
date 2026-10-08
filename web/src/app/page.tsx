@@ -38,7 +38,7 @@ export default function Home() {
               {[
                 { value: "5s", label: "Offline record lookup" },
                 { value: "100%", label: "Approved before publish" },
-                { value: "IoT", label: "Live threat alerts" },
+                { value: "IoT", label: "Threat alert dashboard" },
               ].map((stat) => (
                 <div key={stat.label} className="rounded-2xl bg-white px-4 py-4 shadow-sm">
                   <p className="text-xl font-bold text-emerald">{stat.value}</p>

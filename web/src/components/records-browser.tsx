@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ApproveRejectButtons } from "@/components/approve-reject";
+import { PhotoImg } from "@/components/photo-img";
 import type { RecordListItem } from "@/lib/records";
 
 type Props = {
@@ -324,14 +325,11 @@ export function RecordsBrowser({ records, officer }: Props) {
               className="flex flex-1 flex-col"
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-sprout/70 transition-colors group-hover:bg-sprout">
-                {record.photoUrl && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={record.photoUrl}
-                    alt={record.scientificName}
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                )}
+                <PhotoImg
+                  src={record.photoUrl}
+                  alt={record.scientificName}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
                 {(record.approvalStatus === "pending" ||
                   record.approvalStatus === "rejected") && (
                   <span className="absolute top-3 left-3 inline-block rounded-full bg-chartreuse px-3 py-1 text-xs font-bold text-pine">

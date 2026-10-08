@@ -36,6 +36,7 @@ Without these the app still runs, but shows sample records and sign-in is disabl
 | `/species`, `/species/new` | Catalogue browsing and management (officer) |
 | `/map` | Located observations on an interactive species map |
 | `/records`, `/records/[id]` | Records list with species search and record detail; officers approve or reject |
+| `/approvals` | Pending-submission queue with approve/reject + quick links (officer) |
 | `/reports` | Generated biodiversity reports (officer) |
 | `/alerts` | Live IoT threat alerts and latest sensor readings (officer) |
 | `/users` | Grant or revoke roles (admin) |

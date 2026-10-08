@@ -221,6 +221,34 @@ export default function SyncScreen() {
       }
     };
 
+    // A qr_code clash means the tag was already registered from another
+    // device. Adopt that row instead of failing as a duplicate: remember the
+    // server id (so this record is never pushed as an insert again) and copy
+    // the officer's review outcome. Null when the clash isn't about the plant
+    // tag or the remote row isn't visible under this session's access rules.
+    const adoptDuplicateByTag = async (error: unknown, row: LocalRecord): Promise<string | null> => {
+      const code = (error as { code?: string } | null)?.code ?? '';
+      const raw = error instanceof Error ? error.message : String(error);
+      const details = (error as { details?: string } | null)?.details ?? '';
+      if (code !== '23505' || !row.qr_code || !`${raw} ${details}`.toLowerCase().includes('qr_code')) {
+        return null;
+      }
+      try {
+        const { data: remote } = await supabase!
+          .from('plant_records')
+          .select('record_id, approval_status, reviewed_at')
+          .eq('qr_code', row.qr_code)
+          .maybeSingle();
+        if (!remote) return null;
+        await setRecordServerId(db, row.record_id, remote.record_id);
+        await updateRecordReviewStatus(db, remote.record_id, remote.approval_status, remote.reviewed_at);
+        return remote.record_id;
+      } catch (e) {
+        console.warn('[sync] duplicate adoption failed:', e instanceof Error ? e.message : e);
+        return null;
+      }
+    };
+
     setState('syncing');
     setSynced(0);
     setFailed(0);
@@ -278,19 +306,23 @@ export default function SyncScreen() {
 
         let serverRecordId = existing?.record_id ?? row.server_id ?? null;
 
-        if (serverRecordId && row.edited) {
-          // Locally edited after syncing: push the correction to the same
-          // record and reset it for officer re-review, because the approved
-          // data no longer matches what was reviewed.
-          const { error: updateError } = await supabase
+        // Locally edited after syncing: push the correction to the same
+        // record and reset it for officer re-review, because the approved
+        // data no longer matches what was reviewed.
+        const pushEdit = async (serverId: string) => {
+          const { error: updateError } = await supabase!
             .from('plant_records')
             .update({
               ...observation,
               status: 'submitted',
               approval_status: 'pending',
             })
-            .eq('record_id', serverRecordId);
+            .eq('record_id', serverId);
           if (updateError) throw updateError;
+        };
+
+        if (serverRecordId && row.edited) {
+          await pushEdit(serverRecordId);
         } else if (!serverRecordId) {
           const { data: inserted, error } = await supabase
             .from('plant_records')
@@ -304,9 +336,15 @@ export default function SyncScreen() {
             .select('record_id')
             .single();
 
-          if (error) throw error;
-          serverRecordId = inserted.record_id;
-          await setRecordServerId(db, row.record_id, serverRecordId);
+          if (error) {
+            const adoptedId = await adoptDuplicateByTag(error, row);
+            if (!adoptedId) throw error;
+            serverRecordId = adoptedId;
+            if (row.edited) await pushEdit(serverRecordId);
+          } else {
+            serverRecordId = inserted.record_id;
+            await setRecordServerId(db, row.record_id, serverRecordId);
+          }
         }
 
         const photos = await getPhotosForRecord(db, row.record_id);

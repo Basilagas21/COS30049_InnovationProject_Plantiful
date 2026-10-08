@@ -1,13 +1,57 @@
 import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera';
 import { useFocusEffect, useRouter } from 'expo-router';
+import type { SQLiteDatabase } from 'expo-sqlite';
 import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Pressable } from '@/lib/interactionLog';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/theme';
-import { getRecordByTag, openDatabase } from '@/db';
+import { getRecordByTag, importRemoteRecord, openDatabase } from '@/db';
 import { normalizeTag, TAG_LABEL } from '@/lib/tags';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+
+// Caps a central-database request so a stalled network can't hang the scan
+// handler; resolves null on timeout.
+async function withLookupTimeout<T>(request: PromiseLike<T>): Promise<T | null> {
+  const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 4000));
+  return Promise.race([request, timeout]);
+}
+
+// Scan-time lookup of the central database for a tag that isn't stored on
+// this device. Best-effort by design: an offline, slow or signed-out lookup
+// resolves to null so the scan falls back to the local "New tag detected"
+// flow instead of failing.
+async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promise<string | null> {
+  if (!isSupabaseConfigured || !supabase) return null;
+  try {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session) return null;
+
+    const result = await withLookupTimeout(
+      supabase
+        .from('plant_records')
+        .select(
+          'record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, morphology, notes, approval_status, reviewed_at, created_at'
+        )
+        .eq('qr_code', tag)
+        .limit(1)
+        .maybeSingle()
+    );
+    if (!result || result.error || !result.data) return null;
+
+    // Photos are best-effort: the record still opens if they can't be pulled.
+    const photos = await withLookupTimeout(
+      supabase
+        .from('plant_record_photos')
+        .select('photo_url, taken_at')
+        .eq('record_id', result.data.record_id)
+    );
+    return await importRemoteRecord(db, result.data, photos?.data ?? []);
+  } catch {
+    return null;
+  }
+}
 
 export default function CaptureScreen() {
   const router = useRouter();
@@ -41,10 +85,13 @@ const data = normalizeTag(result.data);
     lastHandledRef.current = data;
     try {
       const db = await openDatabase();
-      const existing = await getRecordByTag(db, data);
-      setLastScan({ data, recordId: existing?.record_id ?? null });
-      if (existing) {
-        router.push({ pathname: '/record/[id]', params: { id: existing.record_id } });
+      let recordId = (await getRecordByTag(db, data))?.record_id ?? null;
+      if (!recordId) {
+        recordId = await importScannedRemoteRecord(db, data);
+      }
+      setLastScan({ data, recordId });
+      if (recordId) {
+        router.push({ pathname: '/record/[id]', params: { id: recordId } });
       }
     } finally {
       handlingRef.current = false;

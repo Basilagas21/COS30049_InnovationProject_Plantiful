@@ -10,6 +10,8 @@ export type SpeciesInput = {
   taxonomy?: string | null;
   conservation_status?: string | null;
   description?: string | null;
+  ecology?: string | null;
+  cultural_significance?: string | null;
   is_published?: boolean;
 };
 

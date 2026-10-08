@@ -22,6 +22,8 @@ export function SpeciesForm({ speciesId, initial }: Props) {
       taxonomy: textOrNull(formData.get("taxonomy")),
       conservation_status: textOrNull(formData.get("conservation_status")),
       description: textOrNull(formData.get("description")),
+      ecology: textOrNull(formData.get("ecology")),
+      cultural_significance: textOrNull(formData.get("cultural_significance")),
       is_published: formData.get("is_published") === "on",
     };
 
@@ -94,6 +96,26 @@ export function SpeciesForm({ speciesId, initial }: Props) {
           defaultValue={initial?.description ?? ""}
           rows={5}
           placeholder="Botanical description, habitat, key identifying features…"
+          className="field-input resize-y"
+        />
+      </Field>
+
+      <Field label="Ecology & habitat">
+        <textarea
+          name="ecology"
+          defaultValue={initial?.ecology ?? ""}
+          rows={4}
+          placeholder="Habitat, elevation, ecological role…"
+          className="field-input resize-y"
+        />
+      </Field>
+
+      <Field label="Cultural significance">
+        <textarea
+          name="cultural_significance"
+          defaultValue={initial?.cultural_significance ?? ""}
+          rows={4}
+          placeholder="Traditional uses, folklore, ethnobotanical value…"
           className="field-input resize-y"
         />
       </Field>

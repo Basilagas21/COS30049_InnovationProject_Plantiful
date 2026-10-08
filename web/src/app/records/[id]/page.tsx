@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import QRCode from "qrcode";
 import { fetchRecordById } from "@/lib/records";
 import { isOfficer } from "@/lib/auth";
 import { ApproveRejectButtons } from "@/components/approve-reject";
+import { PhotoImg } from "@/components/photo-img";
 
 export default async function RecordDetailPage({
   params,
@@ -13,6 +15,16 @@ export default async function RecordDetailPage({
 
   const officer = await isOfficer();
 
+  let qrDataUrl: string | null = null;
+  const qrValue = record.qrCode ?? null;
+  if (qrValue) {
+    try {
+      qrDataUrl = await QRCode.toDataURL(qrValue);
+    } catch {
+      qrDataUrl = null;
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
       <Link href="/records" className="text-sm font-medium text-emerald hover:underline">
@@ -22,17 +34,12 @@ export default async function RecordDetailPage({
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         <div>
           <div className="relative">
-          {record.photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <PhotoImg
               src={record.photoUrl}
               alt={record.scientificName}
               className="aspect-[4/5] w-full rounded-3xl object-cover"
             />
-          ) : (
-            <div className="aspect-[4/5] w-full rounded-3xl bg-gradient-to-br from-sprout to-cream" />
-          )}
-        </div>
+          </div>
         </div>
 
         <div className="flex flex-col gap-6">
@@ -71,7 +78,24 @@ export default async function RecordDetailPage({
             {[
               {
                 label: "QR code",
-                value: record.qrCode ?? "—",
+                value: (
+                  <div className="mt-2 flex flex-col items-start gap-2">
+                    {qrDataUrl ? (
+                      <>
+                        <img
+                          src={qrDataUrl}
+                          alt={`QR for ${record.qrCode}`}
+                          className="h-24 w-24 rounded-lg border border-pine/10 bg-white p-1"
+                        />
+                        <p className="text-xs text-moss">Scan to view tag ID</p>
+                      </>
+                    ) : (
+                      <span className="text-sm font-semibold text-pine">
+                        {record.qrCode ?? "—"}
+                      </span>
+                    )}
+                  </div>
+                ),
               },
               {
                 label: "Coordinates",

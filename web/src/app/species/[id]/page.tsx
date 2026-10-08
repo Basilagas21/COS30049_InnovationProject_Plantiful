@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { fetchSpeciesById } from "@/lib/species";
 import { isOfficer } from "@/lib/auth";
 import { PhotoGallery } from "@/components/species-photos";
+import { SpeciesDeleteButton } from "@/components/species-delete-button";
 
 export default async function SpeciesDetailPage({
   params,
@@ -78,6 +79,20 @@ export default async function SpeciesDetailPage({
             </div>
           )}
 
+          {entry.ecology && (
+            <div className="rounded-2xl border border-pine/10 bg-white p-5">
+              <h2 className="font-semibold text-pine">Ecology & habitat</h2>
+              <p className="mt-2 text-sm leading-7 text-moss">{entry.ecology}</p>
+            </div>
+          )}
+
+          {entry.culturalSignificance && (
+            <div className="rounded-2xl border border-pine/10 bg-white p-5">
+              <h2 className="font-semibold text-pine">Cultural significance</h2>
+              <p className="mt-2 text-sm leading-7 text-moss">{entry.culturalSignificance}</p>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-3">
             {[
               { label: "Added", value: new Date(entry.createdAt).toLocaleDateString() },
@@ -92,6 +107,13 @@ export default async function SpeciesDetailPage({
             ))}
           </div>
 
+          <Link
+            href={`/map?species_id=${entry.id}`}
+            className="inline-flex h-10 w-fit items-center rounded-full border border-pine/20 bg-white px-6 text-sm font-semibold text-pine transition-colors hover:bg-sprout"
+          >
+            View distribution on map
+          </Link>
+
           {officer && (
             <div className="flex flex-wrap items-center gap-3">
               <Link
@@ -100,6 +122,7 @@ export default async function SpeciesDetailPage({
               >
                 Edit species
               </Link>
+              <SpeciesDeleteButton speciesId={entry.id} speciesName={entry.scientificName} />
             </div>
           )}
         </div>

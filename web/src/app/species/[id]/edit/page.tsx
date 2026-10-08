@@ -34,6 +34,8 @@ export default async function EditSpeciesPage({
           taxonomy: entry.taxonomy,
           conservation_status: entry.conservationStatus,
           description: entry.description,
+          ecology: entry.ecology,
+          cultural_significance: entry.culturalSignificance,
           is_published: entry.isPublished,
         }}
       />

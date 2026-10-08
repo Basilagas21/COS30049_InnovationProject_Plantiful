@@ -2,7 +2,7 @@ import { File } from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
 const DATABASE_NAME = 'plantiful.db';
-const SCHEMA_VERSION = 5;
+const SCHEMA_VERSION = 6;
 
 async function migrateDbIfNeeded(db: SQLite.SQLiteDatabase) {
   const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -153,6 +153,28 @@ CREATE TABLE sync_queue (
     currentDbVersion = 5;
   }
 
+  if (currentDbVersion < 6) {
+    // Species reference photos are a server-backed cache like the catalog, so
+    // the table is created idempotently and its rows are replaced on every
+    // photos pull in sync.tsx.
+    await db.execAsync(`
+CREATE TABLE IF NOT EXISTS local_species_photos (
+  photo_id TEXT PRIMARY KEY NOT NULL,
+  species_id TEXT NOT NULL,
+  photo_url TEXT NOT NULL,
+  synced_at TEXT
+);
+`);
+    const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(local_records)');
+    if (!columns.some((column) => column.name === 'approval_status')) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN approval_status TEXT');
+    }
+    if (!columns.some((column) => column.name === 'reviewed_at')) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN reviewed_at TEXT');
+    }
+    currentDbVersion = 6;
+  }
+
   // `edited` marks a locally edited record so the next sync pushes an UPDATE to
   // the existing server row instead of creating a duplicate. Repaired on EVERY
   // open rather than version-gated, so a half-applied migration can never leave
@@ -229,6 +251,8 @@ export type LocalRecord = {
   sync_status: string;
   server_id: string | null;
   sync_error: string | null;
+  approval_status: string | null;
+  reviewed_at: string | null;
   edited: number;
   created_at: string;
 };
@@ -298,7 +322,7 @@ export async function getLocalRecords(db: SQLite.SQLiteDatabase): Promise<LocalR
        r.record_id, r.species_id, r.qr_code, r.provisional_name,
        r.gps_lat, r.gps_lng, r.gps_accuracy_m,
        r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
-       r.sync_error, r.created_at,
+       r.sync_error, r.approval_status, r.reviewed_at, r.created_at,
        COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
@@ -315,7 +339,7 @@ export async function getLocalRecord(
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
        r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
-       r.sync_error, r.edited, r.created_at,
+       r.sync_error, r.approval_status, r.reviewed_at, r.edited, r.created_at,
        COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
@@ -448,7 +472,7 @@ export async function getRecordByTag(
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
        r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
-       r.sync_error, r.edited, r.created_at,
+       r.sync_error, r.approval_status, r.reviewed_at, r.edited, r.created_at,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
      WHERE r.qr_code = ? LIMIT 1`,
@@ -571,4 +595,71 @@ export async function upsertSpeciesCatalog(
       now
     );
   }
+}
+
+export async function getSpeciesById(
+  db: SQLite.SQLiteDatabase,
+  speciesId: string
+): Promise<SpeciesOption | null> {
+  return db.getFirstAsync<SpeciesOption>(
+    `SELECT species_id, scientific_name, common_name, conservation_status, taxonomy, description
+     FROM species_catalog
+     WHERE species_id = ?`,
+    speciesId
+  );
+}
+
+export type SpeciesLocalPhoto = {
+  photo_id: string;
+  species_id: string;
+  photo_url: string;
+  synced_at: string;
+};
+
+// The photos pull is an authoritative snapshot of a species' reference images,
+// so each species' previous rows are dropped before the fresh batch is written.
+export async function insertSpeciesPhotos(
+  db: SQLite.SQLiteDatabase,
+  rows: { photo_id: string; species_id: string; photo_url: string }[]
+) {
+  const now = new Date().toISOString();
+  const touched = [...new Set(rows.map((row) => row.species_id))];
+  for (const speciesId of touched) {
+    await db.runAsync('DELETE FROM local_species_photos WHERE species_id = ?', speciesId);
+  }
+  for (const row of rows) {
+    await db.runAsync(
+      'INSERT INTO local_species_photos (photo_id, species_id, photo_url, synced_at) VALUES (?, ?, ?, ?)',
+      row.photo_id,
+      row.species_id,
+      row.photo_url,
+      now
+    );
+  }
+}
+
+export async function getSpeciesPhotos(
+  db: SQLite.SQLiteDatabase,
+  speciesId: string
+): Promise<SpeciesLocalPhoto[]> {
+  return db.getAllAsync<SpeciesLocalPhoto>(
+    'SELECT photo_id, species_id, photo_url, synced_at FROM local_species_photos WHERE species_id = ? ORDER BY synced_at ASC',
+    speciesId
+  );
+}
+
+// Review outcomes are keyed by the server record id, which lives in server_id
+// on the device row, so match on that rather than the generated local id.
+export async function updateRecordReviewStatus(
+  db: SQLite.SQLiteDatabase,
+  recordId: string,
+  approvalStatus: string | null,
+  reviewedAt: string | null
+) {
+  await db.runAsync(
+    'UPDATE local_records SET approval_status = ?, reviewed_at = ? WHERE server_id = ?',
+    approvalStatus,
+    reviewedAt,
+    recordId
+  );
 }

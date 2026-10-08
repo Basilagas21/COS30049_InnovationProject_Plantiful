@@ -51,11 +51,11 @@ export default function Home() {
           <div className="relative">
             <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-sprout to-cream p-4 shadow-md">
               <Image
-                src="/plantiful_logo.jpg"
+                src="/plantiful_logo.png"
                 alt="Plantiful logo"
-                width={858}
-                height={620}
-                className="aspect-[858/620] w-full rounded-2xl object-cover"
+                width={592}
+                height={421}
+                className="aspect-[592/421] w-full rounded-2xl object-cover"
               />
             </div>
             <div className="absolute left-4 top-10 rounded-2xl bg-white/90 p-3 shadow-md backdrop-blur">

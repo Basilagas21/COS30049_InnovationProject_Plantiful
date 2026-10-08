@@ -51,10 +51,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold text-pine">
               <Image
-                src="/plantiful_logo.jpg"
+                src="/plantiful_logo.png"
                 alt="Plantiful logo"
-                width={858}
-                height={620}
+                width={592}
+                height={421}
                 className="h-9 w-auto object-contain"
                 priority
               />

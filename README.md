@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Docs/Assets/plantiful_logo.jpg" alt="Plantiful Logo" width="400"/>
+  <img src="Docs/Assets/plantiful_logo.png" alt="Plantiful Logo" width="400"/>
 </p>
 
 <h1 align="center">Plantiful</h1>

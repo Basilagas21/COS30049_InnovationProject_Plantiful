@@ -54,10 +54,10 @@ export default function SignInPage() {
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6 py-16">
       <div className="rounded-3xl border border-pine/10 bg-white p-8">
         <Image
-          src="/plantiful_logo.jpg"
+          src="/plantiful_logo.png"
           alt="Plantiful logo"
-          width={858}
-          height={620}
+          width={592}
+          height={421}
           className="h-14 w-auto object-contain"
         />
         <h1 className="mt-5 text-2xl font-bold tracking-tight text-pine">

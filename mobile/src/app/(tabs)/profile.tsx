@@ -49,7 +49,7 @@ export default function ProfileScreen() {
     return (
       <View style={styles.container}>
         <Image
-          source={require('../../../assets/plantiful_logo.jpg')}
+          source={require('../../../assets/plantiful_logo.png')}
           style={styles.logo}
           resizeMode="contain"
           accessibilityLabel="Plantiful logo"
@@ -77,7 +77,7 @@ export default function ProfileScreen() {
     return (
       <View style={styles.container}>
         <Image
-          source={require('../../../assets/plantiful_logo.jpg')}
+          source={require('../../../assets/plantiful_logo.png')}
           style={styles.logo}
           resizeMode="contain"
           accessibilityLabel="Plantiful logo"
@@ -99,7 +99,7 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../../assets/plantiful_logo.jpg')}
+        source={require('../../../assets/plantiful_logo.png')}
         style={styles.logo}
         resizeMode="contain"
         accessibilityLabel="Plantiful logo"

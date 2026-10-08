@@ -10,6 +10,7 @@ export type MapPoint = {
   conservationStatus: string | null;
   heightCm: number | null;
   createdAt: string;
+  photoUrl: string | null;
 };
 
 const mockPoints: MapPoint[] = [
@@ -22,6 +23,7 @@ const mockPoints: MapPoint[] = [
     conservationStatus: "Endangered",
     heightCm: 18,
     createdAt: "2026-09-28T09:41:00Z",
+    photoUrl: null,
   },
   {
     id: "R-0002",
@@ -32,6 +34,7 @@ const mockPoints: MapPoint[] = [
     conservationStatus: "Endangered",
     heightCm: 0.4,
     createdAt: "2026-09-25T14:12:00Z",
+    photoUrl: null,
   },
   {
     id: "R-0003",
@@ -42,6 +45,7 @@ const mockPoints: MapPoint[] = [
     conservationStatus: "Vulnerable",
     heightCm: 3120,
     createdAt: "2026-09-22T08:05:00Z",
+    photoUrl: null,
   },
   {
     id: "R-0004",
@@ -52,6 +56,7 @@ const mockPoints: MapPoint[] = [
     conservationStatus: null,
     heightCm: 85,
     createdAt: "2026-09-18T16:22:00Z",
+    photoUrl: null,
   },
   {
     id: "R-0006",
@@ -62,6 +67,7 @@ const mockPoints: MapPoint[] = [
     conservationStatus: "Endangered",
     heightCm: 2400,
     createdAt: "2026-09-11T12:33:00Z",
+    photoUrl: null,
   },
 ];
 
@@ -126,6 +132,21 @@ export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoin
     }
   }
 
+  const photoByRecord = new Map<string, string>();
+  const { data: photoRows, error: photoError } = await supabase
+    .from("plant_record_photos")
+    .select("record_id, photo_url")
+    .in("record_id", points.map((p) => p.id))
+    .order("taken_at", { ascending: true });
+
+  if (!photoError && photoRows) {
+    for (const row of photoRows) {
+      if (!photoByRecord.has(row.record_id)) {
+        photoByRecord.set(row.record_id, row.photo_url);
+      }
+    }
+  }
+
   return points.map((point) => {
     const species = point.speciesId ? speciesByName.get(point.speciesId) : undefined;
     return {
@@ -137,6 +158,7 @@ export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoin
       conservationStatus: species?.conservation_status ?? null,
       heightCm: data.find((r) => r.record_id === point.id)?.height_cm ?? null,
       createdAt: data.find((r) => r.record_id === point.id)?.created_at ?? "",
+      photoUrl: photoByRecord.get(point.id) ?? null,
     };
   });
 }

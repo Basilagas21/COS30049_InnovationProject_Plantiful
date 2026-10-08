@@ -19,6 +19,19 @@ function syncLabel(status: string) {
   }
 }
 
+function approvalLabel(status: string | null) {
+  switch (status) {
+    case 'approved':
+      return { text: 'Approved', bg: colors.emerald, fg: colors.white };
+    case 'rejected':
+      return { text: 'Rejected', bg: colors.danger, fg: colors.white };
+    case 'pending':
+      return { text: 'Pending review', bg: colors.chartreuse, fg: colors.pine };
+    default:
+      return { text: 'Not synced yet', bg: colors.muted, fg: colors.white };
+  }
+}
+
 export default function RecordDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -49,6 +62,7 @@ export default function RecordDetailScreen() {
 
   const rec = record;
   const pill = syncLabel(rec.sync_status);
+  const approval = approvalLabel(rec.approval_status);
 
   function confirmDelete() {
     Alert.alert(
@@ -84,8 +98,13 @@ export default function RecordDetailScreen() {
 <View style={styles.card}>
           <View style={styles.titleRow}>
             <Text style={styles.title}>{rec.provisional_name ?? 'Unnamed plant'}</Text>
-            <View style={[styles.syncPill, { backgroundColor: pill.color }]}>
-              <Text style={styles.syncPillText}>{pill.text}</Text>
+            <View style={styles.pillStack}>
+              <View style={[styles.syncPill, { backgroundColor: pill.color }]}>
+                <Text style={styles.syncPillText}>{pill.text}</Text>
+              </View>
+              <View style={[styles.syncPill, { backgroundColor: approval.bg }]}>
+                <Text style={[styles.syncPillText, { color: approval.fg }]}>{approval.text}</Text>
+              </View>
             </View>
           </View>
 
@@ -245,6 +264,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
+  },
+  pillStack: {
+    alignItems: 'flex-end',
+    gap: 6,
   },
   syncPill: {
     borderRadius: 12,

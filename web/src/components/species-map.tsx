@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { MapPoint } from "@/lib/map";
@@ -45,27 +45,13 @@ export function SpeciesMap({ points }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [loaded, setLoaded] = useState(false);
 
-  const observations = useMemo(
-    () => ({
-      type: "FeatureCollection" as const,
-      features: points.map((point) => ({
-        type: "Feature" as const,
-        geometry: {
-          type: "Point" as const,
-          coordinates: [point.lng, point.lat] as [number, number],
-        },
-        properties: { ...point, color: statusColor(point.conservationStatus) },
-      })),
-    }),
-    [points]
-  );
-
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     let disposed = false;
     let mapInstance: import("maplibre-gl").Map | null = null;
+    let markers: import("maplibre-gl").Marker[] = [];
 
     import("maplibre-gl").then((maplibregl) => {
       if (disposed) return;
@@ -124,19 +110,6 @@ export function SpeciesMap({ points }: Props) {
           attribution: "Elevation: AWS Open Data (Terrarium)",
         });
 
-        map.addSource("observations", { type: "geojson", data: observations });
-        map.addLayer({
-          id: "observations-circle",
-          type: "circle",
-          source: "observations",
-          paint: {
-            "circle-color": ["get", "color"],
-            "circle-radius": 7,
-            "circle-stroke-width": 2,
-            "circle-stroke-color": "#ffffff",
-          },
-        });
-
         if (points.length > 1) {
           const bounds = new maplibregl.LngLatBounds(
             [Math.min(...lngs), Math.min(...lats)],
@@ -152,29 +125,26 @@ export function SpeciesMap({ points }: Props) {
           map.setTerrain({ source: "terrain-dem", exaggeration: 1.3 });
         });
 
-        const showPopup = (feature: GeoJSON.Feature) => {
-          const props = feature.properties as Record<string, unknown>;
-          const label = String(props.label ?? "Observation");
-          const commonName = props.commonName ? String(props.commonName) : null;
-          const status = props.conservationStatus
-            ? String(props.conservationStatus)
-            : null;
+        const showPopup = (point: MapPoint) => {
           const meta = [
-            props.heightCm != null ? `${props.heightCm} cm` : null,
-            props.createdAt ? new Date(String(props.createdAt)).toLocaleDateString() : null,
+            point.heightCm != null ? `${point.heightCm} cm` : null,
+            point.createdAt
+              ? new Date(point.createdAt).toLocaleDateString()
+              : null,
           ]
             .filter(Boolean)
             .join(" · ");
 
           const rows = [
-            `<strong>${escapeHtml(label)}</strong>`,
-            commonName ? escapeHtml(commonName) : "",
-            status
-              ? `<span style="color:${statusColor(status)}">${escapeHtml(status)}</span>`
+            `<strong>${escapeHtml(point.label)}</strong>`,
+            point.commonName ? escapeHtml(point.commonName) : "",
+            point.conservationStatus
+              ? `<span style="color:${statusColor(point.conservationStatus)}">${escapeHtml(point.conservationStatus)}</span>`
               : "",
           ].filter(Boolean);
 
           popup
+            .setLngLat([point.lng, point.lat])
             .setHTML(
               `${rows.join("<br/>")}${
                 meta
@@ -185,30 +155,43 @@ export function SpeciesMap({ points }: Props) {
             .addTo(map);
         };
 
-        map.on("mouseenter", "observations-circle", (e) => {
-          map.getCanvas().style.cursor = "pointer";
-          const feature = e.features?.[0];
-          if (!feature) return;
-          popup.setLngLat(e.lngLat);
-          showPopup(feature);
-        });
+        // Circular markers: the record's photo when it has one, otherwise a
+        // status-coloured dot. Ring colour always encodes conservation status.
+        markers = points.map((point) => {
+          const color = statusColor(point.conservationStatus);
+          const el = document.createElement("div");
+          el.style.width = "40px";
+          el.style.height = "40px";
+          el.style.borderRadius = "9999px";
+          el.style.border = "3px solid #ffffff";
+          el.style.background = color;
+          el.style.overflow = "hidden";
+          el.style.cursor = "pointer";
+          el.style.boxShadow = `0 0 0 2px ${color}, 0 2px 8px rgba(12, 52, 44, 0.35)`;
 
-        map.on("mousemove", "observations-circle", (e) => {
-          if (popup.isOpen()) popup.setLngLat(e.lngLat);
-        });
+          if (point.photoUrl) {
+            const img = document.createElement("img");
+            img.src = point.photoUrl;
+            img.alt = "";
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.objectFit = "cover";
+            img.style.display = "block";
+            img.onerror = () => img.remove();
+            el.appendChild(img);
+          }
 
-        map.on("mouseleave", "observations-circle", () => {
-          map.getCanvas().style.cursor = "";
-          popup.remove();
-        });
+          el.addEventListener("mouseenter", () => showPopup(point));
+          el.addEventListener("mouseleave", () => popup.remove());
+          el.addEventListener("click", () => {
+            const name = point.commonName ?? point.label;
+            reportInteraction(`map marker "${name}" -> /records/${point.id}`);
+            router.push(`/records/${point.id}`);
+          });
 
-        map.on("click", "observations-circle", (e) => {
-          const feature = e.features?.[0];
-          if (!feature?.properties) return;
-          const props = feature.properties as Record<string, unknown>;
-          const name = String(props.commonName ?? props.label ?? "observation");
-          reportInteraction(`map marker "${name}" -> /records/${String(props.id)}`);
-          router.push(`/records/${String(feature.properties.id)}`);
+          return new maplibregl.Marker({ element: el, anchor: "center" })
+            .setLngLat([point.lng, point.lat])
+            .addTo(map);
         });
 
         setLoaded(true);
@@ -217,10 +200,12 @@ export function SpeciesMap({ points }: Props) {
 
     return () => {
       disposed = true;
+      markers.forEach((marker) => marker.remove());
+      markers = [];
       mapInstance?.remove();
       mapInstance = null;
     };
-  }, [observations, points, router]);
+  }, [points, router]);
 
   const speciesCount = new Set(points.map((p) => p.label)).size;
 

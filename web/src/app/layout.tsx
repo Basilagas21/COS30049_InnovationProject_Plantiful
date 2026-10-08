@@ -32,6 +32,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     { href: "/profile", label: "Profile" },
     ...(officer
       ? [
+          { href: "/approvals", label: "Approvals" },
           { href: "/reports", label: "Reports" },
           { href: "/alerts", label: "Alerts" },
         ]

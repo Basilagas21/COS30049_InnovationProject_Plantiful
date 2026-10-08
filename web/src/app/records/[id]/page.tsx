@@ -116,7 +116,7 @@ export default async function RecordDetailPage({
             ].map((metric) => (
               <div key={metric.label} className="rounded-2xl bg-sprout p-4">
                 <p className="text-xs text-moss">{metric.label}</p>
-                <p className="mt-1 text-sm font-semibold text-pine">{metric.value}</p>
+                <div className="mt-1 text-sm font-semibold text-pine">{metric.value}</div>
               </div>
             ))}
           </div>

@@ -10,27 +10,16 @@ export type ReportListItem = {
   createdAt: string;
 };
 
-const mockReports: ReportListItem[] = [
-  {
-    id: "RP-0001",
-    reportType: "observations",
-    dataRange: "2026-09-01..2026-09-30",
-    fileUrl: null,
-    isPublished: true,
-    createdAt: "2026-10-01T08:00:00Z",
-  },
-  {
-    id: "RP-0002",
-    reportType: "species-catalogue",
-    dataRange: "all",
-    fileUrl: null,
-    isPublished: false,
-    createdAt: "2026-09-20T14:30:00Z",
-  },
-];
+export type ReportsResult = {
+  reports: ReportListItem[];
+  error: string | null;
+};
 
 export type { ReportType } from "@/lib/report-types";
 export { REPORT_TYPES } from "@/lib/report-types";
+
+const REPORTS_BUCKET = "reports";
+const DOWNLOAD_URL_TTL_SECONDS = 60 * 60 * 24 * 7;
 
 function toListItem(row: {
   report_id: string;
@@ -50,8 +39,36 @@ function toListItem(row: {
   };
 }
 
-export async function fetchReports(): Promise<ReportListItem[]> {
-  if (!isSupabaseConfigured) return mockReports;
+function storagePathOf(fileUrl: string): string | null {
+  if (!fileUrl.startsWith("http")) return fileUrl;
+  const match = fileUrl.match(/\/object\/(?:public|sign)\/reports\/([^?]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+async function resolveFileUrl(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  fileUrl: string | null,
+): Promise<string | null> {
+  if (!fileUrl) return null;
+  const path = storagePathOf(fileUrl);
+  if (!path) return null;
+  const { data, error } = await supabase.storage
+    .from(REPORTS_BUCKET)
+    .createSignedUrl(path, DOWNLOAD_URL_TTL_SECONDS);
+  if (error || !data?.signedUrl) {
+    console.error(`resolveFileUrl failed for ${path}: ${error?.message ?? "no signed url"}`);
+    return null;
+  }
+  return data.signedUrl;
+}
+
+export async function fetchReports(): Promise<ReportsResult> {
+  if (!isSupabaseConfigured) {
+    return {
+      reports: [],
+      error: "Supabase is not configured, so reports cannot be loaded.",
+    };
+  }
 
   const supabase = await createClient();
 
@@ -60,6 +77,18 @@ export async function fetchReports(): Promise<ReportListItem[]> {
     .select("report_id, report_type, data_range, file_url, is_published, created_at")
     .order("created_at", { ascending: false });
 
-  if (error || !data) return mockReports;
-  return data.map(toListItem);
+  if (error || !data) {
+    const message = error?.message ?? "The reports query returned no data.";
+    console.error(`fetchReports failed: ${message}`);
+    return { reports: [], error: message };
+  }
+
+  const reports = await Promise.all(
+    data.map(async (row) => ({
+      ...toListItem(row),
+      fileUrl: await resolveFileUrl(supabase, row.file_url),
+    })),
+  );
+
+  return { reports, error: null };
 }

@@ -316,6 +316,68 @@ export async function addLocalPhoto(
   return photoId;
 }
 
+export type RemoteRecordImport = {
+  record_id: string;
+  species_id?: string | null;
+  qr_code?: string | null;
+  provisional_name?: string | null;
+  gps_lat?: number | null;
+  gps_lng?: number | null;
+  gps_accuracy_m?: number | null;
+  height_cm?: number | null;
+  morphology?: string | null;
+  notes?: string | null;
+  approval_status?: string | null;
+  reviewed_at?: string | null;
+  created_at?: string;
+};
+
+// Imports a record found via a central-database lookup by tag as a fully
+// synced local copy: server_id is set, review fields are copied, and photos
+// are stored as their remote URLs (not file paths) so the push loop never
+// re-inserts the record and never treats its photos as local files.
+export async function importRemoteRecord(
+  db: SQLite.SQLiteDatabase,
+  remote: RemoteRecordImport,
+  photos: { photo_url: string; taken_at?: string | null }[]
+): Promise<string> {
+  const recordId = `rec-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const now = new Date().toISOString();
+  await db.runAsync(
+    `INSERT INTO local_records (
+       record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm,
+       morphology, notes, capture_ts, sync_status, server_id, approval_status, reviewed_at, edited, created_at
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?, 0, ?)`,
+    recordId,
+    remote.species_id ?? null,
+    remote.qr_code ? remote.qr_code.trim().toUpperCase() : null,
+    remote.provisional_name ?? null,
+    remote.gps_lat ?? null,
+    remote.gps_lng ?? null,
+    remote.gps_accuracy_m ?? null,
+    remote.height_cm ?? null,
+    remote.morphology ?? null,
+    remote.notes ?? null,
+    remote.created_at ?? now,
+    remote.record_id,
+    remote.approval_status ?? null,
+    remote.reviewed_at ?? null,
+    now
+  );
+  for (const photo of photos) {
+    await db.runAsync(
+      `INSERT INTO local_photos (id, record_id, local_uri, capture_ts, sync_status, server_url)
+       VALUES (?, ?, ?, ?, 'synced', ?)`,
+      `ph-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      recordId,
+      photo.photo_url,
+      photo.taken_at ?? now,
+      photo.photo_url
+    );
+  }
+  return recordId;
+}
+
 export async function getLocalRecords(db: SQLite.SQLiteDatabase): Promise<LocalRecordWithPhoto[]> {
   return db.getAllAsync<LocalRecordWithPhoto>(
     `SELECT
@@ -396,13 +458,16 @@ export type SyncedPhoto = {
 };
 
 // Photos already flagged synced, joined to their server record id, so a sync
-// can verify the storage object really exists before trusting the flag.
+// can verify the storage object really exists before trusting the flag. Only
+// device captures (file:// URIs) are verified: photos imported from the
+// central database live as remote URLs in local_uri and have no local file to
+// repair, so they must never re-enter the upload/repair pipeline.
 export async function getSyncedPhotos(db: SQLite.SQLiteDatabase): Promise<SyncedPhoto[]> {
   return db.getAllAsync<SyncedPhoto>(
     `SELECT p.id, p.record_id, r.server_id
      FROM local_photos p
      JOIN local_records r ON r.record_id = p.record_id
-     WHERE p.sync_status = 'synced' AND r.server_id IS NOT NULL`
+     WHERE p.sync_status = 'synced' AND r.server_id IS NOT NULL AND p.local_uri LIKE 'file:%'`
   );
 }
 

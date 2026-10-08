@@ -53,6 +53,17 @@ function buildCsv(section: string, rows: (string | number | null | undefined)[][
   return `${header}\n${body.join("\n")}\n# ${section}\n`;
 }
 
+const RANGE_HINT =
+  'Use "all", a number of days (e.g. 30), or a date range like 2026-09-01..2026-09-30.';
+
+function isDateOnly(value: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+function isValidDate(value: string): boolean {
+  return isDateOnly(value) || !isNaN(Date.parse(value));
+}
+
 export async function generateReport(
   type: ReportType,
   dataRange: string,
@@ -62,6 +73,7 @@ export async function generateReport(
   }
 
   const supabase = await createClient();
+  const range = dataRange.trim();
 
   let fileName: string;
   let content: string;
@@ -117,13 +129,45 @@ export async function generateReport(
     );
     fileName = "conservation-status.csv";
   } else {
-    const { data: records, error } = await supabase
+    let recordsQuery = supabase
       .from("plant_records")
       .select(
         `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, morphology, notes, approval_status, status, created_at,
          species ( scientific_name, common_name )`,
       )
       .order("created_at", { ascending: false });
+
+    if (range && range !== "all") {
+      const parts = range.split("..").map((part) => part.trim());
+      if (parts.length > 2 || parts.some((part) => part === "")) {
+        return { ok: false, error: `Invalid data range. ${RANGE_HINT}` };
+      }
+
+      if (parts.length === 2) {
+        const [start, end] = parts;
+        if (!isValidDate(start) || !isValidDate(end)) {
+          return { ok: false, error: `Invalid data range. ${RANGE_HINT}` };
+        }
+        const startIso = isDateOnly(start) ? `${start}T00:00:00.000Z` : start;
+        const endIso = isDateOnly(end) ? `${end}T23:59:59.999Z` : end;
+        if (Date.parse(startIso) > Date.parse(endIso)) {
+          return { ok: false, error: "Data range start must be on or before its end." };
+        }
+        recordsQuery = recordsQuery.gte("created_at", startIso).lte("created_at", endIso);
+      } else if (/^\d+$/.test(range)) {
+        const days = Number(range);
+        const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+        recordsQuery = recordsQuery.gte("created_at", cutoff);
+      } else if (isDateOnly(range)) {
+        recordsQuery = recordsQuery.gte("created_at", `${range}T00:00:00.000Z`);
+      } else if (isValidDate(range)) {
+        recordsQuery = recordsQuery.gte("created_at", range);
+      } else {
+        return { ok: false, error: `Invalid data range. ${RANGE_HINT}` };
+      }
+    }
+
+    const { data: records, error } = await recordsQuery;
 
     if (error) return { ok: false, error: error.message };
     const rows = (records ?? []).map(toCsvRow);
@@ -169,13 +213,12 @@ export async function generateReport(
     return { ok: false, error: uploadError?.message ?? "Could not upload the report file." };
   }
 
-  const publicUrl = supabase.storage.from(REPORTS_BUCKET).getPublicUrl(uploaded.path).data.publicUrl;
-
+  const storedRange = range || null;
   const { error: insertError } = await supabase.from("reports").insert({
     generated_by: user.id,
     report_type: type,
-    data_range: dataRange,
-    file_url: publicUrl,
+    data_range: storedRange,
+    file_url: uploaded.path,
     is_published: false,
   });
 

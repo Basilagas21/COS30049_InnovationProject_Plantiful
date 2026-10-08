@@ -6,7 +6,7 @@ import { ReportForm } from "@/components/report-form";
 export default async function ReportsPage() {
   if (!(await isOfficer())) redirect("/records");
 
-  const reports = await fetchReports();
+  const { reports, error: reportsError } = await fetchReports();
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
@@ -28,7 +28,17 @@ export default async function ReportsPage() {
         <h2 className="text-xl font-bold tracking-tight text-pine">
           Generated reports
         </h2>
-        {reports.length === 0 ? (
+        {reportsError ? (
+          <div
+            role="alert"
+            className="mt-6 rounded-3xl border border-danger/30 bg-sand/60 px-6 py-12 text-center"
+          >
+            <p className="text-sm font-semibold text-danger">
+              Could not load reports
+            </p>
+            <p className="mt-2 text-sm text-moss">{reportsError}</p>
+          </div>
+        ) : reports.length === 0 ? (
           <div className="mt-6 rounded-3xl border border-dashed border-pine/15 bg-sand/60 px-6 py-12 text-center">
             <p className="text-sm text-moss">
               No reports generated yet — create your first one above.

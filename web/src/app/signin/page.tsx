@@ -36,7 +36,17 @@ export default function SignInPage() {
       return;
     }
 
-    router.push("/records");
+    // Officers and admins start at their approval queue; everyone else at records.
+    const { data: profile } = await supabase
+      .from("user_profiles")
+      .select("role")
+      .maybeSingle();
+    const role = profile?.role;
+    router.push(
+      role === "conservation_officer" || role === "admin"
+        ? "/approvals"
+        : "/records",
+    );
     router.refresh();
   }
 

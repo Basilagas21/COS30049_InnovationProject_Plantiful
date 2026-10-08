@@ -52,6 +52,8 @@ export default function RootLayout() {
           <Stack.Screen name="capture/new" options={{ headerShown: true, title: 'New capture' }} />
           <Stack.Screen name="capture/discover" options={{ headerShown: true, title: 'Tag a new plant' }} />
           <Stack.Screen name="record/[id]" options={{ headerShown: true, title: 'Record details' }} />
+          <Stack.Screen name="record/edit/[id]" options={{ headerShown: true, title: 'Edit record' }} />
+          <Stack.Screen name="species/[id]" options={{ headerShown: true, title: 'Species details' }} />
           <Stack.Screen name="settings" options={{ headerShown: true, title: 'Settings' }} />
         </Stack.Protected>
 

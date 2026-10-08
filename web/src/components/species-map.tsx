@@ -160,14 +160,14 @@ export function SpeciesMap({ points }: Props) {
         markers = points.map((point) => {
           const color = statusColor(point.conservationStatus);
           const el = document.createElement("div");
-          el.style.width = "40px";
-          el.style.height = "40px";
+          el.style.width = "28px";
+          el.style.height = "28px";
           el.style.borderRadius = "9999px";
-          el.style.border = "3px solid #ffffff";
+          el.style.border = "2px solid #ffffff";
           el.style.background = color;
           el.style.overflow = "hidden";
           el.style.cursor = "pointer";
-          el.style.boxShadow = `0 0 0 2px ${color}, 0 2px 8px rgba(12, 52, 44, 0.35)`;
+          el.style.boxShadow = `0 0 0 1.5px ${color}, 0 1px 5px rgba(12, 52, 44, 0.35)`;
 
           if (point.photoUrl) {
             const img = document.createElement("img");

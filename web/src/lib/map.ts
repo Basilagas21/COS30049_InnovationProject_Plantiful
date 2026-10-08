@@ -82,12 +82,12 @@ function toPoint(row: {
   };
 }
 
-export async function fetchMapPoints(): Promise<MapPoint[]> {
+export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoint[]> {
   if (!isSupabaseConfigured) return mockPoints;
 
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("plant_records")
     .select("record_id, species_id, gps_lat, gps_lng, height_cm, created_at")
     .not("gps_lat", "is", null)
@@ -96,6 +96,12 @@ export async function fetchMapPoints(): Promise<MapPoint[]> {
     .eq("status", "submitted")
     .order("created_at", { ascending: false })
     .limit(500);
+
+  if (speciesId) {
+    query = query.eq("species_id", speciesId);
+  }
+
+  const { data, error } = await query;
 
   if (error || !data) return mockPoints;
 

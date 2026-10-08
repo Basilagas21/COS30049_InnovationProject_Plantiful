@@ -2,22 +2,43 @@ import Link from "next/link";
 import { fetchRecords } from "@/lib/records";
 import { fetchMapPoints } from "@/lib/map";
 import { SpeciesMap } from "@/components/species-map";
+import { fetchSpeciesById } from "@/lib/species";
 
-export default async function MapPage() {
+export default async function MapPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const speciesIdParam = params.species_id;
+  const speciesId = Array.isArray(speciesIdParam) ? speciesIdParam[0] : speciesIdParam ?? null;
+
   const { records, error, usingSampleData } = await fetchRecords();
-  const points = await fetchMapPoints();
+  const points = await fetchMapPoints(speciesId);
   const located = records.filter((r) => r.gpsLat != null && r.gpsLng != null);
   const speciesCount = new Set(records.map((r) => r.scientificName)).size;
   const pendingCount = records.filter((r) => r.approvalStatus === "pending").length;
 
+  let filterSpeciesName: string | null = null;
+  if (speciesId) {
+    const entry = await fetchSpeciesById(speciesId);
+    filterSpeciesName = entry?.scientificName ?? null;
+  }
+
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
       <h1 className="text-3xl font-bold tracking-tight text-pine sm:text-4xl">
-        Species map
+        Species map{filterSpeciesName ? ` – ${filterSpeciesName}` : ""}
       </h1>
       <p className="mt-2 text-moss">
         Approved field observations plotted by GPS coordinate
         {usingSampleData ? " (sample data)" : ""}
+        {speciesId && (
+          <>
+            {" "}
+            · <Link href="/map" className="text-emerald hover:underline">Show all species</Link>
+          </>
+        )}
       </p>
 
       {error && (

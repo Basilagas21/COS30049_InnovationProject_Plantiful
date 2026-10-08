@@ -38,7 +38,8 @@ Without these the app still runs, but shows sample records and sign-in is disabl
 | `/records`, `/records/[id]` | Records list with species search and record detail; officers approve or reject |
 | `/reports` | Generated biodiversity reports (officer) |
 | `/alerts` | Live IoT threat alerts and latest sensor readings (officer) |
+| `/users` | Grant or revoke roles (admin) |
 | `/signin`, `/register` | Supabase email/password auth |
 | `/profile`, `/profile/change-password` | Account and role |
 
-Officer actions require a `user_profiles.role` of `conservation_officer` or `admin`.
+Officer actions require a `user_profiles.role` of `conservation_officer` or `admin`; the `/users` page and its role changes require `admin`.

@@ -82,14 +82,15 @@ const data = normalizeTag(result.data);
 
   return (
     <View style={styles.container}>
-      <CameraView
-        style={StyleSheet.absoluteFill}
-        facing="back"
-        enableTorch={torchOn}
-        barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
-        onBarcodeScanned={onBarcodeScanned}
-        active={focused}
-      />
+      {focused && (
+        <CameraView
+          style={StyleSheet.absoluteFill}
+          facing="back"
+          enableTorch={torchOn}
+          barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+          onBarcodeScanned={onBarcodeScanned}
+        />
+      )}
 
       <Pressable
         style={[styles.torchButton, { top: insets.top + 16 }]}

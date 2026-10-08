@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Pressable, TextInput } from '@/lib/interactionLog';
@@ -7,6 +7,7 @@ import { colors } from '@/theme';
 import { openDatabase, getSpeciesOptions, type SpeciesOption } from '@/db';
 
 export default function SpeciesReferenceScreen() {
+  const router = useRouter();
   const [species, setSpecies] = useState<SpeciesOption[]>([]);
   const [query, setQuery] = useState('');
 
@@ -70,7 +71,10 @@ export default function SpeciesReferenceScreen() {
           </View>
         }
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <Pressable
+            style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+            onPress={() => router.push({ pathname: '/species/[id]', params: { id: item.species_id } })}
+          >
             <View style={styles.cardHeader}>
               <Text style={styles.sciName}>{item.scientific_name}</Text>
               {item.conservation_status ? (
@@ -86,7 +90,7 @@ export default function SpeciesReferenceScreen() {
                 {item.description}
               </Text>
             ) : null}
-          </View>
+          </Pressable>
         )}
       />
     </View>
@@ -144,6 +148,9 @@ const styles = StyleSheet.create({
     gap: 4,
     borderWidth: 1,
     borderColor: colors.sand,
+  },
+  cardPressed: {
+    opacity: 0.7,
   },
   cardHeader: {
     flexDirection: 'row',

@@ -18,6 +18,8 @@ import {
   markRecordSynced,
   openDatabase,
   setRecordServerId,
+  insertSpeciesPhotos,
+  updateRecordReviewStatus,
   upsertSpeciesCatalog,
   type LocalRecord,
 } from '@/db';
@@ -36,6 +38,8 @@ const PHOTO_BUCKET = process.env.EXPO_PUBLIC_SUPABASE_PHOTO_BUCKET || 'record-ph
 function describeSyncError(error: unknown, tag: string | null): string {
   const raw = error instanceof Error ? error.message : String(error);
   const code = (error as { code?: string } | null)?.code ?? '';
+  const status = (error as { status?: number; statusCode?: number } | null) ?? {};
+  const details = (error as { details?: string } | null)?.details ?? '';
   const tagText = tag ? ` (${tag})` : '';
 
   if (code === '23505' && raw.toLowerCase().includes('qr_code')) {
@@ -44,10 +48,24 @@ function describeSyncError(error: unknown, tag: string | null): string {
   if (code === '23505') {
     return `Duplicate value rejected by the central database${tagText}.`;
   }
-  if (code === '42501' || raw.toLowerCase().includes('row-level security')) {
+
+  // An expired refresh token fails every write with a 401, which otherwise
+  // looks like a permissions problem.
+  const httpStatus = status.status ?? status.statusCode ?? 0;
+  if (httpStatus === 401 || /jwt|not authenticated|invalid authentication/i.test(raw)) {
+    return 'Your session has expired. Sign in again on the Profile tab, then press Sync now.';
+  }
+
+  if (code === '42501' || /row-level security/i.test(raw)) {
+    // Storage writes fail the same way as table writes, but the remedy is a
+    // migration rather than a permissions problem on the record itself.
+    if (/storage|already exists|upsert|bucket|object/i.test(`${raw} ${details}`)) {
+      return `The photo bucket rejected the upload${tagText}. Run 005_record_photo_sync.sql in the Supabase SQL editor, then press Sync now again.`;
+    }
     return 'The central database rejected this write under its access rules.';
   }
-  return raw;
+
+  return details ? `${raw} (${details})` : raw;
 }
 
 // True only when the object exists and is a plausible image. Earlier builds
@@ -93,9 +111,12 @@ async function uploadPhoto(
 
   const contentType = isPng ? 'image/png' : 'image/jpeg';
   const path = `${userId}/${recordId}/${photo.id}.jpg`;
+  // Pass the Uint8Array straight through: React Native's Blob constructor
+  // rejects binary parts ("creating blobs from ArrayBuffer... not supported"),
+  // while RN's request layer converts ArrayBufferView bodies natively.
   const { data, error } = await supabase!.storage
     .from(PHOTO_BUCKET)
-    .upload(path, new Blob([bytes], { type: contentType }), { contentType, upsert: true });
+    .upload(path, bytes, { contentType, upsert: true });
   if (error) throw new Error(`Photo upload failed: ${error.message}`);
   return supabase!.storage.from(PHOTO_BUCKET).getPublicUrl(data.path).data.publicUrl;
 }
@@ -163,6 +184,43 @@ export default function SyncScreen() {
       await upsertSpeciesCatalog(db, species);
     }
 
+    // Photos are best-effort: a failed pull must not fail the sync, the same
+    // way the photo repair scan below swallows its errors.
+    try {
+      const { data: speciesPhotos } = await supabase
+        .from('species_photos')
+        .select('photo_id, species_id, photo_url');
+      if (speciesPhotos && speciesPhotos.length > 0) {
+        await insertSpeciesPhotos(db, speciesPhotos);
+      }
+    } catch (e) {
+      console.warn('[sync] species photos pull failed:', e instanceof Error ? e.message : e);
+    }
+
+    // Pull own records' approval outcome so the botanist sees the officer's
+    // review on the record detail screen. Matching is done in db.ts against
+    // the server record id stored in server_id.
+    const pullReviewOutcomes = async () => {
+      try {
+        const { data: reviews } = await supabase!
+          .from('plant_records')
+          .select('record_id, approval_status, reviewed_at')
+          .eq('botanist_id', session.session.user.id);
+        if (reviews && reviews.length > 0) {
+          for (const review of reviews) {
+            await updateRecordReviewStatus(
+              db,
+              review.record_id,
+              review.approval_status,
+              review.reviewed_at
+            );
+          }
+        }
+      } catch (e) {
+        console.warn('[sync] approval pull failed:', e instanceof Error ? e.message : e);
+      }
+    };
+
     setState('syncing');
     setSynced(0);
     setFailed(0);
@@ -185,6 +243,7 @@ export default function SyncScreen() {
 
     const rows = await getPendingRecords(db);
     if (rows.length === 0) {
+      await pullReviewOutcomes();
       setState('done');
       setMessage('Nothing to sync. Captures made offline appear here as pending.');
       return;
@@ -299,6 +358,7 @@ export default function SyncScreen() {
 
     const remaining = await getPendingRecords(db);
     setPending(remaining.length);
+    await pullReviewOutcomes();
     await loadCounts();
     setState(failedCount > 0 ? 'error' : 'done');
     setMessage(failedCount > 0

@@ -8,6 +8,8 @@ export type SpeciesListItem = {
   taxonomy: string | null;
   conservationStatus: string | null;
   description: string | null;
+  ecology: string | null;
+  culturalSignificance: string | null;
   isPublished: boolean;
   createdAt: string;
   updatedAt: string;
@@ -34,6 +36,8 @@ const mockSpecies: SpeciesListItem[] = [
     conservationStatus: "Endangered",
     description:
       "Pitcher plant endemic to Borneo, named after Hugh Low. Notable for the distinctive lid that excretes nectar, attracting tree shrews that feed on it.",
+    ecology: null,
+    culturalSignificance: null,
     isPublished: true,
     createdAt: "2026-08-01T09:00:00Z",
     updatedAt: "2026-08-01T09:00:00Z",
@@ -48,6 +52,8 @@ const mockSpecies: SpeciesListItem[] = [
     conservationStatus: "Endangered",
     description:
       "Parasitic plant known for producing some of the largest flowers in the world, up to a metre across, found only on specific host vines.",
+    ecology: null,
+    culturalSignificance: null,
     isPublished: true,
     createdAt: "2026-08-03T09:00:00Z",
     updatedAt: "2026-08-03T09:00:00Z",
@@ -62,6 +68,8 @@ const mockSpecies: SpeciesListItem[] = [
     conservationStatus: "Vulnerable",
     description:
       "Large dipterocarp timber tree prized for its resin and hardwood; a key canopy species of the lowland dipterocarp forest around Niah.",
+    ecology: null,
+    culturalSignificance: null,
     isPublished: true,
     createdAt: "2026-08-05T09:00:00Z",
     updatedAt: "2026-08-05T09:00:00Z",
@@ -76,6 +84,8 @@ const mockSpecies: SpeciesListItem[] = [
     conservationStatus: null,
     description:
       "Terrestrial orchid with tall spikes of small white flowers, common on shady forest floors.",
+    ecology: null,
+    culturalSignificance: null,
     isPublished: true,
     createdAt: "2026-08-08T09:00:00Z",
     updatedAt: "2026-08-08T09:00:00Z",
@@ -89,6 +99,8 @@ const mockSpecies: SpeciesListItem[] = [
     taxonomy: "Cucurbitales · Begoniaceae",
     conservationStatus: null,
     description: null,
+    ecology: null,
+    culturalSignificance: null,
     isPublished: false,
     createdAt: "2026-09-01T09:00:00Z",
     updatedAt: "2026-09-01T09:00:00Z",
@@ -102,6 +114,8 @@ const mockSpecies: SpeciesListItem[] = [
     taxonomy: "Myrtales · Myrtaceae",
     conservationStatus: "Endangered",
     description: null,
+    ecology: null,
+    culturalSignificance: null,
     isPublished: false,
     createdAt: "2026-09-02T09:00:00Z",
     updatedAt: "2026-09-02T09:00:00Z",
@@ -117,6 +131,8 @@ function toListItem(row: {
   taxonomy: string | null;
   conservation_status: string | null;
   description: string | null;
+  ecology: string | null;
+  cultural_significance: string | null;
   is_published: boolean;
   created_at: string;
   updated_at: string;
@@ -129,6 +145,8 @@ function toListItem(row: {
     taxonomy: row.taxonomy,
     conservationStatus: row.conservation_status,
     description: row.description,
+    ecology: row.ecology,
+    culturalSignificance: row.cultural_significance,
     isPublished: row.is_published,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -144,6 +162,8 @@ function toDetail(row: {
   taxonomy: string | null;
   conservation_status: string | null;
   description: string | null;
+  ecology: string | null;
+  cultural_significance: string | null;
   is_published: boolean;
   created_at: string;
   updated_at: string;
@@ -155,6 +175,8 @@ function toDetail(row: {
     taxonomy: row.taxonomy,
     conservationStatus: row.conservation_status,
     description: row.description,
+    ecology: row.ecology,
+    culturalSignificance: row.cultural_significance,
     isPublished: row.is_published,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -175,7 +197,7 @@ export async function fetchSpecies(options?: {
   let query = supabase
     .from("species")
     .select(
-      `species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published, created_at, updated_at,
+      `species_id, scientific_name, common_name, taxonomy, conservation_status, description, ecology, cultural_significance, is_published, created_at, updated_at,
        species_photos ( photo_url )`,
     )
     .order("scientific_name", { ascending: true });
@@ -201,7 +223,7 @@ export async function fetchSpeciesById(id: string): Promise<SpeciesDetail | null
   const { data, error } = await supabase
     .from("species")
     .select(
-      "species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published, created_at, updated_at",
+      "species_id, scientific_name, common_name, taxonomy, conservation_status, description, ecology, cultural_significance, is_published, created_at, updated_at",
     )
     .eq("species_id", id)
     .maybeSingle();

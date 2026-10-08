@@ -32,9 +32,12 @@ Without these the app still runs, but shows sample records and sign-in is disabl
 | Route | Purpose |
 |---|---|
 | `/` | Landing page |
-| `/records` | Records list with species search; officers can approve or reject |
-| `/records/[id]` | Record detail |
-| `/map` | Located observations and summary (interactive map to come) |
+| `/explore` | Public species catalogue |
+| `/species`, `/species/new` | Catalogue browsing and management (officer) |
+| `/map` | Located observations on an interactive species map |
+| `/records`, `/records/[id]` | Records list with species search and record detail; officers approve or reject |
+| `/reports` | Generated biodiversity reports (officer) |
+| `/alerts` | Live IoT threat alerts and latest sensor readings (officer) |
 | `/signin`, `/register` | Supabase email/password auth |
 | `/profile`, `/profile/change-password` | Account and role |
 

@@ -25,3 +25,7 @@ export async function isOfficer(): Promise<boolean> {
   const role = await getCurrentRole();
   return role === "conservation_officer" || role === "admin";
 }
+
+export async function isAdmin(): Promise<boolean> {
+  return (await getCurrentRole()) === "admin";
+}

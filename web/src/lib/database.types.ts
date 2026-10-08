@@ -35,6 +35,8 @@ export interface Database {
           taxonomy: string | null;
           conservation_status: string | null;
           description: string | null;
+          ecology: string | null;
+          cultural_significance: string | null;
           created_at: string;
           updated_at: string;
           is_published: boolean;
@@ -46,6 +48,8 @@ export interface Database {
           taxonomy?: string | null;
           conservation_status?: string | null;
           description?: string | null;
+          ecology?: string | null;
+          cultural_significance?: string | null;
           created_at?: string;
           updated_at?: string;
           is_published?: boolean;

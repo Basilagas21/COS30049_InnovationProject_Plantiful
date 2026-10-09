@@ -2,7 +2,7 @@
 
 Standard library only. Uses the service-role key, which bypasses Row Level
 Security, because the sensor/alert tables have no insert policy for signed-in
-users (see backend/supabase/migrations/002_rls.sql).
+users (see backend/supabase/migrations/apply_project.sql).
 """
 
 import json

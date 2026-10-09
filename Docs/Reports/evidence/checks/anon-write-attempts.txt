@@ -1,0 +1,25 @@
+anon SELECT reports (RLS block?)                         -> HTTP 400
+      
+anon SELECT sync_log (RLS block?)                        -> HTTP 400
+      
+anon SELECT alerts (RLS block?)                          -> HTTP 400
+      
+anon SELECT sensor_readings (RLS block?)                 -> HTTP 400
+      
+anon SELECT species published (overview)                 -> HTTP 200
+anon SELECT species unpublished (RLS block?)             -> HTTP 200
+anon SELECT plant_records (overview)                     -> HTTP 400
+      
+anon INSERT species (blocked?)                           -> HTTP 401
+      {"code":"42501","details":null,"hint":null,"message":"new row violates row-level security policy for table \"species\""}
+anon PATCH species (blocked?)                            -> HTTP 204
+      
+anon POST reports (blocked?)                             -> HTTP 401
+      {"code":"42501","details":null,"hint":null,"message":"new row violates row-level security policy for table \"reports\""}
+--- storage ---
+anon list record-photos (public bucket)                  -> HTTP 200
+      [{"name":"5e29c8db-94fe-40eb-a086-4895ef08a900","version":null,"id":null,"updated_at":null,"created_at":null,"last_accessed_at":null,"metadata":null,"archived_a
+anon list reports bucket (private)                       -> HTTP 200
+anon GET public URL on reports bucket                    -> HTTP 400
+      
+anon GET public URL record-photos (missing file)         -> HTTP 400

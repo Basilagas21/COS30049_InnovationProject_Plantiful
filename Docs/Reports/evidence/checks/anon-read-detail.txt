@@ -1,0 +1,12 @@
+===== anon SELECT plant_records (record_id PK; approved/submitted only) =====
+  [{"record_id":"6707e365-fb27-465e-9cc7-63defaafc5b7","approval_status":"approved"}]
+  ---HTTP 200---
+
+===== anon list reports bucket files (private bucket) =====
+  []
+  ---HTTP 200---
+
+===== anon list record-photos bucket files (public bucket) =====
+  [{"name":"5e29c8db-94fe-40eb-a086-4895ef08a900","version":null,"id":null,"updated_at":null,"created_at":null,"last_accessed_at":null,"metadata":null,"archived_at":null,"is_delete_marker":null,"is_versioned":null}]
+  ---HTTP 200---
+

@@ -10,6 +10,11 @@ export default async function RecordDetailPage({
   params,
 }: PageProps<"/records/[id]">) {
   const { id } = await params;
+  // Reject malformed ids before hitting Postgres: an invalid UUID would
+  // surface as an error (HTTP 500) instead of a clean 404. See F-11.
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    notFound();
+  }
   const record = await fetchRecordById(id);
   if (!record) notFound();
 

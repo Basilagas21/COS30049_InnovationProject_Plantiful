@@ -1,0 +1,111 @@
+===== GET / -> HTTP 200 =====
+  Vary : rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  Link : </_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2"
+  Connection : keep-alive
+  Keep-Alive : timeout=5
+  Transfer-Encoding : chunked
+  Cache-Control : private, no-cache, no-store, max-age=0, must-revalidate
+  Content-Type : text/html; charset=utf-8
+  Date : Fri, 09 Oct 2026 00:33:48 GMT
+  X-Powered-By : Next.js
+
+===== GET /signin -> HTTP 200 =====
+  Vary : rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  Link : </_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2"
+  Connection : keep-alive
+  Keep-Alive : timeout=5
+  Transfer-Encoding : chunked
+  Cache-Control : private, no-cache, no-store, max-age=0, must-revalidate
+  Content-Type : text/html; charset=utf-8
+  Date : Fri, 09 Oct 2026 00:33:48 GMT
+  X-Powered-By : Next.js
+
+===== GET /register -> HTTP 200 =====
+  Vary : rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  Link : </_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2"
+  Connection : keep-alive
+  Keep-Alive : timeout=5
+  Transfer-Encoding : chunked
+  Cache-Control : private, no-cache, no-store, max-age=0, must-revalidate
+  Content-Type : text/html; charset=utf-8
+  Date : Fri, 09 Oct 2026 00:33:48 GMT
+  X-Powered-By : Next.js
+
+===== GET /explore -> HTTP 200 =====
+  Vary : rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  Link : </_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/chunks/0vm-cg90weo6i.css>; rel=preload; as="style"
+  Connection : keep-alive
+  Keep-Alive : timeout=5
+  Transfer-Encoding : chunked
+  Cache-Control : private, no-cache, no-store, max-age=0, must-revalidate
+  Content-Type : text/html; charset=utf-8
+  Date : Fri, 09 Oct 2026 00:33:50 GMT
+  X-Powered-By : Next.js
+
+===== GET /records -> HTTP 200 =====
+  Vary : rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  Link : </_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/chunks/0vm-cg90weo6i.css>; rel=preload; as="style"
+  Connection : keep-alive
+  Keep-Alive : timeout=5
+  Transfer-Encoding : chunked
+  Cache-Control : private, no-cache, no-store, max-age=0, must-revalidate
+  Content-Type : text/html; charset=utf-8
+  Date : Fri, 09 Oct 2026 00:33:51 GMT
+  X-Powered-By : Next.js
+
+===== GET /approvals -> HTTP 307 =====
+  Vary : rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  Link : </_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/chunks/0vm-cg90weo6i.css>; rel=preload; as="style"
+  Connection : keep-alive
+  Keep-Alive : timeout=5
+  Transfer-Encoding : chunked
+  Cache-Control : private, no-cache, no-store, max-age=0, must-revalidate
+  Content-Type : text/html; charset=utf-8
+  Date : Fri, 09 Oct 2026 00:33:51 GMT
+  Location : /records
+  X-Powered-By : Next.js
+
+===== GET /users -> HTTP 307 =====
+  Vary : rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  Link : </_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/chunks/0vm-cg90weo6i.css>; rel=preload; as="style"
+  Connection : keep-alive
+  Keep-Alive : timeout=5
+  Transfer-Encoding : chunked
+  Cache-Control : private, no-cache, no-store, max-age=0, must-revalidate
+  Content-Type : text/html; charset=utf-8
+  Date : Fri, 09 Oct 2026 00:33:51 GMT
+  Location : /records
+  X-Powered-By : Next.js
+
+===== GET /species -> HTTP 200 =====
+  Vary : rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  Link : </_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/chunks/0vm-cg90weo6i.css>; rel=preload; as="style"
+  Connection : keep-alive
+  Keep-Alive : timeout=5
+  Transfer-Encoding : chunked
+  Cache-Control : private, no-cache, no-store, max-age=0, must-revalidate
+  Content-Type : text/html; charset=utf-8
+  Date : Fri, 09 Oct 2026 00:33:52 GMT
+  X-Powered-By : Next.js
+
+===== GET /map -> HTTP 200 =====
+  Vary : rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  Link : </_next/static/media/797e433ab948586e-s.p.0r6juujl39pe6.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/caa3a2e1cccd8315-s.p.0wgildi0cnwt9.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/chunks/0vm-cg90weo6i.css>; rel=preload; as="style", </_next/static/chunks/0eh3hg0a099nx.css>; rel=preload; as="style"
+  Connection : keep-alive
+  Keep-Alive : timeout=5
+  Transfer-Encoding : chunked
+  Cache-Control : private, no-cache, no-store, max-age=0, must-revalidate
+  Content-Type : text/html; charset=utf-8
+  Date : Fri, 09 Oct 2026 00:33:53 GMT
+  X-Powered-By : Next.js
+
+===== GET /nonexistent-404 -> HTTP 404 =====
+  Keep-Alive : timeout=5
+  Vary : rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding
+  X-Powered-By : Next.js
+  Transfer-Encoding : chunked
+  Content-Type : text/html; charset=utf-8
+  Date : Fri, 09 Oct 2026 00:33:53 GMT
+  Connection : keep-alive
+  Cache-Control : private, no-cache, no-store, max-age=0, must-revalidate
+

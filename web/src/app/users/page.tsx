@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { UserRoleSelect } from "@/components/user-role-select";
-import type { ManagedRole } from "./actions";
+import type { ManagedRole } from "./roles";
 
 export default async function UsersPage() {
   if ((await getCurrentRole()) !== "admin") redirect("/records");

@@ -3,14 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentRole } from "@/lib/auth";
-
-export const MANAGED_ROLES = [
-  "botanist",
-  "conservation_officer",
-  "admin",
-] as const;
-
-export type ManagedRole = (typeof MANAGED_ROLES)[number];
+import { MANAGED_ROLES, type ManagedRole } from "./roles";
 
 export async function setUserRole(
   userId: string,

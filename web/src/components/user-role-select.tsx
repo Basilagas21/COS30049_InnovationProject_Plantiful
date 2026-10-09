@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { setUserRole, type ManagedRole } from "@/app/users/actions";
+import { setUserRole } from "@/app/users/actions";
+import type { ManagedRole } from "@/app/users/roles";
 
 type Props = {
   userId: string;

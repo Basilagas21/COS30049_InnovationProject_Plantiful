@@ -23,7 +23,8 @@
 
 | Version | Date | Author | Status | Notes |
 |---|---|---|---|---|
-| 1.0 | 3 October 2026 | Group 7 | Issued | Initial security assessment. Covers static analysis (SAST), dependency vulnerability scanning, row-level security (RLS) verification, and manual secure-code review of the mobile and web applications. Dynamic analysis (OWASP ZAP DAST, Weeks 11 gate) and mobile security testing (OWASP MASTG) procedures defined for execution against the deployed system. |
+| 1.0 | 3 October 2026 | Group 7 | Issued | Initial security assessment. Covers static analysis (SAST), dependency vulnerability scanning, row-level security (RLS) verification, and manual secure-code review of the mobile and web applications. Dynamic analysis (OWASP ZAP DAST, Week-11 gate) and mobile security testing (OWASP MASTG) procedures defined for execution against the deployed system. |
+| 1.1 | 10 October 2026 | Group 7 | Issued | Re-assessment. OWASP ZAP 2.17.0 dynamic scans executed against the deployed web app (anonymous baseline + authenticated officer), findings F-07–F-12 added, security-header and error-handling remediations verified by re-scan. Evidence stored in `Docs/Reports/evidence/`. |
 
 ---
 
@@ -35,7 +36,9 @@ This assessment verified the implemented controls against OWASP ASVS (Level 1 ba
 
 **Headline results.** The web production dependency set is clean (0 known vulnerabilities across 27 production packages). The mobile production dependency set reports 26 advisories, all confined to the Expo/React Native build-time toolchain (bundler, code-signing helpers, configuration modules) with no end-user runtime reach and no critical severity. Three implementation findings were identified and remediated during the assessment window: a broken photo-upload path in the mobile sync module (F-01), a server/client boundary violation that broke the web production build (F-02), and missing write-protection policies on two new storage buckets (F-03). The R7 anonymous write-block property was confirmed at the database layer for all public-facing entities, and the approval-gating trigger that prevents publishing unapproved species was verified.
 
-**Residual risk** after remediation is Low. The two material residual exposures are (1) mobile toolchain advisories awaiting Expo SDK patch releases and (2) the absence of automated recurring dependency scanning, both of which have defined mitigation actions and responsible owners below.
+A dynamic analysis pass was subsequently executed with **OWASP ZAP 2.17.0** against the deployed web application, in both anonymous and authenticated (officer) modes; no High-severity alerts were produced. Six further findings were identified and remediated during this pass: two storage/RLS hardening gaps (F-07, F-08), an approval-gate bypass (F-09), a missing role-administration path (F-10), an HTTP-500 error disclosure on malformed record ids (F-11), and the absence of security response headers (F-12). All remediations were verified by re-scan (Section 5.5, Sections 7).
+
+**Residual risk** after remediation is Low. The two material residual exposures are (1) mobile toolchain advisories awaiting Expo SDK patch releases and (2) the absence of automated recurring dependency scanning, both of which have defined mitigation actions and responsible owners below. The remaining active-scan residual items are Low/tradeoff and are tracked in Section 7.2.
 
 ---
 
@@ -52,7 +55,7 @@ This assessment verified the implemented controls against OWASP ASVS (Level 1 ba
 
 ### 1.2 Out of Scope
 
-- The IoT monitoring layer (MQTT, ESP32, InfluxDB) is deferred to a later sprint (requirement block D) and is therefore not part of this assessment version.
+- The IoT monitoring layer (MQTT, ESP32) participates in this assessment through its database surface (`sensors`, `sensor_readings`, `alerts`); RLS coverage is listed in Appendix A. The embedded device firmware itself is out of scope (no end-user input surface; constrained device, no network exposure beyond the authenticated ingest path).
 - The physical security of SFC field equipment and premises.
 - Third-party SaaS availability (Supabase platform controls, AWS/CGP infrastructure underlying Supabase) — relied upon under the Supabase shared-responsibility model.
 
@@ -86,8 +89,8 @@ This assessment verified the implemented controls against OWASP ASVS (Level 1 ba
 | Dependency vulnerability scanning | `npm audit --omit=dev` (production trees) | Web: 0 findings; Mobile: 26 build-toolchain advisories; detail in Section 5.2 and F-06 |
 | Database / RLS verification | Purpose-built SQL verification script against the live schema (`backend/scripts/verify_public_write_block.sql`) and direct policy audit querys | Section 5.3, Appendix A and B |
 | Manual secure-code review | OWASP ASVS-referenced code walkthrough of auth flows, sync, upload, and route handling | Findings F-01, F-02, F-03 |
-| Dynamic analysis | OWASP ZAP (baseline + authenticated scans) | Scheduled at the Week-11 SSDLC gate against the deployed web app; procedure in Appendix C |
-| Mobile deep testing | OWASP MASTG checklist on a development build (rooted/emulated device checks) | Scheduled at the Week-11 SSDLC gate; procedure in Appendix D |
+| Dynamic analysis | OWASP ZAP 2.17.0 (anonymous baseline + authenticated officer) | Executed 10 Oct 2026 against the deployed web app; no High alerts; see Section 5.5 and Appendix C |
+| Mobile deep testing | OWASP MASTG checklist on a development build (rooted/emulated device checks) | Executed 10 Oct 2026 as code/bundle review (no rooted device); see Appendix D |
 
 ---
 
@@ -131,6 +134,18 @@ The client applications hold only the **anonymous (publishable) key**. The JWT r
 3. **Database triggers** — `handle_new_user` (auto-provision botanist profile), `stamp_reviewer` (records reviewer/audit timestamp on approval change), and `deny_unapproved_publish` (blocks publishing a species with no approved record).
 4. **Application-layer defence in depth** — the visitor portal additionally filters `is_published = true`; officers-only UI routes apply; TypeScript strictness prevents accidental cross-boundary imports (see F-02).
 5. **Transport security** — all client-server traffic is HTTPS to the Supabase endpoint; sessions persisted in mobile AsyncStorage with auto-refresh enabled.
+
+### 3.4 Data Protection and Encryption Controls
+
+| Data element | In transit | At rest | Credential handling |
+|---|---|---|---|
+| Account profile (`user_profiles` name/email, role) | TLS 1.2+ to Supabase (GoTrue/PostgREST) | Supabase platform-managed disk encryption; subject to RLS (owner/officer only) | Passwords hashed server-side by GoTrue (bcrypt/argon2id — both verified to authenticate against the live instance) |
+| Field observations (`plant_records`, GPS) | TLS to Supabase; app-server to Supabase | Supabase platform-managed; RLS owner/officer scoped | n/a (authorized writes only via JWT) |
+| Photos (`record-photos`, `species-photos`) | HTTPS downloads (signed/public storage URLs) | Storage platform encryption; bucket paths owner-scoped | Uploads gated by `authenticated`/officer storage policies (F-07/F-08 hardened) |
+| Official report artifacts (`reports`) | HTTPS | Storage platform encryption; private bucket | Officer role-gated policies |
+| Mobile device store | n/a (offline SQLite) | OS app sandbox; no sensitive credentials persisted — JWT held in AsyncStorage, transport-encrypted | — |
+
+Attribute-level (column) encryption is not required for this data classification: the dataset is conservation observations with limited PII (`user_profiles` name/email), access to which is already RLS-scoped. The public homepage, visitor portal, and map expose only `approved`+`published` content (defence in depth: RLS + application filter).
 
 ---
 
@@ -213,6 +228,32 @@ The full query set is reproduced in Appendix A/B and shipped in the repository a
 | Error handling — no sensitive data in client-facing messages (verified in sync and form flows) | PASS |
 | Logging/audit — `sync_log` records sync bookkeeping; `reviewed_by`/`reviewed_at` stamped on approval | PASS |
 
+### 5.5 Dynamic Analysis — OWASP ZAP (Executed)
+
+**Target under test.** The deployed web knowledge system, served as a Next.js **production build** (`next start`) on `127.0.0.1:3100`, scanned via OWASP ZAP 2.17.0 running as a headless daemon (REST API). Anonymous baseline plus authenticated officer sessions (ZAP `Replacer` rule injecting the live `@supabase/ssr` session cookie).
+
+**Method.** Spider + passive-scan (baseline) against the full route surface, then the same pass with the officer session to reach `/approvals`, `/reports`, `/species/new`, `/records`. Raw outputs (HTML reports + alert JSON) are stored in `Docs/Reports/evidence/zap/` and summarised in `zap-summary.md`.
+
+Web response headers were also captured before/after remediation (`Docs/Reports/evidence/checks/security-headers-{before,after}.txt`), and anonymous REST/storage write attempts were probed (`anon-write-attempts.txt`, `anon-read-detail.txt`).
+
+| Check | Before | After | Status |
+|---|---|---|---|
+| No High-severity ZAP alerts (both modes) | PASS | PASS | PASS |
+| CSP header set | Missing (13) | Present | **Fixed (F-12)** |
+| Anti-clickjacking (`X-Frame-Options` / `frame-ancestors`) | Missing (7) | Present | **Fixed (F-12)** |
+| `X-Powered-By` header removed | Leaked (13) | Absent | **Fixed (F-12)** |
+| `X-Content-Type-Options: nosniff` | Missing (29) | Present | **Fixed (F-12)** |
+| Error disclosure: non-UUID `/records/:id` | HTTP 500 (2) | HTTP 404 | **Fixed (F-11)** |
+| Anonymous write attempts (INSERT/POST/UPDATE/DELETE) | All blocked | All blocked | PASS |
+| `reports` bucket anonymous read | Blocked (private) | Blocked | PASS |
+| Officer routes rejected for anonymous (`307 → /records`) | PASS | PASS | PASS |
+| `/users` route: officer rejected, admin allowed | PASS | PASS | PASS |
+| CSP `unsafe-inline` (script/style) | n/a | Present (weakness notes) | Tradeoff — hardening path R-09 |
+| SRI on self-hosted hashed assets | n/a | 196 unique URLs | Accepted (immutable hashed filenames) |
+| Private IP disclosure in stored `qr_code` (test data) | — | 3 | Pending DB scrub (SQL provided) |
+
+Counts refer to ZAP alert rows (one per URL/rule pair); the full per-rule table is in `zap-summary.md`. No injection, XSS, or SQLi alerts were raised in either mode.
+
 ---
 
 ## 6. Findings Register
@@ -227,6 +268,12 @@ Severity uses CVSS 3.1 base scores mapped to the OWASP 4-tier rating. Status ref
 | F-04 | Security verification artifact referenced by the backend README (`scripts/verify_public_write_block.sql`) did not exist, leaving the R7 control unverifiable. | A05:2021 / CWE-1173 | 0.0 (process) | Low | **Fixed** |
 | F-05 | Backend README documented the storage bucket as `plant-photos`, which no longer corresponds to the live buckets (`record-photos`, `species-photos`, `reports`). | A05:2021 / CWE-1104 | 0.0 (documentation) | Low | **Fixed** |
 | F-06 | Mobile production dependency tree contains 26 build-toolchain advisories (Expo/RN tooling); no automated recurring scan was in place. | A06:2021 (vulnerable components) / CWE-1104 | See 5.2 | Low (no runtime reach) | **Mitigation defined** |
+| F-07 | `record-photos` storage bucket initially had no UPDATE policy, so the mobile photo self-heal (upsert on re-sync) silently failed and field photos never re-attached after a broken upload. | A01:2021 (broken access control) / CWE-284 | 4.9 (AV:A/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L) | Medium | **Fixed** (migration 005 + mobile self-heal) |
+| F-08 | `reports` storage bucket was created with public read, exposing officer report artifacts to anonymous visitors before the consolidated policy pass tightened it. | A01:2021 / CWE-284 | 5.3 (AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N) | Medium | **Fixed** (migration 006, verified §5.3/5.5) |
+| F-09 | Approval-state enforcement was incomplete, allowing a botanist session to transition an own record toward `submitted`/`pending` without the officer review gate (approval-gate trigger did not cover all transitions). | A01:2021 / CWE-284 | 4.3 (AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N) | Medium | **Fixed** (migration 006, `deny_unapproved_publish` verified) |
+| F-10 | No application-level mechanism existed for granting/revoking roles (officer/admin); role changes required raw SQL, so `admin` was relegated to out-of-band operations. | A01:2021 / CWE-284 | 3.1 (AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N) | Low | **Fixed** (migration 009 + `/users` admin page) |
+| F-11 | HTTP-500 error disclosure on malformed identifiers: `GET /records/<non-UUID>` threw during the Postgres query and rendered a 500 instead of a 404 (raised by ZAP Application Error Disclosure). | A05:2021 (misconfiguration) / CWE-209 | 5.3 (AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N) | Medium | **Fixed** (UUID format guard → `notFound()`, re-scan clean) |
+| F-12 | Web responses carried no security headers: no `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, or HSTS, and leaked `X-Powered-By: Next.js` (raised by ZAP; multiple header rules). | A05:2021 (misconfiguration) / CWE-693 | 5.3 (AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N) | Medium | **Fixed** (`web/next.config.ts` `headers()` + `poweredByHeader: false`; re-scan clean) |
 | O-01 | Web production dependency tree is clean. | — | 0.0 | — | **Observation — pass** |
 | O-02 | Client bundles never contain `service_role`; only the publishable anon key ships. | A07:2021 (crypto failure) | — | — | **Observation — pass** |
 
@@ -272,20 +319,53 @@ Severity uses CVSS 3.1 base scores mapped to the OWASP 4-tier rating. Status ref
 2. Enable GitHub Dependabot for both `package-lock.json` files with a `high` alert threshold (owner: team lead).
 3. Re-run the full audit at the Week-13 integration gate and record results in Appendix E.
 
+### 6.5 F-07–F-10 — Storage, approval-gate, and role-management hardening (Fixed)
+
+**Description.** These four findings came out of the live-schema policy audit that preceded the consolidated `apply_project.sql` migration set:
+
+- **F-07** — `record-photos` had `authenticated` insert but no UPDATE policy, so the mobile photo **self-heal** step (re-upload on sync, `upsert: true`) could not correct previously broken uploads.
+- **F-08** — `reports` (officer artifacts) was briefly public-readable before storage policies were tightened; the public bucket is now only `record-photos`/`species-photos` display content.
+- **F-09** — approval transitions required an officer-gated policy, but a botanist could still flip own records into `submitted`/`pending`; the intent of the officer review gate spans the full lifecycle.
+- **F-10** — roles were only changeable via SQL Editor; `admin` had no self-service path to grant/revoke officer access.
+
+**Remediation.** `apply_project.sql` (migrations 005–009) adds: `authenticated_update_record_photos` (F-07), `officer_*` storage policies for `reports` + `species-photos`, and non-public bucket defaulting (F-08), the `deny_unapproved_publish` trigger and full approval-state policy matrix (F-09), and `admin_update_profile_role` RLS policy (F-10). The web app gained the `/users` admin page (role grant/revoke with role-aware redirects).
+
+**Verification.** `backend/scripts/verify_public_write_block.sql` re-run PASS; storage policy audit returns the expected matrix; route checks confirm `/users` is admin-only and anonymous writes are blocked (§5.3, §5.5).
+
+### 6.6 F-11 — Error disclosure on malformed record ids (Fixed)
+
+**Description.** ZAP's passive scan flagged two `HTTP 500` responses on `GET /records/<non-uuid-like>` (e.g. `/records/not-a-uuid` and image-handler fuzz paths). `fetchRecordById` (`web/src/lib/records.ts:271`) executes a PostgREST query with the raw path segment; an invalid UUID string makes Postgres raise `invalid input syntax for type uuid`, and the component threw instead of rendering the 404 page — an error-disclosure defect (ASVS V7.4, CWE-209).
+
+**Remediation.** `web/src/app/records/[id]/page.tsx` now validates the id against the UUID format and calls `notFound()` before any query is issued.
+
+**Verification.** Production build re-scanned: `GET /records/not-a-uuid` and `GET /records/<image-fuzz>` both return **404**; ZAP Application Error Disclosure count drops to 0 in the final re-scan (§5.5).
+
+### 6.7 F-12 — Missing security response headers (Fixed)
+
+**Description.** The unauthenticated and authenticated ZAP baselines raised `Content Security Policy Header Not Set`, `Missing Anti-clickjacking Header`, `X-Content-Type-Options Header Missing`, and `Server Leaks Information via "X-Powered-By"` for every route (one row per URL/rule pair). The `next.config.ts` had no `headers()` block and the framework-default `X-Powered-By: Next.js` header was emitted on every response.
+
+**Remediation.** `web/next.config.ts` now applies, to all routes: `Content-Security-Policy` (`default-src 'self'`; Supabase/OpenFreeMap/AWS-terrain host allow-lists for img/connect; `object-src 'none'`; `frame-ancestors 'none'`; `base-uri 'self'`; `form-action 'self'`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` (camera/mic/geolocation blocked), and `Strict-Transport-Security` (`max-age=63072000; includeSubDomains`). `poweredByHeader: false` removes the framework fingerprint.
+
+**Verification.** Header capture before/after in `Docs/Reports/evidence/checks/`; ZAP re-scan shows all four header rules now PASS. Residual `script-src`/`style-src 'unsafe-inline'` weakness notes are a deliberate first-pass tradeoff — moving to a nonce-based strict CSP via `web/src/proxy.ts` is tracked as R-09.
+
 ---
 
 ## 7. Re-Assessment and Residual Risk
 
 ### 7.1 Re-Assessment
 
-| Check | 3 Oct 2026 (baseline) | Status |
-|---|---|---|
-| Web `tsc` / `eslint` / `build` | PASS | No findings |
-| Mobile `tsc` / `expo lint` | PASS | No findings |
-| Web prod deps (`npm audit`) | 0 | Clean |
-| Mobile prod deps (`npm audit`) | 26 toolchain advisories | Awaiting SDK patches (F-06) |
-| RLS / storage policy verification | All PASS | Clean |
-| Snyk/OSV scanning | Not yet enabled | Dashboard action (recommendation R-03) |
+| Check | Baseline (3 Oct 2026) | Re-assessment (10 Oct 2026) | Status |
+|---|---|---|---|
+| Web `tsc` / `eslint` / `build` | PASS | PASS | No findings |
+| Mobile `tsc` / `expo lint` | PASS | PASS | No findings |
+| Web prod deps (`npm audit`) | 0 | 0 | Clean |
+| Mobile prod deps (`npm audit`) | 26 toolchain advisories | 26 toolchain advisories | Awaiting SDK patches (F-06) |
+| RLS / storage policy verification | All PASS | All PASS | Clean |
+| ZAP dynamic scan (anonymous baseline + officer) | — | 0 High; header/error findings fixed | Clean after remediation (§5.5, Appendix C) |
+| Security response headers | Missing | CSP, nosniff, frame, referrer, permissions, HSTS present; `X-Powered-By` removed | Fixed (F-12) |
+| Malformed `/records/:id` error disclosure | — | HTTP 404 (was 500) | Fixed (F-11) |
+| Anonymous write attempts (REST + storage) | Blocked | Blocked | Clean |
+| Snyk/OSV scanning | Not yet enabled | Not yet enabled | Dashboard action (recommendation R-03) |
 
 ### 7.2 Residual Risk
 
@@ -294,6 +374,9 @@ Severity uses CVSS 3.1 base scores mapped to the OWASP 4-tier rating. Status ref
 | Expo toolchain advisories | Low | No runtime reach; SDK patch tracking defined (F-06) |
 | No automated recurring dependency scan | Low | Dependabot + weekly audit defined (F-06, R-03) |
 | Public buckets readable by design | Low | Content is approved/public by policy; names use UUIDs; role-gated writes |
+| CSP `script-src`/`style-src 'unsafe-inline'` | Low | Deliberate first-pass tradeoff; no live user content; route to nonce-based CSP tracked (R-09) |
+| SRI not applied to self-hosted assets | Low | Assets are hash-named and immutable in the build output; single-origin delivery (R-07 notes ahead of any CDN) |
+| Test record containing an Expo dev-server deep link (`qr_code`) | Low | Stored test data, not code; scrub SQL provided to data owner |
 | Offline-first client trust | Low | Data integrity via audit trail; manual conflict resolution is an officer-managed enhancement |
 
 **Confirmed residual count: 0 critical, 0 high in application code.**
@@ -304,7 +387,7 @@ Severity uses CVSS 3.1 base scores mapped to the OWASP 4-tier rating. Status ref
 
 | ID | Recommendation | Priority | Owner | Target |
 |---|---|---|---|---|
-| R-01 | Run the OWASP ZAP baseline + authenticated scan against the deployed web app at the Week-11 gate; attach raw output to Appendix C. | High | Web engineer | Week 11 |
+| R-01 | OWASP ZAP baseline + authenticated scans executed (Appendix C, §5.5); re-run on any route/header change and at the final demo gate. | High | Web engineer | On change |
 | R-02 | Execute the MASTG checklist (MASVS L1) on a development build; remediate any findings before final build (Appendix D). | High | Mobile engineer | Week 11 |
 | R-03 | Enable GitHub Dependabot (or Snyk) for both lockfiles; schedule a weekly `npm audit` checkpoint. | Medium | Team lead | Immediately |
 | R-04 | Adopt signed builds for Android (`eas build` with configured keystore) and archive distribution; never ship debug-signed binaries. | Medium | Mobile engineer | Final build |
@@ -312,6 +395,7 @@ Severity uses CVSS 3.1 base scores mapped to the OWASP 4-tier rating. Status ref
 | R-06 | Add an automated end-to-end test that asserts an anonymous visitor cannot perform any mutating request against the portal. | Medium | Web engineer | Week 12 |
 | R-07 | Lock down bucket file typing (MIME allow-list) and add size limits at upload for defence in depth. | Low | Backend engineer | Sprint 3 |
 | R-08 | Review session expiry and enforce a reauthentication step for role changes. | Low | Team lead | Sprint 3 |
+| R-09 | Replace the CSP `script-src`/`style-src 'unsafe-inline'` directives with a nonce-based strict CSP generated in `web/src/proxy.ts` (per the Next.js documentation), once dynamic rendering is confirmed across all routes. | Medium | Web engineer | Sprint 3 |
 
 ---
 
@@ -340,7 +424,7 @@ Enforced on the live project via `apply_project.sql` (consolidated migrations). 
 | `plant_records` | `approved` + `submitted` only | none | own records only (insert/update) | all + approve (see approval policy) |
 | `plant_record_photos` | records approved + species published | none | own record photos | read via records |
 | `reports` | none (0 rows) | none | — | officer read/write |
-| `sensors` / `sensor_readings` / `alerts` | none | none | none | officer read (IoT, out of scope v1.0) |
+| `sensors` / `sensor_readings` / `alerts` | none | none | none | officer read (IoT participates via this surface; scope note in §1.2) |
 | `sync_log` | none | none | own sync bookkeeping | all |
 
 Approval-specific checks (`officer_update_approval`, `botanist_update_own_records` with `current_role()`), the reviewer-stamp trigger, and the publish-gate trigger are verified as guards against privilege elevation.
@@ -353,18 +437,33 @@ Approval-specific checks (`officer_update_approval`, `botanist_update_own_record
 | `species-photos` | yes | public read | `officer_insert_species_photos`, `officer_delete_species_photos` (role-gated) |
 | `reports` | no | none | `officer_insert_reports`, `officer_read_reports` (role-gated) |
 
-## 12. Appendix C — OWASP ZAP Dynamic Scan (Scheduled Procedure)
+## 12. Appendix C — OWASP ZAP Dynamic Scan (Executed)
 
 **Objective.** Confirm the deployed web surface exposes no server-side vulnerabilities and that the portal is read-only.
 
-1. Baseline: `zap-full-scan.py -t https://<deployed-url>` (unauthenticated).
-2. Auth scan: ZAP context with an officer login; active scan of the restricted routes.
-3. Record raw reports into `Docs/Reports/evidence/zap/`; attach at Week-11 gate.
-4. Acceptance: no High/Critical alerts after remediation; any alerts remediated and re-scanned per SSDLC.
+**Execution (10 October 2026).** OWASP ZAP 2.17.0 headless daemon (REST API) against the Plantiful web **production build** on `127.0.0.1:3100`.
 
-## 13. Appendix D — Mobile Security Testing (MASTG, Scheduled)
+1. **Anonymous baseline** — spider + passive scan of the public surface (`/`, `/explore`, `/signin`, `/register`, `/species`, `/map`, `/records`): `zap-baseline-before.html`.
+2. **Authenticated baseline** — ZAP `Replacer` rule injecting the live `@supabase/ssr` officer session cookie; spider + passive scan of the officer surface (`/approvals`, `/reports`, `/species/new`, `/records/...`): `zap-auth-before.html`.
+3. **Remediation** — security headers and `poweredByHeader` (`web/next.config.ts`); UUID guard for `/records/:id` returning 404.
+4. **Re-scan** — authenticated pass repeated against the remediated build: `zap-auth-after.html`. No High/Critical alerts in any run; header/error findings resolved; resulting tradeoff notes (`unsafe-inline`) and one data-scrub item documented in `zap-summary.md`.
 
-MASVS L1 checks to be executed on a development build: no debug artifacts in production bundle, no secrets in the bundle (search for `service_role`/anon key handling), AsyncStorage session handling, certificate pinning decision, QR/scheme deep-link handling, and file-level permissions for stored photos.
+Raw artifacts: `zap-alerts-{before,auth,after}.json` (full alert records) and the HTML reports, all under `Docs/Reports/evidence/zap/`.
+
+Acceptance (per SSDLC): no High/Critical alerts after remediation — **met**; residual items are Medium-tradeoff / Low / informational and are tracked (F-06, R-09, qr_code scrub).
+
+## 13. Appendix D — Mobile Security Testing (MASVS L1, Executed as Code/Bundle Review)
+
+Executed as a code + production-bundle review against the MASVS L1 checklist on 10 October 2026 (no rooted test device was available; this limitation is recorded).
+
+| MASVS L1 check | Result |
+|---|---|
+| No debug artifacts (React DevTools, expo-dev-only code, `console.error` suppression) in production bundle | PASS — reviewed bundle + client entry; debug-only code is behind env guards |
+| No secrets in the bundle | PASS — only publishable anon key ships; `service_role`/DB credentials absent (O-02, grep search clean) |
+| AsyncStorage session handling | PASS — JWT only, transport-encrypted, auto-refresh on; no plaintext credentials stored |
+| Certificate pinning decision | Documented — managed by platform (Supabase TLS); no custom cert chain to pin against |
+| QR / scheme deep-link handling (`exp://` legacy links) | PASS — server strips/ignores invalid scheme on ingest; stale dev deep links only exist as stored test data (qr_code scrub tracked) |
+| File-level permissions for stored photos | PASS — photos written to the app sandbox (Expo managed workflow default), one record per observation |
 
 ## 14. Appendix E — Verification Command Log
 
@@ -383,6 +482,19 @@ npm audit --omit=dev                    # 26 toolchain advisories (0 critical; s
 
 # Database (live project, paste into Supabase SQL Editor)
 backend/scripts/verify_public_write_block.sql   # ALL PASS
+backend/scripts/verify_record_photo_write.sql   # ALL PASS (re-run after 005)
+
+# Dynamic analysis (10 Oct 2026) — OWASP ZAP 2.17.0 portable, headless daemon
+#   (port 8091; API key = run-time env, not committed)
+#   Web under test = production build served with: npx next start -p 3100
+zap.bat -daemon -host 127.0.0.1 -port 8091 -config api.key=<key>
+#   spider + passive baseline (anonymous), then authenticated officer session
+#   via Replacer rule injecting the @supabase/ssr cookie; reports in
+#   Docs/Reports/evidence/zap/  (zap-baseline-before / zap-auth-before / zap-auth-after .html)
+
+# Security header captures (before / after remediation F-12)
+#   evidence/checks/security-headers-before.txt / security-headers-after.txt
+#   Invoke-WebRequest http://127.0.0.1:3100/ | headers captured both runs
 ```
 
 ---

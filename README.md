@@ -81,7 +81,7 @@ COS30049_InnovationProject_Plantiful/
 │   └── src/app/           ← App Router pages (explore, species, map, records, reports, alerts, profile)
 ├── backend/
 │   └── supabase/
-│       ├── migrations/    ← 001_schema.sql, per-feature migrations 002–008, and apply_project.sql (consolidated)
+│       ├── migrations/    ← 001_schema.sql + apply_project.sql (consolidated, idempotent); applied/ holds the 002–009 history
 │       └── seed.sql       ← assigns officer/admin roles by email + sample species catalogue
 ├── iot/                   ← Python sensor simulator + threat-rule evaluator (writes alerts to Supabase)
 ├── Docs/
@@ -124,9 +124,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 
 1. Create a project in Supabase.
 2. Enable Supabase Auth with email/password.
-3. Open Dashboard > SQL Editor and run `backend/supabase/migrations/001_schema.sql` first. Then run `apply_project.sql` from the same folder — it is a consolidated, idempotent script covering `002_rls.sql` through `008`: RLS policies and schema backfills, workflow triggers, photo visibility, the botanist approval gate, the private reports bucket, and storage-bucket creation. If you prefer the individual files, run `002`–`006` in order and then `007_reports_bucket_private.sql` and `008_species_knowledge_fields.sql` — these last two are already included in `apply_project.sql`, so skip them when using the consolidated script.
+3. Open Dashboard > SQL Editor and run the two scripts in `backend/supabase/migrations/`: `001_schema.sql` first (tables), then `apply_project.sql` — one consolidated, idempotent script covering everything else (RLS policies, schema backfills, workflow triggers, photo visibility, the botanist approval gate, the private reports bucket, storage-bucket policies, and admin role management). The per-feature files it consolidates are kept for reference in `migrations/applied/` — never run them individually.
 4. Run `backend/supabase/seed.sql` to assign officer and admin roles by email — edit its two `update` statements to your own addresses first — and to load the sample species catalogue.
-5. Invite your own test users in Dashboard > Authentication > Users and tick "Email confirmed" (email confirmation is on).
+5. Invite your own test users in Dashboard > Authentication > Users (dashboard-created users are confirmed automatically) — or register through the app; if registration says "Email not confirmed", either turn off "Confirm sign up" under Authentication > Emails (requires Admin project role) or run the one-off `update auth.users set email_confirmed_at = now() …` snippet for that account.
 6. Verify the setup with the scripts under `backend/scripts/`: `verify_public_write_block.sql` should show anonymous writes rejected and anonymous reads limited to approved and published data, and `verify_record_photo_write.sql` must report `PASS` on every line before the mobile Sync now button is used.
 
 ### 3. Run the web app

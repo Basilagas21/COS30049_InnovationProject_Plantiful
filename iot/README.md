@@ -18,7 +18,7 @@ There are no third-party Python dependencies — only `urllib`, `json`, `os`, `t
 
 ## How it maps to the database
 
-Both scripts talk to the Supabase REST API using the **service-role key**, which bypasses Row Level Security. That is required because `sensors`, `sensor_readings`, and `alerts` deliberately have no insert policy for signed-in users (see `backend/supabase/migrations/002_rls.sql`) — officers only ever *read* these tables, in the web dashboard at `/alerts`.
+Both scripts talk to the Supabase REST API using the **service-role key**, which bypasses Row Level Security. That is required because `sensors`, `sensor_readings`, and `alerts` deliberately have no insert policy for signed-in users (see `backend/supabase/migrations/apply_project.sql`) — officers only ever *read* these tables, in the web dashboard at `/alerts`.
 
 | Table | Written by | Columns used |
 |---|---|---|

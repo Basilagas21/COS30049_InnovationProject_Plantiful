@@ -60,7 +60,7 @@ function describeSyncError(error: unknown, tag: string | null): string {
     // Storage writes fail the same way as table writes, but the remedy is a
     // migration rather than a permissions problem on the record itself.
     if (/storage|already exists|upsert|bucket|object/i.test(`${raw} ${details}`)) {
-      return `The photo bucket rejected the upload${tagText}. Run 005_record_photo_sync.sql in the Supabase SQL editor, then press Sync now again.`;
+      return `The photo bucket rejected the upload${tagText}. Run apply_project.sql in the Supabase SQL editor, then press Sync now again.`;
     }
     return 'The central database rejected this write under its access rules.';
   }

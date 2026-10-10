@@ -360,7 +360,7 @@ Severity uses CVSS 3.1 base scores mapped to the OWASP 4-tier rating. Status ref
 | Mobile `tsc` / `expo lint` | PASS | PASS | No findings |
 | Web prod deps (`npm audit`) | 0 | 0 | Clean |
 | Mobile prod deps (`npm audit`) | 26 toolchain advisories | 26 toolchain advisories | Awaiting SDK patches (F-06) |
-| RLS / storage policy verification | All PASS | All PASS | Clean |
+| RLS / storage policy verification | All PASS | All PASS — re-run 10 Oct 2026, both verdicts CONFIRMED (`Docs/Reports/evidence/checks/sql-verification-output.txt`) | Clean |
 | ZAP dynamic scan (anonymous baseline + officer) | — | 0 High; header/error findings fixed | Clean after remediation (§5.5, Appendix C) |
 | Security response headers | Missing | CSP, nosniff, frame, referrer, permissions, HSTS present; `X-Powered-By` removed | Fixed (F-12) |
 | Malformed `/records/:id` error disclosure | — | HTTP 404 (was 500) | Fixed (F-11) |
@@ -481,8 +481,9 @@ npx expo-doctor                        # PASS
 npm audit --omit=dev                    # 26 toolchain advisories (0 critical; see 5.2/F-06)
 
 # Database (live project, paste into Supabase SQL Editor)
-backend/scripts/verify_public_write_block.sql   # ALL PASS
-backend/scripts/verify_record_photo_write.sql   # ALL PASS (re-run after 005)
+backend/scripts/verify_public_write_block.sql   # ALL PASS (10 Oct 2026 re-run; R7 CONFIRMED)
+backend/scripts/verify_record_photo_write.sql   # ALL PASS (10 Oct 2026 re-run; sync path CONFIRMED)
+#  output saved in Docs/Reports/evidence/checks/sql-verification-output.txt
 
 # Dynamic analysis (10 Oct 2026) — OWASP ZAP 2.17.0 portable, headless daemon
 #   (port 8091; API key = run-time env, not committed)

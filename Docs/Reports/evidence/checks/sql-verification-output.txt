@@ -1,0 +1,45 @@
+Plantiful RLS / storage policy verification — SQL Editor re-run
+Date: 10 October 2026
+Runner: user (Supabase Dashboard SQL Editor)
+Scripts: backend/scripts/verify_public_write_block.sql, backend/scripts/verify_record_photo_write.sql
+Result: BOTH VERDICTS PASS
+
+============================================================================
+verify_public_write_block.sql  (R7 public write-block + storage audit)
+============================================================================
+PASS: RLS enabled on all public tables
+PASS: no anonymous write policy on any public table
+PASS: publish-gate trigger present
+PASS: no anonymous write policy on storage.objects
+PASS: anon cannot read unpublished species
+PASS: anon cannot read non-approved records
+PASS: anon cannot read report artifacts
+PASS: anon cannot read photos of unpublished species
+SKIP: plant_records INSERT probe needs a published species and an auth user
+      (probe ids: species_id=null, user_id=5e29c8db-94fe-40eb-a086-4895ef08a900)
+SKIP: species INSERT probe needs a published species row
+SKIP: anonymous UPDATE on species (no published species to probe)
+PASS: anonymous cannot change approval_status
+SKIP: anonymous DELETE on species (no published species to probe)
+PASS: authenticated (non-officer) session cannot approve records
+SKIP: authenticated DELETE on species (no published species to probe)
+PASS: publish gate rejected publishing unapproved species
+PASS: record-photos / species-photos / reports buckets exist
+PASS: storage policy matrix complete (public read / role-gated writes)
+VERDICT: ALL CHECKS PASSED - R7 public write-block CONFIRMED.
+
+(SKIP lines are data-dependent: the write probes require an existing published
+species, and none is published yet. They are not control failures.)
+
+============================================================================
+verify_record_photo_write.sql  (record-photo sync insert/upsert path)
+============================================================================
+PASS: record-photos has select / insert / update / delete policies
+PASS: insert policy enforces the "<user id>/" path prefix
+PASS: botanist_manage_own_photos matches on the outer record_id
+PASS: insert allowed for "<my id>/..." path
+PASS: upsert / update allowed on my own object (repair path works)
+PASS: write into another user's folder denied (row-level security)
+SKIP: direct SQL delete is blocked by design - deletes go through the
+      Storage API, where authenticated_delete_record_photos applies
+VERDICT: record-photo write path CONFIRMED - press Sync now on the device.

@@ -91,6 +91,9 @@ web/CLAUDE.md
 # Claude Code local config
 .claude/
 
+# Security assessment evidence (large scan artifacts — kept locally for the demo)
+Docs/Reports/evidence/
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db

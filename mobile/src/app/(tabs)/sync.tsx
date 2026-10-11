@@ -36,7 +36,10 @@ const PHOTO_BUCKET = process.env.EXPO_PUBLIC_SUPABASE_PHOTO_BUCKET || 'record-ph
  * central database rejects the second one.
  */
 function describeSyncError(error: unknown, tag: string | null): string {
-  const raw = error instanceof Error ? error.message : String(error);
+  // Supabase returns plain objects, not Error instances, so read .message
+  // directly instead of printing "[object Object]".
+  const message = (error as { message?: unknown } | null)?.message;
+  const raw = typeof message === 'string' ? message : String(error);
   const code = (error as { code?: string } | null)?.code ?? '';
   const status = (error as { status?: number; statusCode?: number } | null) ?? {};
   const details = (error as { details?: string } | null)?.details ?? '';
@@ -68,20 +71,24 @@ function describeSyncError(error: unknown, tag: string | null): string {
   return details ? `${raw} (${details})` : raw;
 }
 
-// True only when the object exists and is a plausible image. Earlier builds
-// uploaded a 14-byte "File not found" text page instead of photo bytes, so
-// size is checked before a photo is trusted as synced.
-async function isRemotePhotoHealthy(folder: string, name: string): Promise<boolean> {
+// 'healthy' only when the object exists and is a plausible image. Earlier
+// builds uploaded a 14-byte "File not found" text page instead of photo bytes,
+// so size is checked before a photo is trusted as synced. 'unknown' means the
+// bucket could not be checked (e.g. no signal), which is not proof of damage.
+async function checkRemotePhoto(
+  folder: string,
+  name: string
+): Promise<'healthy' | 'broken' | 'unknown'> {
   try {
     const { data, error } = await supabase!.storage
       .from(PHOTO_BUCKET)
       .list(folder, { search: name });
-    if (error) return false;
+    if (error) return 'unknown';
     const object = data?.find((entry) => entry.name === name);
     const size = object?.metadata?.size;
-    return Boolean(object) && typeof size === 'number' && size >= 1024;
+    return object && typeof size === 'number' && size >= 1024 ? 'healthy' : 'broken';
   } catch {
-    return false;
+    return 'unknown';
   }
 }
 
@@ -261,7 +268,9 @@ export default function SyncScreen() {
       const syncedPhotos = await getSyncedPhotos(db);
       for (const photo of syncedPhotos) {
         const folder = `${session.session.user.id}/${photo.server_id}`;
-        if (await isRemotePhotoHealthy(folder, `${photo.id}.jpg`)) continue;
+        // Only re-queue on a confirmed bad object; offline, every check fails
+        // and would wrongly push already-synced records back into the queue.
+        if ((await checkRemotePhoto(folder, `${photo.id}.jpg`)) !== 'broken') continue;
         await markPhotoPending(db, photo.id);
         await markRecordPendingForRepair(db, photo.record_id);
       }
@@ -364,7 +373,7 @@ export default function SyncScreen() {
             .eq('photo_url', expectedUrl)
             .maybeSingle();
 
-          const remoteHealthy = await isRemotePhotoHealthy(photoFolder, photoName);
+          const remoteHealthy = (await checkRemotePhoto(photoFolder, photoName)) === 'healthy';
           if (existingPhoto.data && remoteHealthy) {
             await markPhotoSynced(db, photo.id, expectedUrl);
             continue;

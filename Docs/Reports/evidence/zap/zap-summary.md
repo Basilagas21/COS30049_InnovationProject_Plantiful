@@ -15,7 +15,7 @@
 | CSP: `script-src` uses `unsafe-inline` | — | — | 1099 Medium | **New tradeoff** — CSP is present; weak source-list noted for hardening |
 | CSP: `style-src` uses `unsafe-inline` | — | — | 1100 Medium | **New tradeoff** — as above |
 | Sub Resource Integrity Attribute Missing | — | 216 | 388 (196 unique URLs) | **Accepted** — static assets are self-hosted, hash-named, immutable (Next.js) |
-| Private IP Disclosure | — | 3 Low | 3 Low | **Pending** — stored `qr_code` value `exp://192.168.1.11:8081` in one test record; scrub SQL provided |
+| Private IP Disclosure | — | 3 Low | 3 Low → **resolved** | **Fixed** — stale Expo deep link in test data (`qr_code`) scrubbed; all three pages re-verified clean (see `../checks/private-ip-disclosure-verification.txt`) |
 | Content-Type Header Missing | — | 0 | 7 Info | **False positive** — spider-fuzzed phonetic paths returned as 404 |
 | Modern Web Application | — | 2 Info | 4 Info | Informational — not a fault |
 | Timestamp Disclosure — Unix | — | 1 Info | 0 | Variable/benign |
@@ -25,5 +25,5 @@
 - **No High severity alerts** in any run. No injection, XSS, or SQLi surfaced via the unauthenticated or authenticated baseline surface.
 - Alert counts include one row per affected (URL, rule) pair; the rule table above lists raw counts and (where relevant) unique-URL counts.
 - The CSP `unsafe-inline` alerts are a deliberate first-pass tradeoff: removing them requires a nonce-based strict CSP generated in `web/src/proxy.ts` per the Next.js documentation (recommended hardening, recorded as R-09).
-- The `Private IP Disclosure` stems from stored **test data** (an Expo dev-server deep-link in `plant_records.qr_code`), not application code. Fix = `update plant_records set qr_code = null where qr_code ilike '%8081%';`
+- The `Private IP Disclosure` stemmed from stored **test data** (an Expo dev-server deep-link in `plant_records.qr_code`), exposed because the public record-detail query selects `qr_code` (`web/src/lib/records.ts:281`). The test data was cleared and all three flagged pages re-verified clean; removing `qr_code` from the public select is tracked as R-10 (defence in depth).
 - Raw artifacts: `zap-alerts-before.json`, `zap-alerts-auth.json`, `zap-alerts-after.json`, and the three HTML reports in this folder.

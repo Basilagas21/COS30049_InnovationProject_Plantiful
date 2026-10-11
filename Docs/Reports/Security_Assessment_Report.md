@@ -250,7 +250,7 @@ Web response headers were also captured before/after remediation (`Docs/Reports/
 | `/users` route: officer rejected, admin allowed | PASS | PASS | PASS |
 | CSP `unsafe-inline` (script/style) | n/a | Present (weakness notes) | Tradeoff — hardening path R-09 |
 | SRI on self-hosted hashed assets | n/a | 196 unique URLs | Accepted (immutable hashed filenames) |
-| Private IP disclosure in stored `qr_code` (test data) | — | 3 | Pending DB scrub (SQL provided) |
+| Private IP disclosure in stored `qr_code` (test data) | — | 3 | **Resolved** — data scrubbed; 3 pages re-verified clean (evidence `checks/private-ip-disclosure-verification.txt`) |
 
 Counts refer to ZAP alert rows (one per URL/rule pair); the full per-rule table is in `zap-summary.md`. No injection, XSS, or SQLi alerts were raised in either mode.
 
@@ -376,7 +376,7 @@ Severity uses CVSS 3.1 base scores mapped to the OWASP 4-tier rating. Status ref
 | Public buckets readable by design | Low | Content is approved/public by policy; names use UUIDs; role-gated writes |
 | CSP `script-src`/`style-src 'unsafe-inline'` | Low | Deliberate first-pass tradeoff; no live user content; route to nonce-based CSP tracked (R-09) |
 | SRI not applied to self-hosted assets | Low | Assets are hash-named and immutable in the build output; single-origin delivery (R-07 notes ahead of any CDN) |
-| Test record containing an Expo dev-server deep link (`qr_code`) | Low | Stored test data, not code; scrub SQL provided to data owner |
+| Test record containing an Expo dev-server deep link (`qr_code`) | Resolved | Test data, not code; scrubbed and re-verified 10 Oct 2026. Structural hardening (drop `qr_code` from the public select) tracked as R-10 |
 | Offline-first client trust | Low | Data integrity via audit trail; manual conflict resolution is an officer-managed enhancement |
 
 **Confirmed residual count: 0 critical, 0 high in application code.**
@@ -396,6 +396,7 @@ Severity uses CVSS 3.1 base scores mapped to the OWASP 4-tier rating. Status ref
 | R-07 | Lock down bucket file typing (MIME allow-list) and add size limits at upload for defence in depth. | Low | Backend engineer | Sprint 3 |
 | R-08 | Review session expiry and enforce a reauthentication step for role changes. | Low | Team lead | Sprint 3 |
 | R-09 | Replace the CSP `script-src`/`style-src 'unsafe-inline'` directives with a nonce-based strict CSP generated in `web/src/proxy.ts` (per the Next.js documentation), once dynamic rendering is confirmed across all routes. | Medium | Web engineer | Sprint 3 |
+| R-10 | Remove `qr_code` (and any device/field metadata) from the public record-detail select in `web/src/lib/records.ts`; render field QR payloads only in officer/internal views, so a stale or device-revealing value cannot leak to anonymous visitors. | Low | Web engineer | Sprint 3 |
 
 ---
 

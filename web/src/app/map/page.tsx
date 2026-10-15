@@ -31,7 +31,7 @@ export default async function MapPage({
         Species map{filterSpeciesName ? ` – ${filterSpeciesName}` : ""}
       </h1>
       <p className="mt-2 text-moss">
-        Approved field observations plotted by GPS coordinate
+        Field observations plotted by GPS coordinate — filter by approval status
         {usingSampleData ? " (sample data)" : ""}
         {speciesId && (
           <>

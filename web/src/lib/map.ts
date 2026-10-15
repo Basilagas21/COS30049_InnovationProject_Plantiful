@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
+export type MapApprovalStatus = "pending" | "approved" | "rejected";
+
 export type MapPoint = {
   id: string;
   lat: number;
@@ -8,6 +10,7 @@ export type MapPoint = {
   label: string;
   commonName: string | null;
   conservationStatus: string | null;
+  approvalStatus: MapApprovalStatus;
   heightCm: number | null;
   createdAt: string;
   photoUrl: string | null;
@@ -24,6 +27,7 @@ const mockPoints: MapPoint[] = [
     heightCm: 18,
     createdAt: "2026-09-28T09:41:00Z",
     photoUrl: null,
+    approvalStatus: "approved",
   },
   {
     id: "R-0002",
@@ -35,6 +39,7 @@ const mockPoints: MapPoint[] = [
     heightCm: 0.4,
     createdAt: "2026-09-25T14:12:00Z",
     photoUrl: null,
+    approvalStatus: "approved",
   },
   {
     id: "R-0003",
@@ -46,6 +51,7 @@ const mockPoints: MapPoint[] = [
     heightCm: 3120,
     createdAt: "2026-09-22T08:05:00Z",
     photoUrl: null,
+    approvalStatus: "pending",
   },
   {
     id: "R-0004",
@@ -57,6 +63,7 @@ const mockPoints: MapPoint[] = [
     heightCm: 85,
     createdAt: "2026-09-18T16:22:00Z",
     photoUrl: null,
+    approvalStatus: "approved",
   },
   {
     id: "R-0006",
@@ -68,23 +75,41 @@ const mockPoints: MapPoint[] = [
     heightCm: 2400,
     createdAt: "2026-09-11T12:33:00Z",
     photoUrl: null,
+    approvalStatus: "rejected",
   },
 ];
 
 function toPoint(row: {
   record_id: string;
   species_id: string | null;
+  provisional_name: string | null;
   gps_lat: number | null;
   gps_lng: number | null;
   height_cm: number | null;
   created_at: string;
-}): { id: string; speciesId: string | null; lat: number; lng: number } | null {
+  approval_status: MapApprovalStatus;
+}):
+  | {
+      id: string;
+      speciesId: string | null;
+      provisionalName: string | null;
+      lat: number;
+      lng: number;
+      heightCm: number | null;
+      createdAt: string;
+      approvalStatus: MapApprovalStatus;
+    }
+  | null {
   if (row.gps_lat == null || row.gps_lng == null) return null;
   return {
     id: row.record_id,
     speciesId: row.species_id,
+    provisionalName: row.provisional_name,
     lat: row.gps_lat,
     lng: row.gps_lng,
+    heightCm: row.height_cm,
+    createdAt: row.created_at,
+    approvalStatus: row.approval_status,
   };
 }
 
@@ -93,13 +118,16 @@ export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoin
 
   const supabase = await createClient();
 
+  // Row Level Security is the real ceiling here: anon visitors only ever see
+  // approved + submitted rows (policy anon_read_approved_records), while
+  // officers/admins see every record and can filter by approval below.
   let query = supabase
     .from("plant_records")
-    .select("record_id, species_id, gps_lat, gps_lng, height_cm, created_at")
+    .select(
+      "record_id, species_id, provisional_name, gps_lat, gps_lng, height_cm, created_at, approval_status",
+    )
     .not("gps_lat", "is", null)
     .not("gps_lng", "is", null)
-    .eq("approval_status", "approved")
-    .eq("status", "submitted")
     .order("created_at", { ascending: false })
     .limit(500);
 
@@ -120,7 +148,10 @@ export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoin
     ...new Set(points.map((p) => p.speciesId).filter((id): id is string => id !== null)),
   ];
 
-  let speciesByName = new Map<string, { scientific_name: string; common_name: string | null; conservation_status: string | null }>();
+  let speciesById = new Map<
+    string,
+    { scientific_name: string; common_name: string | null; conservation_status: string | null }
+  >();
   if (speciesIds.length > 0) {
     const { data: species, error: speciesError } = await supabase
       .from("species")
@@ -128,7 +159,7 @@ export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoin
       .in("species_id", speciesIds);
 
     if (!speciesError && species) {
-      speciesByName = new Map(species.map((s) => [s.species_id, s]));
+      speciesById = new Map(species.map((s) => [s.species_id, s]));
     }
   }
 
@@ -148,16 +179,17 @@ export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoin
   }
 
   return points.map((point) => {
-    const species = point.speciesId ? speciesByName.get(point.speciesId) : undefined;
+    const species = point.speciesId ? speciesById.get(point.speciesId) : undefined;
     return {
       id: point.id,
       lat: point.lat,
       lng: point.lng,
-      label: species?.scientific_name ?? "Unknown species",
+      label: species?.scientific_name ?? point.provisionalName ?? "Unknown species",
       commonName: species?.common_name ?? null,
       conservationStatus: species?.conservation_status ?? null,
-      heightCm: data.find((r) => r.record_id === point.id)?.height_cm ?? null,
-      createdAt: data.find((r) => r.record_id === point.id)?.created_at ?? "",
+      approvalStatus: point.approvalStatus,
+      heightCm: point.heightCm,
+      createdAt: point.createdAt,
       photoUrl: photoByRecord.get(point.id) ?? null,
     };
   });

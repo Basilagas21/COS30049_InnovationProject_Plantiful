@@ -7,3 +7,9 @@ export function parseHeightCm(input: string): number | null | undefined {
   if (!Number.isFinite(value) || value <= 0) return undefined;
   return value;
 }
+
+// Stem diameter at breast height. Same positive-number rules as height, kept as
+// its own name so validation messages can name the right field.
+export function parseDbhCm(input: string): number | null | undefined {
+  return parseHeightCm(input);
+}

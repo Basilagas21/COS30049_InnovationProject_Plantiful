@@ -83,6 +83,9 @@ export interface Database {
           gps_lng: number | null;
           gps_accuracy_m: number | null;
           height_cm: number | null;
+          dbh_cm: number | null;
+          taxonomy: string | null;
+          phenology: string | null;
           morphology: string | null;
           notes: string | null;
           status: "draft" | "submitted";
@@ -104,6 +107,9 @@ export interface Database {
           gps_lng?: number | null;
           gps_accuracy_m?: number | null;
           height_cm?: number | null;
+          dbh_cm?: number | null;
+          taxonomy?: string | null;
+          phenology?: string | null;
           morphology?: string | null;
           notes?: string | null;
           status?: "draft" | "submitted";

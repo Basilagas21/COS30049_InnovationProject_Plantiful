@@ -12,7 +12,8 @@ import {
   View,
 } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
-import { colors } from '@/theme';
+import { colors, surfaces } from '@/theme';
+import { BotanicalBanner } from '@/components/botanical-banner';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 
 export default function SignInScreen() {
@@ -62,12 +63,13 @@ export default function SignInScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
         style={styles.flex}
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <Image
           source={require('../../assets/plantiful_logo.png')}
@@ -76,8 +78,9 @@ export default function SignInScreen() {
           accessibilityLabel="Plantiful logo"
         />
 
+        <BotanicalBanner title="Closer to nature." subtitle="Your next discovery starts here. Capture, connect and conserve." />
         <View style={styles.card}>
-          <Text style={styles.title}>Sign in to Plantiful</Text>
+          <Text style={styles.title}>Welcome back</Text>
           <Text style={styles.hint}>
             Authenticate to capture and sync plant observations as a botanist.
           </Text>
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     padding: 16,
     gap: 16,
     paddingBottom: 40,
@@ -151,14 +154,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   card: {
+    ...surfaces.card,
     alignItems: 'center',
     gap: 10,
-    backgroundColor: colors.sprout,
-    borderRadius: 20,
     padding: 24,
   },
   title: {
-    fontSize: 18,
+    fontSize: 28,
     fontWeight: '800',
     color: colors.pine,
   },
@@ -174,12 +176,8 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   input: {
-    height: 46,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.sand,
-    backgroundColor: colors.white,
-    paddingHorizontal: 14,
+    ...surfaces.input,
+    minHeight: 52,
     fontSize: 14,
     color: colors.pine,
   },
@@ -189,6 +187,7 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
+    paddingRight: 48,
   },
   eyeButton: {
     position: 'absolute',

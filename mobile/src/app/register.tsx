@@ -12,7 +12,8 @@ import {
   View,
 } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
-import { colors } from '@/theme';
+import { colors, surfaces } from '@/theme';
+import { BotanicalBanner } from '@/components/botanical-banner';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 
 export default function RegisterScreen() {
@@ -96,6 +97,7 @@ export default function RegisterScreen() {
           accessibilityLabel="Plantiful logo"
         />
 
+        <BotanicalBanner title="Grow our knowledge." subtitle="Join the field team and help document the living world." />
         <View style={styles.card}>
           <Text style={styles.title}>Create your account</Text>
           <Text style={styles.hint}>
@@ -187,14 +189,13 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   card: {
+    ...surfaces.card,
     alignItems: 'center',
     gap: 10,
-    backgroundColor: colors.sprout,
-    borderRadius: 20,
     padding: 24,
   },
   title: {
-    fontSize: 18,
+    fontSize: 28,
     fontWeight: '800',
     color: colors.pine,
   },
@@ -210,12 +211,8 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   input: {
-    height: 46,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.sand,
-    backgroundColor: colors.white,
-    paddingHorizontal: 14,
+    ...surfaces.input,
+    minHeight: 52,
     fontSize: 14,
     color: colors.pine,
   },
@@ -225,6 +222,7 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
+    paddingRight: 48,
   },
   eyeButton: {
     position: 'absolute',

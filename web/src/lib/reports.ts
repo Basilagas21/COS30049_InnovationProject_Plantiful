@@ -15,8 +15,8 @@ export type ReportsResult = {
   error: string | null;
 };
 
-export type { ReportType } from "@/lib/report-types";
-export { REPORT_TYPES } from "@/lib/report-types";
+export type { ReportType, ReportFormat } from "@/lib/report-types";
+export { REPORT_TYPES, REPORT_FORMATS } from "@/lib/report-types";
 
 const REPORTS_BUCKET = "reports";
 const DOWNLOAD_URL_TTL_SECONDS = 60 * 60 * 24 * 7;

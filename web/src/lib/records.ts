@@ -23,6 +23,9 @@ export type RecordListItem = {
 
 export type RecordDetail = RecordListItem & {
   taxonomy: string | null;
+  recordTaxonomy: string | null;
+  phenology: string | null;
+  dbhCm: number | null;
   description: string | null;
   reviewedAt: string | null;
   syncedAt: string | null;
@@ -37,6 +40,9 @@ const mockRecords: RecordDetail[] = [
     commonName: "Low's pitcher plant",
     provisionalName: null,
     taxonomy: "Caryophyllales · Nepenthaceae",
+    recordTaxonomy: "Nepenthaceae",
+    phenology: "flowering",
+    dbhCm: 3.2,
     conservationStatus: "Endangered",
     description:
       "Mature pitcher with upper and lower pitchers present. Pitcher rim in good condition; fruit set observed nearby. Light gaps moderate along the trail edge.",
@@ -62,6 +68,9 @@ const mockRecords: RecordDetail[] = [
     commonName: "Tuan Muda's rafflesia",
     provisionalName: null,
     taxonomy: "Malpighiales · Rafflesiaceae",
+    recordTaxonomy: "Rafflesiaceae",
+    phenology: "vegetative",
+    dbhCm: null,
     conservationStatus: "Endangered",
     description: null,
     gpsLat: 3.9941,
@@ -86,6 +95,9 @@ const mockRecords: RecordDetail[] = [
     commonName: "Keruing",
     provisionalName: null,
     taxonomy: "Malvales · Dipterocarpaceae",
+    recordTaxonomy: "Dipterocarpaceae",
+    phenology: "vegetative",
+    dbhCm: 148.5,
     conservationStatus: "Vulnerable",
     description: null,
     gpsLat: 3.9907,
@@ -110,6 +122,9 @@ const mockRecords: RecordDetail[] = [
     commonName: "Christmas orchid",
     provisionalName: null,
     taxonomy: "Asparagales · Orchidaceae",
+    recordTaxonomy: "Orchidaceae",
+    phenology: "flowering",
+    dbhCm: null,
     conservationStatus: null,
     description: null,
     gpsLat: 3.9829,
@@ -134,6 +149,9 @@ const mockRecords: RecordDetail[] = [
     commonName: "Begonia",
     provisionalName: null,
     taxonomy: "Cucurbitales · Begoniaceae",
+    recordTaxonomy: "Begoniaceae",
+    phenology: "vegetative",
+    dbhCm: null,
     conservationStatus: null,
     description: null,
     gpsLat: 3.9955,
@@ -158,6 +176,9 @@ const mockRecords: RecordDetail[] = [
     commonName: "Keruntun tree",
     provisionalName: null,
     taxonomy: "Myrtales · Myrtaceae",
+    recordTaxonomy: "Myrtaceae",
+    phenology: "fruiting",
+    dbhCm: 92,
     conservationStatus: "Endangered",
     description: null,
     gpsLat: 3.9882,
@@ -185,6 +206,9 @@ function toListItem(row: {
   gps_lng: number | null;
   gps_accuracy_m: number | null;
   height_cm: number | null;
+  dbh_cm: number | null;
+  taxonomy: string | null;
+  phenology: string | null;
   morphology: string | null;
   notes: string | null;
   approval_status: "pending" | "approved" | "rejected";
@@ -213,6 +237,9 @@ function toListItem(row: {
     commonName: row.species?.common_name ?? null,
     provisionalName: row.provisional_name ?? null,
     taxonomy: row.species?.taxonomy ?? null,
+    recordTaxonomy: row.taxonomy,
+    phenology: row.phenology,
+    dbhCm: row.dbh_cm,
     conservationStatus: row.species?.conservation_status ?? null,
     description: row.species?.description ?? null,
     gpsLat: row.gps_lat,
@@ -250,7 +277,7 @@ export async function fetchRecords(): Promise<RecordsResult> {
   const { data, error } = await supabase
     .from("plant_records")
     .select(
-      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id,
+      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id,
        species (
          species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published
        ),
@@ -278,7 +305,7 @@ export async function fetchRecordById(id: string): Promise<RecordDetail | null> 
   const { data, error } = await supabase
     .from("plant_records")
     .select(
-      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id,
+      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id,
        species (
          species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published
        ),

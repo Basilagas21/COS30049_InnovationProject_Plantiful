@@ -9,7 +9,10 @@ export function SiteNav({ links }: { links: { href: string; label: string }[] })
   return (
     <nav aria-label="Main navigation" className="site-nav">
       {links.map(({ href, label }) => {
-        const active = pathname === href || pathname.startsWith(`${href}/`);
+        const active =
+          href === "/"
+            ? pathname === "/"
+            : pathname === href || pathname.startsWith(`${href}/`);
         return <Link key={href} href={href} aria-current={active ? "page" : undefined} className="site-nav-link">{label}</Link>;
       })}
       <NavAuth />

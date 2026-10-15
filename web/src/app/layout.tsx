@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [officer, admin] = await Promise.all([isOfficer(), isAdmin()]);
   const navLinks = [
+    { href: "/", label: "Home" },
     { href: "/explore", label: "Explore" },
     { href: "/species", label: "Species" },
     { href: "/map", label: "Map" },

@@ -2,7 +2,7 @@ import { File } from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
 const DATABASE_NAME = 'plantiful.db';
-const SCHEMA_VERSION = 6;
+const SCHEMA_VERSION = 7;
 
 async function migrateDbIfNeeded(db: SQLite.SQLiteDatabase) {
   const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -175,6 +175,22 @@ CREATE TABLE IF NOT EXISTS local_species_photos (
     currentDbVersion = 6;
   }
 
+  if (currentDbVersion < 7) {
+    // Per-record ground-truthing attributes: taxonomy as recorded on site, the
+    // reproductive state (phenology), and stem diameter (DBH). All nullable.
+    const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(local_records)');
+    if (!columns.some((column) => column.name === 'taxonomy')) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN taxonomy TEXT');
+    }
+    if (!columns.some((column) => column.name === 'phenology')) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN phenology TEXT');
+    }
+    if (!columns.some((column) => column.name === 'dbh_cm')) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN dbh_cm REAL');
+    }
+    currentDbVersion = 7;
+  }
+
   // `edited` marks a locally edited record so the next sync pushes an UPDATE to
   // the existing server row instead of creating a duplicate. Repaired on EVERY
   // open rather than version-gated, so a half-applied migration can never leave
@@ -245,6 +261,9 @@ export type LocalRecord = {
   gps_lng: number | null;
   gps_accuracy_m: number | null;
   height_cm: number | null;
+  dbh_cm: number | null;
+  taxonomy: string | null;
+  phenology: string | null;
   morphology: string | null;
   notes: string | null;
   capture_ts: string;
@@ -272,6 +291,9 @@ export async function insertLocalRecord(
     gps_lng?: number | null;
     gps_accuracy_m?: number | null;
     height_cm?: number | null;
+    dbh_cm?: number | null;
+    taxonomy?: string | null;
+    phenology?: string | null;
     morphology?: string | null;
     notes?: string | null;
   }
@@ -281,8 +303,8 @@ export async function insertLocalRecord(
   await db.runAsync(
     `INSERT INTO local_records (
       record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm,
-      morphology, notes, capture_ts, sync_status, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`,
+      dbh_cm, taxonomy, phenology, morphology, notes, capture_ts, sync_status, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`,
     recordId,
     input.species_id ?? null,
     input.qr_code ?? null,
@@ -291,6 +313,9 @@ export async function insertLocalRecord(
     input.gps_lng ?? null,
     input.gps_accuracy_m ?? null,
     input.height_cm ?? null,
+    input.dbh_cm ?? null,
+    input.taxonomy ?? null,
+    input.phenology ?? null,
     input.morphology ?? null,
     input.notes ?? null,
     now,
@@ -325,6 +350,9 @@ export type RemoteRecordImport = {
   gps_lng?: number | null;
   gps_accuracy_m?: number | null;
   height_cm?: number | null;
+  dbh_cm?: number | null;
+  taxonomy?: string | null;
+  phenology?: string | null;
   morphology?: string | null;
   notes?: string | null;
   approval_status?: string | null;
@@ -346,8 +374,8 @@ export async function importRemoteRecord(
   await db.runAsync(
     `INSERT INTO local_records (
        record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm,
-       morphology, notes, capture_ts, sync_status, server_id, approval_status, reviewed_at, edited, created_at
-     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?, 0, ?)`,
+       dbh_cm, taxonomy, phenology, morphology, notes, capture_ts, sync_status, server_id, approval_status, reviewed_at, edited, created_at
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?, 0, ?)`,
     recordId,
     remote.species_id ?? null,
     remote.qr_code ? remote.qr_code.trim().toUpperCase() : null,
@@ -356,6 +384,9 @@ export async function importRemoteRecord(
     remote.gps_lng ?? null,
     remote.gps_accuracy_m ?? null,
     remote.height_cm ?? null,
+    remote.dbh_cm ?? null,
+    remote.taxonomy ?? null,
+    remote.phenology ?? null,
     remote.morphology ?? null,
     remote.notes ?? null,
     remote.created_at ?? now,
@@ -383,7 +414,7 @@ export async function getLocalRecords(db: SQLite.SQLiteDatabase): Promise<LocalR
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name,
        r.gps_lat, r.gps_lng, r.gps_accuracy_m,
-       r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
+       r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
        r.sync_error, r.approval_status, r.reviewed_at, r.created_at,
        COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
@@ -400,7 +431,7 @@ export async function getLocalRecord(
   return db.getFirstAsync<LocalRecordWithPhoto>(
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
-       r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
+       r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
        r.sync_error, r.approval_status, r.reviewed_at, r.edited, r.created_at,
        COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
@@ -536,7 +567,7 @@ export async function getRecordByTag(
   return db.getFirstAsync<LocalRecordWithPhoto>(
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
-       r.height_cm, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
+       r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
        r.sync_error, r.approval_status, r.reviewed_at, r.edited, r.created_at,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
@@ -580,6 +611,9 @@ export async function updateLocalRecord(
     gps_lng?: number | null;
     gps_accuracy_m?: number | null;
     height_cm?: number | null;
+    dbh_cm?: number | null;
+    taxonomy?: string | null;
+    phenology?: string | null;
     morphology?: string | null;
     notes?: string | null;
   }
@@ -593,6 +627,9 @@ export async function updateLocalRecord(
        gps_lng = ?,
        gps_accuracy_m = ?,
        height_cm = ?,
+       dbh_cm = ?,
+       taxonomy = ?,
+       phenology = ?,
        morphology = ?,
        notes = ?,
        sync_status = 'pending',
@@ -606,6 +643,9 @@ export async function updateLocalRecord(
     patch.gps_lng ?? null,
     patch.gps_accuracy_m ?? null,
     patch.height_cm ?? null,
+    patch.dbh_cm ?? null,
+    patch.taxonomy ?? null,
+    patch.phenology ?? null,
     patch.morphology ?? null,
     patch.notes ?? null,
     recordId

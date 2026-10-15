@@ -3,7 +3,8 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Pressable, TextInput } from '@/lib/interactionLog';
-import { colors } from '@/theme';
+import { colors, surfaces } from '@/theme';
+import { BotanicalBanner } from '@/components/botanical-banner';
 import { openDatabase, getSpeciesOptions, type SpeciesOption } from '@/db';
 
 export default function SpeciesReferenceScreen() {
@@ -53,6 +54,7 @@ export default function SpeciesReferenceScreen() {
       </View>
 
       <FlatList
+        ListHeaderComponent={<BotanicalBanner title="The field guide." subtitle="A closer look at the plants around you. Available offline after sync." />}
         data={filtered}
         keyExtractor={(item) => item.species_id}
         contentContainerStyle={styles.list}
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
   },
   search: {
     flex: 1,
-    height: 44,
+    height: 50,
     fontSize: 14,
     color: colors.pine,
   },
@@ -142,12 +144,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   card: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: 16,
-    gap: 4,
-    borderWidth: 1,
-    borderColor: colors.sand,
+    ...surfaces.card,
+    gap: 8,
   },
   cardPressed: {
     opacity: 0.7,

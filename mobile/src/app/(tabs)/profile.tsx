@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable } from '@/lib/interactionLog';
-import { colors } from '@/theme';
+import { colors, surfaces } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { countUnsyncedRecords, openDatabase } from '@/db';
 
@@ -148,22 +148,21 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   card: {
+    ...surfaces.card,
     alignItems: 'center',
     gap: 10,
-    backgroundColor: colors.sprout,
-    borderRadius: 20,
     padding: 24,
   },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     backgroundColor: colors.emerald,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
-    fontSize: 18,
+    fontSize: 26,
     fontWeight: '800',
     color: colors.pine,
   },

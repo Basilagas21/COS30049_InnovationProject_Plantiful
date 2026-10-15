@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
-import { colors } from '@/theme';
+import { colors, surfaces } from '@/theme';
+import { BotanicalBanner } from '@/components/botanical-banner';
 import {
   deleteLocalRecord,
   getLocalRecords,
@@ -30,6 +31,28 @@ function syncLabel(status: string) {
     default:
       return { text: 'Pending', color: colors.pine };
   }
+}
+
+function RecordThumbnail({ uri, label }: { uri: string | null; label: string }) {
+  const [failed, setFailed] = useState(false);
+
+  if (!uri || failed) {
+    return (
+      <View style={[styles.thumbnail, styles.thumbnailPlaceholder]} accessibilityLabel="No plant photo available">
+        <Ionicons name="leaf-outline" size={44} color={colors.emerald} />
+      </View>
+    );
+  }
+
+  return (
+    <Image
+      source={{ uri }}
+      style={styles.thumbnail}
+      resizeMode="cover"
+      accessibilityLabel={`Photo of ${label}`}
+      onError={() => setFailed(true)}
+    />
+  );
 }
 
 export default function RecordsScreen() {
@@ -137,6 +160,7 @@ export default function RecordsScreen() {
       </View>
 
       <FlatList
+        ListHeaderComponent={<BotanicalBanner title="Your discoveries." subtitle="Every observation adds a new page to the story of the forest." />}
         data={filteredRecords}
         keyExtractor={(item) => item.record_id}
         contentContainerStyle={styles.list}
@@ -160,41 +184,48 @@ export default function RecordsScreen() {
               style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
               onPress={() => router.push({ pathname: '/record/[id]', params: { id: item.record_id } })}
             >
-              <View style={styles.cardHeader}>
-                <View style={styles.cardTitleWrap}>
-                  <Text style={styles.cardTitle}>
-                    {item.provisional_name ?? item.species_name ?? 'Unnamed plant'}
+              <RecordThumbnail
+                key={item.photo_uri ?? 'no-photo'}
+                uri={item.photo_uri}
+                label={item.provisional_name ?? item.species_name ?? 'plant'}
+              />
+              <View style={styles.cardBody}>
+                <View style={styles.cardHeader}>
+                  <View style={styles.cardTitleWrap}>
+                    <Text style={styles.cardTitle}>
+                      {item.provisional_name ?? item.species_name ?? 'Unnamed plant'}
+                    </Text>
+                    {item.qr_code ? <Text style={styles.cardMeta}>Tag {item.qr_code}</Text> : null}
+                    {!item.provisional_name && !item.species_name && item.species_id ? (
+                      <Text style={styles.cardMeta}>Species {item.species_id}</Text>
+                    ) : null}
+                  </View>
+                  <Pressable
+                    onPress={() => removeRecord(item.record_id, item.qr_code ?? 'This record', item.sync_status)}
+                    hitSlop={8}
+                    accessibilityLabel="Delete record"
+                  >
+                    <Ionicons name="trash-outline" size={24} color={colors.danger} />
+                  </Pressable>
+                </View>
+
+                <Text style={styles.cardMeta}>Captured: {new Date(item.capture_ts).toLocaleString()}</Text>
+                {item.gps_lat != null && item.gps_lng != null && (
+                  <Text style={styles.cardMeta}>
+                    {item.gps_lat.toFixed(5)}, {item.gps_lng.toFixed(5)}
                   </Text>
-                  {item.qr_code ? <Text style={styles.cardMeta}>Tag {item.qr_code}</Text> : null}
-                  {!item.provisional_name && !item.species_name && item.species_id ? (
-                    <Text style={styles.cardMeta}>Species {item.species_id}</Text>
+                )}
+                {item.height_cm != null && <Text style={styles.cardMeta}>{item.height_cm} cm</Text>}
+                {item.morphology ? <Text style={styles.cardMeta}>{item.morphology}</Text> : null}
+
+                <View style={styles.cardFooter}>
+                  <View style={[styles.syncPill, { backgroundColor: pill.color }]}>
+                    <Text style={styles.syncPillText}>{pill.text}</Text>
+                  </View>
+                  {item.sync_error ? (
+                    <Text numberOfLines={1} style={styles.syncError}>{item.sync_error}</Text>
                   ) : null}
                 </View>
-                <Pressable
-                  onPress={() => removeRecord(item.record_id, item.qr_code ?? 'This record', item.sync_status)}
-                  hitSlop={8}
-                  accessibilityLabel="Delete record"
-                >
-                  <Ionicons name="trash-outline" size={18} color={colors.danger} />
-                </Pressable>
-              </View>
-
-              <Text style={styles.cardMeta}>Captured: {new Date(item.capture_ts).toLocaleString()}</Text>
-              {item.gps_lat != null && item.gps_lng != null && (
-                <Text style={styles.cardMeta}>
-                  {item.gps_lat.toFixed(5)}, {item.gps_lng.toFixed(5)}
-                </Text>
-              )}
-              {item.height_cm != null && <Text style={styles.cardMeta}>{item.height_cm} cm</Text>}
-              {item.morphology ? <Text style={styles.cardMeta}>{item.morphology}</Text> : null}
-
-              <View style={styles.cardFooter}>
-                <View style={[styles.syncPill, { backgroundColor: pill.color }]}>
-                  <Text style={styles.syncPillText}>{pill.text}</Text>
-                </View>
-                {item.sync_error ? (
-                  <Text numberOfLines={1} style={styles.syncError}>{item.sync_error}</Text>
-                ) : null}
               </View>
             </Pressable>
           );
@@ -224,7 +255,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.sand,
     paddingHorizontal: 14,
-    height: 40,
+    height: 50,
   },
   searchInput: {
     flex: 1,
@@ -296,10 +327,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   card: {
+    ...surfaces.card,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    padding: 14,
+    gap: 14,
+  },
+  thumbnail: {
+    width: 124,
+    minHeight: 168,
+    alignSelf: 'stretch',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
     backgroundColor: colors.sprout,
-    borderRadius: 16,
-    padding: 16,
-    gap: 4,
+  },
+  thumbnailPlaceholder: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardBody: {
+    flex: 1,
+    minWidth: 0,
+    gap: 8,
   },
   cardPressed: {
     opacity: 0.7,
@@ -315,13 +365,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   cardTitle: {
-    fontSize: 17,
-    fontWeight: '700',
+    fontSize: 20,
+    fontWeight: '800',
     color: colors.pine,
-    letterSpacing: 0.3,
+    letterSpacing: -0.3,
   },
   cardMeta: {
-    fontSize: 12,
+    fontSize: 14,
+    lineHeight: 20,
     color: colors.muted,
   },
   cardFooter: {
@@ -336,14 +387,14 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   syncPillText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
     color: colors.white,
     textTransform: 'uppercase',
   },
   syncError: {
     flex: 1,
-    fontSize: 11,
+    fontSize: 12,
     color: colors.danger,
   },
 });

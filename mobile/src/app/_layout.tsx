@@ -4,9 +4,19 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import { NavLogger } from '@/lib/interactionLog';
+import { RoleProvider, useRole } from '@/lib/role';
 import { colors } from '@/theme';
 
 export default function RootLayout() {
+  return (
+    <RoleProvider>
+      <RootNavigator />
+    </RoleProvider>
+  );
+}
+
+function RootNavigator() {
+  const { loading: roleLoading, canCapture } = useRole();
   const [session, setSession] = useState<unknown>(null);
   const [loading, setLoading] = useState(() => Boolean(supabase));
 
@@ -32,7 +42,7 @@ export default function RootLayout() {
     };
   }, []);
 
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <View style={styles.splash}>
         <ActivityIndicator color={colors.emerald} size="large" />
@@ -56,12 +66,15 @@ export default function RootLayout() {
       }}>
         <Stack.Protected guard={authed}>
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="capture/new" options={{ headerShown: true, title: 'New capture' }} />
-          <Stack.Screen name="capture/discover" options={{ headerShown: true, title: 'Tag a new plant' }} />
           <Stack.Screen name="record/[id]" options={{ headerShown: true, title: 'Record details' }} />
-          <Stack.Screen name="record/edit/[id]" options={{ headerShown: true, title: 'Edit record' }} />
           <Stack.Screen name="species/[id]" options={{ headerShown: true, title: 'Species details' }} />
           <Stack.Screen name="settings" options={{ headerShown: true, title: 'Settings' }} />
+        </Stack.Protected>
+
+        <Stack.Protected guard={authed && canCapture}>
+          <Stack.Screen name="capture/new" options={{ headerShown: true, title: 'New capture' }} />
+          <Stack.Screen name="capture/discover" options={{ headerShown: true, title: 'Tag a new plant' }} />
+          <Stack.Screen name="record/edit/[id]" options={{ headerShown: true, title: 'Edit record' }} />
         </Stack.Protected>
 
         <Stack.Protected guard={!authed}>

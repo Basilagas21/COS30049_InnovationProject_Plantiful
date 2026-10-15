@@ -97,7 +97,8 @@ export default function RegisterPage() {
   );
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6 py-16">
+    <div className="auth-layout">
+      <aside className="auth-story"><p className="eyebrow text-chartreuse">Plantiful / Join the field team</p><h2>Grow our<br />knowledge.</h2><p>Every discovery makes a difference.<br />Start your conservation journey here.</p></aside>
       <div className="rounded-3xl border border-pine/10 bg-white p-8">
         <Image
           src="/plantiful_logo.png"

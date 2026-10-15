@@ -1,90 +1,39 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col">
-      <section className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-24">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <span className="inline-flex rounded-full bg-sprout px-3 py-1 text-sm font-semibold text-emerald">
-              Niah National Park, Sarawak
-            </span>
-            <h1 className="mt-6 text-5xl font-bold tracking-tight text-pine sm:text-6xl">
-              Bring the forest into focus
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-moss">
-              Plantiful is the knowledge system for the Sarawak Forestry
-              Corporation. Botanists capture plant sightings in the field, and
-              conservation officers review, approve, and publish them for the
-              public to explore.
-            </p>
-            <div className="mt-9 flex flex-col gap-4 text-base font-medium sm:flex-row">
-              <Link
-                href="/explore"
-                className="flex h-12 items-center justify-center rounded-full bg-emerald px-8 text-cream transition-colors hover:bg-pine"
-              >
-                Explore the plant guide
-              </Link>
-              <Link
-                href="/map"
-                className="flex h-12 items-center justify-center rounded-full border border-pine/20 px-8 transition-colors hover:bg-sprout"
-              >
-                View the species map
-              </Link>
-            </div>
-
-            <div className="mt-10 grid grid-cols-3 gap-4">
-              {[
-                { value: "5s", label: "Offline record lookup" },
-                { value: "100%", label: "Approved before publish" },
-                { value: "IoT", label: "Threat alert dashboard" },
-              ].map((stat) => (
-                <div key={stat.label} className="rounded-2xl bg-white px-4 py-4 shadow-sm">
-                  <p className="text-xl font-bold text-emerald">{stat.value}</p>
-                  <p className="mt-1 text-xs text-moss">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-sprout to-cream p-4 shadow-md">
-              <Image
-                src="/plantiful_logo.png"
-                alt="Plantiful logo"
-                width={592}
-                height={421}
-                className="aspect-[592/421] w-full rounded-2xl object-cover"
-              />
-            </div>
-            <div className="absolute left-4 top-10 rounded-2xl bg-white/90 p-3 shadow-md backdrop-blur">
-              <p className="text-xs text-moss">Identity</p>
-              <p className="text-sm font-semibold text-pine">Confirmed</p>
-            </div>
-            <div className="absolute bottom-10 right-4 rounded-2xl bg-white/90 p-3 shadow-md backdrop-blur">
-              <p className="text-xs text-moss">GPS fix</p>
-              <p className="text-sm font-semibold text-pine">±4 m</p>
-            </div>
+      <section className="forest-hero">
+        <div className="hero-leaves" aria-hidden="true" />
+        <div className="relative z-1 max-w-3xl">
+          <p className="eyebrow text-sprout">Niah National Park · Sarawak</p>
+          <h1 className="hero-title">Every plant.<br />A story worth<br /><span>preserving.</span></h1>
+          <p className="mt-6 max-w-md text-base leading-7 text-cream/80">From a discovery on the forest floor to a shared understanding of our biodiversity. Explore the living world with Plantiful.</p>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Link href="/explore" className="rounded-full bg-chartreuse px-7 py-4 font-semibold text-pine transition hover:bg-sprout">Explore the plant guide ↗</Link>
+            <Link href="/map" className="rounded-full border border-cream/35 px-7 py-4 font-medium text-cream transition hover:bg-white/10">Open the species map</Link>
           </div>
         </div>
+        <div className="hero-caption"><span className="h-2 w-2 rounded-full bg-chartreuse" /> Rooted in discovery. Growing through knowledge.</div>
       </section>
-
-      <section className="bg-sand py-12">
-        <div className="mx-auto w-full max-w-6xl px-6">
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-            {[
-              { value: "1,500+", label: "Species catalogued" },
-              { value: "12,000+", label: "Field records synced" },
-              { value: "4.9/5", label: "Officer workflow rating" },
-              { value: "24/7", label: "Sensor monitoring" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-3xl font-bold text-emerald">{stat.value}</p>
-                <p className="mt-1 text-sm text-moss">{stat.label}</p>
-              </div>
-            ))}
-          </div>
+      <section className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-24">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+          <div><p className="eyebrow text-emerald">A connected conservation journey</p><h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">For the forest.<br />For the future.</h2></div>
+          <p className="max-w-sm text-sm leading-7 text-moss">Field observations, carefully reviewed knowledge, and environmental insights — all in one place.</p>
+        </div>
+        <div className="grid gap-5 md:grid-cols-3">
+          {[
+            { number: "01", title: "Discover", description: "Get to know the plants of Niah through the published species catalogue.", href: "/explore", label: "Browse the guide" },
+            { number: "02", title: "Connect", description: "See where approved plant observations connect across the landscape.", href: "/map", label: "Explore the map" },
+            { number: "03", title: "Conserve", description: "Sign in to review field records and contribute to a growing body of knowledge.", href: "/signin", label: "Join the workspace" },
+          ].map((item) => (
+            <Link key={item.number} href={item.href} className="journey-card group">
+              <span className="eyebrow text-emerald">{item.number} / Plantiful</span>
+              <h3 className="mt-10 text-3xl font-semibold tracking-tight">{item.title}</h3>
+              <p className="mt-3 text-sm leading-7 text-moss">{item.description}</p>
+              <div className="mt-8 flex items-center justify-between text-sm font-semibold">{item.label}<span className="flex h-10 w-10 items-center justify-center rounded-full bg-pine text-cream transition group-hover:bg-emerald">↗</span></div>
+            </Link>
+          ))}
         </div>
       </section>
     </div>

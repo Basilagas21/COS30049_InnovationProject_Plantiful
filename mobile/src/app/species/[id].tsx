@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { colors } from '@/theme';
+import { colors, surfaces } from '@/theme';
 import {
   getSpeciesById,
   getSpeciesPhotos,
@@ -179,11 +179,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   card: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: colors.sand,
+    ...surfaces.card,
     gap: 12,
   },
   titleRow: {

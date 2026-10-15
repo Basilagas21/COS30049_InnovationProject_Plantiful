@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable } from '@/lib/interactionLog';
 import QRCode from 'react-native-qrcode-svg';
-import { colors } from '@/theme';
+import { colors, surfaces } from '@/theme';
 import { deleteLocalRecord, getLocalRecord, openDatabase, type LocalRecordWithPhoto } from '@/db';
 import { TAG_LABEL } from '@/lib/tags';
 
@@ -252,11 +252,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   card: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: colors.sand,
+    ...surfaces.card,
     gap: 12,
   },
   titleRow: {

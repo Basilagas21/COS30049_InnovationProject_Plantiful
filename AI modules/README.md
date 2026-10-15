@@ -2,6 +2,8 @@
 
 Prototype area for the Optional Additional Innovation (Objective 5) described in
 [Docs/Reports/System_Proposal_Report.md](../Docs/Reports/System_Proposal_Report.md).
+The workflow, integration points, and evaluation plan are documented in
+[Docs/Innovation_Workflow.md](../Docs/Innovation_Workflow.md).
 
 ## Status
 

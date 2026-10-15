@@ -16,7 +16,8 @@ import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
 import { colors, surfaces } from '@/theme';
 import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, isTagInUse, type SpeciesOption } from '@/db';
 import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/lib/location';
-import { parseHeightCm } from '@/lib/validation';
+import { parseDbhCm, parseHeightCm } from '@/lib/validation';
+import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
 import { generateTag, TAG_LABEL } from '@/lib/tags';
 
 export default function DiscoverPlantScreen() {
@@ -30,6 +31,9 @@ export default function DiscoverPlantScreen() {
   const [scientificName, setScientificName] = useState('');
   const [morphology, setMorphology] = useState('');
   const [heightCm, setHeightCm] = useState('');
+  const [dbhCm, setDbhCm] = useState('');
+  const [taxonomy, setTaxonomy] = useState('');
+  const [phenology, setPhenology] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
   const [location, setLocation] = useState<LocationFix | null>(null);
   const [locating, setLocating] = useState(false);
@@ -148,6 +152,12 @@ export default function DiscoverPlantScreen() {
       return;
     }
 
+    const dbh = parseDbhCm(dbhCm);
+    if (dbh === undefined) {
+      Alert.alert('Check the stem diameter', 'Enter the DBH as a positive number of centimetres, e.g. 30 or 12.5.');
+      return;
+    }
+
     const db = await openDatabase();
     let tag = tagId;
     for (let attempt = 0; attempt < 5 && (await isTagInUse(db, tag)); attempt += 1) {
@@ -169,6 +179,9 @@ export default function DiscoverPlantScreen() {
         gps_lng: location?.lng ?? null,
         gps_accuracy_m: location?.accuracyM ?? null,
         height_cm: height,
+        dbh_cm: dbh,
+        taxonomy: taxonomy.trim() || null,
+        phenology,
         morphology: morphology.trim() || null,
         notes:
           [
@@ -189,7 +202,7 @@ export default function DiscoverPlantScreen() {
     } finally {
       setSaving(false);
     }
-  }, [tagId, commonName, scientificName, selectedSpecies, morphology, heightCm, notes, location, photoUri, router]);
+  }, [tagId, commonName, scientificName, selectedSpecies, morphology, heightCm, dbhCm, taxonomy, phenology, notes, location, photoUri, router]);
 
   if (!permission) {
     return (
@@ -381,16 +394,48 @@ export default function DiscoverPlantScreen() {
           <Text style={styles.sectionLabel}>DETAILS</Text>
           <TextInput
             style={styles.input}
+            placeholder="Taxonomy (e.g. Dipterocarpaceae)"
+            value={taxonomy}
+            onChangeText={setTaxonomy}
+          />
+          <View style={styles.fieldPair}>
+            <TextInput
+              style={[styles.input, styles.fieldPairInput]}
+              placeholder="Height (cm)"
+              value={heightCm}
+              onChangeText={setHeightCm}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={[styles.input, styles.fieldPairInput]}
+              placeholder="DBH (cm)"
+              value={dbhCm}
+              onChangeText={setDbhCm}
+              keyboardType="numeric"
+            />
+          </View>
+          <Text style={styles.fieldHint}>Phenology</Text>
+          <View style={styles.phenologyRow}>
+            {PHENOLOGY_OPTIONS.map((option) => {
+              const active = phenology === option.value;
+              return (
+                <Pressable
+                  key={option.value}
+                  style={[styles.phenologyChip, active && styles.phenologyChipActive]}
+                  onPress={() => setPhenology(active ? null : option.value)}
+                >
+                  <Text style={[styles.phenologyChipText, active && styles.phenologyChipTextActive]}>
+                    {option.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          <TextInput
+            style={styles.input}
             placeholder="Morphology (e.g. leathery leaves, 3 m canopy)"
             value={morphology}
             onChangeText={setMorphology}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Height (cm)"
-            value={heightCm}
-            onChangeText={setHeightCm}
-            keyboardType="numeric"
           />
           <TextInput
             style={[styles.input, styles.multiline]}
@@ -478,6 +523,43 @@ const styles = StyleSheet.create({
   multiline: {
     minHeight: 72,
     textAlignVertical: 'top',
+  },
+  fieldPair: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  fieldPairInput: {
+    flex: 1,
+  },
+  fieldHint: {
+    fontSize: 12,
+    color: colors.muted,
+    fontWeight: '700',
+  },
+  phenologyRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  phenologyChip: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.sand,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  phenologyChipActive: {
+    borderColor: colors.emerald,
+    backgroundColor: colors.sprout,
+  },
+  phenologyChipText: {
+    color: colors.pine,
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  phenologyChipTextActive: {
+    color: colors.emerald,
   },
   matchList: {
     backgroundColor: colors.white,

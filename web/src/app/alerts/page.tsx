@@ -22,6 +22,8 @@ type LatestReading = {
   temperature: number | null;
   humidity: number | null;
   movement: boolean | null;
+  soil_moisture: number | null;
+  rain: boolean | null;
   recorded_at: string;
 };
 
@@ -62,7 +64,7 @@ export default async function AlertsPage() {
     sensors.map(async (sensor) => {
       const { data } = await supabase
         .from("sensor_readings")
-        .select("temperature, humidity, movement, recorded_at")
+        .select("temperature, humidity, movement, soil_moisture, rain, recorded_at")
         .eq("sensor_id", sensor.sensor_id)
         .order("recorded_at", { ascending: false })
         .limit(1)
@@ -204,7 +206,7 @@ export default async function AlertsPage() {
                   </span>
                 </div>
 
-                <dl className="mt-4 grid grid-cols-3 gap-3 border-t border-pine/10 pt-4 text-sm">
+                <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-pine/10 pt-4 text-sm sm:grid-cols-3">
                   <div>
                     <dt className="text-xs uppercase tracking-wide text-moss">
                       Temp
@@ -222,6 +224,28 @@ export default async function AlertsPage() {
                     <dd className="mt-1 font-semibold text-pine">
                       {reading?.humidity != null
                         ? `${reading.humidity.toFixed(0)} %`
+                        : "—"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-moss">
+                      Soil moisture
+                    </dt>
+                    <dd className="mt-1 font-semibold text-pine">
+                      {reading?.soil_moisture != null
+                        ? `${reading.soil_moisture.toFixed(0)} %`
+                        : "—"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-moss">
+                      Rain
+                    </dt>
+                    <dd className="mt-1 font-semibold text-pine">
+                      {reading?.rain != null
+                        ? reading.rain
+                          ? "Detected"
+                          : "Dry"
                         : "—"}
                     </dd>
                   </div>

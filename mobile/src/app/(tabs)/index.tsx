@@ -149,6 +149,7 @@ const data = normalizeTag(result.data);
       </Pressable>
 
       <View style={styles.finder} pointerEvents="none">
+        <View style={styles.scanLine} />
         <View style={[styles.corner, styles.topLeft]} />
         <View style={[styles.corner, styles.topRight]} />
         <View style={[styles.corner, styles.bottomLeft]} />
@@ -180,7 +181,7 @@ const data = normalizeTag(result.data);
           </>
         ) : (
           <>
-            <Ionicons name="radio-button-on" size={20} color={colors.chartreuse} />
+            <Ionicons name="scan-circle-outline" size={36} color={colors.emerald} />
             <Text style={styles.cardTitle}>Ready to scan</Text>
             <Text style={styles.cardMeta}>A scanned tag will appear here</Text>
           </>
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 28,
     height: 28,
-    borderColor: colors.white,
+    borderColor: colors.chartreuse,
   },
   torchButton: {
     position: 'absolute',
@@ -270,17 +271,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     right: 16,
-    bottom: 0,
+    bottom: 16,
     backgroundColor: 'rgba(255, 253, 238, 0.94)',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderRadius: 28,
     padding: 20,
     paddingBottom: 28,
     gap: 6,
     alignItems: 'center',
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: '700',
     color: colors.pine,
   },
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   ghostButton: {
-    backgroundColor: colors.sprout,
+    backgroundColor: colors.chartreuse,
     borderRadius: 24,
     paddingVertical: 14,
     alignItems: 'center',
@@ -324,5 +324,14 @@ const styles = StyleSheet.create({
     color: colors.pine,
     fontSize: 16,
     fontWeight: '600',
+  },
+  scanLine: {
+    position: 'absolute',
+    top: '50%',
+    left: 4,
+    right: 4,
+    height: 2,
+    backgroundColor: colors.chartreuse,
+    opacity: 0.8,
   },
 });

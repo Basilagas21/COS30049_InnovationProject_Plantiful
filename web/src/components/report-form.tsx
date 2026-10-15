@@ -3,11 +3,17 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { generateReport } from "@/app/reports/actions";
-import { REPORT_TYPES, type ReportType } from "@/lib/report-types";
+import {
+  REPORT_TYPES,
+  REPORT_FORMATS,
+  type ReportType,
+  type ReportFormat,
+} from "@/lib/report-types";
 
 export function ReportForm() {
   const router = useRouter();
   const [type, setType] = useState<ReportType>("observations");
+  const [format, setFormat] = useState<ReportFormat>("csv");
   const [range, setRange] = useState("");
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
@@ -19,6 +25,7 @@ export function ReportForm() {
       const result = await generateReport(
         type,
         range.trim() || "all",
+        format,
       );
       if (!result.ok) {
         setMessage({ ok: false, text: result.error ?? "Could not generate report." });
@@ -34,7 +41,7 @@ export function ReportForm() {
       <h2 className="font-semibold text-pine">Generate a report</h2>
       <p className="mt-1 text-sm text-moss">
         Export the latest catalogue, conservation status, or field observations
-        as a CSV file.
+        as a CSV or PDF file.
       </p>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -54,6 +61,21 @@ export function ReportForm() {
         </label>
 
         <label className="block">
+          <span className="mb-1.5 block text-sm font-semibold text-pine">Format</span>
+          <select
+            value={format}
+            onChange={(e) => setFormat(e.target.value as ReportFormat)}
+            className="field-input"
+          >
+            {REPORT_FORMATS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="block sm:col-span-2">
           <span className="mb-1.5 block text-sm font-semibold text-pine">Data range</span>
           <input
             value={range}

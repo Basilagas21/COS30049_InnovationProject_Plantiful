@@ -13,7 +13,7 @@ import {
   View,
 } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
-import { colors } from '@/theme';
+import { colors, surfaces } from '@/theme';
 import {
   openDatabase,
   insertLocalRecord,
@@ -466,9 +466,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   card: {
-    backgroundColor: colors.sprout,
-    borderRadius: 16,
-    padding: 16,
+    ...surfaces.card,
     gap: 10,
   },
   sectionLabel: {
@@ -478,11 +476,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
   },
   input: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.sand,
-    paddingHorizontal: 14,
+    ...surfaces.input,
     paddingVertical: 12,
     fontSize: 15,
     color: colors.pine,

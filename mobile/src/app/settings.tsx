@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable } from '@/lib/interactionLog';
-import { colors } from '@/theme';
+import { colors, surfaces } from '@/theme';
 import { countUnsyncedRecords, deleteLocalRecord, getLocalRecords, openDatabase } from '@/db';
 
 export default function SettingsScreen() {
@@ -84,15 +84,13 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   aboutBox: {
-    backgroundColor: colors.sprout,
-    borderRadius: 16,
-    padding: 20,
+    ...surfaces.card,
     alignItems: 'center',
     gap: 8,
     marginTop: 8,
   },
   aboutTitle: {
-    fontSize: 18,
+    fontSize: 28,
     fontWeight: '800',
     color: colors.pine,
   },

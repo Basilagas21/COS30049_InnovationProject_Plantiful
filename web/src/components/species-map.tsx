@@ -3,7 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import "maplibre-gl/dist/maplibre-gl.css";
-import type { Map as MapLibreMap, Marker } from "maplibre-gl";
+import type {
+  GeoJSONSource,
+  Map as MapLibreMap,
+  MapLayerMouseEvent,
+} from "maplibre-gl";
 import type { MapApprovalStatus, MapPoint } from "@/lib/map";
 import { reportInteraction } from "@/lib/interactionLog";
 
@@ -34,6 +38,11 @@ const STATUS_COLORS: Record<string, string> = {
   "Least concern": "#076653",
 };
 
+const EMPTY_COLLECTION: GeoJSON.FeatureCollection<GeoJSON.Point, PointProperties> = {
+  type: "FeatureCollection",
+  features: [],
+};
+
 function statusColor(status: string | null): string {
   if (status && STATUS_COLORS[status]) return STATUS_COLORS[status];
   return "#076653";
@@ -60,17 +69,69 @@ function escapeHtml(value: string): string {
   });
 }
 
+type PointProperties = {
+  id: string;
+  label: string;
+  commonName: string;
+  conservationStatus: string;
+  approvalStatus: MapApprovalStatus;
+  meta: string;
+  color: string;
+};
+
+function toFeature(point: MapPoint): GeoJSON.Feature<GeoJSON.Point, PointProperties> {
+  const meta = [
+    APPROVAL_LABELS[point.approvalStatus],
+    point.heightCm != null ? `${point.heightCm} cm` : null,
+    point.createdAt ? new Date(point.createdAt).toLocaleDateString() : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  return {
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [point.lng, point.lat] },
+    properties: {
+      id: point.id,
+      label: point.label,
+      commonName: point.commonName ?? "",
+      conservationStatus: point.conservationStatus ?? "",
+      approvalStatus: point.approvalStatus,
+      meta,
+      color: statusColor(point.conservationStatus),
+    },
+  };
+}
+
+function popupHtml(props: PointProperties): string {
+  const rows = [
+    `<strong>${escapeHtml(props.label)}</strong>`,
+    props.commonName ? escapeHtml(props.commonName) : "",
+    props.conservationStatus
+      ? `<span style="color:${props.color}">${escapeHtml(props.conservationStatus)}</span>`
+      : "",
+  ].filter(Boolean);
+  const meta = props.meta
+    ? `<br/><span style="color:#6b7568;font-size:11px">${escapeHtml(props.meta)}</span>`
+    : "";
+  return `${rows.join("<br/>")}${meta}`;
+}
+
+/** Coordinates are grouped into clusters so overlapping observations stay visible. */
 export function SpeciesMap({ points }: Props) {
   const router = useRouter();
+  const routerRef = useRef(router);
+  useEffect(() => {
+    routerRef.current = router;
+  }, [router]);
 
   // Initial points are only used to frame the map on first load; later prop
-  // changes rebuild markers without moving the camera.
+  // changes rebuild the data without moving the camera.
   const pointsRef = useRef(points);
   const framedRef = useRef<MapPoint[] | null>(null);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
-  const glRef = useRef<typeof import("maplibre-gl") | null>(null);
 
   const [loaded, setLoaded] = useState(false);
   const [filter, setFilter] = useState<ApprovalFilter>("all");
@@ -83,7 +144,6 @@ export function SpeciesMap({ points }: Props) {
 
     import("maplibre-gl").then((maplibregl) => {
       if (disposed) return;
-      glRef.current = maplibregl;
 
       // Turbopack rewrites import.meta.url, so MapLibre's default worker path
       // 404s; serve the worker from our own route instead.
@@ -114,6 +174,13 @@ export function SpeciesMap({ points }: Props) {
         "top-right"
       );
 
+      const hoverPopup = new maplibregl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        offset: 14,
+        className: "species-popup",
+      });
+
       map.on("load", () => {
         if (disposed) return;
 
@@ -140,6 +207,106 @@ export function SpeciesMap({ points }: Props) {
           map.setTerrain({ source: "terrain-dem", exaggeration: 1.3 });
         });
 
+        // Observations are clustered: records captured at the same or nearby
+        // coordinates merge into a counted bubble until the user zooms in.
+        map.addSource("observations", {
+          type: "geojson",
+          data: EMPTY_COLLECTION,
+          cluster: true,
+          clusterRadius: 45,
+          clusterMaxZoom: 15,
+        });
+
+        map.addLayer({
+          id: "observations-clusters",
+          type: "circle",
+          source: "observations",
+          filter: ["has", "point_count"],
+          paint: {
+            "circle-color": "#076653",
+            "circle-radius": ["step", ["get", "point_count"], 16, 5, 20, 10, 26],
+            "circle-stroke-width": 3,
+            "circle-stroke-color": "#FFFDEE",
+          },
+        });
+
+        map.addLayer({
+          id: "observations-cluster-count",
+          type: "symbol",
+          source: "observations",
+          filter: ["has", "point_count"],
+          layout: {
+            "text-field": ["get", "point_count_abbreviated"],
+            "text-size": 12,
+            "text-font": ["Noto Sans Regular"],
+          },
+          paint: { "text-color": "#FFFDEE" },
+        });
+
+        map.addLayer({
+          id: "observations-points",
+          type: "circle",
+          source: "observations",
+          filter: ["!", ["has", "point_count"]],
+          paint: {
+            "circle-color": ["get", "color"],
+            "circle-radius": 8,
+            "circle-stroke-width": 2.5,
+            "circle-stroke-color": "#ffffff",
+          },
+        });
+
+        const setCursor = (value: string) => {
+          const canvas = map.getCanvas();
+          if (canvas) canvas.style.cursor = value;
+        };
+
+        map.on("mouseenter", "observations-clusters", () => setCursor("pointer"));
+        map.on("mouseleave", "observations-clusters", () => setCursor(""));
+
+        map.on("mouseenter", "observations-points", (event: MapLayerMouseEvent) => {
+          setCursor("pointer");
+          const feature = event.features?.[0];
+          if (!feature) return;
+          const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
+          hoverPopup
+            .setLngLat(coords)
+            .setHTML(popupHtml(feature.properties as PointProperties))
+            .addTo(map);
+        });
+        map.on("mouseleave", "observations-points", () => {
+          setCursor("");
+          hoverPopup.remove();
+        });
+
+        map.on("click", "observations-clusters", (event: MapLayerMouseEvent) => {
+          const feature = event.features?.[0];
+          const source = map.getSource("observations") as GeoJSONSource | undefined;
+          if (!feature || !source) return;
+          const clusterId = feature.properties?.cluster_id as number | undefined;
+          const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
+          if (clusterId == null) return;
+          source
+            .getClusterExpansionZoom(clusterId)
+            .then((zoom) => {
+              if (disposed) return;
+              map.easeTo({ center: coords, zoom });
+            })
+            .catch(() => {
+              // Cluster disappeared between click and query; nothing to do.
+            });
+        });
+
+        map.on("click", "observations-points", (event: MapLayerMouseEvent) => {
+          const feature = event.features?.[0];
+          if (!feature) return;
+          const props = feature.properties as PointProperties;
+          reportInteraction(
+            `map marker "${props.commonName || props.label}" -> /records/${props.id}`
+          );
+          routerRef.current.push(`/records/${props.id}`);
+        });
+
         setLoaded(true);
       });
     });
@@ -148,121 +315,37 @@ export function SpeciesMap({ points }: Props) {
       disposed = true;
       mapRef.current?.remove();
       mapRef.current = null;
-      glRef.current = null;
     };
   }, []);
 
-  // Build one marker per visible point. Re-runs when the filter changes, so the
-  // camera is only reframed when the underlying points actually change.
+  // Push the filtered points into the cluster source. Re-runs on filter change;
+  // the camera is only reframed when the underlying points actually change.
   useEffect(() => {
     const map = mapRef.current;
-    const maplibregl = glRef.current;
-    if (!map || !maplibregl || !loaded) return;
+    if (!map || !loaded) return;
 
     if (framedRef.current !== points) {
       framedRef.current = points;
       const lngs = points.map((p) => p.lng);
       const lats = points.map((p) => p.lat);
       if (points.length > 1) {
-        const bounds = new maplibregl.LngLatBounds(
-          [Math.min(...lngs), Math.min(...lats)],
-          [Math.max(...lngs), Math.max(...lats)]
+        map.fitBounds(
+          [
+            [Math.min(...lngs), Math.min(...lats)],
+            [Math.max(...lngs), Math.max(...lats)],
+          ],
+          { padding: 64, maxZoom: 15, duration: 0 }
         );
-        map.fitBounds(bounds, { padding: 64, maxZoom: 12, duration: 0 });
       }
     }
 
-    const popup = new maplibregl.Popup({
-      closeButton: false,
-      closeOnClick: false,
-      offset: 14,
-      className: "species-popup",
+    const source = map.getSource("observations") as GeoJSONSource | undefined;
+    if (!source) return;
+    source.setData({
+      type: "FeatureCollection",
+      features: points.filter((p) => matchesFilter(p, filter)).map(toFeature),
     });
-
-    const showPopup = (point: MapPoint) => {
-      const meta = [
-        APPROVAL_LABELS[point.approvalStatus],
-        point.heightCm != null ? `${point.heightCm} cm` : null,
-        point.createdAt ? new Date(point.createdAt).toLocaleDateString() : null,
-      ]
-        .filter(Boolean)
-        .join(" · ");
-
-      const rows = [
-        `<strong>${escapeHtml(point.label)}</strong>`,
-        point.commonName ? escapeHtml(point.commonName) : "",
-        point.conservationStatus
-          ? `<span style="color:${statusColor(point.conservationStatus)}">${escapeHtml(point.conservationStatus)}</span>`
-          : "",
-      ].filter(Boolean);
-
-      popup
-        .setLngLat([point.lng, point.lat])
-        .setHTML(
-          `${rows.join("<br/>")}${
-            meta
-              ? `<br/><span style="color:#6b7568;font-size:11px">${escapeHtml(meta)}</span>`
-              : ""
-          }`
-        )
-        .addTo(map);
-    };
-
-    // Circular markers: the record's photo when it has one, otherwise a
-    // status-coloured dot. Ring colour always encodes conservation status.
-    const created: Marker[] = [];
-    for (const point of points) {
-      if (!matchesFilter(point, filter)) continue;
-
-      const color = statusColor(point.conservationStatus);
-      const el = document.createElement("div");
-      el.style.width = "28px";
-      el.style.height = "28px";
-      el.style.borderRadius = "9999px";
-      el.style.border = "2px solid #ffffff";
-      el.style.background = color;
-      el.style.overflow = "hidden";
-      el.style.cursor = "pointer";
-      el.style.boxShadow = `0 0 0 1.5px ${color}, 0 1px 5px rgba(12, 52, 44, 0.35)`;
-
-      if (point.photoUrl) {
-        const img = document.createElement("img");
-        img.src = point.photoUrl;
-        img.alt = "";
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.objectFit = "cover";
-        img.style.display = "block";
-        img.onerror = () => img.remove();
-        el.appendChild(img);
-      }
-
-      el.addEventListener("mouseenter", () => showPopup(point));
-      el.addEventListener("mouseleave", () => popup.remove());
-      el.addEventListener("click", () => {
-        const name = point.commonName ?? point.label;
-        reportInteraction(`map marker "${name}" -> /records/${point.id}`);
-        router.push(`/records/${point.id}`);
-      });
-
-      created.push(
-        new maplibregl.Marker({ element: el, anchor: "center" })
-          .setLngLat([point.lng, point.lat])
-          .addTo(map)
-      );
-    }
-
-    return () => {
-      popup.remove();
-      for (const marker of created) {
-        try {
-          marker.remove();
-        } catch {
-          // The map was already torn down with the markers.
-        }
-      }
-    };
-  }, [points, loaded, filter, router]);
+  }, [points, loaded, filter]);
 
   const counts = FILTERS.reduce<Record<ApprovalFilter, number>>(
     (acc, { key }) => {
@@ -353,6 +436,11 @@ export function SpeciesMap({ points }: Props) {
             </div>
           )}
         </div>
+
+        <p className="mt-2 text-xs text-moss">
+          Overlapping observations are grouped into numbered clusters — click a
+          cluster to zoom in.
+        </p>
       </div>
 
       <aside className="flex flex-col gap-4">

@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { isOfficer, isAdmin } from "@/lib/auth";
-import { NavAuth } from "@/components/nav-auth";
+import { SiteNav } from "@/components/site-nav";
 import { InteractionLogger } from "@/components/interaction-logger";
 import "./globals.css";
 
@@ -47,9 +47,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-cream text-pine">
         <InteractionLogger />
-        <header className="sticky top-0 z-10 border-b border-pine/10 bg-cream/90 backdrop-blur">
-          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold text-pine">
+        <a href="#main-content" className="skip-link">Skip to content</a>
+        <header className="site-header">
+          <div className="site-header-inner">
+            <Link href="/" className="flex shrink-0 items-center gap-1 font-semibold text-pine" aria-label="Plantiful home">
               <Image
                 src="/plantiful_logo.png"
                 alt="Plantiful logo"
@@ -58,25 +59,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 className="h-9 w-auto object-contain"
                 priority
               />
+              <span className="text-xl tracking-tight">plantiful<span className="text-emerald">.</span></span>
             </Link>
-            <nav className="flex items-center gap-6 text-sm font-medium">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="transition-colors hover:text-emerald"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <NavAuth />
-            </nav>
+            <SiteNav links={navLinks} />
           </div>
         </header>
-        <main className="flex flex-1 flex-col">{children}</main>
-        <footer className="border-t border-pine/10 bg-sand py-6">
-          <div className="mx-auto w-full max-w-6xl px-6 text-sm text-moss">
-            Plantiful · Niah National Park biodiversity assessment · COS30049 Group 7
+        <main id="main-content" className="site-content flex flex-1 flex-col">{children}</main>
+        <footer className="site-footer">
+          <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-6 px-6">
+            <div><p className="text-2xl font-semibold tracking-tight">A little closer to nature.</p><p className="mt-2 text-sm text-sprout/75">Plantiful · Niah National Park, Sarawak</p></div>
+            <Link href="/explore" className="rounded-full bg-chartreuse px-6 py-3 text-sm font-semibold text-pine">Explore the plant guide ↗</Link>
           </div>
         </footer>
       </body>

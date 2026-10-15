@@ -175,6 +175,8 @@ export interface Database {
           temperature: number | null;
           humidity: number | null;
           movement: boolean | null;
+          soil_moisture: number | null;
+          rain: boolean | null;
           recorded_at: string;
         };
         Insert: Omit<Database["public"]["Tables"]["sensor_readings"]["Row"], "reading_id" | "recorded_at"> & {

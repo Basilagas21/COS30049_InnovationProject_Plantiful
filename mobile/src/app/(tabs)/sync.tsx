@@ -4,7 +4,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Pressable } from '@/lib/interactionLog';
-import { colors } from '@/theme';
+import { colors, surfaces } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import {
   getPendingRecords,
@@ -515,14 +515,13 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    backgroundColor: colors.sprout,
-    borderRadius: 20,
+    ...surfaces.card,
     padding: 24,
     alignItems: 'center',
     gap: 10,
   },
   title: {
-    fontSize: 20,
+    fontSize: 28,
     fontWeight: '700',
     color: colors.pine,
   },
@@ -541,7 +540,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
-    fontSize: 24,
+    fontSize: 36,
     fontWeight: '800',
     color: colors.emerald,
   },

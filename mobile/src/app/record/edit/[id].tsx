@@ -28,6 +28,7 @@ import {
 } from '@/db';
 import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 import { generateTag, isValidTag, normalizeTag, TAG_LABEL } from '@/lib/tags';
+import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
 
 type PhotoRow = { id: string; local_uri: string };
 
@@ -49,6 +50,9 @@ export default function EditRecordScreen() {
   const [selectedSpecies, setSelectedSpecies] = useState<SpeciesOption | null>(null);
   const [morphology, setMorphology] = useState('');
   const [heightCm, setHeightCm] = useState('');
+  const [dbhCm, setDbhCm] = useState('');
+  const [taxonomy, setTaxonomy] = useState('');
+  const [phenology, setPhenology] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
   const [location, setLocation] = useState<LocationFix | null>(null);
   const [locating, setLocating] = useState(false);
@@ -77,6 +81,9 @@ export default function EditRecordScreen() {
           setProvisionalName(rec.provisional_name ?? '');
           setMorphology(rec.morphology ?? '');
           setHeightCm(rec.height_cm != null ? String(rec.height_cm) : '');
+          setDbhCm(rec.dbh_cm != null ? String(rec.dbh_cm) : '');
+          setTaxonomy(rec.taxonomy ?? '');
+          setPhenology(rec.phenology ?? null);
           setNotes(rec.notes ?? '');
           if (rec.gps_lat != null && rec.gps_lng != null) {
             setLocation({
@@ -206,6 +213,7 @@ export default function EditRecordScreen() {
     try {
       const db = await openDatabase();
       const height = heightCm.trim();
+      const dbh = dbhCm.trim();
       await updateLocalRecord(db, recordId, {
         qr_code: tag,
         species_id: selectedSpecies?.species_id ?? null,
@@ -214,6 +222,9 @@ export default function EditRecordScreen() {
         gps_lng: location?.lng ?? null,
         gps_accuracy_m: location?.accuracyM ?? null,
         height_cm: height ? Number(height) : null,
+        dbh_cm: dbh ? Number(dbh) : null,
+        taxonomy: taxonomy.trim() || null,
+        phenology,
         morphology: morphology.trim() || null,
         notes: notes.trim() || null,
       });
@@ -229,7 +240,7 @@ export default function EditRecordScreen() {
     } finally {
       setSaving(false);
     }
-  }, [recordId, alreadyTagged, tagCode, selectedSpecies, provisionalName, location, heightCm, morphology, notes, router]);
+  }, [recordId, alreadyTagged, tagCode, selectedSpecies, provisionalName, location, heightCm, dbhCm, taxonomy, phenology, morphology, notes, router]);
 
   if (!permission) {
     return (
@@ -387,16 +398,48 @@ export default function EditRecordScreen() {
           <Text style={styles.sectionLabel}>DETAILS</Text>
           <TextInput
             style={styles.input}
+            placeholder="Taxonomy (e.g. Dipterocarpaceae)"
+            value={taxonomy}
+            onChangeText={setTaxonomy}
+          />
+          <View style={styles.fieldPair}>
+            <TextInput
+              style={[styles.input, styles.fieldPairInput]}
+              placeholder="Height (cm)"
+              value={heightCm}
+              onChangeText={setHeightCm}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={[styles.input, styles.fieldPairInput]}
+              placeholder="DBH (cm)"
+              value={dbhCm}
+              onChangeText={setDbhCm}
+              keyboardType="numeric"
+            />
+          </View>
+          <Text style={styles.fieldHint}>Phenology</Text>
+          <View style={styles.phenologyRow}>
+            {PHENOLOGY_OPTIONS.map((option) => {
+              const active = phenology === option.value;
+              return (
+                <Pressable
+                  key={option.value}
+                  style={[styles.phenologyChip, active && styles.phenologyChipActive]}
+                  onPress={() => setPhenology(active ? null : option.value)}
+                >
+                  <Text style={[styles.phenologyChipText, active && styles.phenologyChipTextActive]}>
+                    {option.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          <TextInput
+            style={styles.input}
             placeholder="Morphology (e.g. leathery leaves, 3 m canopy)"
             value={morphology}
             onChangeText={setMorphology}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Height (cm)"
-            value={heightCm}
-            onChangeText={setHeightCm}
-            keyboardType="numeric"
           />
           <TextInput
             style={[styles.input, styles.multiline]}
@@ -564,6 +607,43 @@ const styles = StyleSheet.create({
   multiline: {
     minHeight: 72,
     textAlignVertical: 'top',
+  },
+  fieldPair: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  fieldPairInput: {
+    flex: 1,
+  },
+  fieldHint: {
+    fontSize: 12,
+    color: colors.muted,
+    fontWeight: '700',
+  },
+  phenologyRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  phenologyChip: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.sand,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  phenologyChipActive: {
+    borderColor: colors.emerald,
+    backgroundColor: colors.sprout,
+  },
+  phenologyChipText: {
+    color: colors.pine,
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  phenologyChipTextActive: {
+    color: colors.emerald,
   },
   locationRow: {
     flexDirection: 'row',

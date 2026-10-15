@@ -7,6 +7,8 @@ import QRCode from 'react-native-qrcode-svg';
 import { colors, surfaces } from '@/theme';
 import { deleteLocalRecord, getLocalRecord, openDatabase, type LocalRecordWithPhoto } from '@/db';
 import { TAG_LABEL } from '@/lib/tags';
+import { phenologyLabel } from '@/lib/phenology';
+import { useRole } from '@/lib/role';
 
 function syncLabel(status: string) {
   switch (status) {
@@ -34,6 +36,7 @@ function approvalLabel(status: string | null) {
 
 export default function RecordDetailScreen() {
   const router = useRouter();
+  const { canCapture } = useRole();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [record, setRecord] = useState<LocalRecordWithPhoto | null | undefined>(undefined);
 
@@ -147,27 +150,48 @@ export default function RecordDetailScreen() {
         {rec.height_cm != null && (
           <Field icon="resize-outline" label="Height" value={`${rec.height_cm} cm`} />
         )}
+        {rec.dbh_cm != null && (
+          <Field icon="ellipse-outline" label="Stem diameter (DBH)" value={`${rec.dbh_cm} cm`} />
+        )}
+        {rec.taxonomy ? (
+          <Field icon="git-branch-outline" label="Taxonomy" value={rec.taxonomy} />
+        ) : null}
+        {rec.phenology ? (
+          <Field
+            icon="flower-outline"
+            label="Phenology"
+            value={phenologyLabel(rec.phenology) ?? rec.phenology}
+          />
+        ) : null}
         {rec.morphology && <Field icon="leaf-outline" label="Morphology" value={rec.morphology} />}
 
         <Field icon="document-text-outline" label="Notes" value={rec.notes || '—'} last />
 
         {rec.sync_error ? <Text style={styles.syncError}>Sync error: {rec.sync_error}</Text> : null}
 
-        <Pressable style={styles.editButton} onPress={() => router.push(`/record/edit/${rec.record_id}`)}>
-          <Ionicons name="create-outline" size={18} color={colors.pine} />
-          <Text style={styles.editText}>Edit record</Text>
-        </Pressable>
-        {rec.sync_status === 'synced' ? (
-          <Text style={styles.editHint}>
-            Editing keeps the record on this device and re-queues it — press Sync now to push the
-            correction. An approved record returns to pending for officer re-review.
-          </Text>
-        ) : null}
+        {canCapture ? (
+          <>
+            <Pressable style={styles.editButton} onPress={() => router.push(`/record/edit/${rec.record_id}`)}>
+              <Ionicons name="create-outline" size={18} color={colors.pine} />
+              <Text style={styles.editText}>Edit record</Text>
+            </Pressable>
+            {rec.sync_status === 'synced' ? (
+              <Text style={styles.editHint}>
+                Editing keeps the record on this device and re-queues it — press Sync now to push the
+                correction. An approved record returns to pending for officer re-review.
+              </Text>
+            ) : null}
 
-        <Pressable style={styles.deleteButton} onPress={confirmDelete}>
-          <Ionicons name="trash-outline" size={18} color={colors.danger} />
-          <Text style={styles.deleteText}>Delete local record</Text>
-        </Pressable>
+            <Pressable style={styles.deleteButton} onPress={confirmDelete}>
+              <Ionicons name="trash-outline" size={18} color={colors.danger} />
+              <Text style={styles.deleteText}>Delete local record</Text>
+            </Pressable>
+          </>
+        ) : (
+          <Text style={styles.editHint}>
+            Your role is read-only — records can be viewed but not edited.
+          </Text>
+        )}
       </View>
     </ScrollView>
   );

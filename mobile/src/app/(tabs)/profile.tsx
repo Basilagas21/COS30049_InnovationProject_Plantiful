@@ -6,9 +6,11 @@ import { Alert, Pressable } from '@/lib/interactionLog';
 import { colors, surfaces } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { countUnsyncedRecords, openDatabase } from '@/db';
+import { roleLabel, useRole } from '@/lib/role';
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { role, canCapture, loading: roleLoading } = useRole();
   const [loading, setLoading] = useState(supabase ? true : false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
@@ -65,7 +67,7 @@ export default function ProfileScreen() {
     );
   }
 
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <View style={styles.container}>
         <ActivityIndicator color={colors.emerald} />
@@ -111,6 +113,14 @@ export default function ProfileScreen() {
         </View>
         <Text style={styles.title}>Signed in</Text>
         <Text style={styles.email}>{userEmail}</Text>
+        <View style={styles.roleBadge}>
+          <Ionicons
+            name={canCapture ? 'leaf' : 'eye'}
+            size={14}
+            color={colors.emerald}
+          />
+          <Text style={styles.roleBadgeText}>{roleLabel(role)}</Text>
+        </View>
         <Pressable style={[styles.button, styles.ghost]} onPress={confirmSignOut}>
           <Text style={styles.ghostText}>Sign out</Text>
         </Pressable>
@@ -127,7 +137,9 @@ export default function ProfileScreen() {
 
       <View style={styles.card}>
         <Text style={styles.hint}>
-          Records you sync are stamped with your botanist account so officers can verify them.
+          {canCapture
+            ? 'Records you sync are stamped with your botanist account so officers can verify them.'
+            : 'Your role is read-only. You can browse and review records, but capture is limited to botanist accounts.'}
         </Text>
       </View>
     </View>
@@ -169,6 +181,20 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 14,
     fontWeight: '600',
+    color: colors.emerald,
+  },
+  roleBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.sprout,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  roleBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
     color: colors.emerald,
   },
   hint: {

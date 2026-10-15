@@ -10,6 +10,7 @@ import { colors } from '@/theme';
 import { getRecordByTag, importRemoteRecord, openDatabase } from '@/db';
 import { normalizeTag, TAG_LABEL } from '@/lib/tags';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+import { useRole } from '@/lib/role';
 
 // Caps a central-database request so a stalled network can't hang the scan
 // handler; resolves null on timeout.
@@ -32,7 +33,7 @@ async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promi
       supabase
         .from('plant_records')
         .select(
-          'record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, morphology, notes, approval_status, reviewed_at, created_at'
+          'record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, reviewed_at, created_at'
         )
         .eq('qr_code', tag)
         .limit(1)
@@ -56,6 +57,7 @@ async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promi
 export default function CaptureScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { canCapture } = useRole();
   const [permission, requestPermission] = useCameraPermissions();
   const [torchOn, setTorchOn] = useState(false);
   const [lastScan, setLastScan] = useState<{ data: string; recordId: string | null } | null>(null);
@@ -161,7 +163,7 @@ const data = normalizeTag(result.data);
         {lastScan ? (
           <>
             <Text style={styles.cardTitle}>
-              {lastScan.recordId ? 'Tag detected' : 'New tag detected'}
+              {lastScan.recordId ? 'Tag detected' : canCapture ? 'New tag detected' : 'Tag not found'}
             </Text>
             <Text style={styles.cardMeta}>{TAG_LABEL}: {lastScan.data}</Text>
             <View style={styles.cardActions}>
@@ -172,10 +174,14 @@ const data = normalizeTag(result.data);
                 >
                   <Text style={styles.primaryButtonText}>Open record</Text>
                 </Pressable>
-              ) : (
+              ) : canCapture ? (
                 <Pressable style={[styles.primaryButton, { flex: 1 }]} onPress={() => createRecord(lastScan.data)}>
                   <Text style={styles.primaryButtonText}>New record</Text>
                 </Pressable>
+              ) : (
+                <Text style={styles.cardMeta}>
+                  This tag is not in the catalogue. Only botanists can create records.
+                </Text>
               )}
             </View>
           </>
@@ -189,13 +195,19 @@ const data = normalizeTag(result.data);
 
         <View style={styles.divider} />
 
-        <Pressable
-          style={[styles.ghostButton, styles.discoverButton]}
-          onPress={() => router.push('/capture/discover')}
-        >
-          <Ionicons name="leaf-outline" size={18} color={colors.emerald} />
-          <Text style={styles.ghostButtonText}>Tag a new plant (no tag yet?)</Text>
-        </Pressable>
+        {canCapture ? (
+          <Pressable
+            style={[styles.ghostButton, styles.discoverButton]}
+            onPress={() => router.push('/capture/discover')}
+          >
+            <Ionicons name="leaf-outline" size={18} color={colors.emerald} />
+            <Text style={styles.ghostButtonText}>Tag a new plant (no tag yet?)</Text>
+          </Pressable>
+        ) : (
+          <Text style={styles.cardMeta}>
+            Your role is read-only — you can browse records but not create them.
+          </Text>
+        )}
       </View>
     </View>
   );

@@ -300,6 +300,9 @@ export default function SyncScreen() {
           gps_lng: row.gps_lng,
           gps_accuracy_m: row.gps_accuracy_m,
           height_cm: row.height_cm,
+          dbh_cm: row.dbh_cm,
+          taxonomy: row.taxonomy,
+          phenology: row.phenology,
           morphology: row.morphology,
           notes: row.notes,
         };

@@ -6,6 +6,14 @@ import { isOfficer } from "@/lib/auth";
 import { ApproveRejectButtons } from "@/components/approve-reject";
 import { PhotoImg } from "@/components/photo-img";
 
+const PHENOLOGY_LABELS: Record<string, string> = {
+  vegetative: "Vegetative",
+  flowering: "Flowering",
+  fruiting: "Fruiting",
+  dormant: "Dormant",
+  unknown: "Unknown",
+};
+
 export default async function RecordDetailPage({
   params,
 }: PageProps<"/records/[id]">) {
@@ -137,6 +145,34 @@ export default async function RecordDetailPage({
             <div className="rounded-2xl border border-pine/10 bg-white p-5">
               <h2 className="font-semibold text-pine">Morphology</h2>
               <p className="mt-2 text-sm leading-7 text-moss">{record.morphology}</p>
+            </div>
+          )}
+
+          {(record.recordTaxonomy || record.phenology || record.dbhCm != null) && (
+            <div className="rounded-2xl border border-pine/10 bg-white p-5">
+              <h2 className="font-semibold text-pine">Field attributes</h2>
+              <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                {record.recordTaxonomy && (
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-moss">Taxonomy</dt>
+                    <dd className="mt-1 font-semibold text-pine">{record.recordTaxonomy}</dd>
+                  </div>
+                )}
+                {record.phenology && (
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-moss">Phenology</dt>
+                    <dd className="mt-1 font-semibold text-pine">
+                      {PHENOLOGY_LABELS[record.phenology] ?? record.phenology}
+                    </dd>
+                  </div>
+                )}
+                {record.dbhCm != null && (
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-moss">Stem diameter (DBH)</dt>
+                    <dd className="mt-1 font-semibold text-pine">{record.dbhCm} cm</dd>
+                  </div>
+                )}
+              </dl>
             </div>
           )}
 

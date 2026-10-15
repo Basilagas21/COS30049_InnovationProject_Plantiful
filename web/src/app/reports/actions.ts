@@ -3,9 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isOfficer } from "@/lib/auth";
-import type { ReportType } from "@/lib/reports";
+import { buildReportPdf } from "@/lib/pdf";
+import type { ReportFormat, ReportType } from "@/lib/reports";
 
 const REPORTS_BUCKET = "reports";
+
+type CellValue = string | number | null | undefined;
 
 type ObservationRow = {
   record_id: string;
@@ -15,6 +18,9 @@ type ObservationRow = {
   gps_lng: number | null;
   gps_accuracy_m: number | null;
   height_cm: number | null;
+  dbh_cm: number | null;
+  taxonomy: string | null;
+  phenology: string | null;
   morphology: string | null;
   notes: string | null;
   approval_status: string;
@@ -23,7 +29,15 @@ type ObservationRow = {
   species: { scientific_name: string; common_name: string | null } | null;
 };
 
-function toCsvRow(row: ObservationRow): (string | number | null | undefined)[] {
+type ReportSection = {
+  title: string;
+  subtitle: string | null;
+  headers: string[];
+  rows: CellValue[][];
+  baseName: string;
+};
+
+function toObsRow(row: ObservationRow): CellValue[] {
   return [
     row.record_id,
     row.qr_code,
@@ -34,6 +48,9 @@ function toCsvRow(row: ObservationRow): (string | number | null | undefined)[] {
     row.gps_lng,
     row.gps_accuracy_m,
     row.height_cm,
+    row.dbh_cm,
+    row.taxonomy,
+    row.phenology,
     row.morphology,
     row.notes,
     row.approval_status,
@@ -42,12 +59,36 @@ function toCsvRow(row: ObservationRow): (string | number | null | undefined)[] {
   ];
 }
 
+const OBS_HEADERS = [
+  "record_id",
+  "qr_code",
+  "provisional_name",
+  "species",
+  "common_name",
+  "gps_lat",
+  "gps_lng",
+  "gps_accuracy_m",
+  "height_cm",
+  "dbh_cm",
+  "taxonomy",
+  "phenology",
+  "morphology",
+  "notes",
+  "approval_status",
+  "status",
+  "created_at",
+];
+
 function csvCell(value: unknown): string {
   const text = value == null ? "" : String(value);
   return `"${text.replace(/"/g, '""')}"`;
 }
 
-function buildCsv(section: string, rows: (string | number | null | undefined)[][], headers: string[]): string {
+function buildCsv(
+  section: string,
+  rows: CellValue[][],
+  headers: string[],
+): string {
   const header = headers.map(csvCell).join(",");
   const body = rows.map((row) => row.map(csvCell).join(","));
   return `${header}\n${body.join("\n")}\n# ${section}\n`;
@@ -67,6 +108,7 @@ function isValidDate(value: string): boolean {
 export async function generateReport(
   type: ReportType,
   dataRange: string,
+  format: ReportFormat = "csv",
 ): Promise<{ ok: boolean; error?: string }> {
   if (!(await isOfficer())) {
     return { ok: false, error: "Conservation officer access required." };
@@ -75,8 +117,7 @@ export async function generateReport(
   const supabase = await createClient();
   const range = dataRange.trim();
 
-  let fileName: string;
-  let content: string;
+  let section: ReportSection;
 
   if (type === "species-catalogue") {
     const { data: species, error } = await supabase
@@ -87,18 +128,10 @@ export async function generateReport(
       .order("scientific_name", { ascending: true });
 
     if (error) return { ok: false, error: error.message };
-    const rows = (species ?? []).map((s) => [
-      s.scientific_name,
-      s.common_name,
-      s.taxonomy,
-      s.conservation_status,
-      s.description,
-      s.is_published ? "published" : "unpublished",
-    ]);
-    content = buildCsv(
-      "Species catalogue",
-      rows,
-      [
+    section = {
+      title: "Species catalogue",
+      subtitle: null,
+      headers: [
         "scientific_name",
         "common_name",
         "taxonomy",
@@ -106,8 +139,16 @@ export async function generateReport(
         "description",
         "is_published",
       ],
-    );
-    fileName = "species-catalogue.csv";
+      rows: (species ?? []).map((s) => [
+        s.scientific_name,
+        s.common_name,
+        s.taxonomy,
+        s.conservation_status,
+        s.description,
+        s.is_published ? "published" : "unpublished",
+      ]),
+      baseName: "species-catalogue",
+    };
   } else if (type === "conservation-status") {
     const { data: species, error } = await supabase
       .from("species")
@@ -116,23 +157,23 @@ export async function generateReport(
       .order("scientific_name", { ascending: true });
 
     if (error) return { ok: false, error: error.message };
-    const rows = (species ?? []).map((s) => [
-      s.scientific_name,
-      s.common_name,
-      s.conservation_status ?? "not assessed",
-      s.is_published ? "published" : "unpublished",
-    ]);
-    content = buildCsv(
-      "Conservation status",
-      rows,
-      ["scientific_name", "common_name", "conservation_status", "is_published"],
-    );
-    fileName = "conservation-status.csv";
+    section = {
+      title: "Conservation status",
+      subtitle: null,
+      headers: ["scientific_name", "common_name", "conservation_status", "is_published"],
+      rows: (species ?? []).map((s) => [
+        s.scientific_name,
+        s.common_name,
+        s.conservation_status ?? "not assessed",
+        s.is_published ? "published" : "unpublished",
+      ]),
+      baseName: "conservation-status",
+    };
   } else {
     let recordsQuery = supabase
       .from("plant_records")
       .select(
-        `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, morphology, notes, approval_status, status, created_at,
+        `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, status, created_at,
          species ( scientific_name, common_name )`,
       )
       .order("created_at", { ascending: false });
@@ -170,28 +211,13 @@ export async function generateReport(
     const { data: records, error } = await recordsQuery;
 
     if (error) return { ok: false, error: error.message };
-    const rows = (records ?? []).map(toCsvRow);
-    content = buildCsv(
-      "Field observations",
-      rows,
-      [
-        "record_id",
-        "qr_code",
-        "provisional_name",
-        "species",
-        "common_name",
-        "gps_lat",
-        "gps_lng",
-        "gps_accuracy_m",
-        "height_cm",
-        "morphology",
-        "notes",
-        "approval_status",
-        "status",
-        "created_at",
-      ],
-    );
-    fileName = "observations.csv";
+    section = {
+      title: "Field observations",
+      subtitle: `Data range: ${range || "all"}`,
+      headers: OBS_HEADERS,
+      rows: (records ?? []).map(toObsRow),
+      baseName: "observations",
+    };
   }
 
   const {
@@ -201,13 +227,32 @@ export async function generateReport(
     return { ok: false, error: "You must be signed in to generate a report." };
   }
 
+  let body: Blob;
+  let fileName: string;
+  let contentType: string;
+
+  if (format === "pdf") {
+    const bytes = await buildReportPdf({
+      title: section.title,
+      subtitle: section.subtitle,
+      headers: section.headers,
+      rows: section.rows,
+    });
+    body = new Blob([bytes as BlobPart], { type: "application/pdf" });
+    fileName = `${section.baseName}.pdf`;
+    contentType = "application/pdf";
+  } else {
+    body = new Blob([buildCsv(section.title, section.rows, section.headers)], {
+      type: "text/csv",
+    });
+    fileName = `${section.baseName}.csv`;
+    contentType = "text/csv";
+  }
+
   const path = `${user.id}/${Date.now()}-${fileName}`;
   const { data: uploaded, error: uploadError } = await supabase.storage
     .from(REPORTS_BUCKET)
-    .upload(path, new Blob([content], { type: "text/csv" }), {
-      contentType: "text/csv",
-      upsert: false,
-    });
+    .upload(path, body, { contentType, upsert: false });
 
   if (uploadError || !uploaded) {
     return { ok: false, error: uploadError?.message ?? "Could not upload the report file." };

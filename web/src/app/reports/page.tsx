@@ -3,6 +3,14 @@ import { fetchReports } from "@/lib/reports";
 import { isOfficer } from "@/lib/auth";
 import { ReportForm } from "@/components/report-form";
 
+function downloadLabel(fileUrl: string): string {
+  const clean = fileUrl.split("?")[0];
+  const ext = clean.slice(clean.lastIndexOf(".") + 1).toLowerCase();
+  if (ext === "pdf") return "Download PDF";
+  if (ext === "csv") return "Download CSV";
+  return "Download report";
+}
+
 export default async function ReportsPage() {
   if (!(await isOfficer())) redirect("/records");
 
@@ -81,7 +89,7 @@ export default async function ReportsPage() {
                       rel="noreferrer"
                       className="font-semibold text-emerald hover:underline"
                     >
-                      Download CSV
+                      {downloadLabel(report.fileUrl)}
                     </a>
                   ) : (
                     <span className="text-moss">No file</span>

@@ -7,14 +7,19 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: true,
-        tabBarActiveTintColor: colors.emerald,
-        tabBarInactiveTintColor: colors.muted,
+        tabBarActiveTintColor: colors.chartreuse,
+        tabBarInactiveTintColor: colors.sprout,
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+        tabBarItemStyle: { paddingTop: 6 },
         tabBarStyle: {
-          backgroundColor: colors.cream,
-          borderTopColor: colors.sand,
+          backgroundColor: colors.pine,
+          borderTopWidth: 0,
+          borderTopLeftRadius: 26,
+          borderTopRightRadius: 26,
+          paddingTop: 6,
         },
         headerStyle: { backgroundColor: colors.cream },
-        headerTitleStyle: { color: colors.pine, fontWeight: '700' },
+        headerTitleStyle: { color: colors.pine, fontWeight: '700', fontSize: 24 },
         headerShadowVisible: false,
       }}
     >

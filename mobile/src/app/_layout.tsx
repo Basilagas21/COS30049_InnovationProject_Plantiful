@@ -46,7 +46,14 @@ export default function RootLayout() {
     <>
       <StatusBar style="dark" />
       <NavLogger />
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack screenOptions={{
+        headerShown: false,
+        headerStyle: { backgroundColor: colors.cream },
+        headerTintColor: colors.pine,
+        headerTitleStyle: { fontWeight: '700' },
+        headerShadowVisible: false,
+        contentStyle: { backgroundColor: colors.cream },
+      }}>
         <Stack.Protected guard={authed}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="capture/new" options={{ headerShown: true, title: 'New capture' }} />

@@ -6,14 +6,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Pressable } from '@/lib/interactionLog';
 import { colors, surfaces } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+import { EditConflict, pushEditedRecord } from '@/lib/sync-edit';
 import {
   getPendingRecords,
+  bindRecordServerId,
+  getAcceptanceMeasurements,
   getPhotosForRecord,
   getSyncedPhotos,
   markPhotoPending,
   markPhotoSynced,
   getRecordsByStatus,
+  logAcceptanceMeasurement,
   markRecordFailed,
+  markRecordConflict,
   markRecordPendingForRepair,
   markRecordSynced,
   openDatabase,
@@ -22,6 +27,7 @@ import {
   updateRecordReviewStatus,
   upsertSpeciesCatalog,
   type LocalRecord,
+  type AcceptanceMeasurement,
 } from '@/db';
 
 type SyncState = 'idle' | 'syncing' | 'done' | 'error';
@@ -138,21 +144,26 @@ export default function SyncScreen() {
   const [needsAuth, setNeedsAuth] = useState(false);
   const [pendingList, setPendingList] = useState<LocalRecord[]>([]);
   const [failedList, setFailedList] = useState<LocalRecord[]>([]);
+  const [conflictList, setConflictList] = useState<LocalRecord[]>([]);
   const [syncedList, setSyncedList] = useState<LocalRecord[]>([]);
+  const [measurements, setMeasurements] = useState<AcceptanceMeasurement[]>([]);
 
   const loadCounts = useCallback(async () => {
     const db = await openDatabase();
-    const [pendingRows, failedRows, syncedRows] = await Promise.all([
+    const [pendingRows, failedRows, conflictRows, syncedRows] = await Promise.all([
       getRecordsByStatus(db, 'pending'),
       getRecordsByStatus(db, 'failed'),
+      getRecordsByStatus(db, 'conflict'),
       getRecordsByStatus(db, 'synced'),
     ]);
     setPendingList(pendingRows);
     setFailedList(failedRows);
+    setConflictList(conflictRows);
     setSyncedList(syncedRows);
     setPending(pendingRows.length);
     setFailed(failedRows.length);
     setSynced(syncedRows.length);
+    setMeasurements(await getAcceptanceMeasurements(db));
   }, []);
 
   useFocusEffect(
@@ -228,34 +239,6 @@ export default function SyncScreen() {
       }
     };
 
-    // A qr_code clash means the tag was already registered from another
-    // device. Adopt that row instead of failing as a duplicate: remember the
-    // server id (so this record is never pushed as an insert again) and copy
-    // the officer's review outcome. Null when the clash isn't about the plant
-    // tag or the remote row isn't visible under this session's access rules.
-    const adoptDuplicateByTag = async (error: unknown, row: LocalRecord): Promise<string | null> => {
-      const code = (error as { code?: string } | null)?.code ?? '';
-      const raw = error instanceof Error ? error.message : String(error);
-      const details = (error as { details?: string } | null)?.details ?? '';
-      if (code !== '23505' || !row.qr_code || !`${raw} ${details}`.toLowerCase().includes('qr_code')) {
-        return null;
-      }
-      try {
-        const { data: remote } = await supabase!
-          .from('plant_records')
-          .select('record_id, approval_status, reviewed_at')
-          .eq('qr_code', row.qr_code)
-          .maybeSingle();
-        if (!remote) return null;
-        await setRecordServerId(db, row.record_id, remote.record_id);
-        await updateRecordReviewStatus(db, remote.record_id, remote.approval_status, remote.reviewed_at);
-        return remote.record_id;
-      } catch (e) {
-        console.warn('[sync] duplicate adoption failed:', e instanceof Error ? e.message : e);
-        return null;
-      }
-    };
-
     setState('syncing');
     setSynced(0);
     setFailed(0);
@@ -291,6 +274,7 @@ export default function SyncScreen() {
     let failedCount = 0;
 
     for (const row of rows) {
+      const startedAt = Date.now();
       try {
         const observation = {
           species_id: row.species_id,
@@ -310,27 +294,37 @@ export default function SyncScreen() {
         // Idempotent push: a failed retry may already have inserted the row
         // server-side (e.g. upload succeeded then a photo failed), so match on
         // device_id before inserting to avoid duplicates.
-        const { data: existing } = await supabase
+        const { data: existing, error: lookupError } = await supabase
           .from('plant_records')
-          .select('record_id')
+          .select('record_id, version, botanist_id')
           .eq('device_id', row.record_id)
+          .eq('botanist_id', session.session.user.id)
           .maybeSingle();
+        if (lookupError) throw lookupError;
+
+        // A previously known server row must not be recreated if it is now
+        // invisible (deleted or access changed).
+        if (row.server_id && existing && row.server_id !== existing.record_id) {
+          throw new EditConflict('The server record differs from the saved copy. Review before retrying.');
+        }
+        if (existing && !row.server_id && row.edited) {
+          // An interrupted earlier insert can already exist remotely. Keep
+          // the local edit and bind its identity without inventing a revision.
+          await bindRecordServerId(db, row.record_id, existing.record_id);
+        }
 
         let serverRecordId = existing?.record_id ?? row.server_id ?? null;
+        let serverVersion = row.server_version ?? existing?.version ?? null;
 
         // Locally edited after syncing: push the correction to the same
         // record and reset it for officer re-review, because the approved
         // data no longer matches what was reviewed.
         const pushEdit = async (serverId: string) => {
-          const { error: updateError } = await supabase!
-            .from('plant_records')
-            .update({
-              ...observation,
-              status: 'submitted',
-              approval_status: 'pending',
-            })
-            .eq('record_id', serverId);
-          if (updateError) throw updateError;
+          serverVersion = await pushEditedRecord(
+            supabase!, serverId, session.session.user.id, row.server_version, observation
+          );
+          // An upload may fail afterwards; retrying must not repeat this edit.
+          await setRecordServerId(db, row.record_id, serverId, serverVersion);
         };
 
         if (serverRecordId && row.edited) {
@@ -345,17 +339,15 @@ export default function SyncScreen() {
               approval_status: 'pending',
               device_id: row.record_id,
             })
-            .select('record_id')
+            .select('record_id, version')
             .single();
 
           if (error) {
-            const adoptedId = await adoptDuplicateByTag(error, row);
-            if (!adoptedId) throw error;
-            serverRecordId = adoptedId;
-            if (row.edited) await pushEdit(serverRecordId);
+            throw error;
           } else {
             serverRecordId = inserted.record_id;
-            await setRecordServerId(db, row.record_id, serverRecordId);
+            serverVersion = inserted.version;
+            await setRecordServerId(db, row.record_id, serverRecordId, serverVersion);
           }
         }
 
@@ -394,13 +386,16 @@ export default function SyncScreen() {
           await markPhotoSynced(db, photo.id, photoUrl);
         }
 
-        await markRecordSynced(db, row.record_id, serverRecordId!);
+        await markRecordSynced(db, row.record_id, serverRecordId!, serverVersion!);
+        await logAcceptanceMeasurement(db, 'sync_record', 'synced', startedAt, row.record_id);
 
         syncedCount += 1;
         setSynced(syncedCount);
       } catch (e) {
         const msg = describeSyncError(e, row.qr_code);
-        await markRecordFailed(db, row.record_id, msg);
+        if (e instanceof EditConflict) await markRecordConflict(db, row.record_id, e.message);
+        else await markRecordFailed(db, row.record_id, msg);
+        await logAcceptanceMeasurement(db, 'sync_record', e instanceof EditConflict ? 'conflict' : 'failed', startedAt, row.record_id);
         failedCount += 1;
         setFailed(failedCount);
       }
@@ -412,11 +407,18 @@ export default function SyncScreen() {
     await loadCounts();
     setState(failedCount > 0 ? 'error' : 'done');
     setMessage(failedCount > 0
-      ? `Synced ${syncedCount}, ${failedCount} failed. Failed records retry next time you press Sync now; tap one in Records for the reason.`
+      ? `Synced ${syncedCount}, ${failedCount} need attention. Conflicts require review; other failures retry when you press Sync now.`
       : `All done — ${syncedCount} record(s) pushed to the central database as submitted.`);
   }, [loadCounts]);
 
   const connected = isSupabaseConfigured && supabase !== null;
+  const attempts = measurements.filter((m) => m.operation === 'sync_record');
+  const localLookups = measurements.filter((m) => m.operation === 'qr_lookup' && m.outcome === 'local_found');
+  const successfulAttempts = attempts.filter((m) => m.outcome === 'synced').length;
+  const fastLookups = localLookups.filter((m) => m.duration_ms < 5000).length;
+  const averageLocalLookupMs = localLookups.length
+    ? Math.round(localLookups.reduce((sum, m) => sum + m.duration_ms, 0) / localLookups.length)
+    : null;
 
   return (
     <View style={styles.container}>
@@ -487,6 +489,17 @@ export default function SyncScreen() {
           </View>
         ) : null}
 
+        {conflictList.length > 0 ? (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Conflicts ({conflictList.length}) — review before retrying</Text>
+            {conflictList.map((r) => (
+              <Pressable key={r.record_id} onPress={() => router.push(`/record/${r.record_id}`)}>
+                <Text style={styles.listItem}>• {r.provisional_name || r.qr_code || 'Unknown'} — Open record</Text>
+              </Pressable>
+            ))}
+          </View>
+        ) : null}
+
         {syncedList.length > 0 ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Synced ({syncedList.length})</Text>
@@ -497,6 +510,20 @@ export default function SyncScreen() {
             ))}
           </View>
         ) : null}
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Acceptance measurements (latest 1,000 events)</Text>
+          <Text style={styles.listItem}>
+            Sync success: {successfulAttempts}/{attempts.length} attempts
+            {attempts.length ? ` (${(100 * successfulAttempts / attempts.length).toFixed(1)}%)` : ''}
+          </Text>
+          <Text style={styles.listItem}>
+            Cached QR lookup: {averageLocalLookupMs == null ? 'no samples' : `${averageLocalLookupMs} ms average`}; {fastLookups}/{localLookups.length} under 5 seconds
+          </Text>
+          <Text style={styles.listItem}>
+            Starts at QR decoder callback / record push; includes SQLite lookup or upload, not camera recognition or user navigation. Conflicts and failed attempts count against sync success; retries count as new attempts. Raw dated rows remain in local SQLite acceptance_measurements.
+          </Text>
+        </View>
 
         {message || state === 'idle' ? (
           <Text style={styles.lastSync}>

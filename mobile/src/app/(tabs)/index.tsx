@@ -7,7 +7,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Pressable } from '@/lib/interactionLog';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/theme';
-import { getRecordByTag, importRemoteRecord, openDatabase } from '@/db';
+import { getRecordByTag, importRemoteRecord, logAcceptanceMeasurement, openDatabase } from '@/db';
 import { normalizeTag, TAG_LABEL } from '@/lib/tags';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
@@ -33,7 +33,7 @@ async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promi
       supabase
         .from('plant_records')
         .select(
-          'record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, reviewed_at, created_at'
+          'record_id, version, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, reviewed_at, created_at'
         )
         .eq('qr_code', tag)
         .limit(1)
@@ -81,20 +81,30 @@ export default function CaptureScreen() {
 
   async function onBarcodeScanned(result: BarcodeScanningResult) {
     if (result.type !== 'qr') return;
-const data = normalizeTag(result.data);
+    const data = normalizeTag(result.data);
     if (!data || handlingRef.current || lastHandledRef.current === data) return;
     handlingRef.current = true;
     lastHandledRef.current = data;
+    const startedAt = Date.now();
     try {
       const db = await openDatabase();
       let recordId = (await getRecordByTag(db, data))?.record_id ?? null;
+      let outcome = recordId ? 'local_found' : 'not_found';
       if (!recordId) {
         recordId = await importScannedRemoteRecord(db, data);
+        if (recordId) outcome = 'remote_found';
       }
+      await logAcceptanceMeasurement(db, 'qr_lookup', outcome, startedAt);
       setLastScan({ data, recordId });
       if (recordId) {
         router.push({ pathname: '/record/[id]', params: { id: recordId } });
       }
+    } catch (error) {
+      try {
+        const db = await openDatabase();
+        await logAcceptanceMeasurement(db, 'qr_lookup', 'error', startedAt);
+      } catch { /* Measurement storage must not mask the scan error. */ }
+      console.warn('[scan] lookup failed:', error);
     } finally {
       handlingRef.current = false;
     }

@@ -2,7 +2,7 @@ import { File } from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
 const DATABASE_NAME = 'plantiful.db';
-const SCHEMA_VERSION = 7;
+const SCHEMA_VERSION = 9;
 
 async function migrateDbIfNeeded(db: SQLite.SQLiteDatabase) {
   const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -191,6 +191,28 @@ CREATE TABLE IF NOT EXISTS local_species_photos (
     currentDbVersion = 7;
   }
 
+  if (currentDbVersion < 8) {
+    // Null means an older synced copy has no known baseline. Never silently
+    // overwrite a remote edit using such a copy.
+    const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(local_records)');
+    if (!columns.some((column) => column.name === 'server_version')) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN server_version INTEGER');
+    }
+    currentDbVersion = 8;
+  }
+
+  if (currentDbVersion < 9) {
+    await db.execAsync(`CREATE TABLE IF NOT EXISTS acceptance_measurements (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      measured_at TEXT NOT NULL,
+      operation TEXT NOT NULL,
+      outcome TEXT NOT NULL,
+      duration_ms INTEGER NOT NULL,
+      detail TEXT
+    );`);
+    currentDbVersion = 9;
+  }
+
   // `edited` marks a locally edited record so the next sync pushes an UPDATE to
   // the existing server row instead of creating a duplicate. Repaired on EVERY
   // open rather than version-gated, so a half-applied migration can never leave
@@ -269,6 +291,7 @@ export type LocalRecord = {
   capture_ts: string;
   sync_status: string;
   server_id: string | null;
+  server_version: number | null;
   sync_error: string | null;
   approval_status: string | null;
   reviewed_at: string | null;
@@ -343,6 +366,7 @@ export async function addLocalPhoto(
 
 export type RemoteRecordImport = {
   record_id: string;
+  version: number;
   species_id?: string | null;
   qr_code?: string | null;
   provisional_name?: string | null;
@@ -374,8 +398,8 @@ export async function importRemoteRecord(
   await db.runAsync(
     `INSERT INTO local_records (
        record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm,
-       dbh_cm, taxonomy, phenology, morphology, notes, capture_ts, sync_status, server_id, approval_status, reviewed_at, edited, created_at
-     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?, 0, ?)`,
+        dbh_cm, taxonomy, phenology, morphology, notes, capture_ts, sync_status, server_id, server_version, approval_status, reviewed_at, edited, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?, ?, 0, ?)`,
     recordId,
     remote.species_id ?? null,
     remote.qr_code ? remote.qr_code.trim().toUpperCase() : null,
@@ -391,6 +415,7 @@ export async function importRemoteRecord(
     remote.notes ?? null,
     remote.created_at ?? now,
     remote.record_id,
+    remote.version,
     remote.approval_status ?? null,
     remote.reviewed_at ?? null,
     now
@@ -414,7 +439,7 @@ export async function getLocalRecords(db: SQLite.SQLiteDatabase): Promise<LocalR
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name,
        r.gps_lat, r.gps_lng, r.gps_accuracy_m,
-       r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
+        r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id, r.server_version,
        r.sync_error, r.approval_status, r.reviewed_at, r.created_at,
        COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
@@ -431,7 +456,7 @@ export async function getLocalRecord(
   return db.getFirstAsync<LocalRecordWithPhoto>(
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
-       r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
+        r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id, r.server_version,
        r.sync_error, r.approval_status, r.reviewed_at, r.edited, r.created_at,
        COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
@@ -517,19 +542,76 @@ export async function markRecordPendingForRepair(db: SQLite.SQLiteDatabase, reco
 
 // Remember the server row as soon as it exists, so a retry after a failed photo
 // upload reuses it instead of inserting a duplicate record.
-export async function setRecordServerId(db: SQLite.SQLiteDatabase, recordId: string, serverId: string) {
-  await db.runAsync('UPDATE local_records SET server_id = ? WHERE record_id = ?', serverId, recordId);
+export async function setRecordServerId(db: SQLite.SQLiteDatabase, recordId: string, serverId: string, version: number) {
+  await db.runAsync('UPDATE local_records SET server_id = ?, server_version = ?, edited = 0 WHERE record_id = ?', serverId, version, recordId);
+}
+
+export async function bindRecordServerId(db: SQLite.SQLiteDatabase, recordId: string, serverId: string) {
+  await db.runAsync('UPDATE local_records SET server_id = ? WHERE record_id = ? AND server_id IS NULL', serverId, recordId);
 }
 
 export async function markRecordSynced(
   db: SQLite.SQLiteDatabase,
   recordId: string,
-  serverId: string
+  serverId: string,
+  version: number
 ) {
   await db.runAsync(
-    "UPDATE local_records SET sync_status = 'synced', server_id = ?, sync_error = NULL, edited = 0 WHERE record_id = ?",
+    "UPDATE local_records SET sync_status = 'synced', server_id = ?, server_version = ?, sync_error = NULL, edited = 0 WHERE record_id = ?",
     serverId,
+    version,
     recordId
+  );
+}
+
+export async function markRecordConflict(db: SQLite.SQLiteDatabase, recordId: string, error: string) {
+  await db.runAsync(
+    "UPDATE local_records SET sync_status = 'conflict', sync_error = ? WHERE record_id = ?",
+    error,
+    recordId
+  );
+}
+
+// Only the record owner may explicitly retry a conflicting local edit. The
+// next push still uses a conditional update; another intervening write will
+// raise a new conflict instead of being overwritten.
+export async function retryConflictingEdit(db: SQLite.SQLiteDatabase, recordId: string, version: number) {
+  await db.runAsync(
+    "UPDATE local_records SET server_version = ?, sync_status = 'pending', sync_error = NULL WHERE record_id = ? AND sync_status = 'conflict' AND edited = 1",
+    version,
+    recordId
+  );
+}
+
+export type AcceptanceMeasurement = {
+  id: number;
+  measured_at: string;
+  operation: 'qr_lookup' | 'sync_record';
+  outcome: string;
+  duration_ms: number;
+  detail: string | null;
+};
+
+export async function logAcceptanceMeasurement(
+  db: SQLite.SQLiteDatabase,
+  operation: AcceptanceMeasurement['operation'],
+  outcome: string,
+  startedAt: number,
+  detail: string | null = null
+) {
+  try {
+    await db.runAsync(
+      'INSERT INTO acceptance_measurements (measured_at, operation, outcome, duration_ms, detail) VALUES (?, ?, ?, ?, ?)',
+      new Date().toISOString(), operation, outcome, Math.max(0, Date.now() - startedAt), detail
+    );
+  } catch (error) {
+    console.warn('[measurement] unable to save result:', error);
+  }
+}
+
+export async function getAcceptanceMeasurements(db: SQLite.SQLiteDatabase): Promise<AcceptanceMeasurement[]> {
+  return db.getAllAsync<AcceptanceMeasurement>(
+    'SELECT * FROM acceptance_measurements ORDER BY id DESC LIMIT 1000'
   );
 }
 
@@ -567,7 +649,7 @@ export async function getRecordByTag(
   return db.getFirstAsync<LocalRecordWithPhoto>(
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
-       r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id,
+        r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id, r.server_version,
        r.sync_error, r.approval_status, r.reviewed_at, r.edited, r.created_at,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
@@ -632,8 +714,8 @@ export async function updateLocalRecord(
        phenology = ?,
        morphology = ?,
        notes = ?,
-       sync_status = 'pending',
-       sync_error = NULL,
+        sync_status = CASE WHEN sync_status = 'conflict' THEN 'conflict' ELSE 'pending' END,
+       sync_error = CASE WHEN sync_status = 'conflict' THEN sync_error ELSE NULL END,
        edited = 1
      WHERE record_id = ?`,
     patch.qr_code ?? null,

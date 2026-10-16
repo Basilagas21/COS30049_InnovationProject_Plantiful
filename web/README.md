@@ -9,14 +9,14 @@ cd web
 npm install
 ```
 
-Create `web/.env.local` (git-ignored) with the Supabase project values:
+Create `web/.env.local` (git-ignored) with the Supabase project values (Dashboard > Project Settings > API Keys):
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon / sb_publishable_ key>
 ```
 
-Without these the app still runs, but shows sample records and sign-in is disabled. The variables are read at build time, so rebuild after changing them.
+The public key is labelled `anon` on older projects or `sb_publishable_…` on newer ones; both work here. Without these the app still runs, but shows sample records and sign-in is disabled. The variables are read at build time, so rebuild after changing them.
 
 ## Scripts
 
@@ -38,7 +38,7 @@ Without these the app still runs, but shows sample records and sign-in is disabl
 | `/records`, `/records/[id]` | Records list with species search and record detail; officers approve or reject |
 | `/approvals` | Pending-submission queue with approve/reject + quick links (officer) |
 | `/reports` | Generated biodiversity reports (officer) |
-| `/alerts` | Live IoT threat alerts and latest sensor readings (officer) |
+| `/alerts` | IoT threat alerts and latest sensor readings (officer). Server-rendered; refresh to update — no realtime push |
 | `/users` | Grant or revoke roles (admin) |
 | `/signin`, `/register` | Supabase email/password auth |
 | `/profile`, `/profile/change-password` | Account and role |

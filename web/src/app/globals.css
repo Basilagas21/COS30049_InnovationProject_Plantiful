@@ -92,6 +92,17 @@ body {
 .site-content .shadow-sm { box-shadow: 0 6px 24px #0c342c06; }
 
 @keyframes page-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.monitor-workspace { background: radial-gradient(ellipse at 95% 20%, #e2fbce55, transparent 55%); }
+.monitor-panel { min-width: 0; border: 1px solid #0c342c0c; border-radius: 1.75rem; padding: 1.5rem; background: #fffffaf2; box-shadow: 0 8px 30px #0c342c04; }
+.monitor-hero { position: relative; overflow: hidden; border-radius: 1.75rem; padding: 2rem; background: linear-gradient(110deg, #153d2feb, #153d2f88), url('/botanical.svg') right center / cover, #376b3e; color: #fffdee; }
+.monitor-ring { width: 6rem; height: 6rem; flex-shrink: 0; padding: .5rem; border-radius: 50%; }
+.monitor-ring > span { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; border-radius: 50%; background: #fffffa; font-size: 1.4rem; font-weight: 600; }
+.monitor-icon { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #f3f4eb; font-size: 1.25rem; }
+.monitor-metric { border-radius: 1.15rem; padding: 1rem; }
+.monitor-warm { background: linear-gradient(150deg, #faf1df, #fffaf2); }
+.monitor-cool { background: linear-gradient(150deg, #e8f2ef, #f7fbf8); }
+.monitor-green { background: linear-gradient(150deg, #e8f4dc, #f7fbef); }
+.monitor-notice { border: 1px solid #b54a3b30; border-radius: 1rem; background: #fff5e9; color: #783e2e; padding: 1rem 1.25rem; font-size: .875rem; line-height: 1.7; }
 @media (max-width: 640px) {
   .auth-layout { grid-template-columns: 1fr; gap: 1.25rem; padding-top: 1.25rem; }
   .auth-story { min-height: 0; padding: 2rem; }

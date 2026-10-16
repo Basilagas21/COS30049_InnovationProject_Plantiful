@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useState } from "react";
 import type { HistoryPoint, TelemetryHistory } from "@/lib/telemetry";
 
 export function monitoringTime(value: string, short = false) {
@@ -71,20 +71,42 @@ export function TrendChart({ history, metric }: { history: TelemetryHistory; met
 }
 
 export function EventStrips({ history }: { history: TelemetryHistory }) {
+  const [view, setView] = useState<"recorded" | "full">("recorded");
+  // Trim only the empty edges. Keep gaps between recording sessions visible,
+  // and use the same window for movement and rain, including negative readings.
+  const first = history.points.findIndex((p) => p.samples > 0);
+  const last = history.points.findLastIndex((p) => p.samples > 0);
+  const points = view === "recorded" && first >= 0 ? history.points.slice(first, last + 1) : history.points;
+  const start = view === "recorded" && first >= 0 ? points[0].time : history.start;
+  const end = view === "recorded" && last >= 0
+    ? new Date(Math.min(Date.parse(history.end), Date.parse(history.points[last].time) + history.bucket_seconds * 1000)).toISOString()
+    : history.end;
+  const cellWidth = 720 / Math.max(1, points.length);
+  const gap = Math.min(2, cellWidth * .2);
+
   return <section className="monitor-panel">
-    <p className="eyebrow text-moss">Activity over time</p><h3 className="mt-2 text-xl font-semibold">Movement & rain</h3>
-    <p className="mt-2 text-sm text-moss">Green marks a bucket with a positive reading. Grey means readings without a detection; blank means no data.</p>
-    {(["movement_samples", "rain_samples"] as const).map((key) => <div key={key} className="mt-5">
-      <div className="mb-2 flex justify-between text-sm"><span>{key === "movement_samples" ? "Movement" : "Rain detected"}</span><span className="text-moss">{history.points.reduce((n, p) => n + p[key], 0).toLocaleString()} positive samples</span></div>
-      <svg viewBox="0 0 720 30" className="w-full" role="img" aria-label={`${key === "movement_samples" ? "Movement" : "Rain"} detections across the selected range; counts are samples, not distinct events.`}>
-        {history.points.map((p, i) => <rect key={p.time} x={i * 720 / history.points.length} y={p[key] ? 2 : 12}
-          width={Math.max(.5, 720 / history.points.length - 1)} height={p[key] ? 26 : 8} rx="1"
-          fill={!p.samples ? "transparent" : p[key] ? "#367849" : "#dce3d7"}>
-          <title>{monitoringTime(p.time)} MYT: {p[key]} positive / {p.samples} samples</title>
-        </rect>)}
-      </svg>
-    </div>)}
-    <div className="mt-2 flex justify-between text-xs text-moss"><span>{monitoringTime(history.start, true)}</span><span>{monitoringTime(history.end, true)} MYT</span></div>
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div><p className="eyebrow text-moss">Activity over time</p><h3 className="mt-2 text-xl font-semibold">Movement & rain</h3></div>
+      <div role="group" aria-label="Activity chart time scale" className="flex flex-wrap gap-1 rounded-2xl bg-pine/5 p-1">
+        {(["recorded", "full"] as const).map((value) => <button key={value} type="button" aria-pressed={view === value} onClick={() => setView(value)} className={`rounded-full px-3 py-2 text-xs transition ${view === value ? "bg-white font-semibold text-emerald shadow-sm" : "text-moss hover:text-pine"}`}>{value === "recorded" ? "Recorded period" : "Full time range"}</button>)}
+      </div>
+    </div>
+    <p className="mt-2 text-sm text-moss">Green marks a bucket with a positive reading. Grey means readings without a detection. Blank means no data.</p>
+    <p className="mt-2 text-xs leading-relaxed text-moss">{view === "recorded" ? "Recorded period expands the first through last stored buckets within your filter. Empty time before and after is hidden. Gaps between recordings remain visible." : "Full time range includes empty time before and after recordings."} Each bar represents up to {Math.round(history.bucket_seconds / 60)} minutes.</p>
+    <p className="mt-2 text-xs text-moss">Selected range: {monitoringTime(history.start, true)} to {monitoringTime(history.end, true)} MYT</p>
+    {first < 0 ? <p className="py-8 text-sm text-moss">No stored readings in this range.</p> : <>
+      {(["movement_samples", "rain_samples"] as const).map((key) => <div key={key} className="mt-5">
+        <div className="mb-2 flex flex-wrap justify-between gap-2 text-sm"><span>{key === "movement_samples" ? "Movement" : "Rain detected"}</span><span className="text-moss">{history.points.reduce((n, p) => n + p[key], 0).toLocaleString()} positive samples</span></div>
+        <svg viewBox="0 0 720 30" preserveAspectRatio="none" className="h-16 w-full" role="img" aria-label={`${key === "movement_samples" ? "Movement" : "Rain"} detections from ${monitoringTime(start)} to ${monitoringTime(end)} MYT. Counts are samples, not distinct events.`}>
+          {points.map((p, i) => <rect key={p.time} x={i * cellWidth + gap / 2} y={p[key] ? 2 : 12}
+            width={cellWidth - gap} height={p[key] ? 26 : 8} rx="1"
+            fill={!p.samples ? "transparent" : p[key] ? "#367849" : "#dce3d7"}>
+            <title>{monitoringTime(p.time)} MYT: {p[key]} positive / {p.samples} samples</title>
+          </rect>)}
+        </svg>
+      </div>)}
+      <div className="mt-2 flex flex-wrap justify-between gap-2 text-xs text-moss"><span>{monitoringTime(start, true)}</span><span>{monitoringTime(end, true)} MYT</span></div>
+    </>}
     <p className="mt-4 text-xs text-moss">Consecutive positive samples can belong to one event. Counts are not individual animals, visitors or rainfall amounts.</p>
   </section>;
 }

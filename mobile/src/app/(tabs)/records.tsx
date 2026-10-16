@@ -13,13 +13,14 @@ import {
 } from '@/db';
 
 type SortKey = 'newest' | 'oldest';
-type StatusFilter = 'all' | 'pending' | 'synced' | 'failed';
+type StatusFilter = 'all' | 'pending' | 'synced' | 'failed' | 'conflict';
 
 const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'pending', label: 'Pending' },
   { key: 'synced', label: 'Synced' },
   { key: 'failed', label: 'Failed' },
+  { key: 'conflict', label: 'Conflict' },
 ];
 
 function syncLabel(status: string) {
@@ -28,6 +29,8 @@ function syncLabel(status: string) {
       return { text: 'Synced', color: colors.emerald };
     case 'failed':
       return { text: 'Failed', color: colors.danger };
+    case 'conflict':
+      return { text: 'Conflict', color: colors.danger };
     default:
       return { text: 'Pending', color: colors.pine };
   }

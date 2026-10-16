@@ -1,14 +1,35 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable } from '@/lib/interactionLog';
 import QRCode from 'react-native-qrcode-svg';
 import { colors, surfaces } from '@/theme';
-import { deleteLocalRecord, getLocalRecord, openDatabase, type LocalRecordWithPhoto } from '@/db';
+import { deleteLocalRecord, getLocalRecord, openDatabase, retryConflictingEdit, type LocalRecordWithPhoto } from '@/db';
+import { supabase } from '@/lib/supabase';
 import { TAG_LABEL } from '@/lib/tags';
 import { phenologyLabel } from '@/lib/phenology';
 import { useRole } from '@/lib/role';
+import type { Database } from '@/lib/database.types';
+
+type ObservationKey = 'qr_code' | 'species_id' | 'provisional_name' | 'gps_lat' | 'gps_lng' |
+  'gps_accuracy_m' | 'height_cm' | 'dbh_cm' | 'taxonomy' | 'phenology' | 'morphology' | 'notes';
+type ServerObservation = Pick<Database['public']['Tables']['plant_records']['Row'], ObservationKey | 'version'>;
+
+const conflictFields: { key: ObservationKey; label: string }[] = [
+  { key: 'qr_code', label: 'Plant tag' },
+  { key: 'species_id', label: 'Species ID' },
+  { key: 'provisional_name', label: 'Provisional name' },
+  { key: 'gps_lat', label: 'Latitude' },
+  { key: 'gps_lng', label: 'Longitude' },
+  { key: 'gps_accuracy_m', label: 'GPS accuracy (m)' },
+  { key: 'height_cm', label: 'Height (cm)' },
+  { key: 'dbh_cm', label: 'DBH (cm)' },
+  { key: 'taxonomy', label: 'Taxonomy' },
+  { key: 'phenology', label: 'Phenology' },
+  { key: 'morphology', label: 'Morphology' },
+  { key: 'notes', label: 'Notes' },
+];
 
 function syncLabel(status: string) {
   switch (status) {
@@ -16,6 +37,8 @@ function syncLabel(status: string) {
       return { text: 'Synced', color: colors.emerald };
     case 'failed':
       return { text: 'Failed', color: colors.danger };
+    case 'conflict':
+      return { text: 'Conflict', color: colors.danger };
     default:
       return { text: 'Pending', color: colors.pine };
   }
@@ -39,6 +62,7 @@ export default function RecordDetailScreen() {
   const { canCapture } = useRole();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [record, setRecord] = useState<LocalRecordWithPhoto | null | undefined>(undefined);
+  const [remoteConflict, setRemoteConflict] = useState<ServerObservation | null>(null);
 
   const refresh = useCallback(async () => {
     if (!id) return;
@@ -88,8 +112,62 @@ export default function RecordDetailScreen() {
     );
   }
 
+  async function reviewConflict() {
+    if (!rec.server_id || !supabase) {
+      Alert.alert('Unable to review', 'Sign in and connect to the central database first.');
+      return;
+    }
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session) {
+      Alert.alert('Sign in first', 'Sign in on the Profile tab, then review this conflict.');
+      return;
+    }
+    const { data: remote, error } = await supabase.from('plant_records')
+      .select('version, qr_code, species_id, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes')
+      .eq('record_id', rec.server_id).eq('botanist_id', session.session.user.id).maybeSingle();
+    if (error || !remote) {
+      Alert.alert('Unable to review', 'The server record is unavailable or you do not own it. Your local copy is safe.');
+      return;
+    }
+    setRemoteConflict(remote);
+  }
+
+  async function keepLocalEdit() {
+    if (!remoteConflict) return;
+    try {
+      const db = await openDatabase();
+      await retryConflictingEdit(db, rec.record_id, remoteConflict.version);
+      setRemoteConflict(null);
+      await refresh();
+    } catch {
+      Alert.alert('Unable to retry', 'Your local copy is still safe. Please try again.');
+    }
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Modal visible={remoteConflict !== null} animationType="slide" onRequestClose={() => setRemoteConflict(null)}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+          <Text style={styles.title}>Review conflicting edits</Text>
+          <Text style={styles.editHint}>
+            Server revision {remoteConflict?.version} vs your saved revision {rec.server_version ?? 'unknown'}.
+            Review every field below. Keeping your copy will replace the server observation fields and send the record for officer re-review. Photos are added separately.
+          </Text>
+          {remoteConflict && conflictFields.map(({ key, label }) => (
+            <View key={key} style={styles.card}>
+              <Text style={styles.fieldLabel}>{label}</Text>
+              <Text style={styles.fieldValue}>Server: {String(remoteConflict[key] ?? '—')}</Text>
+              <Text style={styles.fieldValue}>Your copy: {String(rec[key] ?? '—')}</Text>
+            </View>
+          ))}
+          <Pressable style={styles.editButton} onPress={() => setRemoteConflict(null)}>
+            <Text style={styles.editText}>Cancel — keep conflict pending</Text>
+          </Pressable>
+          <Pressable style={styles.editButton} onPress={keepLocalEdit}>
+            <Text style={styles.editText}>Keep my local edit and retry on next sync</Text>
+          </Pressable>
+        </ScrollView>
+      </Modal>
       {rec.photo_uri ? (
         <Image source={{ uri: rec.photo_uri }} style={styles.photo} resizeMode="cover" />
       ) : (
@@ -168,6 +246,12 @@ export default function RecordDetailScreen() {
         <Field icon="document-text-outline" label="Notes" value={rec.notes || '—'} last />
 
         {rec.sync_error ? <Text style={styles.syncError}>Sync error: {rec.sync_error}</Text> : null}
+
+        {canCapture && rec.sync_status === 'conflict' ? (
+          <Pressable style={styles.editButton} onPress={reviewConflict}>
+            <Text style={styles.editText}>Review server version and resolve conflict</Text>
+          </Pressable>
+        ) : null}
 
         {canCapture ? (
           <>

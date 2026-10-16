@@ -72,17 +72,15 @@ export function TrendChart({ history, metric }: { history: TelemetryHistory; met
 
 export function EventStrips({ history }: { history: TelemetryHistory }) {
   const [view, setView] = useState<"recorded" | "full">("recorded");
-  // Trim only the empty edges. Keep gaps between recording sessions visible,
-  // and use the same window for movement and rain, including negative readings.
-  const first = history.points.findIndex((p) => p.samples > 0);
-  const last = history.points.findLastIndex((p) => p.samples > 0);
-  const points = view === "recorded" && first >= 0 ? history.points.slice(first, last + 1) : history.points;
-  const start = view === "recorded" && first >= 0 ? points[0].time : history.start;
-  const end = view === "recorded" && last >= 0
-    ? new Date(Math.min(Date.parse(history.end), Date.parse(history.points[last].time) + history.bucket_seconds * 1000)).toISOString()
-    : history.end;
-  const cellWidth = 720 / Math.max(1, points.length);
-  const gap = Math.min(2, cellWidth * .2);
+  // Recorded-period buckets are aggregated separately in SQL. Trimming the
+  // full-range buckets cannot recover the detail lost in a 28-minute bucket.
+  const activity = view === "recorded" ? history.activity : history;
+  const points = activity?.points ?? [];
+  const hasReadings = points.some((p) => p.samples > 0);
+  // Fixed CSS-pixel geometry for every filter, including All history.
+  const cellWidth = 8;
+  const barWidth = 6;
+  const stripWidth = Math.max(1, points.length * cellWidth);
 
   return <section className="monitor-panel">
     <div className="flex flex-wrap items-start justify-between gap-4">
@@ -92,20 +90,22 @@ export function EventStrips({ history }: { history: TelemetryHistory }) {
       </div>
     </div>
     <p className="mt-2 text-sm text-moss">Green marks a bucket with a positive reading. Grey means readings without a detection. Blank means no data.</p>
-    <p className="mt-2 text-xs leading-relaxed text-moss">{view === "recorded" ? "Recorded period expands the first through last stored buckets within your filter. Empty time before and after is hidden. Gaps between recordings remain visible." : "Full time range includes empty time before and after recordings."} Each bar represents up to {Math.round(history.bucket_seconds / 60)} minutes.</p>
+    <p className="mt-2 text-xs leading-relaxed text-moss">{view === "recorded" ? "Recorded period shows the stored readings within your filter. The same readings use the same grouping across filters." : "Full time range includes empty time before and after recordings."} Bars keep the same size and spacing. Scroll horizontally for longer timelines.{activity && ` Each bucket covers up to ${Number((activity.bucket_seconds / 60).toFixed(2))} minutes.`}</p>
     <p className="mt-2 text-xs text-moss">Selected range: {monitoringTime(history.start, true)} to {monitoringTime(history.end, true)} MYT</p>
-    {first < 0 ? <p className="py-8 text-sm text-moss">No stored readings in this range.</p> : <>
+    {!activity ? <p role="status" className="monitor-notice mt-4">Activity history update required. Run the updated web/sql/alerts_history.sql in Supabase SQL Editor, then refresh this dashboard.</p> : !hasReadings ? <p className="py-8 text-sm text-moss">No stored readings in this range.</p> : <>
       {(["movement_samples", "rain_samples"] as const).map((key) => <div key={key} className="mt-5">
-        <div className="mb-2 flex flex-wrap justify-between gap-2 text-sm"><span>{key === "movement_samples" ? "Movement" : "Rain detected"}</span><span className="text-moss">{history.points.reduce((n, p) => n + p[key], 0).toLocaleString()} positive samples</span></div>
-        <svg viewBox="0 0 720 30" preserveAspectRatio="none" className="h-16 w-full" role="img" aria-label={`${key === "movement_samples" ? "Movement" : "Rain"} detections from ${monitoringTime(start)} to ${monitoringTime(end)} MYT. Counts are samples, not distinct events.`}>
-          {points.map((p, i) => <rect key={p.time} x={i * cellWidth + gap / 2} y={p[key] ? 2 : 12}
-            width={cellWidth - gap} height={p[key] ? 26 : 8} rx="1"
+        <div className="mb-2 flex flex-wrap justify-between gap-2 text-sm"><span>{key === "movement_samples" ? "Movement" : "Rain detected"}</span><span className="text-moss">{points.reduce((n, p) => n + p[key], 0).toLocaleString()} positive samples</span></div>
+        <div className="overflow-x-auto pb-2" tabIndex={0} role="region" aria-label={`${key === "movement_samples" ? "Movement" : "Rain"} timeline. Scroll horizontally to view all buckets.`}>
+        <svg width={stripWidth} height="48" viewBox={`0 0 ${stripWidth} 48`} className="block max-w-none" role="img" aria-label={`${key === "movement_samples" ? "Movement" : "Rain"} detections from ${monitoringTime(activity.start)} to ${monitoringTime(activity.end)} MYT. Counts are samples, not distinct events.`}>
+          {points.map((p, i) => <rect key={p.time} x={i * cellWidth + (cellWidth - barWidth) / 2} y={p[key] ? 2 : 18}
+            width={barWidth} height={p[key] ? 44 : 12} rx="1"
             fill={!p.samples ? "transparent" : p[key] ? "#367849" : "#dce3d7"}>
             <title>{monitoringTime(p.time)} MYT: {p[key]} positive / {p.samples} samples</title>
           </rect>)}
         </svg>
+        </div>
       </div>)}
-      <div className="mt-2 flex flex-wrap justify-between gap-2 text-xs text-moss"><span>{monitoringTime(start, true)}</span><span>{monitoringTime(end, true)} MYT</span></div>
+      <p className="mt-2 text-xs text-moss">Displayed period: {monitoringTime(activity.start, true)} to {monitoringTime(activity.end, true)} MYT</p>
     </>}
     <p className="mt-4 text-xs text-moss">Consecutive positive samples can belong to one event. Counts are not individual animals, visitors or rainfall amounts.</p>
   </section>;

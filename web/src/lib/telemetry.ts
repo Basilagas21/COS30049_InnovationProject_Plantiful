@@ -48,11 +48,19 @@ export type HistoryPoint = {
   movement_samples: number;
   rain_samples: number;
 };
+export type ActivityHistory = {
+  start: string;
+  end: string;
+  bucket_seconds: number;
+  points: Pick<HistoryPoint, "time" | "samples" | "movement_samples" | "rain_samples">[];
+};
 export type TelemetryHistory = {
   start: string;
   end: string;
   bucket_seconds: number;
   points: HistoryPoint[];
+  // Optional while an existing deployment still has the previous SQL function.
+  activity?: ActivityHistory;
 };
 
 export function rangeStart(range: TelemetryRange, now: number): string | null {

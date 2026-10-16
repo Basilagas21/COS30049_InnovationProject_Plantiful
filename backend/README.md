@@ -46,7 +46,25 @@ backend/
    1. `supabase/migrations/001_schema.sql` — tables (fresh project only).
    2. `supabase/migrations/apply_project.sql` — everything else: RLS policies, schema backfills, workflow triggers, photo visibility, storage-bucket policies, the botanist approval gate, the private `reports` bucket, and admin role management. Idempotent — safe to re-run any time.
 
-   The individual `002`–`009` files it consolidates are kept for reference in `migrations/applied/` — never run them individually.
+    The individual `002`–`011` files it consolidates are kept for reference in `migrations/applied/` — never run them individually. Re-run the current consolidated file on an existing project before using offline-edit conflict handling: it updates `stamp_reviewer` to clear previous officer review when an owner resubmits an edited approved record. Confirm the live trigger has this change; otherwise such updates fail RLS. The local app keeps conflicts pending until resolved. Because `backend/supabase/` is gitignored, the equivalent targeted SQL is recorded below for handover (apply it only after the base schema and RLS migrations):
+
+    ```sql
+    create or replace function public.stamp_reviewer()
+    returns trigger language plpgsql security definer set search_path = '' as $$
+    begin
+      if new.approval_status is distinct from old.approval_status then
+        if new.approval_status = 'pending' and new.botanist_id = auth.uid() then
+          new.reviewed_by := null;
+          new.reviewed_at := null;
+        else
+          new.reviewed_by := auth.uid();
+          new.reviewed_at := now();
+        end if;
+      end if;
+      return new;
+    end;
+    $$;
+    ```
 
 4. **Enable auth** (issue #3): email/password provider, then run `seed.sql` to promote the officer and admin users (set your real emails in its two `update` statements first).
 5. **Storage buckets** (`record-photos`, `species-photos`, `reports`) are created and policy-configured by `apply_project.sql` — the `reports` bucket is deliberately private (`public = false`) so officer CSVs with sensitive-species GPS stay behind RLS.

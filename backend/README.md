@@ -7,12 +7,13 @@ Supabase-backed backend for Plantiful. Owns the central database (PostgreSQL), a
 ```
 backend/
 ├── README.md
-├── .env.example              ← shared env template (URL + anon + service_role keys)
+├── .env.example              ← shared env template (URL + public/anon + service/secret keys)
 ├── supabase/
 │   ├── migrations/           ← schema, RLS policies, approval trigger (DDL)
 │   └── seed.sql              ← seed officer/admin users and role assignments
 └── scripts/
-    └── verify_public_write_block.sql   ← R7 check: anon writes must fail
+    ├── verify_public_write_block.sql   ← R7 check: anon writes must fail
+    └── verify_record_photo_write.sql   ← storage write-path check before device sync
 ```
 
 ## Tech stack
@@ -29,7 +30,7 @@ backend/
 ## Prerequisites
 
 - A Supabase account and a new project named `plantiful`.
-- The project URL and keys (`anon` for clients, `service_role` for trusted scripts).
+- The project URL and keys from Dashboard > Project Settings > API Keys. The public key is `anon` (older projects) or `sb_publishable_…` (newer projects) and is safe for clients; the secret key is `service_role` (older) or `sb_secret_…` (newer) and is for trusted scripts only.
 - [Supabase CLI](https://supabase.com/docs/guides/cli) (optional, for pushing migrations).
 
 ## Setup

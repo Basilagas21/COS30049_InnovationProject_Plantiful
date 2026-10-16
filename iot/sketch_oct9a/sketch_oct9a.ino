@@ -31,9 +31,9 @@ DHT dht(DHT_PIN, DHT_TYPE);
 // If a percentage moves the wrong way, swap that sensor's dry and wet values.
 // ==========================================
 const int SOIL_DRY = 4095;
-const int SOIL_WET = 1750;
+const int SOIL_WET = 1650;
 const int RAIN_DRY = 4095;
-const int RAIN_WET = 2500;
+const int RAIN_WET = 2200;
 
 // STATUS THRESHOLDS (percent)
 const int SOIL_DRY_BELOW   = 30;  // below this = DRY

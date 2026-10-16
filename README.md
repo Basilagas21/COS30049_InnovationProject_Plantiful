@@ -13,7 +13,7 @@
 
 ## Overview
 
-Plantiful is an integrated mobile and web platform that streamlines biodiversity documentation for Sarawak Forestry Corporation (SFC) at Niah National Park. Botanists scan QR-tagged plants and record species data offline in the field, and conservation officers manage, review, and publish that data through a centralised web knowledge system. An IoT monitoring layer — currently a simulated sensor feed — records environmental conditions around monitored field sites and raises alerts that conservation officers review in the web dashboard.
+Plantiful is an integrated mobile and web platform that streamlines biodiversity documentation for Sarawak Forestry Corporation (SFC) at Niah National Park. Botanists scan QR-tagged plants and record species data offline in the field, and conservation officers manage, review, and publish that data through a centralised web knowledge system. An IoT monitoring layer records environmental conditions around monitored field sites and raises alerts that conservation officers review in the web dashboard. It can be fed either by a simulated publisher or by a real ESP32 sensor node over USB.
 
 **Industry partner:** NeuonAI (SFC's commercialisation partner)
 
@@ -36,7 +36,7 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 | Web | React / Next.js + Tailwind |
 | Backend & DB | Supabase (PostgreSQL, auth, storage, auto-generated APIs) |
 | Offline storage | SQLite (on-device) |
-| IoT | Python sensor simulator + threat-rule evaluator → Supabase (`sensors`, `sensor_readings`, `alerts`) → officer alert dashboard |
+| IoT | ESP32 sensor node (DHT11/PIR/soil/rain) → USB bridge or Python simulator → threat-rule evaluator → Supabase (`sensors`, `sensor_readings`, `alerts`) → officer alert dashboard |
 | Security testing | OWASP ZAP |
 | Version control | Git + GitHub |
 | Hosting | Vercel / Render + Supabase |
@@ -81,9 +81,9 @@ COS30049_InnovationProject_Plantiful/
 │   └── src/app/           ← App Router pages (explore, species, map, records, reports, alerts, profile)
 ├── backend/
 │   └── supabase/
-│       ├── migrations/    ← 001_schema.sql + apply_project.sql (consolidated, idempotent); applied/ holds the 002–009 history
+│       ├── migrations/    ← 001_schema.sql + apply_project.sql (consolidated, idempotent); applied/ holds the 002–011 history
 │       └── seed.sql       ← assigns officer/admin roles by email + sample species catalogue
-├── iot/                   ← Python sensor simulator + threat-rule evaluator (writes alerts to Supabase)
+├── iot/                   ← ESP32 firmware, USB bridge, simulated publisher + threat-rule evaluator (writes to Supabase)
 ├── Docs/
 │   ├── Assets/            ← logo, diagrams, images
 │   ├── Reports/           ← proposal, final report
@@ -102,7 +102,7 @@ COS30049_InnovationProject_Plantiful/
 
 ### 1. Configure environment
 
-Create these two files (both are git-ignored) with the Supabase Project URL and anon key. These are only used on the client and are safe to expose. Values come from Supabase Dashboard > Project Settings > API.
+Create these two files (both are git-ignored) with the Supabase Project URL and anon/publishable key. These are only used on the client and are safe to expose. Values come from Supabase Dashboard > Project Settings > API Keys (the project URL is shown at the top of that page; the public key may be labelled `anon` or, on newer projects, `sb_publishable_…`).
 
 `mobile/.env`:
 
@@ -163,12 +163,32 @@ Scan the QR code shown by Expo with Expo Go on your phone, or press `a` for an A
 
 ### 6. Run the IoT monitor (optional demo)
 
+Two ways to feed the same tables and dashboard: a simulator (no hardware) or a real ESP32 node over USB.
+
+**Simulator (no hardware):**
+
 ```
 python iot/publisher.py --once
 python iot/evaluate.py
 ```
 
-The publisher registers simulated sensors and pushes synthetic readings; the evaluator applies threat rules and raises alerts. Officers review the output at `/alerts` in the web app. There is no physical hardware — details in [`iot/README.md`](iot/README.md).
+The publisher registers simulated sensors and pushes synthetic readings; the evaluator applies threat rules and raises alerts.
+
+**Real ESP32 node (USB):**
+
+1. Wire the node and flash `iot/sketch_oct9a/sketch_oct9a.ino` (Arduino IDE, board ESP32 Dev Module). It prints a QA/QC table plus one `DATA {json}` line per reading at 115200 baud.
+2. Close the Arduino Serial Monitor, then in a PowerShell terminal set the credentials from Project Settings > API Keys (use the secret key — `service_role`, or `sb_secret_…` on newer projects):
+
+```
+$env:SUPABASE_URL = "https://<project-ref>.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY = "<secret key>"
+python -m pip install -r iot/requirements.txt
+python iot/bridge.py --port COM5
+```
+
+The bridge registers the node's sensor, inserts each reading, and raises heat/humidity/movement alerts immediately. The secret key stays on this host only — never in the sketch, mobile app, or web client.
+
+**Dashboard:** officers review alerts and the latest reading per sensor at `/alerts` in the web app. That page is server-rendered and fetches on load, so **refresh it** to see new data (there is no realtime push). Details in [`iot/README.md`](iot/README.md).
 
 ### Checks
 

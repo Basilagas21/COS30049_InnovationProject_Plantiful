@@ -41,7 +41,7 @@ const int SOIL_MOIST_BELOW = 60;  // below this = MOIST, otherwise WET
 const int RAIN_WET_ABOVE   = 20;  // above this = WET
 
 // TIMING SETTINGS
-const unsigned long REPORT_INTERVAL = 4000;
+const unsigned long REPORT_INTERVAL = 2000;
 const unsigned long PIR_WARMUP = 60000;
 
 // PIR VARIABLES

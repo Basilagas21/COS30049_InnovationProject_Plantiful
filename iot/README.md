@@ -24,6 +24,8 @@ iot/
 ├── publisher.py         ← simulated sensor registration + reading feed
 ├── evaluate.py          ← threat-rule evaluator, writes rows to alerts
 ├── bridge.py            ← USB-serial → Supabase bridge for the real node
+├── requirements.txt     ← pyserial (only external dependency, used by the bridge)
+├── test_pipeline.py     ← offline contract tests (no hardware or Supabase)
 └── sketch_oct9a/
     └── sketch_oct9a.ino ← ESP32 firmware (DHT11 + PIR + soil + rain + LED)
 ```
@@ -133,12 +135,14 @@ the hardware node registers its own on the first bridge run:
 ## Setup
 
 Set the Supabase credentials in your shell first (values from Supabase Dashboard >
-Project Settings > API; see `backend/.env.example`). The scripts exit with a clear
-message if either is missing.
+Project Settings > API Keys; see `backend/.env.example`). The scripts exit with a
+clear message if either is missing. The service key is labelled `service_role` on
+older projects or `sb_secret_…` on newer ones — either works as
+`SUPABASE_SERVICE_ROLE_KEY`.
 
 ```powershell
 $env:SUPABASE_URL = "https://<project-ref>.supabase.co"
-$env:SUPABASE_SERVICE_ROLE_KEY = "<service-role key>"
+$env:SUPABASE_SERVICE_ROLE_KEY = "<service-role / sb_secret_ key>"
 ```
 
 Then apply the schema and policies per the root README so the `sensors`,
@@ -227,8 +231,9 @@ are a natural next addition.
 
 Officers see the output at `/alerts` in the web app: recent alerts, and the
 latest reading per sensor (temperature, humidity, movement, and now soil moisture
-and rain). The page reads with the ordinary signed-in session under the officer
-RLS policies — no service key ever reaches the browser.
+and rain). The page is server-rendered and reads on load — **refresh it** to pick
+up new readings (there is no realtime push). It reads with the ordinary signed-in
+session under the officer RLS policies — no service key ever reaches the browser.
 
 ## Path to MQTT (and real deployment)
 

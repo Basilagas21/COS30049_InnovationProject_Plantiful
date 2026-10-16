@@ -15,8 +15,8 @@ of the form:
           "movement":false,"soil_moisture":41,"rain":false,"uptime_ms":12345}
 
 Only the "DATA " lines are parsed; everything else on the serial port is
-ignored, so the QA/QC table can be watched in the Arduino serial monitor at the
-same time.
+ignored. Close Arduino Serial Monitor before running this script: only one
+process can normally own the COM port at a time.
 
 Requires pyserial (pip install pyserial).
 
@@ -31,6 +31,7 @@ import sys
 from datetime import datetime, timezone
 
 from supabase_rest import SupabaseError, SupabaseRest
+from evaluate import evaluate_live_reading
 
 try:
     import serial
@@ -72,6 +73,29 @@ def build_row(payload, sensor_id, recorded_at):
     for field in READING_FIELDS:
         row[field] = payload.get(field)
     return row
+
+
+def process_line(client, raw, sensor_id, recorded_at):
+    """Insert one valid node reading, then raise immediate alerts if needed."""
+    payload = parse_line(raw)
+    if payload is None:
+        return None
+    if payload.get("sensor_id", sensor_id) != sensor_id:
+        raise ValueError("Node sensor_id does not match the registered sensor")
+    # The node has no trusted clock; never use a timestamp supplied by serial.
+    row = build_row(payload, sensor_id, recorded_at)
+    if any(value is not None and not isinstance(value, (int, float, bool)) for
+           field, value in row.items() if field in READING_FIELDS):
+        raise ValueError("Invalid sensor reading type")
+    client.insert("sensor_readings", [row])
+    try:
+        alerts = evaluate_live_reading(client, row)
+    except SupabaseError as exc:
+        # The reading has already been persisted; a later evaluate.py run can
+        # retry the rule without losing the measurement.
+        print(f"Alert evaluation failed ({exc}); retry with python iot/evaluate.py", file=sys.stderr)
+        alerts = []
+    return row, alerts
 
 
 def describe(row):
@@ -135,18 +159,15 @@ def main():
     try:
         with link:
             while True:
-                payload = parse_line(link.readline())
-                if payload is None:
+                recorded_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+                try:
+                    result = process_line(client, link.readline(), args.sensor_id, recorded_at)
+                except ValueError as exc:
+                    print(f"Rejected node line: {exc}", file=sys.stderr)
                     continue
-
-                sensor_id = payload.get("sensor_id") or args.sensor_id
-                recorded_at = payload.get("recorded_at") or datetime.now(
-                    timezone.utc
-                ).isoformat(timespec="seconds")
-                row = build_row(payload, sensor_id, recorded_at)
-
-                client.insert("sensor_readings", [row])
-                print(f"{recorded_at} {describe(row)}")
+                if result is not None:
+                    row, alerts = result
+                    print(f"{recorded_at} {describe(row)} alerts={len(alerts)}", flush=True)
     except KeyboardInterrupt:
         print("Stopped.")
     except serial.SerialException as exc:

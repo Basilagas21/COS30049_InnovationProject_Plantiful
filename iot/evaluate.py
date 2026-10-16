@@ -40,12 +40,16 @@ def evaluate_readings(readings, silent_after_minutes):
         temperature = row.get("temperature")
         if temperature is not None and temperature >= HEAT_HIGH:
             severity = "critical" if temperature >= HEAT_CRITICAL else "high"
-            findings.setdefault((sensor_id, "heat_stress"), (severity, f"{temperature}°C"))
+            key = (sensor_id, "heat_stress")
+            if key not in findings or (severity == "critical" and findings[key][0] != "critical"):
+                findings[key] = (severity, f"{temperature}°C")
 
         humidity = row.get("humidity")
         if humidity is not None and humidity <= DROUGHT_MEDIUM:
             severity = "high" if humidity <= DROUGHT_HIGH else "medium"
-            findings.setdefault((sensor_id, "drought_stress"), (severity, f"{humidity}% RH"))
+            key = (sensor_id, "drought_stress")
+            if key not in findings or (severity == "high" and findings[key][0] != "high"):
+                findings[key] = (severity, f"{humidity}% RH")
 
         if row.get("movement"):
             findings.setdefault((sensor_id, "unusual_movement"), ("medium", "movement detected"))
@@ -57,6 +61,34 @@ def evaluate_readings(readings, silent_after_minutes):
             findings.setdefault((sensor_id, "sensor_silent"), ("high", f"silent for {stale} min"))
 
     return findings, latest
+
+
+def evaluate_live_reading(client, row, cooldown_hours=6.0):
+    """Check a newly inserted hardware reading immediately for active threats.
+
+    The periodic evaluator remains useful for sensor_silent (no new reading can
+    trigger this function) and for retrying a failed alert insertion.
+    """
+    findings, _ = evaluate_readings([row], silent_after_minutes=30)
+    sensor_id = row["sensor_id"]
+    cutoff = (now_utc() - timedelta(hours=cooldown_hours)).isoformat(timespec="seconds")
+    recent = client.select("alerts", params={
+        "select": "alert_type,created_at",
+        "sensor_id": f"eq.{sensor_id}",
+        "created_at": f"gte.{cutoff}",
+        "order": "created_at.desc",
+        "limit": "100",
+    }) if findings else []
+    active = {alert["alert_type"] for alert in recent}
+    new_alerts = [{
+        "sensor_id": sensor_id,
+        "alert_type": kind,
+        "severity": severity,
+        "resolved": False,
+    } for (_, kind), (severity, _) in findings.items() if kind not in active]
+    if new_alerts:
+        client.insert("alerts", new_alerts)
+    return new_alerts
 
 
 def main():
@@ -92,10 +124,6 @@ def main():
             "limit": "500",
         },
     )
-
-    if not readings:
-        print(f"No readings in the last {args.window_hours:g}h — run python iot/publisher.py first.")
-        return
 
     findings, latest = evaluate_readings(readings, args.silent_after_minutes)
 

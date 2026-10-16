@@ -30,7 +30,8 @@ iot/
 
 The simulator uses no third-party Python dependencies — only `urllib`, `json`,
 `os`, `time`, `random`, `argparse`, and `datetime` from the standard library. The
-USB bridge is the one exception and needs `pyserial`.
+USB bridge is the one exception and needs `pyserial` (`python -m pip install -r
+iot/requirements.txt`).
 
 ## Hardware node
 
@@ -183,7 +184,22 @@ inside the alert cooldown).
    python iot/bridge.py --port COM5
    ```
 
-4. Evaluate as above: `python iot/evaluate.py`.
+4. The bridge checks each successfully stored reading immediately for heat,
+   low humidity, and movement, inserting alerts outside the cooldown. Run
+   `python iot/evaluate.py` periodically as well to detect silent sensors and
+   retry alert checks if a previous online evaluation failed. The two scripts
+   cannot detect silence from incoming readings alone.
+
+The bridge exclusively owns the COM port: close Arduino Serial Monitor before
+running it. The node has no GPS or clock; the bridge uses host UTC time and
+registers the sensor's fixed location. Pass `--gps-lat` and `--gps-lng` for its
+actual installation location rather than using the demonstration defaults.
+
+Run the local contract checks without hardware or Supabase:
+
+```
+python -m unittest discover -s iot -p 'test_*.py'
+```
 
 ## Threat rules
 

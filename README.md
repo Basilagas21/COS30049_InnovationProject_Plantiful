@@ -128,7 +128,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 4. Run `backend/supabase/seed.sql` to assign officer and admin roles by email — edit its two `update` statements to your own addresses first — and to load the sample species catalogue.
 5. Invite your own test users in Dashboard > Authentication > Users (dashboard-created users are confirmed automatically) — or register through the app; if registration says "Email not confirmed", either turn off "Confirm sign up" under Authentication > Emails (requires Admin project role) or run the one-off `update auth.users set email_confirmed_at = now() …` snippet for that account.
 6. Verify the setup with the scripts under `backend/scripts/`: `verify_public_write_block.sql` should show anonymous writes rejected and anonymous reads limited to approved and published data, and `verify_record_photo_write.sql` must report `PASS` on every line before the mobile Sync now button is used.
-7. For the IoT monitoring dashboard, run `web/sql/alerts_history.sql` once in the SQL Editor (re-runnable; adds the read path used by `/alerts` — no service key, existing RLS still applies).
+7. For the IoT monitoring dashboard, run `backend/supabase/migrations/012_monitoring_history.sql` once in the SQL Editor (re-runnable; adds the read path used by `/alerts` — no service key, existing RLS still applies).
 
 ### 3. Run the web app
 
@@ -189,7 +189,7 @@ python iot/bridge.py --port COM5
 
 The bridge registers the node's sensor, inserts each reading, and raises heat/humidity/movement alerts immediately. The secret key stays on this host only — never in the sketch, mobile app, or web client.
 
-**Dashboard:** officers review alerts and the latest reading per sensor at `/alerts` in the web app. It shows per-sensor status cards, environmental trend charts, movement/rain event strips, and an alert timeline with a 1d/5d/7d/all range selector; live readings and alerts auto-refresh every 10s and charts every 60s (paused when the tab is hidden), or use **Refresh now**. Environmental history is served by a database function, so run `web/sql/alerts_history.sql` once in the Supabase SQL Editor (re-runnable; no service key needed) or the charts report that setup is required. Details in [`iot/README.md`](iot/README.md).
+**Dashboard:** officers review alerts and the latest reading per sensor at `/alerts` in the web app. It shows per-sensor status cards, environmental trend charts, movement/rain event strips, and an alert timeline with a 1d/5d/7d/all range selector; live readings and alerts auto-refresh every 10s and charts every 60s (paused when the tab is hidden), or use **Refresh now**. Environmental history is served by a database function, so run `backend/supabase/migrations/012_monitoring_history.sql` once in the Supabase SQL Editor (re-runnable; no service key needed) or the charts report that setup is required. Details in [`iot/README.md`](iot/README.md).
 
 ### Checks
 

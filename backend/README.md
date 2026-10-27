@@ -9,11 +9,12 @@ backend/
 ├── README.md
 ├── .env.example              ← shared env template (URL + public/anon + service/secret keys)
 ├── supabase/
-│   ├── migrations/           ← schema, RLS policies, approval trigger (DDL)
+│   ├── migrations/           ← schema, RLS policies, approval trigger, monitoring read path (DDL)
 │   └── seed.sql              ← seed officer/admin users and role assignments
 └── scripts/
     ├── verify_public_write_block.sql   ← R7 check: anon writes must fail
-    └── verify_record_photo_write.sql   ← storage write-path check before device sync
+    ├── verify_record_photo_write.sql   ← storage write-path check before device sync
+    └── verify_alerts_history.sql       ← monitoring history consistency check
 ```
 
 ## Tech stack

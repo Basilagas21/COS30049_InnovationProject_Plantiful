@@ -38,7 +38,7 @@ export async function GET(request: Request) {
       if (error) {
         const missing = error.code === "PGRST202" || error.code === "42883";
         return json({ error: missing
-          ? "History setup required: run web/sql/alerts_history.sql in Supabase SQL Editor, then refresh. Live readings remain available."
+          ? "History setup required: run backend/supabase/migrations/012_monitoring_history.sql in Supabase SQL Editor, then refresh. Live readings remain available."
           : "Could not load history. Retry and check the database function and connection." }, 503);
       }
       return json(data);

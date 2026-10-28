@@ -99,6 +99,7 @@ export default async function RecordDetailPage({
                           src={qrDataUrl}
                           alt={`QR for ${record.qrCode}`}
                           className="h-24 w-24 rounded-lg border border-pine/10 bg-white p-1"
+                          style={{ backgroundColor: "#ffffff" }}
                         />
                         <p className="text-xs text-moss">Scan to view tag ID</p>
                       </>

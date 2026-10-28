@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import type { UserRole } from "@/lib/auth";
+import { ThemeControl } from "@/components/theme-control";
 
 const roleLabels: Record<UserRole, string> = {
   botanist: "Botanist",
@@ -141,6 +142,10 @@ export default function ProfilePage() {
           </span>
           <span className="text-emerald">→</span>
         </Link>
+
+        <div className="mt-6 border-t border-pine/10 pt-6">
+          <ThemeControl />
+        </div>
 
         <div className="mt-6 border-t border-pine/10 pt-6">
           <p className="text-sm font-medium text-moss">Sign out</p>

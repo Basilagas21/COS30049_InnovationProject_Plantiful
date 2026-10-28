@@ -12,11 +12,13 @@ import {
   View,
 } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
-import { colors, surfaces } from '@/theme';
+import { useThemeStyles } from '@/lib/theme';
+import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { BotanicalBanner } from '@/components/botanical-banner';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 
 export default function RegisterScreen() {
+  const { colors, styles } = useThemeStyles(createStyles);
   const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -171,7 +173,7 @@ export default function RegisterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
   flex: {
     flex: 1,
     backgroundColor: colors.cream,

@@ -2,11 +2,20 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable } from '@/lib/interactionLog';
-import { colors, surfaces } from '@/theme';
+import { useTheme, useThemeStyles, type ThemePreference } from '@/lib/theme';
+import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { countUnsyncedRecords, deleteLocalRecord, getLocalRecords, openDatabase } from '@/db';
+
+const themeOptions: { value: ThemePreference; label: string }[] = [
+  { value: 'system', label: 'System' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+];
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const { preference, setPreference } = useTheme();
+  const { colors, styles } = useThemeStyles(createStyles);
 
   async function clearAll() {
     const db = await openDatabase();
@@ -31,6 +40,31 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.appearanceBox}>
+        <Text style={styles.sectionTitle}>Appearance</Text>
+        <Text style={styles.hint}>
+          Choose a light or dark theme, or follow this device.
+        </Text>
+        <View style={styles.segment}>
+          {themeOptions.map((option) => {
+            const active = preference === option.value;
+            return (
+              <Pressable
+                key={option.value}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: active }}
+                onPress={() => setPreference(option.value)}
+                style={[styles.segmentButton, active && styles.segmentButtonActive]}
+              >
+                <Text style={[styles.segmentText, active && styles.segmentTextActive]}>
+                  {option.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
       <View style={styles.aboutBox}>
         <Text style={styles.aboutTitle}>Plantiful</Text>
         <Text style={styles.aboutText}>
@@ -53,12 +87,52 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,
     padding: 16,
     gap: 12,
+  },
+  appearanceBox: {
+    ...surfaces.card,
+    gap: 10,
+  },
+  sectionTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.pine,
+  },
+  hint: {
+    fontSize: 13,
+    color: colors.muted,
+    lineHeight: 19,
+  },
+  segment: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+  },
+  segmentButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.cream,
+  },
+  segmentButtonActive: {
+    borderColor: colors.emerald,
+    backgroundColor: colors.emerald,
+  },
+  segmentText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.pine,
+  },
+  segmentTextActive: {
+    color: colors.white,
   },
   row: {
     flexDirection: 'row',

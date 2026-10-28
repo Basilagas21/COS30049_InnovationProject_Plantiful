@@ -1,22 +1,25 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import { NavLogger } from '@/lib/interactionLog';
 import { RoleProvider, useRole } from '@/lib/role';
-import { colors } from '@/theme';
+import { ThemeProvider, useTheme } from '@/lib/theme';
 
 export default function RootLayout() {
   return (
-    <RoleProvider>
-      <RootNavigator />
-    </RoleProvider>
+    <ThemeProvider>
+      <RoleProvider>
+        <RootNavigator />
+      </RoleProvider>
+    </ThemeProvider>
   );
 }
 
 function RootNavigator() {
   const { loading: roleLoading, canCapture } = useRole();
+  const { colors, scheme } = useTheme();
   const [session, setSession] = useState<unknown>(null);
   const [loading, setLoading] = useState(() => Boolean(supabase));
 
@@ -44,7 +47,7 @@ function RootNavigator() {
 
   if (loading || roleLoading) {
     return (
-      <View style={styles.splash}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.cream }}>
         <ActivityIndicator color={colors.emerald} size="large" />
       </View>
     );
@@ -54,7 +57,7 @@ function RootNavigator() {
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <NavLogger />
       <Stack screenOptions={{
         headerShown: false,
@@ -85,12 +88,3 @@ function RootNavigator() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  splash: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.cream,
-  },
-});

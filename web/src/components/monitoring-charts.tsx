@@ -12,9 +12,9 @@ export function monitoringTime(value: string, short = false) {
 
 type Metric = "temperature" | "humidity" | "soil_moisture";
 const METRICS = {
-  temperature: { title: "Temperature", unit: "°C", color: "#bb642c", thresholds: [36, 40] },
-  humidity: { title: "Air humidity", unit: "% RH", color: "#327c92", thresholds: [25, 40] },
-  soil_moisture: { title: "Soil moisture", unit: "% relative", color: "#367849", thresholds: [] },
+  temperature: { title: "Temperature", unit: "°C", color: "var(--chart-temperature)", thresholds: [36, 40] },
+  humidity: { title: "Air humidity", unit: "% RH", color: "var(--chart-humidity)", thresholds: [25, 40] },
+  soil_moisture: { title: "Soil moisture", unit: "% relative", color: "var(--chart-soil)", thresholds: [] },
 };
 
 export function TrendChart({ history, metric }: { history: TelemetryHistory; metric: Metric }) {
@@ -50,12 +50,12 @@ export function TrendChart({ history, metric }: { history: TelemetryHistory; met
         <title id={`${id}-title`}>{title} history</title>
         <desc id={`${id}-desc`}>Average line with min/max whiskers. Missing buckets break the line. Values range from {Math.min(...values).toFixed(1)} to {Math.max(...values).toFixed(1)} {unit}. Times are MYT. A data table follows the charts.</desc>
         {[low, (high + low) / 2, high].map((v) => <g key={v}>
-          <line x1="43" x2="513" y1={y(v)} y2={y(v)} stroke="#0c342c18" strokeDasharray="3 5" />
-          <text x="35" y={y(v) + 4} textAnchor="end" fontSize="11" fill="#6b7568">{v.toFixed(0)}</text>
+          <line x1="43" x2="513" y1={y(v)} y2={y(v)} stroke="var(--chart-grid)" strokeDasharray="3 5" />
+          <text x="35" y={y(v) + 4} textAnchor="end" fontSize="11" fill="var(--chart-label)">{v.toFixed(0)}</text>
         </g>)}
         {thresholds.map((v) => <g key={v}>
-          <line x1="43" x2="513" y1={y(v)} y2={y(v)} stroke="#b54a3b" strokeOpacity=".55" strokeDasharray="5 5" />
-          <text x="510" y={y(v) - 4} textAnchor="end" fontSize="10" fill="#b54a3b">Rule: {v}</text>
+          <line x1="43" x2="513" y1={y(v)} y2={y(v)} stroke="var(--danger)" strokeOpacity=".55" strokeDasharray="5 5" />
+          <text x="510" y={y(v) - 4} textAnchor="end" fontSize="10" fill="var(--danger)">Rule: {v}</text>
         </g>)}
         {history.points.filter((p) => p[metric] != null).map((p) => <g key={p.time}>
           <title>{monitoringTime(p.time)} MYT · average {p[metric]?.toFixed(1)} · min {Number(p[minKey]).toFixed(1)} · max {Number(p[maxKey]).toFixed(1)} {unit}</title>
@@ -63,8 +63,8 @@ export function TrendChart({ history, metric }: { history: TelemetryHistory; met
           <circle cx={x(p)} cy={y(p[metric]!)} r="2.3" fill={color} />
         </g>)}
         <path d={path} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
-        <text x="43" y="201" fontSize="10" fill="#6b7568">{monitoringTime(history.start, true)}</text>
-        <text x="513" y="201" textAnchor="end" fontSize="10" fill="#6b7568">{monitoringTime(history.end, true)}</text>
+        <text x="43" y="201" fontSize="10" fill="var(--chart-label)">{monitoringTime(history.start, true)}</text>
+        <text x="513" y="201" textAnchor="end" fontSize="10" fill="var(--chart-label)">{monitoringTime(history.end, true)}</text>
       </svg>}
     <p className="text-xs leading-relaxed text-moss">{metric === "soil_moisture" ? "Relative probe calibration; not laboratory soil water content." : metric === "humidity" ? "Low air humidity drives the drought-stress rule; it is not proof of soil drought." : "Heat warning ≥36 °C; critical ≥40 °C."}</p>
   </section>;
@@ -99,7 +99,7 @@ export function EventStrips({ history }: { history: TelemetryHistory }) {
         <svg width={stripWidth} height="48" viewBox={`0 0 ${stripWidth} 48`} className="block max-w-none" role="img" aria-label={`${key === "movement_samples" ? "Movement" : "Rain"} detections from ${monitoringTime(activity.start)} to ${monitoringTime(activity.end)} MYT. Counts are samples, not distinct events.`}>
           {points.map((p, i) => <rect key={p.time} x={i * cellWidth + (cellWidth - barWidth) / 2} y={p[key] ? 2 : 18}
             width={barWidth} height={p[key] ? 44 : 12} rx="1"
-            fill={!p.samples ? "transparent" : p[key] ? "#367849" : "#dce3d7"}>
+            fill={!p.samples ? "transparent" : p[key] ? "var(--chart-progress)" : "var(--chart-empty)"}>
             <title>{monitoringTime(p.time)} MYT: {p[key]} positive / {p.samples} samples</title>
           </rect>)}
         </svg>

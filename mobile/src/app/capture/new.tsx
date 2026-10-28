@@ -13,7 +13,8 @@ import {
   View,
 } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
-import { colors, surfaces } from '@/theme';
+import { useThemeStyles } from '@/lib/theme';
+import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import {
   openDatabase,
   insertLocalRecord,
@@ -29,6 +30,7 @@ import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/li
 import { generateTag, isValidTag, normalizeTag, TAG_LABEL } from '@/lib/tags';
 
 export default function NewCaptureScreen() {
+  const { colors, styles } = useThemeStyles(createStyles);
   const router = useRouter();
   const params = useLocalSearchParams<{ qr?: string }>();
   const qr = typeof params.qr === 'string' ? params.qr : undefined;
@@ -229,7 +231,7 @@ export default function NewCaptureScreen() {
           <>
             <View style={styles.cameraHud}>
               <Pressable style={styles.hudGhost} onPress={() => setStage('form')}>
-                <Ionicons name="close" size={28} color={colors.white} />
+                <Ionicons name="close" size={28} color={colors.onScrim} />
               </Pressable>
               <Pressable
                 style={styles.shutter}
@@ -415,8 +417,8 @@ export default function NewCaptureScreen() {
           <Text style={styles.sectionLabel}>PHOTO</Text>
           {photoUri ? (
             <Pressable style={styles.photoPreviewBtn} onPress={choosePhotoSource}>
-              <Ionicons name="image" size={18} color={colors.pine} />
-              <Text style={styles.ghostButtonText}>Photo attached — replace</Text>
+              <Ionicons name="image" size={18} color={colors.onChartreuse} />
+              <Text style={styles.photoPreviewText}>Photo attached - replace</Text>
             </Pressable>
           ) : (
             <Pressable style={styles.ghostButton} onPress={choosePhotoSource}>
@@ -482,7 +484,7 @@ export default function NewCaptureScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,
@@ -647,6 +649,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingVertical: 12,
   },
+  photoPreviewText: {
+    color: colors.onChartreuse,
+    fontSize: 14,
+    fontWeight: '700',
+  },
   primaryButton: {
     backgroundColor: colors.emerald,
     borderRadius: 24,
@@ -670,7 +677,7 @@ const styles = StyleSheet.create({
   },
   cameraWrap: {
     flex: 1,
-    backgroundColor: colors.pine,
+    backgroundColor: colors.scrim,
   },
   cameraHud: {
     position: 'absolute',
@@ -699,7 +706,7 @@ const styles = StyleSheet.create({
     height: 76,
     borderRadius: 38,
     borderWidth: 4,
-    borderColor: colors.white,
+    borderColor: colors.onScrim,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -707,7 +714,7 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 29,
-    backgroundColor: colors.white,
+    backgroundColor: colors.onScrim,
   },
   shutterBusy: {
     opacity: 0.4,

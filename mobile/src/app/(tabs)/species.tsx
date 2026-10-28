@@ -3,11 +3,13 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Pressable, TextInput } from '@/lib/interactionLog';
-import { colors, surfaces } from '@/theme';
+import { useThemeStyles } from '@/lib/theme';
+import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { BotanicalBanner } from '@/components/botanical-banner';
 import { openDatabase, getSpeciesOptions, type SpeciesOption } from '@/db';
 
 export default function SpeciesReferenceScreen() {
+  const { colors, styles } = useThemeStyles(createStyles);
   const router = useRouter();
   const [species, setSpecies] = useState<SpeciesOption[]>([]);
   const [query, setQuery] = useState('');
@@ -99,7 +101,7 @@ export default function SpeciesReferenceScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,

@@ -3,12 +3,14 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable } from '@/lib/interactionLog';
-import { colors, surfaces } from '@/theme';
+import { useThemeStyles } from '@/lib/theme';
+import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { countUnsyncedRecords, openDatabase } from '@/db';
 import { roleLabel, useRole } from '@/lib/role';
 
 export default function ProfileScreen() {
+  const { colors, styles } = useThemeStyles(createStyles);
   const router = useRouter();
   const { role, canCapture, loading: roleLoading } = useRole();
   const [loading, setLoading] = useState(supabase ? true : false);
@@ -146,7 +148,7 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,

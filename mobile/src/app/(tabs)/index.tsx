@@ -6,7 +6,8 @@ import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Pressable } from '@/lib/interactionLog';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors } from '@/theme';
+import { useThemeStyles } from '@/lib/theme';
+import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { getRecordByTag, importRemoteRecord, logAcceptanceMeasurement, openDatabase } from '@/db';
 import { normalizeTag, TAG_LABEL } from '@/lib/tags';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
@@ -55,6 +56,7 @@ async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promi
 }
 
 export default function CaptureScreen() {
+  const { colors, styles } = useThemeStyles(createStyles);
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { canCapture } = useRole();
@@ -157,7 +159,7 @@ export default function CaptureScreen() {
         accessibilityRole="button"
         accessibilityLabel={torchOn ? 'Turn flashlight off' : 'Turn flashlight on'}
       >
-        <Ionicons name={torchOn ? 'flashlight' : 'flashlight-outline'} size={24} color={colors.white} />
+        <Ionicons name={torchOn ? 'flashlight' : 'flashlight-outline'} size={24} color={colors.onScrim} />
       </Pressable>
 
       <View style={styles.finder} pointerEvents="none">
@@ -225,10 +227,10 @@ export default function CaptureScreen() {
 
 const frameSize = 260;
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.pine,
+    backgroundColor: colors.scrim,
   },
   center: {
     flex: 1,
@@ -283,7 +285,7 @@ const styles = StyleSheet.create({
   bottomLeft: { bottom: 0, left: 0, borderBottomWidth: 4, borderLeftWidth: 4, borderBottomLeftRadius: 12 },
   bottomRight: { bottom: 0, right: 0, borderBottomWidth: 4, borderRightWidth: 4, borderBottomRightRadius: 12 },
   finderLabel: {
-    color: colors.white,
+    color: colors.onScrim,
     fontSize: 12,
     fontWeight: '600',
     textShadowColor: 'rgba(0,0,0,0.4)',
@@ -294,7 +296,9 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     bottom: 16,
-    backgroundColor: 'rgba(255, 253, 238, 0.94)',
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
     borderRadius: 28,
     padding: 20,
     paddingBottom: 28,
@@ -343,7 +347,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ghostButtonText: {
-    color: colors.pine,
+    color: colors.onChartreuse,
     fontSize: 16,
     fontWeight: '600',
   },

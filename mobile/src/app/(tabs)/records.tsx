@@ -3,7 +3,8 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
-import { colors, surfaces } from '@/theme';
+import { useThemeStyles } from '@/lib/theme';
+import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { BotanicalBanner } from '@/components/botanical-banner';
 import {
   deleteLocalRecord,
@@ -23,7 +24,7 @@ const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
   { key: 'conflict', label: 'Conflict' },
 ];
 
-function syncLabel(status: string) {
+function syncLabel(status: string, colors: ThemeColors) {
   switch (status) {
     case 'synced':
       return { text: 'Synced', color: colors.emerald };
@@ -38,6 +39,7 @@ function syncLabel(status: string) {
 
 function RecordThumbnail({ uri, label }: { uri: string | null; label: string }) {
   const [failed, setFailed] = useState(false);
+  const { colors, styles } = useThemeStyles(createStyles);
 
   if (!uri || failed) {
     return (
@@ -59,6 +61,7 @@ function RecordThumbnail({ uri, label }: { uri: string | null; label: string }) 
 }
 
 export default function RecordsScreen() {
+  const { colors, styles } = useThemeStyles(createStyles);
   const router = useRouter();
   const [records, setRecords] = useState<LocalRecordWithPhoto[]>([]);
   const [search, setSearch] = useState('');
@@ -181,7 +184,7 @@ export default function RecordsScreen() {
           </View>
         }
         renderItem={({ item }) => {
-          const pill = syncLabel(item.sync_status);
+          const pill = syncLabel(item.sync_status, colors);
           return (
             <Pressable
               style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
@@ -238,7 +241,7 @@ export default function RecordsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,

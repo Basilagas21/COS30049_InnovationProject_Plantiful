@@ -32,8 +32,8 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 
 | Layer | Technology |
 |---|---|
-| Mobile | React Native (offline-first, QR, GPS, camera) |
-| Web | React / Next.js + Tailwind |
+| Mobile | Expo SDK 58 with React Native 0.88 (offline-first, QR, GPS, camera) |
+| Web | Next.js 16.4.3, React 19 and Tailwind CSS 4 |
 | Backend & DB | Supabase (PostgreSQL, auth, storage, auto-generated APIs) |
 | Offline storage | SQLite (on-device) |
 | IoT | ESP32 sensor node (DHT11/PIR/soil/rain) → USB bridge or Python simulator → threat-rule evaluator → Supabase (`sensors`, `sensor_readings`, `alerts`) → officer alert dashboard |
@@ -85,9 +85,15 @@ COS30049_InnovationProject_Plantiful/
 │       └── seed.sql       ← assigns officer/admin roles by email + sample species catalogue
 ├── iot/                   ← ESP32 firmware, USB bridge, simulated publisher + threat-rule evaluator (writes to Supabase)
 ├── Docs/
-│   ├── Assets/            ← logo, diagrams, images
-│   ├── Reports/           ← proposal, final report
-│   └── Templates/         ← docx + md templates
+│   ├── README.md          ← single documentation index and filing conventions
+│   ├── Assets/            ← shared logo and existing diagram images
+│   ├── Design/            ← design proposals and optional workflows
+│   ├── Guides/            ← deployment and maintenance
+│   ├── Reports/           ← shared reports, Sprint1 and Sprint2 folders
+│   ├── Security/          ← local-only security pack (gitignored)
+│   ├── Templates/         ← reusable docx and md templates
+│   ├── Testing/           ← historical verification records
+│   └── Marking_Rubric.md  ← assessment reference
 ├── .gitignore
 └── README.md
 ```
@@ -195,11 +201,17 @@ The bridge registers the node's sensor, inserts each reading, and raises heat/hu
 
 ```
 cd web && npm run lint && npm run build
-cd mobile && npx tsc --noEmit && npx expo lint
+cd mobile && npx tsc --noEmit && npx expo lint && npm test
+python -m unittest discover -s iot -p "test_*.py"
 ```
 
 ## Docs
 
+- [Documentation index](Docs/README.md)
+- [Sprint 2 plans, backlog and status](Docs/README.md#sprint-2)
+- [Sprint 1 revised report and figures](Docs/README.md#sprint-1)
+- [D-02 physical IoT wiring and editable diagram](Docs/README.md#d-02-physical-build)
+- [Marking rubric](Docs/Marking_Rubric.md)
 - [System Proposal Report](Docs/Reports/System_Proposal_Report.md)
 - [Product Backlog Template](Docs/Templates/01_R_Product_Backlog_Template.md)
-- [Project Proposal Template](Docs/Templates/COS30029 Complete Project_Proposal_Template.md)
+- [Project Proposal Template](Docs/Templates/COS30029%20Complete%20Project_Proposal_Template.md)

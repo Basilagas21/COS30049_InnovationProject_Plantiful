@@ -14,7 +14,8 @@ import {
   View,
 } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
-import { colors, surfaces } from '@/theme';
+import { useThemeStyles } from '@/lib/theme';
+import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import {
   addLocalPhoto,
   deleteLocalPhoto,
@@ -33,6 +34,7 @@ import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
 type PhotoRow = { id: string; local_uri: string };
 
 export default function EditRecordScreen() {
+  const { colors, styles } = useThemeStyles(createStyles);
   const router = useRouter();
   const params = useLocalSearchParams<{ id: string }>();
   const recordId = typeof params.id === 'string' ? params.id : undefined;
@@ -277,7 +279,7 @@ export default function EditRecordScreen() {
         {permission.granted && (
           <View style={styles.cameraHud}>
             <Pressable style={styles.hudGhost} onPress={() => setStage('form')}>
-              <Ionicons name="close" size={28} color={colors.white} />
+              <Ionicons name="close" size={28} color={colors.onScrim} />
             </Pressable>
             <Pressable style={styles.shutter} onPress={takePhoto} disabled={capturing}>
               <View style={[styles.shutterInner, capturing && styles.shutterBusy]} />
@@ -527,7 +529,7 @@ export default function EditRecordScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,
@@ -739,7 +741,7 @@ const styles = StyleSheet.create({
   },
   cameraWrap: {
     flex: 1,
-    backgroundColor: colors.pine,
+    backgroundColor: colors.scrim,
   },
   cameraHud: {
     position: 'absolute',
@@ -768,7 +770,7 @@ const styles = StyleSheet.create({
     height: 76,
     borderRadius: 38,
     borderWidth: 4,
-    borderColor: colors.white,
+    borderColor: colors.onScrim,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -776,7 +778,7 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 29,
-    backgroundColor: colors.white,
+    backgroundColor: colors.onScrim,
   },
   shutterBusy: {
     opacity: 0.4,

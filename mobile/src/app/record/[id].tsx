@@ -4,7 +4,8 @@ import { useCallback, useState } from 'react';
 import { Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable } from '@/lib/interactionLog';
 import QRCode from 'react-native-qrcode-svg';
-import { colors, surfaces } from '@/theme';
+import { useThemeStyles } from '@/lib/theme';
+import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { deleteLocalRecord, getLocalRecord, openDatabase, retryConflictingEdit, type LocalRecordWithPhoto } from '@/db';
 import { supabase } from '@/lib/supabase';
 import { TAG_LABEL } from '@/lib/tags';
@@ -31,7 +32,7 @@ const conflictFields: { key: ObservationKey; label: string }[] = [
   { key: 'notes', label: 'Notes' },
 ];
 
-function syncLabel(status: string) {
+function syncLabel(status: string, colors: ThemeColors) {
   switch (status) {
     case 'synced':
       return { text: 'Synced', color: colors.emerald };
@@ -44,20 +45,21 @@ function syncLabel(status: string) {
   }
 }
 
-function approvalLabel(status: string | null) {
+function approvalLabel(status: string | null, colors: ThemeColors) {
   switch (status) {
     case 'approved':
       return { text: 'Approved', bg: colors.emerald, fg: colors.white };
     case 'rejected':
       return { text: 'Rejected', bg: colors.danger, fg: colors.white };
     case 'pending':
-      return { text: 'Pending review', bg: colors.chartreuse, fg: colors.pine };
+      return { text: 'Pending review', bg: colors.chartreuse, fg: colors.onChartreuse };
     default:
       return { text: 'Not synced yet', bg: colors.muted, fg: colors.white };
   }
 }
 
 export default function RecordDetailScreen() {
+  const { colors, styles } = useThemeStyles(createStyles);
   const router = useRouter();
   const { canCapture } = useRole();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -88,8 +90,8 @@ export default function RecordDetailScreen() {
   }
 
   const rec = record;
-  const pill = syncLabel(rec.sync_status);
-  const approval = approvalLabel(rec.approval_status);
+        const pill = syncLabel(rec.sync_status, colors);
+        const approval = approvalLabel(rec.approval_status, colors);
 
   function confirmDelete() {
     Alert.alert(
@@ -204,7 +206,7 @@ export default function RecordDetailScreen() {
                   <Text style={styles.qrCode}>{rec.qr_code}</Text>
                 </View>
               </View>
-              <QRCode value={rec.qr_code} size={132} color={colors.pine} backgroundColor={colors.white} />
+              <QRCode value={rec.qr_code} size={132} color="#0C342C" backgroundColor="#FFFFFF" />
               <Text style={styles.qrHint}>Scan this on the Capture tab to reopen the record.</Text>
             </View>
           ) : (
@@ -300,6 +302,7 @@ function Field({
   value: string;
   last?: boolean;
 }) {
+  const { colors, styles } = useThemeStyles(createStyles);
   return (
     <View style={[styles.field, !last && styles.fieldBorder]}>
       <Ionicons name={icon} size={18} color={colors.emerald} />
@@ -311,7 +314,7 @@ function Field({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,

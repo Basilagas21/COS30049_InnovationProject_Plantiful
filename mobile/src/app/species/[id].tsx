@@ -2,7 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { colors, surfaces } from '@/theme';
+import { useThemeStyles } from '@/lib/theme';
+import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import {
   getSpeciesById,
   getSpeciesPhotos,
@@ -12,6 +13,7 @@ import {
 } from '@/db';
 
 export default function SpeciesDetailScreen() {
+  const { colors, styles } = useThemeStyles(createStyles);
   const { id } = useLocalSearchParams<{ id: string }>();
   const [species, setSpecies] = useState<SpeciesOption | null | undefined>(undefined);
   const [photos, setPhotos] = useState<SpeciesLocalPhoto[]>([]);
@@ -102,10 +104,11 @@ export default function SpeciesDetailScreen() {
 
 function SpeciesPhoto({ uri }: { uri: string }) {
   const [failed, setFailed] = useState(false);
+  const { colors, styles } = useThemeStyles(createStyles);
   if (failed) {
     return (
       <View style={[styles.thumb, styles.thumbPlaceholder]}>
-        <Ionicons name="image-outline" size={28} color={colors.sand} />
+        <Ionicons name="image-outline" size={28} color={colors.muted} />
       </View>
     );
   }
@@ -130,6 +133,7 @@ function Field({
   value: string;
   last?: boolean;
 }) {
+  const { colors, styles } = useThemeStyles(createStyles);
   return (
     <View style={[styles.field, !last && styles.fieldBorder]}>
       <Ionicons name={icon} size={18} color={colors.emerald} />
@@ -141,7 +145,7 @@ function Field({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,

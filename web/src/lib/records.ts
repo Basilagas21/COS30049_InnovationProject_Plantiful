@@ -30,6 +30,7 @@ export type RecordDetail = RecordListItem & {
   reviewedAt: string | null;
   syncedAt: string | null;
   deviceId: string | null;
+  rejectionReason: string | null;
 };
 
 const mockRecords: RecordDetail[] = [
@@ -60,6 +61,7 @@ const mockRecords: RecordDetail[] = [
     syncedAt: "2026-09-28T10:05:00Z",
     photoUrl: null,
     deviceId: "plantiful-bot-01",
+    rejectionReason: null,
   },
   {
     id: "R-0002",
@@ -87,6 +89,7 @@ const mockRecords: RecordDetail[] = [
     syncedAt: "2026-09-25T14:20:00Z",
     photoUrl: null,
     deviceId: "plantiful-bot-01",
+    rejectionReason: null,
   },
   {
     id: "R-0003",
@@ -114,6 +117,7 @@ const mockRecords: RecordDetail[] = [
     syncedAt: "2026-09-22T08:11:00Z",
     photoUrl: null,
     deviceId: "plantiful-bot-02",
+    rejectionReason: null,
   },
   {
     id: "R-0004",
@@ -141,6 +145,7 @@ const mockRecords: RecordDetail[] = [
     syncedAt: "2026-09-18T16:30:00Z",
     photoUrl: null,
     deviceId: "plantiful-bot-01",
+    rejectionReason: null,
   },
   {
     id: "R-0005",
@@ -168,6 +173,7 @@ const mockRecords: RecordDetail[] = [
     syncedAt: null,
     photoUrl: null,
     deviceId: "plantiful-bot-02",
+    rejectionReason: null,
   },
   {
     id: "R-0006",
@@ -195,6 +201,7 @@ const mockRecords: RecordDetail[] = [
     syncedAt: "2026-09-11T12:40:00Z",
     photoUrl: null,
     deviceId: "plantiful-bot-02",
+    rejectionReason: null,
   },
 ];
 
@@ -217,6 +224,7 @@ function toListItem(row: {
   reviewed_at: string | null;
   synced_at: string | null;
   device_id: string | null;
+  rejection_reason: string | null;
   species: {
     species_id: string;
     scientific_name: string;
@@ -256,6 +264,7 @@ function toListItem(row: {
     reviewedAt: row.reviewed_at,
     syncedAt: row.synced_at,
     deviceId: row.device_id,
+    rejectionReason: row.rejection_reason,
   };
 }
 
@@ -277,7 +286,7 @@ export async function fetchRecords(): Promise<RecordsResult> {
   const { data, error } = await supabase
     .from("plant_records")
     .select(
-      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id,
+      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id, rejection_reason,
        species (
          species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published
        ),
@@ -305,7 +314,7 @@ export async function fetchRecordById(id: string): Promise<RecordDetail | null> 
   const { data, error } = await supabase
     .from("plant_records")
     .select(
-      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id,
+      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id, rejection_reason,
        species (
          species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published
        ),

@@ -207,6 +207,12 @@ export default async function RecordDetailPage({
             </div>
           )}
 
+          {record.approvalStatus === "rejected" && record.rejectionReason !== null && (
+            <p className="text-sm text-danger">
+              Rejection reason: {record.rejectionReason}
+            </p>
+          )}
+
           <div className="flex items-center justify-between rounded-2xl bg-sand px-5 py-4 text-sm">
             <span className="text-moss">
               {record.syncedAt

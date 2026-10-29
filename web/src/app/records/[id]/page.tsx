@@ -76,6 +76,21 @@ export default async function RecordDetailPage({
                       ? "Approved"
                       : "Rejected"}
             </span>
+            <span
+              className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${
+                record.approvalStatus === "rejected"
+                  ? "bg-danger text-white"
+                  : record.approvalStatus === "approved"
+                    ? "bg-sprout text-emerald"
+                    : "bg-chartreuse/70 text-pine"
+              }`}
+            >
+              {record.approvalStatus === "pending"
+                ? "Pending review"
+                : record.approvalStatus === "approved"
+                  ? "Approved"
+                  : "Rejected"}
+            </span>
             <h1 className="mt-3 text-4xl font-bold tracking-tight text-pine">
               {record.scientificName}
             </h1>

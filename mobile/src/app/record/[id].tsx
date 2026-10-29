@@ -188,6 +188,9 @@ export default function RecordDetailScreen() {
               <View style={[styles.syncPill, { backgroundColor: approval.bg }]}>
                 <Text style={[styles.syncPillText, { color: approval.fg }]}>{approval.text}</Text>
               </View>
+              {rec.approval_status === 'rejected' && rec.rejection_reason !== null ? (
+                <Text style={styles.hint}>Rejection reason: {rec.rejection_reason}</Text>
+              ) : null}
             </View>
           </View>
 

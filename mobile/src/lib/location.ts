@@ -1,5 +1,6 @@
 import * as Location from 'expo-location';
 import { Directory, File, Paths } from 'expo-file-system';
+import { Linking } from 'react-native';
 
 export type LocationFix = {
   lat: number;
@@ -12,6 +13,10 @@ const PHOTOS_DIR = 'captures';
 export async function requestLocationPermission(): Promise<boolean> {
   const { status } = await Location.requestForegroundPermissionsAsync();
   return status === 'granted';
+}
+
+export async function openLocationSettings(): Promise<boolean> {
+  return Linking.openSettings();
 }
 
 export async function getCurrentPosition(): Promise<LocationFix | null> {

@@ -26,7 +26,7 @@ import {
 } from '@/db';
 import { parseDbhCm, parseHeightCm } from '@/lib/validation';
 import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
-import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/lib/location';
+import { getCurrentPosition, openLocationSettings, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 import { generateTag, isValidTag, normalizeTag, TAG_LABEL } from '@/lib/tags';
 
 export default function NewCaptureScreen() {
@@ -79,7 +79,10 @@ export default function NewCaptureScreen() {
       if (fix) {
         setLocation(fix);
       } else {
-        Alert.alert('Location unavailable', 'Location permission was not granted.');
+        Alert.alert('Location unavailable', 'Location permission was not granted.', [
+          { text: 'Open settings', onPress: () => void openLocationSettings() },
+          { text: 'Cancel', style: 'cancel' },
+        ]);
       }
     } catch {
       Alert.alert('Location unavailable', 'Could not get a GPS fix right now.');

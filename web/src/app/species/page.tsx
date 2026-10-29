@@ -26,9 +26,7 @@ export default async function SpeciesPage() {
             New species
           </Link>
         ) : (
-          <span className="inline-flex w-fit rounded-full bg-sprout px-3 py-1 text-sm font-semibold text-emerald">
-            Officer actions
-          </span>
+          null
         )}
       </div>
 

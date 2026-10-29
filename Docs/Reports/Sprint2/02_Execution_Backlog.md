@@ -4,7 +4,7 @@
 
 ## 1. Status and priority rules
 
-Updated 28 October 2026. This is the local work tracker. The [GitHub Sprint 2 tracker](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/42) links all 19 work packages. Detailed source evidence for S2-01 to S2-15 is retained in the baseline audit.
+Updated 29 October 2026. This is the local work tracker. The [GitHub Sprint 2 tracker](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/42) links all 19 work packages. Detailed source evidence for S2-01 to S2-15 is retained in the baseline audit.
 
 Proposed means a candidate has not yet been committed. Planned means work is identified but has not started. In progress means active work. Blocked means a named dependency prevents progress. Verified requires an executed check and supporting result. Deferred means deliberately outside this sprint with a reason.
 

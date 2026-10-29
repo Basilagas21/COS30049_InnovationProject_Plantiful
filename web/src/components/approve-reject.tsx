@@ -14,9 +14,19 @@ export function ApproveRejectButtons({ recordId }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   function decide(decision: "approved" | "rejected") {
+    let reason: string | null = null;
+
+    if (decision === "rejected") {
+      const enteredReason = window.prompt("Reason for rejection");
+      if (enteredReason === null) return;
+      const trimmedReason = enteredReason.trim();
+      if (!trimmedReason) return;
+      reason = trimmedReason;
+    }
+
     setError(null);
     startTransition(async () => {
-      const result = await setRecordApproval(recordId, decision);
+      const result = await setRecordApproval(recordId, decision, reason);
       if (!result.ok) {
         setError(result.error ?? "Could not update the record.");
         return;

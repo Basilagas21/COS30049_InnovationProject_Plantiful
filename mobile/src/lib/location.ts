@@ -15,7 +15,7 @@ export async function requestLocationPermission(): Promise<boolean> {
   return status === 'granted';
 }
 
-export async function openLocationSettings(): Promise<boolean> {
+export async function openLocationSettings(): Promise<void> {
   return Linking.openSettings();
 }
 

@@ -46,13 +46,18 @@ export async function updateSpecies(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("species")
     .update(input)
-    .eq("species_id", speciesId);
+    .eq("species_id", speciesId)
+    .select("species_id");
 
   if (error) {
     return { ok: false, error: error.message };
+  }
+
+  if (!data || data.length === 0) {
+    return { ok: false, error: "Species not found." };
   }
 
   revalidatePath("/species");
@@ -68,13 +73,18 @@ export async function deleteSpecies(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("species")
     .delete()
-    .eq("species_id", speciesId);
+    .eq("species_id", speciesId)
+    .select("species_id");
 
   if (error) {
     return { ok: false, error: error.message };
+  }
+
+  if (!data || data.length === 0) {
+    return { ok: false, error: "Species not found." };
   }
 
   revalidatePath("/species");

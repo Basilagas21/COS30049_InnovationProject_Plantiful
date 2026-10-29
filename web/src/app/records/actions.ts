@@ -9,6 +9,7 @@ export type ApprovalDecision = "approved" | "rejected";
 export async function setRecordApproval(
   recordId: string,
   decision: ApprovalDecision,
+  reason: string | null = null,
 ): Promise<{ ok: boolean; error?: string }> {
   if (!(await isOfficer())) {
     return { ok: false, error: "Conservation officer access required." };
@@ -25,6 +26,7 @@ export async function setRecordApproval(
       approval_status: decision,
       reviewed_by: user?.id ?? null,
       reviewed_at: new Date().toISOString(),
+      rejection_reason: decision === "rejected" ? reason : null,
     })
     .eq("record_id", recordId)
     .select("record_id");

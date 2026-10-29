@@ -2,7 +2,7 @@ import { File } from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
 const DATABASE_NAME = 'plantiful.db';
-const SCHEMA_VERSION = 9;
+const SCHEMA_VERSION = 10;
 
 async function migrateDbIfNeeded(db: SQLite.SQLiteDatabase) {
   const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -213,6 +213,14 @@ CREATE TABLE IF NOT EXISTS local_species_photos (
     currentDbVersion = 9;
   }
 
+  if (currentDbVersion < 10) {
+    const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(local_records)');
+    if (!columns.some((column) => column.name === 'rejection_reason')) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN rejection_reason TEXT');
+    }
+    currentDbVersion = 10;
+  }
+
   // `edited` marks a locally edited record so the next sync pushes an UPDATE to
   // the existing server row instead of creating a duplicate. Repaired on EVERY
   // open rather than version-gated, so a half-applied migration can never leave
@@ -295,6 +303,7 @@ export type LocalRecord = {
   sync_error: string | null;
   approval_status: string | null;
   reviewed_at: string | null;
+  rejection_reason: string | null;
   edited: number;
   created_at: string;
 };
@@ -440,7 +449,7 @@ export async function getLocalRecords(db: SQLite.SQLiteDatabase): Promise<LocalR
        r.record_id, r.species_id, r.qr_code, r.provisional_name,
        r.gps_lat, r.gps_lng, r.gps_accuracy_m,
         r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id, r.server_version,
-       r.sync_error, r.approval_status, r.reviewed_at, r.created_at,
+       r.sync_error, r.approval_status, r.reviewed_at, r.rejection_reason, r.created_at,
        COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
@@ -457,7 +466,7 @@ export async function getLocalRecord(
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name, r.gps_lat, r.gps_lng, r.gps_accuracy_m,
         r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id, r.server_version,
-       r.sync_error, r.approval_status, r.reviewed_at, r.edited, r.created_at,
+       r.sync_error, r.approval_status, r.reviewed_at, r.rejection_reason, r.edited, r.created_at,
        COALESCE(s.common_name, s.scientific_name) AS species_name,
        (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
      FROM local_records r
@@ -841,12 +850,14 @@ export async function updateRecordReviewStatus(
   db: SQLite.SQLiteDatabase,
   recordId: string,
   approvalStatus: string | null,
-  reviewedAt: string | null
+  reviewedAt: string | null,
+  rejectionReason: string | null
 ) {
   await db.runAsync(
-    'UPDATE local_records SET approval_status = ?, reviewed_at = ? WHERE server_id = ?',
+    'UPDATE local_records SET approval_status = ?, reviewed_at = ?, rejection_reason = ? WHERE server_id = ?',
     approvalStatus,
     reviewedAt,
+    rejectionReason,
     recordId
   );
 }

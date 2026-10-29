@@ -224,7 +224,7 @@ export default function SyncScreen() {
       try {
         const { data: reviews } = await supabase!
           .from('plant_records')
-          .select('record_id, approval_status, reviewed_at')
+          .select('record_id, approval_status, reviewed_at, rejection_reason')
           .eq('botanist_id', session.session.user.id);
         if (reviews && reviews.length > 0) {
           for (const review of reviews) {
@@ -232,7 +232,8 @@ export default function SyncScreen() {
               db,
               review.record_id,
               review.approval_status,
-              review.reviewed_at
+              review.reviewed_at,
+              review.rejection_reason
             );
           }
         }

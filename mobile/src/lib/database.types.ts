@@ -92,6 +92,7 @@ export interface Database {
           device_id: string | null;
           created_at: string;
           synced_at: string | null;
+          rejection_reason: string | null;
         };
         Insert: {
           record_id?: string;
@@ -116,8 +117,11 @@ export interface Database {
           device_id?: string | null;
           created_at?: string;
           synced_at?: string | null;
+          rejection_reason?: string | null;
         };
-        Update: Partial<Database["public"]["Tables"]["plant_records"]["Insert"]>;
+        Update: Partial<Database["public"]["Tables"]["plant_records"]["Insert"]> & {
+          rejection_reason?: string | null;
+        };
         Relationships: [];
       };
       plant_record_photos: {

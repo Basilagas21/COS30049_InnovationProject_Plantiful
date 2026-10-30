@@ -97,3 +97,21 @@ After 2 November, prioritise essential fixes and delivery work. Record any scope
 | Submission time and required attachments | Unconfirmed | Team |
 
 Record future decisions with date, decision-maker, rationale and affected S2 IDs. Do not replace the historical audit with an updated claim of success.
+
+## 7. S2-19 reconciliation findings (GitHub issues vs. implemented behaviour)
+
+Reviewed 30 October 2026 against current `main` (commit `8ce612e`). Each row compares the issue's original spec against what the code and the owner's own status comments show today.
+
+| Issue | Original spec | Actual state | Recommended action |
+|---|---|---|---|
+| #16 Record create/edit/delete/approve-publish | Full officer CRUD + approve/publish | Approve/reject + publish gating live. Team lead decided 29 Oct: officer edit/delete excluded; corrections go through reject-with-reason, botanist resubmits. Implemented and verified in commits a28fa8e, 80fb74d, e37f828, d23a4f1, ebcf7ce | Keep open until regression checks are recorded per S2-10; issue text already reflects the decision, no rewrite needed |
+| #21 Conflict handling - last-write-wins | Last-write-wins on `updated_at`, with a `conflict_flag` | Not built as specified. Team instead implemented compare-and-swap on `plant_records.version` (tracked and verified under #39) | Record this as an agreed scope change (last-write-wins superseded by CAS), cross-link to #39, then close once #39's trial evidence lands |
+| #23 Offline-then-reconnect e2e test | Manual/scripted offline-to-sync demo + runbook | Not yet implemented, no automated test files or runbook exist | Keep open, assigned to Maqeel |
+| #27 MQTT topic and payload contract | MQTT topics + JSON schema | Deferred by design; current pipeline writes straight to Supabase via PostgREST (iot/publisher.py, iot/supabase_rest.py). Matches Sprint 1 report Section 6 deviation | Keep open as explicitly deferred, no action needed |
+| #28-30 IoT publisher/ingestion/alert rules | Core IoT pipeline | Appears implemented per Sprint 1 report PB-6, not individually re-verified in this pass (IoT scope) | Needs IoT owner (Gae) to confirm status individually |
+| #31 Admin IoT monitoring dashboard | Admin-only dashboard with charts + alert acknowledge | Partial. web/src/app/alerts/page.tsx shows alerts + latest reading, but gated to officers not admin-only, no per-station charts or acknowledge action. Reused as S2-09 | Keep open, mixed web/IoT scope, owners Gae + web |
+| #39 Two-device offline sync and conflict evidence | End-to-end evidence of CAS conflict handling | Explicitly documents the CAS policy (not last-write-wins per #21). Trial not yet executed | Keep open, coordinate with #21 closure |
+| #40 Acceptance measurements (QR, sync, 5-user walkthrough) | Measured trial numbers against report targets | Instrumentation exists (acceptance_measurements table, summarize_acceptance.py). Trials not run. Blocked on scheduling devices/participants | Keep open |
+| #41 Rotate exposed service-role key | Rotate key + reset test passwords | Pending. Confirmed no secret key is hardcoded anywhere in current backend/iot source; key is read from an env var only | Keep open until Supabase owner confirms rotation |
+
+No issue in this review was closed outright. The only recommended scope change is #21 → superseded by the CAS policy verified under #39.

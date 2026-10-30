@@ -24,6 +24,7 @@ export async function pushEditedRecord(
       ...observation,
       status: 'submitted',
       approval_status: 'pending',
+      rejection_reason: null,
       version: baseVersion + 1,
     })
     .eq('record_id', serverId)

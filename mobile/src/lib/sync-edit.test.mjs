@@ -58,3 +58,20 @@ test('database errors surface without treating the row as synced', async () => {
     maybeSingle: async () => ({ data: null, error }) }) }) };
   await assert.rejects(pushEditedRecord(client, 'record-a', 'owner-a', 1, { notes: 'edit' }), error);
 });
+
+test('resubmitting a rejected record clears the stored rejection reason', async () => {
+  const row = {
+    record_id: 'record-b',
+    botanist_id: 'owner-b',
+    version: 2,
+    approval_status: 'rejected',
+    rejection_reason: 'Photo too blurred to verify',
+    notes: 'original',
+  };
+  const client = recordClient(row);
+  const result = await pushEditedRecord(client, 'record-b', 'owner-b', 2, { notes: 'corrected' });
+  assert.equal(result, 3);
+  assert.equal(row.version, 3);
+  assert.equal(row.rejection_reason, null);
+  assert.equal(row.approval_status, 'pending');
+});

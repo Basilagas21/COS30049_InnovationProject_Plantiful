@@ -97,3 +97,6 @@ Docs/Security/
 # OS / editor cruft
 .DS_Store
 Thumbs.db
+# Local-only working notes and credentials (never commit)
+dld/
+.aider*

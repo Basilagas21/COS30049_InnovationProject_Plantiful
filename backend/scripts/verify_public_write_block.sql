@@ -230,9 +230,9 @@ begin
     failed := false;
     begin
       insert into public.species
-        (scientific_name, common_name, conservation_status, taxonomy, description, morphology, is_published)
+        (scientific_name, common_name, conservation_status, taxonomy, description, is_published)
       select scientific_name || '-anon-probe', common_name, conservation_status,
-             taxonomy, description, morphology, false
+             taxonomy, description, false
       from public.species where is_published = true limit 1;
       log := 'FAIL: anonymous INSERT into species was ALLOWED';
       failed := true;

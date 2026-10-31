@@ -32,3 +32,44 @@ This is an as-built test plan and a record of checks run locally on 16 October 2
 7. **Security and usability:** repeat final ZAP/RLS/storage tests against the deployed build using the [security evidence index](../README.md#security-evidence) and the [security plan](../Security/01_Security_Plan.md), then conduct the five-user walkthrough. Report actual coverage over the requested scope, not the isolated helper's percentage.
 
 After the integrated trials, record counts and root causes for failed cases before making any final performance or security claims. The historical Sprint 1 report is a separate later activity.
+
+## Offline-then-reconnect end-to-end test (#23) — observed 31 October 2026
+
+Tester: Maq. Environment: real iPhone with Expo Go (SDK 58), app served from a GitHub Codespace (`npx expo start --tunnel ngrok`), web app run with `npm run dev` in the same Codespace, live Supabase project. Revision: `main` @ `8ce612e`. Accounts: botanist `maqbotanist1@test.com`, conservation officer `maqofficer@test.com`. Screenshots are in [Evidence/issue-23](Evidence/issue-23/).
+
+| # | Step | Expected | Observed | Result | Evidence |
+|---|---|---|---|---|---|
+| 1 | Capture `Test 23 - plant 1` to `plant 4` with GPS and a photo while offline | Records kept locally, not uploaded | Plant 1 uploaded because Wi-Fi was still on when Sync was pressed. Plants 2 and 3 were captured in Airplane mode; the sync attempt failed with a readable "Internet connection appears to be offline" error and the records stayed on the device. Plant 4 was captured in Airplane mode and stayed Pending. | PASS (3 offline records) | 01, 02 |
+| 2 | Fully close and reopen the app | Unsynced records and photos still present | Plants 2, 3 (Failed) and 4 (Pending) still listed with photos after restart. Expo Go needs network to load the dev bundle, so the phone was online on reopen; the app does not sync until **Sync now** is pressed. | PASS | 03 |
+| 3 | Reconnect and press **Sync now** | All unsynced records upload | 0 pending, 4 synced, 0 failed | PASS | 04 |
+| 4 | Press **Sync now** again | No new uploads | Run counters 0 / 0 / 0; list unchanged | PASS | 05 |
+| 5 | Duplicate and photo check in Supabase (SQL below) | One row and one photo per record | 4 rows, each `records = 1`, `photos = 1` | PASS | 06 |
+| 6 | Officer opens web Records list | 4 records Pending with photo and GPS | All 4 shown Pending with photo and coordinates | PASS | 07 |
+| 7 | Officer approves all 4 | Status Approved | All 4 Approved | PASS | 08 |
+| 8 | Phone syncs again and opens a record | Approval visible on phone | Records show Synced; record detail for plant 1 shows **Approved** | PASS | 09, 10, 11 |
+
+Duplicate check used in step 5:
+
+```sql
+select r.provisional_name,
+       count(distinct r.record_id) as records,
+       count(p.*) as photos
+from plant_records r
+left join plant_record_photos p on p.record_id = r.record_id
+where r.provisional_name like 'Test 23%'
+group by r.provisional_name
+order by 1;
+```
+
+The in-app acceptance panel reported "Sync success: 4/8 attempts (50.0%)" after this run, because the deliberate offline attempts count as failed attempts. This run is not a sync success-rate measurement; that belongs to #40.
+
+### Demo steps (client demo)
+
+1. Sign in on the phone as a botanist while online.
+2. Turn on Airplane mode. Capture a plant with tag, GPS and photo. Show it as Pending on the Sync tab.
+3. Close and reopen the app to show the record is kept on the device.
+4. Turn Airplane mode off and press **Sync now**. Press it again to show nothing is uploaded twice.
+5. On the web app, sign in as a conservation officer, open Records and approve the new plant.
+6. On the phone, press **Sync now** and open the record to show the **Approved** badge.
+
+Setup notes for Codespaces with Expo SDK 58: sign in with `npx expo login -u <user> -p <password>` (the browser sign-in cannot reach the Codespace), use `npx expo start --tunnel ngrok` (the default tunnel failed with `s.WebSocket is not a constructor`), and open the web app through the forwarded `-3000.app.github.dev` address rather than `localhost`.

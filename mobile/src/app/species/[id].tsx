@@ -3,6 +3,7 @@ import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useThemeStyles } from '@/lib/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import {
   getSpeciesById,
@@ -14,6 +15,7 @@ import {
 
 export default function SpeciesDetailScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
+  const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [species, setSpecies] = useState<SpeciesOption | null | undefined>(undefined);
   const [photos, setPhotos] = useState<SpeciesLocalPhoto[]>([]);
@@ -45,7 +47,7 @@ export default function SpeciesDetailScreen() {
   const s = species;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingBottom: 16 + insets.bottom }]}>
       {photos.length > 0 ? (
         <Image source={{ uri: photos[0].photo_url }} style={styles.photo} resizeMode="cover" />
       ) : (

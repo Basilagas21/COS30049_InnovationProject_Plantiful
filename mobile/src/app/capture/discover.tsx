@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
 import { useThemeStyles } from '@/lib/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, getSpeciesCatalogSyncedAt, isTagInUse, type SpeciesOption } from '@/db';
 import { getCurrentPosition, openLocationSettings, persistCapturedPhoto, type LocationFix } from '@/lib/location';
@@ -24,6 +25,7 @@ import { getCurrentUserId } from '@/lib/currentUser';
 
 export default function DiscoverPlantScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
@@ -277,7 +279,7 @@ export default function DiscoverPlantScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[styles.scroll, { paddingBottom: 16 + insets.bottom }]} keyboardShouldPersistTaps="handled">
         <View style={styles.card}>
           <Text style={styles.sectionLabel}>KNOWN SPECIES? CHECK FIRST</Text>
           {speciesOptions.length === 0 ? (

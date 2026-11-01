@@ -5,6 +5,7 @@ import { Image, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable } from '@/lib/interactionLog';
 import QRCode from 'react-native-qrcode-svg';
 import { useThemeStyles } from '@/lib/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { deleteLocalRecord, getLocalRecord, openDatabase, retryConflictingEdit, updateLocalRecord, type LocalRecordWithPhoto } from '@/db';
 import { supabase } from '@/lib/supabase';
@@ -60,6 +61,7 @@ function approvalLabel(status: string | null, colors: ThemeColors) {
 
 export default function RecordDetailScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { canCapture } = useRole();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -166,7 +168,7 @@ export default function RecordDetailScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingBottom: 16 + insets.bottom }]}>
       <Modal visible={remoteConflict !== null} animationType="slide" onRequestClose={() => setRemoteConflict(null)}>
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
           <Text style={styles.title}>Review conflicting edits</Text>

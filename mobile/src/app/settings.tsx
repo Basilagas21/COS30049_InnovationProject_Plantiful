@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable } from '@/lib/interactionLog';
 import { useTheme, useThemeStyles, type ThemePreference } from '@/lib/theme';
@@ -17,6 +18,7 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { preference, setPreference } = useTheme();
   const { colors, styles } = useThemeStyles(createStyles);
+  const insets = useSafeAreaInsets();
 
   async function clearAll() {
     const db = await openDatabase();
@@ -59,7 +61,7 @@ export default function SettingsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: 16 + insets.bottom }]}>
       <View style={styles.appearanceBox}>
         <Text style={styles.sectionTitle}>Appearance</Text>
         <Text style={styles.hint}>

@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
 import { useThemeStyles } from '@/lib/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import {
   openDatabase,
@@ -32,6 +33,7 @@ import { getCurrentUserId } from '@/lib/currentUser';
 
 export default function NewCaptureScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams<{ qr?: string }>();
   const qr = typeof params.qr === 'string' ? params.qr : undefined;
@@ -258,7 +260,7 @@ export default function NewCaptureScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[styles.scroll, { paddingBottom: 16 + insets.bottom }]} keyboardShouldPersistTaps="handled">
         <View style={styles.card}>
           <Text style={styles.sectionLabel}>{TAG_LABEL.toUpperCase()}</Text>
 

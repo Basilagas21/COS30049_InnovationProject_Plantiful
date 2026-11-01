@@ -43,6 +43,8 @@
   "private": true,
   "overrides": {
     "shell-quote": "^1.12.0",
-    "zod": "^4.6.6"
+    "zod": "^4.6.6",
+    "glob": "^14.0.2",
+    "minimatch": "^11.0.3"
   }
 }

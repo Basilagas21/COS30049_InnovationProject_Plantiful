@@ -328,3 +328,24 @@ export async function fetchRecordById(id: string): Promise<RecordDetail | null> 
   }
   return data ? toListItem(data) : null;
 }
+
+export type ConflictReport = {
+  message: string | null;
+  createdAt: string;
+};
+
+export async function fetchConflictReports(id: string): Promise<ConflictReport[]> {
+  if (!isSupabaseConfigured) {
+    return [];
+  }
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("sync_conflicts")
+    .select("message, created_at")
+    .eq("record_id", id)
+    .order("created_at", { ascending: false });
+  if (error || !data) {
+    return [];
+  }
+  return data.map((row) => ({ message: row.message, createdAt: row.created_at }));
+}

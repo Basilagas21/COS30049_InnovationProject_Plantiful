@@ -5,6 +5,7 @@ import { Alert, Pressable } from '@/lib/interactionLog';
 import { useTheme, useThemeStyles, type ThemePreference } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { clearSpeciesCatalog, countUnsyncedRecords, deleteLocalRecord, getLocalRecords, getSpeciesOptions, openDatabase } from '@/db';
+import { getCurrentUserId } from '@/lib/currentUser';
 
 const themeOptions: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: 'System' },
@@ -19,7 +20,7 @@ export default function SettingsScreen() {
 
   async function clearAll() {
     const db = await openDatabase();
-    const records = await getLocalRecords(db);
+    const records = await getLocalRecords(db, (await getCurrentUserId()) ?? undefined);
     for (const record of records) {
       await deleteLocalRecord(db, record.record_id);
     }
@@ -47,7 +48,7 @@ export default function SettingsScreen() {
 
   async function confirmClear() {
     const db = await openDatabase();
-    const unsynced = await countUnsyncedRecords(db);
+    const unsynced = await countUnsyncedRecords(db, (await getCurrentUserId()) ?? undefined);
     const warning = unsynced > 0
       ? `${unsynced} record(s) have not been synced and will be lost permanently. This cannot be undone.`
       : 'This cannot be undone.';

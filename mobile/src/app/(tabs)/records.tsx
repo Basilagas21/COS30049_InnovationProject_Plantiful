@@ -255,6 +255,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   toolbar: {
     paddingHorizontal: 16,
     paddingTop: 16,
+    paddingBottom: 16,
     gap: 8,
   },
   searchWrap: {
@@ -324,6 +325,8 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   list: {
     padding: 16,
+    paddingTop: 0,
+    paddingBottom: 24,
     gap: 12,
   },
   empty: {

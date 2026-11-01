@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import QRCode from "qrcode";
-import { fetchRecordById } from "@/lib/records";
+import { fetchRecordById, fetchConflictReports } from "@/lib/records";
 import { isOfficer } from "@/lib/auth";
 import { ApproveRejectButtons } from "@/components/approve-reject";
 import { PhotoImg } from "@/components/photo-img";
@@ -27,6 +27,7 @@ export default async function RecordDetailPage({
   if (!record) notFound();
 
   const officer = await isOfficer();
+  const conflicts = officer ? await fetchConflictReports(id) : [];
 
   let qrDataUrl: string | null = null;
   const qrValue = record.qrCode ?? null;
@@ -196,6 +197,25 @@ export default async function RecordDetailPage({
             <div className="rounded-2xl border border-pine/10 bg-white p-5">
               <h2 className="font-semibold text-pine">Field notes</h2>
               <p className="mt-2 text-sm leading-7 text-moss">{record.notes}</p>
+            </div>
+          )}
+
+          {officer && conflicts.length > 0 && (
+            <div className="rounded-2xl border border-danger/40 bg-danger/5 p-5">
+              <h2 className="font-semibold text-danger">
+                Unresolved sync conflict
+              </h2>
+              <ul className="mt-2 space-y-1 text-sm text-moss">
+                {conflicts.map((conflict) => (
+                  <li key={conflict.createdAt}>
+                    {conflict.message ?? "A device holds an edit that has not reached the central record."} ·{" "}
+                    {new Date(conflict.createdAt).toLocaleString()}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-xs text-moss">
+                The owning botanist resolves this from the Sync centre on their device; the report clears when the corrected record lands.
+              </p>
             </div>
           )}
 

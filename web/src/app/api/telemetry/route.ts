@@ -1,6 +1,6 @@
 import { isOfficer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { rangeStart, type TelemetryHistory, type TelemetryRange } from "@/lib/telemetry";
+import { isUuid, rangeStart, type ThreatAlert, type TelemetryHistory, type TelemetryRange } from "@/lib/telemetry";
 
 // The hand-written Database type declares `Functions: Record<string, never>`.
 // Adding monitoring_history there flips the client into strict select-parser
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     const sensorId = params.get("sensor") || null;
     const mode = params.get("mode") ?? "live";
     if (!["1d", "5d", "7d", "all"].includes(range) || !["live", "history"].includes(mode) ||
-        (sensorId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sensorId))) {
+        (sensorId && !isUuid(sensorId))) {
       return json({ error: "Invalid monitoring filter." }, 400);
     }
     const client = await createClient();
@@ -49,15 +49,21 @@ export async function GET(request: Request) {
       .select("sensor_id, gps_lat, gps_lng").order("sensor_id");
     if (sensorsError) return json({ error: "Could not load sensors. Check your connection and permissions." }, 503);
     const selected = (sensors ?? []).filter((sensor) => !sensorId || sensor.sensor_id === sensorId);
-    let alertQuery = client.from("alerts")
-      .select("alert_id, sensor_id, alert_type, severity, resolved, created_at", { count: "exact" })
-      .lte("created_at", new Date(now).toISOString())
-      .order("created_at", { ascending: false }).order("alert_id").limit(100);
+    // Resolution audit columns exist only after 013_alert_resolution.sql; fall back without them.
+    const alertQuery = (columns: string) => {
+      let query = client.from("alerts")
+        .select(columns, { count: "exact" })
+        .lte("created_at", new Date(now).toISOString())
+        .order("created_at", { ascending: false }).order("alert_id").limit(100);
+      if (sensorId) query = query.eq("sensor_id", sensorId);
+      if (start) query = query.gte("created_at", start);
+      return query;
+    };
+    const baseColumns = "alert_id, sensor_id, alert_type, severity, resolved, created_at";
     let openQuery = client.from("alerts").select("alert_id", { head: true, count: "exact" }).eq("resolved", false);
-    if (sensorId) { alertQuery = alertQuery.eq("sensor_id", sensorId); openQuery = openQuery.eq("sensor_id", sensorId); }
-    if (start) alertQuery = alertQuery.gte("created_at", start);
-    const [alerts, open, latest] = await Promise.all([
-      alertQuery, openQuery,
+    if (sensorId) openQuery = openQuery.eq("sensor_id", sensorId);
+    const [firstAlerts, open, latest] = await Promise.all([
+      alertQuery(`${baseColumns}, resolved_by, resolved_at`), openQuery,
       Promise.all(selected.map(async (sensor) => {
         const { data, error } = await client.from("sensor_readings")
           .select("temperature, humidity, movement, soil_moisture, rain, recorded_at")
@@ -65,9 +71,22 @@ export async function GET(request: Request) {
         return { sensor, reading: data, error: error ? "Unable to read this sensor; check connection and RLS permissions." : null };
       })),
     ]);
+    let alerts = firstAlerts;
+    const missingColumn = firstAlerts.error?.code === "42703" || firstAlerts.error?.code === "PGRST204";
+    const resolutionReady = !missingColumn;
+    if (!resolutionReady) alerts = await alertQuery(baseColumns);
     if (alerts.error || open.error) return json({ error: "Could not load alerts. Previous results may be outdated; retry." }, 503);
+    const alertRows = (alerts.data ?? []) as unknown as ThreatAlert[];
+    // Resolver names are best effort: if user_profiles RLS hides a profile, the UI says "an officer".
+    const resolverIds = [...new Set(alertRows.flatMap((a) => (a.resolved_by ? [a.resolved_by] : [])))];
+    const names = new Map<string, string>();
+    if (resolverIds.length) {
+      const { data: profiles } = await client.from("user_profiles").select("user_id, name").in("user_id", resolverIds);
+      for (const profile of profiles ?? []) names.set(profile.user_id, profile.name);
+    }
     return json({ checkedAt: new Date().toISOString(), sensors: sensors ?? [], latest,
-      alerts: alerts.data ?? [], alertCount: alerts.count ?? 0, openCount: open.count ?? 0 });
+      alerts: alertRows.map((a) => ({ ...a, resolved_by_name: a.resolved_by ? names.get(a.resolved_by) ?? null : null })),
+      alertCount: alerts.count ?? 0, openCount: open.count ?? 0, resolutionReady });
   } catch {
     return json({ error: "Monitoring request failed. Check your session and connection, then retry." }, 503);
   }

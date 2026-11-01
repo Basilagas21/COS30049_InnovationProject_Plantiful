@@ -272,7 +272,9 @@ export default function SyncScreen() {
     const rows = await getPendingRecords(db);
     if (rows.length === 0) {
       await pullReviewOutcomes();
-      await setLastSyncAt(db, new Date().toISOString());
+      const stamp = new Date().toISOString();
+      await setLastSyncAt(db, stamp);
+      setLastSyncLabel(new Date(stamp).toLocaleString());
       setState('done');
       setMessage('Nothing to sync. The species catalogue was refreshed; captures made offline appear here as pending.');
       return;
@@ -440,8 +442,8 @@ export default function SyncScreen() {
     const remaining = await getPendingRecords(db);
     setPending(remaining.length);
     await pullReviewOutcomes();
-    await loadCounts();
     await setLastSyncAt(db, new Date().toISOString());
+    await loadCounts();
     setState(failedCount > 0 ? 'error' : 'done');
     setMessage(failedCount > 0
       ? `Synced ${syncedCount}, ${failedCount} need attention. Conflicts require review; other failures retry when you press Sync now.`
@@ -564,7 +566,12 @@ export default function SyncScreen() {
 
         {message || state === 'idle' ? (
           <Text style={styles.lastSync}>
-            {message || (lastSyncLabel ? `Last sync: ${lastSyncLabel}` : 'Last sync: never')}
+            {message || 'No sync has run on this device yet.'}
+          </Text>
+        ) : null}
+        {state !== 'syncing' ? (
+          <Text style={styles.lastSync}>
+            {lastSyncLabel ? `Last sync: ${lastSyncLabel}` : 'Last sync: never'}
           </Text>
         ) : null}
         {!connected ? (

@@ -321,7 +321,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   divider: {
     height: 1,
-    backgroundColor: colors.sand,
+    backgroundColor: colors.border,
     width: '100%',
     marginVertical: 14,
   },

@@ -212,7 +212,7 @@ export default function EditRecordScreen() {
     }
 
     if (await isTagInUse(await openDatabase(), tag, recordId)) {
-      Alert.alert('Tag already used', `${tag} is already recorded on this device. Pick a different tag.`);
+      Alert.alert('Tag already recorded', `${tag} is already recorded on this device. Pick a different tag.`);
       return;
     }
 
@@ -396,7 +396,7 @@ export default function EditRecordScreen() {
               )}
             </View>
           ) : (
-            <Text style={styles.hint}>No GPS fix recorded. Tap below to capture this spot.</Text>
+            <Text style={styles.hint}>No GPS fix yet. Tap below to record this spot.</Text>
           )}
           <Pressable style={styles.ghostButton} onPress={captureLocation} disabled={locating}>
             <Ionicons name="locate-outline" size={18} color={colors.pine} />
@@ -729,7 +729,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   primaryButton: {
     backgroundColor: colors.emerald,
     borderRadius: 24,
-    paddingVertical: 15,
+    paddingVertical: 14,
     alignItems: 'center',
   },
   primaryButtonText: {

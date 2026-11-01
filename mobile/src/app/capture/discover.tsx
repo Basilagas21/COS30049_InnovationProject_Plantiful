@@ -713,7 +713,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   primaryButton: {
     backgroundColor: colors.emerald,
     borderRadius: 24,
-    paddingVertical: 15,
+    paddingVertical: 14,
     alignItems: 'center',
   },
   primaryButtonText: {

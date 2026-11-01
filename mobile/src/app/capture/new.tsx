@@ -159,7 +159,7 @@ export default function NewCaptureScreen() {
       }
       const existing = await getRecordByTag(db, tag);
       if (existing) {
-        Alert.alert('Tag already recorded', `Tag ${tag} already has a record on this device.`, [
+        Alert.alert('Tag already recorded', `Tag ${tag} is already recorded on this device.`, [
           { text: 'Cancel', style: 'cancel' },
           {
             text: 'Open record',
@@ -327,7 +327,7 @@ export default function NewCaptureScreen() {
               {selectedSpecies
                 ? `${selectedSpecies.common_name ?? selectedSpecies.scientific_name} (${selectedSpecies.scientific_name})`
                 : speciesOptions.length === 0
-                  ? 'No species catalog — sync once while signed in'
+                  ? 'No species catalogue — sync once while signed in'
                   : 'Select species…'}
             </Text>
           </Pressable>
@@ -432,7 +432,7 @@ export default function NewCaptureScreen() {
           {photoUri ? (
             <Pressable style={styles.photoPreviewBtn} onPress={choosePhotoSource}>
               <Ionicons name="image" size={18} color={colors.onChartreuse} />
-              <Text style={styles.photoPreviewText}>Photo attached - replace</Text>
+              <Text style={styles.photoPreviewText}>Photo attached — replace</Text>
             </Pressable>
           ) : (
             <Pressable style={styles.ghostButton} onPress={choosePhotoSource}>
@@ -471,7 +471,7 @@ export default function NewCaptureScreen() {
             <ScrollView style={styles.modalList}>
               {speciesOptions.length === 0 ? (
                 <Text style={styles.hint}>
-                  The species catalog is empty. Open Sync and press Sync now while signed in to download it.
+                  The species catalogue is empty. Open Sync and press Sync now while signed in to download it.
                 </Text>
               ) : (
                 speciesOptions.map((species) => (
@@ -675,7 +675,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   primaryButton: {
     backgroundColor: colors.emerald,
     borderRadius: 24,
-    paddingVertical: 15,
+    paddingVertical: 14,
     alignItems: 'center',
   },
   primaryButtonText: {

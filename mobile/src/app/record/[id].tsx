@@ -210,7 +210,7 @@ export default function RecordDetailScreen() {
         <Image source={{ uri: rec.photo_uri }} style={styles.photo} resizeMode="cover" />
       ) : (
         <View style={[styles.photo, styles.photoPlaceholder]}>
-          <Ionicons name="leaf-outline" size={56} color={colors.sand} />
+          <Ionicons name="leaf-outline" size={56} color={colors.muted} />
         </View>
       )}
 

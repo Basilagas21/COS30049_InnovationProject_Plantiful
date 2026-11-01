@@ -50,7 +50,7 @@ export default function SpeciesDetailScreen() {
         <Image source={{ uri: photos[0].photo_url }} style={styles.photo} resizeMode="cover" />
       ) : (
         <View style={[styles.photo, styles.photoPlaceholder]}>
-          <Ionicons name="leaf-outline" size={56} color={colors.sand} />
+          <Ionicons name="leaf-outline" size={56} color={colors.muted} />
         </View>
       )}
 
@@ -91,7 +91,7 @@ export default function SpeciesDetailScreen() {
           </ScrollView>
         ) : (
           <View style={styles.noPhotos}>
-            <Ionicons name="images-outline" size={32} color={colors.sand} />
+            <Ionicons name="images-outline" size={32} color={colors.muted} />
             <Text style={styles.noPhotosText}>
               No photos recorded for this species yet — they appear after the next sync.
             </Text>

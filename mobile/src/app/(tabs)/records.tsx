@@ -172,7 +172,7 @@ export default function RecordsScreen() {
         contentContainerStyle={styles.list}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Ionicons name="leaf-outline" size={48} color={colors.sand} />
+            <Ionicons name="leaf-outline" size={48} color={colors.muted} />
             <Text style={styles.emptyTitle}>
               {records.length === 0 ? 'No offline records' : 'No matches'}
             </Text>

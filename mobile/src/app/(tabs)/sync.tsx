@@ -454,6 +454,8 @@ export default function SyncScreen() {
   const attempts = measurements.filter((m) => m.operation === 'sync_record');
   const localLookups = measurements.filter((m) => m.operation === 'qr_lookup' && m.outcome === 'local_found');
   const successfulAttempts = attempts.filter((m) => m.outcome === 'synced').length;
+  const conflictAttempts = attempts.filter((m) => m.outcome === 'conflict').length;
+  const failedAttempts = attempts.filter((m) => m.outcome === 'failed').length;
   const fastLookups = localLookups.filter((m) => m.duration_ms < 5000).length;
   const averageLocalLookupMs = localLookups.length
     ? Math.round(localLookups.reduce((sum, m) => sum + m.duration_ms, 0) / localLookups.length)
@@ -555,6 +557,9 @@ export default function SyncScreen() {
           <Text style={styles.listItem}>
             Sync success: {successfulAttempts}/{attempts.length} attempts
             {attempts.length ? ` (${(100 * successfulAttempts / attempts.length).toFixed(1)}%)` : ''}
+          </Text>
+          <Text style={styles.listItem}>
+            Attempt outcomes: {successfulAttempts} synced, {conflictAttempts} conflicts, {failedAttempts} failed
           </Text>
           <Text style={styles.listItem}>
             Cached QR lookup: {averageLocalLookupMs == null ? 'no samples' : `${averageLocalLookupMs} ms average`}; {fastLookups}/{localLookups.length} under 5 seconds

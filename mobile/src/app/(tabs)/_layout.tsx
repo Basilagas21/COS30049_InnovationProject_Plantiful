@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import type { ColorValue } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/lib/theme';
 
@@ -29,6 +30,13 @@ export default function TabsLayout() {
           height: 56 + insets.bottom + 8,
           paddingBottom: insets.bottom + 14,
         },
+        // The tab bar container behind the bar defaults to the navigator's
+        // card colour, a white (light) or grey (dark) strip beside the
+        // gesture pill. Painting it with the scrim keeps the bar seamless
+        // over the camera backdrop and any page background.
+        tabBarBackground: () => (
+          <View style={{ flex: 1, backgroundColor: colors.scrim }} />
+        ),
         headerStyle: { backgroundColor: colors.cream },
         headerTitleStyle: { color: colors.pine, fontWeight: '700', fontSize: 24 },
         headerShadowVisible: false,

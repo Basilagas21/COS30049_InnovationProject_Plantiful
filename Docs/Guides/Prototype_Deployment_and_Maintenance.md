@@ -2,7 +2,7 @@
 
 ## What runs where
 
-Supabase hosts authentication, PostgreSQL tables, storage buckets and row-level access rules. The Expo mobile app stores captures locally in SQLite and pushes them when a signed-in botanist chooses **Sync now**. The Next.js web app reads the same database for officers and the public visitor portal. The USB-first IoT prototype has an ESP32 on a host computer; `iot/bridge.py` sends readings to Supabase and immediately checks each stored reading for heat, low humidity and movement alerts. Run `iot/evaluate.py` periodically to catch silent sensors and retry failed alert evaluations. The `/alerts` dashboard displays stored readings and alerts. The physical end-to-end path is still to be verified; MQTT is future work.
+Supabase hosts authentication, PostgreSQL tables, storage buckets and row-level access rules. The Expo mobile app stores captures locally in SQLite, each stamped with the signed-in botanist account, and pushes them when that account chooses **Sync now**. The Next.js web app reads the same database for officers and the public visitor portal. The USB-first IoT prototype has an ESP32 on a host computer; `iot/bridge.py` sends readings to Supabase and immediately checks each stored reading for heat, low humidity and movement alerts. Run `iot/evaluate.py` periodically to catch silent sensors and retry failed alert evaluations. The `/alerts` dashboard displays stored readings and alerts. The physical end-to-end path is still to be verified; MQTT is future work.
 
 ## Set up a demonstration
 
@@ -17,6 +17,18 @@ Supabase hosts authentication, PostgreSQL tables, storage buckets and row-level 
 - **Weekly during active use:** review failed syncs and stale local conflicts, Supabase storage/quota, bridge logs, sensor power/wiring and evaluator execution; check the report and security evidence index for newly introduced findings. Calibrate analog soil/rain thresholds against observed dry/wet conditions before relying on alert semantics.
 - **At release or dependency updates:** run mobile typecheck/lint and web typecheck/lint/build, repeat role/RLS and photo policy probes, and re-check dependency advisories. Apply SQL first in a test project, then the demo project; retain migration version and rollback/export notes. Rotate exposed keys and revoke unused demo accounts. Keep the service-role key only on the trusted host.
 - **When handing over:** document actual host URL, project ownership, migration version, named operational contacts, backup/restore procedure, sensor installation coordinates and outstanding defects. This is a proportionate student prototype runbook, not an organisational service-level or security certification.
+
+### Account switching on a shared device
+
+The mobile app binds every local capture to the account that created it, so one device can serve several botanists without misattributing field data:
+
+- Each capture is stamped with the signed-in user's id at creation, and the central database owner is taken from that same stamp at push time.
+- Sync pushes, the Sync tab lists, the sign-out warning, the My records list and the acceptance measurements are all scoped to the signed-in account. Another account signing in on the same device sees none of it and cannot upload it.
+- A capture made by botanist A and left unsynced stays on the device pending until A signs in again and syncs; botanist B's **Sync now** will not carry it.
+- Captures made before owner stamping existed are adopted once by the first account to open the Sync tab after upgrading, matching the single-user device that produced them; the adoption happens a single time and cannot repeat for another account.
+- Last-sync time and the outcome breakdown (synced, conflicts, failed) are per account; a fresh account on a used device correctly reports "Last sync: never" until it syncs.
+
+Verified on a Google Pixel 9 Pro XL with Expo Go on 1 November 2026: capture pending under one botanist, signed out, signed in as a second botanist, sync ran with nothing uploaded and the record absent from the second account's lists, signed back in as the first, the record pushed under the correct owner.
 
 ## Measurement evidence
 

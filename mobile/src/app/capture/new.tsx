@@ -294,6 +294,7 @@ export default function NewCaptureScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Scan or type the tag code"
+                placeholderTextColor={colors.muted}
                 value={tagCode}
                 onChangeText={setTagCode}
                 autoCapitalize="characters"
@@ -365,6 +366,7 @@ export default function NewCaptureScreen() {
           <TextInput
             style={styles.input}
             placeholder="Taxonomy (e.g. Dipterocarpaceae)"
+            placeholderTextColor={colors.muted}
             value={taxonomy}
             onChangeText={setTaxonomy}
           />
@@ -372,6 +374,7 @@ export default function NewCaptureScreen() {
             <TextInput
               style={[styles.input, styles.fieldPairInput]}
               placeholder="Height (cm)"
+              placeholderTextColor={colors.muted}
               value={heightCm}
               onChangeText={setHeightCm}
               keyboardType="numeric"
@@ -379,6 +382,7 @@ export default function NewCaptureScreen() {
             <TextInput
               style={[styles.input, styles.fieldPairInput]}
               placeholder="DBH (cm)"
+              placeholderTextColor={colors.muted}
               value={dbhCm}
               onChangeText={setDbhCm}
               keyboardType="numeric"
@@ -404,12 +408,14 @@ export default function NewCaptureScreen() {
           <TextInput
             style={styles.input}
             placeholder="Morphology (e.g. leathery leaves, 3 m canopy)"
+            placeholderTextColor={colors.muted}
             value={morphology}
             onChangeText={setMorphology}
           />
           <TextInput
             style={[styles.input, styles.multiline]}
             placeholder="Notes"
+            placeholderTextColor={colors.muted}
             value={notes}
             onChangeText={setNotes}
             multiline

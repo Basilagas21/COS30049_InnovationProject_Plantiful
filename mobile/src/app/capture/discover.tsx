@@ -273,6 +273,7 @@ export default function DiscoverPlantScreen() {
           <TextInput
             style={styles.input}
             placeholder="Search by scientific or common name…"
+            placeholderTextColor={colors.muted}
             value={checkQuery}
             onChangeText={(text) => {
               setCheckQuery(text);
@@ -336,12 +337,14 @@ export default function DiscoverPlantScreen() {
           <TextInput
             style={styles.input}
             placeholder="Common name (required)"
+            placeholderTextColor={colors.muted}
             value={commonName}
             onChangeText={setCommonName}
           />
           <TextInput
             style={styles.input}
             placeholder="Suggested scientific name (optional)"
+            placeholderTextColor={colors.muted}
             value={scientificName}
             onChangeText={setScientificName}
           />
@@ -400,6 +403,7 @@ export default function DiscoverPlantScreen() {
           <TextInput
             style={styles.input}
             placeholder="Taxonomy (e.g. Dipterocarpaceae)"
+            placeholderTextColor={colors.muted}
             value={taxonomy}
             onChangeText={setTaxonomy}
           />
@@ -407,6 +411,7 @@ export default function DiscoverPlantScreen() {
             <TextInput
               style={[styles.input, styles.fieldPairInput]}
               placeholder="Height (cm)"
+              placeholderTextColor={colors.muted}
               value={heightCm}
               onChangeText={setHeightCm}
               keyboardType="numeric"
@@ -414,6 +419,7 @@ export default function DiscoverPlantScreen() {
             <TextInput
               style={[styles.input, styles.fieldPairInput]}
               placeholder="DBH (cm)"
+              placeholderTextColor={colors.muted}
               value={dbhCm}
               onChangeText={setDbhCm}
               keyboardType="numeric"
@@ -439,12 +445,14 @@ export default function DiscoverPlantScreen() {
           <TextInput
             style={styles.input}
             placeholder="Morphology (e.g. leathery leaves, 3 m canopy)"
+            placeholderTextColor={colors.muted}
             value={morphology}
             onChangeText={setMorphology}
           />
           <TextInput
             style={[styles.input, styles.multiline]}
             placeholder="Notes"
+            placeholderTextColor={colors.muted}
             value={notes}
             onChangeText={setNotes}
             multiline

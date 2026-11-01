@@ -336,6 +336,7 @@ export default function EditRecordScreen() {
             <TextInput
               style={styles.input}
               placeholder="Tag code printed on the plant tag"
+              placeholderTextColor={colors.muted}
               value={tagCode}
               onChangeText={setTagCode}
               autoCapitalize="characters"
@@ -354,6 +355,7 @@ export default function EditRecordScreen() {
           <TextInput
             style={styles.input}
             placeholder="Name used before species confirmation"
+            placeholderTextColor={colors.muted}
             value={provisionalName}
             onChangeText={setProvisionalName}
           />
@@ -404,6 +406,7 @@ export default function EditRecordScreen() {
           <TextInput
             style={styles.input}
             placeholder="Taxonomy (e.g. Dipterocarpaceae)"
+            placeholderTextColor={colors.muted}
             value={taxonomy}
             onChangeText={setTaxonomy}
           />
@@ -411,6 +414,7 @@ export default function EditRecordScreen() {
             <TextInput
               style={[styles.input, styles.fieldPairInput]}
               placeholder="Height (cm)"
+              placeholderTextColor={colors.muted}
               value={heightCm}
               onChangeText={setHeightCm}
               keyboardType="numeric"
@@ -418,6 +422,7 @@ export default function EditRecordScreen() {
             <TextInput
               style={[styles.input, styles.fieldPairInput]}
               placeholder="DBH (cm)"
+              placeholderTextColor={colors.muted}
               value={dbhCm}
               onChangeText={setDbhCm}
               keyboardType="numeric"
@@ -443,12 +448,14 @@ export default function EditRecordScreen() {
           <TextInput
             style={styles.input}
             placeholder="Morphology (e.g. leathery leaves, 3 m canopy)"
+            placeholderTextColor={colors.muted}
             value={morphology}
             onChangeText={setMorphology}
           />
           <TextInput
             style={[styles.input, styles.multiline]}
             placeholder="Notes"
+            placeholderTextColor={colors.muted}
             value={notes}
             onChangeText={setNotes}
             multiline

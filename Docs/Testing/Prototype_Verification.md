@@ -63,6 +63,24 @@ order by 1;
 
 The in-app acceptance panel reported "Sync success: 4/8 attempts (50.0%)" after this run, because the deliberate offline attempts count as failed attempts. This run is not a sync success-rate measurement; that belongs to #40.
 
+## Two-device offline sync and conflict test (#39) — observed 1 November 2026
+
+Environment: Google Pixel 9 Pro XL (Android 17) with Expo Go (SDK 58), app served from a workstation (`npx expo start`), web app run with `npm run dev`, live Supabase project. Revision: `main` @ `73278e8` plus this document's commit. Accounts: botanist `dld@botanist.com` on the phone; the second client was a scripted session using the same botanist credentials and the same REST update path the app uses. The conflict mechanism is the `plant_records.version` compare-and-swap on the server row, so the second client's transport does not affect what is proven; the method is stated here rather than claiming two physical devices.
+
+| # | Step | Expected | Observed | Result | Evidence |
+|---|---|---|---|---|---|
+| 1 | Capture `Conflict test plant` on the phone and press **Sync now** | Record reaches Supabase as pending, version 1 | Row present with `approval_status = pending`, `version = 1` | PASS | server query |
+| 2 | Second client edits the row (notes, height) and bumps version to 2 | Server diverges from the phone's baseline | `version = 2`, notes and height changed server-side only | PASS | server query |
+| 3 | Edit the record on the phone (height 42, notes "Phone edit") and press **Sync now** | Compare-and-swap fails, conflict filed, local edit preserved | Push refused, record entered conflict state, `sync_conflicts` row visible to the botanist and the officer, message "The server record changed since this device last synced…" | PASS | server query |
+| 4 | Open the conflict review screen | Every differing field offers server value versus local value | Per-field merge rows shown for all differing fields, defaults to the local copy | PASS | phone |
+| 5 | Pick values, save merged, press **Sync now** | Merged record pushes, version bumps, conflict report clears | Server at `version = 3` with height 42 and notes "Phone edit"; report row gone for both accounts | PASS | server query |
+| 6 | Repeat cycle: second client bumps to version 4 with a morphology change; phone edits and syncs | Conflict fires again | Report row live again (`server_version = 3`, unique per record and device) | PASS | server query |
+| 7 | Officer opens the record on the web while the conflict is unresolved | Banner visible to officer only | "Unresolved sync conflict" banner shown to `dld@officer.com`; botanist page renders without the banner; anonymous sees neither banner nor record content | PASS | 01 |
+| 8 | Resolve and resync on the phone | Server merged, report cleared | Server at `version = 5`, morphology kept the server value, height and notes kept the phone picks; report gone for botanist and officer; zero residue | PASS | server query |
+| 9 | Cross-owner write as a different botanist | Rejected by RLS | Probed directly against the live policies with the second botanist account (`dld2@botanist.com`): cross-owner conflict filing returned 403, and the app cannot generate the scenario locally because its store only holds the signed-in owner's records; the REST probe is the correct test of the RLS layer | PASS | probe output |
+
+Acceptance note: conflicts count against the in-app Sync success metric by design, the raw acceptance log keeps `synced`, `conflict` and `failed` as distinct outcomes, and the Sync tab now shows the breakdown beside the headline. This run is not a sync success-rate measurement; that belongs to #40.
+
 ### Demo steps (client demo)
 
 1. Sign in on the phone as a botanist while online.

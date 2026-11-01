@@ -237,6 +237,9 @@ CREATE TABLE IF NOT EXISTS local_species_photos (
     if (!columns.some((column) => column.name === 'rejection_reason')) {
       await db.execAsync('ALTER TABLE local_records ADD COLUMN rejection_reason TEXT');
     }
+    if (!columns.some((column) => column.name === 'owner_user_id')) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN owner_user_id TEXT');
+    }
   }
 
   await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION}`);

@@ -8,6 +8,7 @@ import { Pressable } from '@/lib/interactionLog';
 import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { getRecordByTag, importRemoteRecord, logAcceptanceMeasurement, openDatabase } from '@/db';
+import { getCurrentUserId } from '@/lib/currentUser';
 import { normalizeTag, TAG_LABEL } from '@/lib/tags';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
@@ -48,7 +49,7 @@ async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promi
         .select('photo_url, taken_at')
         .eq('record_id', result.data.record_id)
     );
-    return await importRemoteRecord(db, result.data, photos?.data ?? []);
+    return await importRemoteRecord(db, result.data, photos?.data ?? [], await getCurrentUserId());
   } catch {
     return null;
   }

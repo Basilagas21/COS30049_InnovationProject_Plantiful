@@ -28,6 +28,7 @@ import { parseDbhCm, parseHeightCm } from '@/lib/validation';
 import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
 import { getCurrentPosition, openLocationSettings, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 import { generateTag, isValidTag, normalizeTag, TAG_LABEL } from '@/lib/tags';
+import { getCurrentUserId } from '@/lib/currentUser';
 
 export default function NewCaptureScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
@@ -174,6 +175,7 @@ export default function NewCaptureScreen() {
     setSaving(true);
     try {
       const recordId = await insertLocalRecord(db, {
+        owner_user_id: await getCurrentUserId(),
         qr_code: tag,
         species_id: selectedSpecies?.species_id ?? null,
         gps_lat: location?.lat ?? null,

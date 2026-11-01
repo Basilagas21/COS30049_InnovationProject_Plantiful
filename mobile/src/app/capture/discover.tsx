@@ -20,6 +20,7 @@ import { getCurrentPosition, openLocationSettings, persistCapturedPhoto, type Lo
 import { parseDbhCm, parseHeightCm } from '@/lib/validation';
 import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
 import { generateTag, TAG_LABEL } from '@/lib/tags';
+import { getCurrentUserId } from '@/lib/currentUser';
 
 export default function DiscoverPlantScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
@@ -187,6 +188,7 @@ export default function DiscoverPlantScreen() {
     setSaving(true);
     try {
       const recordId = await insertLocalRecord(db, {
+        owner_user_id: await getCurrentUserId(),
         qr_code: tag,
         // A known species needs no provisional name; officers only confirm new discoveries.
         species_id: selectedSpecies?.species_id ?? null,

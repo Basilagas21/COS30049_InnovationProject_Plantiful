@@ -16,7 +16,7 @@ import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
 import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, isTagInUse, type SpeciesOption } from '@/db';
-import { getCurrentPosition, persistCapturedPhoto, type LocationFix } from '@/lib/location';
+import { getCurrentPosition, openLocationSettings, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 import { parseDbhCm, parseHeightCm } from '@/lib/validation';
 import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
 import { generateTag, TAG_LABEL } from '@/lib/tags';
@@ -90,7 +90,10 @@ export default function DiscoverPlantScreen() {
       if (fix) {
         setLocation(fix);
       } else {
-        Alert.alert('Location unavailable', 'Location permission was not granted.');
+        Alert.alert('Location unavailable', 'Location permission was not granted.', [
+          { text: 'Open settings', onPress: () => void openLocationSettings() },
+          { text: 'Cancel', style: 'cancel' },
+        ]);
       }
     } catch {
       Alert.alert('Location unavailable', 'Could not get a GPS fix right now.');

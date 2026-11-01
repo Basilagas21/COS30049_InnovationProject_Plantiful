@@ -278,16 +278,28 @@ export default function DiscoverPlantScreen() {
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <View style={styles.card}>
           <Text style={styles.sectionLabel}>KNOWN SPECIES? CHECK FIRST</Text>
-          <Text style={styles.hint}>
-            Search the species catalogue. If this plant already has a QR tag, scan it on the Capture tab instead.
-          </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Search by scientific or common name…"
-            placeholderTextColor={colors.muted}
-            value={checkQuery}
-            onChangeText={(text) => {
-              setCheckQuery(text);
+          {speciesOptions.length === 0 ? (
+            <>
+              <Text style={styles.hint}>
+                Catalogue not synced yet. Download the species list first, then search here before naming a new plant.
+              </Text>
+              <Pressable style={styles.ghostButton} onPress={() => router.navigate('/sync')}>
+                <Ionicons name="cloud-upload-outline" size={18} color={colors.pine} />
+                <Text style={styles.ghostButtonText}>Go to Sync</Text>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <Text style={styles.hint}>
+                Search the species catalogue. If this plant already has a QR tag, scan it on the Capture tab instead.
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Search by scientific or common name…"
+                placeholderTextColor={colors.muted}
+                value={checkQuery}
+                onChangeText={(text) => {
+                  setCheckQuery(text);
               setCheckOpen(true);
             }}
             onFocus={() => setCheckOpen(true)}
@@ -324,25 +336,17 @@ export default function DiscoverPlantScreen() {
           ) : checkQuery.trim() && checkOpen ? (
             <View style={styles.matchList}>
               <View style={styles.matchRow}>
-                <Text style={styles.matchName}>
-                  {speciesOptions.length === 0 ? 'Catalogue not synced yet' : 'No match in the catalogue'}
-                </Text>
+                <Text style={styles.matchName}>No match in the catalogue</Text>
               </View>
               <Text style={styles.matchNote}>
-                {speciesOptions.length === 0
-                  ? 'Open Sync and press Sync now while signed in to download the species catalogue, then search again.'
-                  : `Looks like a new discovery. Name it below and we will issue a fresh tag. Catalogue snapshot from ${catalogSnapshotLabel}.${
-                      catalogStale ? ' It is over a week old, sync before trusting a no match.' : ''
-                    }`}
+                {`Looks like a new discovery. Name it below and we will issue a fresh tag. Catalogue snapshot from ${catalogSnapshotLabel}.${
+                    catalogStale ? ' It is over a week old, sync before trusting a no match.' : ''
+                  }`}
               </Text>
-              {speciesOptions.length === 0 && (
-                <Pressable style={styles.ghostButton} onPress={() => router.navigate('/sync')}>
-                  <Ionicons name="cloud-upload-outline" size={18} color={colors.pine} />
-                  <Text style={styles.ghostButtonText}>Go to Sync</Text>
-                </Pressable>
-              )}
             </View>
           ) : null}
+            </>
+          )}
         </View>
 
         <View style={styles.card}>

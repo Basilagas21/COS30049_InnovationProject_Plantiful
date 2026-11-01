@@ -139,20 +139,19 @@ export default function RecordsScreen() {
           ) : null}
         </View>
 
-        <Pressable
-          onPress={() => setSort((value) => (value === 'newest' ? 'oldest' : 'newest'))}
-          style={styles.sortButton}
-          accessibilityLabel={`Sorted ${sort === 'newest' ? 'newest first' : 'oldest first'}`}
-        >
-          <Ionicons
-            name={sort === 'newest' ? 'arrow-down' : 'arrow-up'}
-            size={14}
-            color={colors.emerald}
-          />
-          <Text style={styles.sortButtonText}>{sort === 'newest' ? 'Newest' : 'Oldest'}</Text>
-        </Pressable>
-
         <View style={styles.chipRow}>
+          <Pressable
+            onPress={() => setSort((value) => (value === 'newest' ? 'oldest' : 'newest'))}
+            style={styles.sortButton}
+            accessibilityLabel={`Sorted ${sort === 'newest' ? 'newest first' : 'oldest first'}`}
+          >
+            <Ionicons
+              name={sort === 'newest' ? 'arrow-down' : 'arrow-up'}
+              size={14}
+              color={colors.emerald}
+            />
+            <Text style={styles.sortButtonText}>{sort === 'newest' ? 'Newest' : 'Oldest'}</Text>
+          </Pressable>
           {STATUS_FILTERS.map((option) => (
             <Pressable
               key={option.key}
@@ -276,8 +275,10 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   sortButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start',
+    justifyContent: 'center',
     gap: 6,
+    flexGrow: 1,
+    flexBasis: '28%',
     backgroundColor: colors.sprout,
     borderRadius: 999,
     paddingHorizontal: 14,
@@ -299,8 +300,11 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     borderColor: colors.sand,
     backgroundColor: colors.white,
     paddingHorizontal: 14,
-    height: 32,
+    flexGrow: 1,
+    flexBasis: '28%',
+    alignItems: 'center',
     justifyContent: 'center',
+    height: 34,
   },
   chipActive: {
     backgroundColor: colors.emerald,

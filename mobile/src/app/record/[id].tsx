@@ -6,7 +6,7 @@ import { Alert, Pressable } from '@/lib/interactionLog';
 import QRCode from 'react-native-qrcode-svg';
 import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
-import { deleteLocalRecord, getLocalRecord, openDatabase, retryConflictingEdit, type LocalRecordWithPhoto } from '@/db';
+import { deleteLocalRecord, getLocalRecord, openDatabase, retryConflictingEdit, updateLocalRecord, type LocalRecordWithPhoto } from '@/db';
 import { supabase } from '@/lib/supabase';
 import { TAG_LABEL } from '@/lib/tags';
 import { phenologyLabel } from '@/lib/phenology';
@@ -65,6 +65,7 @@ export default function RecordDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [record, setRecord] = useState<LocalRecordWithPhoto | null | undefined>(undefined);
   const [remoteConflict, setRemoteConflict] = useState<ServerObservation | null>(null);
+  const [mergePicks, setMergePicks] = useState<Partial<Record<ObservationKey, boolean>>>({});
 
   const refresh = useCallback(async () => {
     if (!id) return;
@@ -131,6 +132,7 @@ export default function RecordDetailScreen() {
       Alert.alert('Unable to review', 'The server record is unavailable or you do not own it. Your local copy is safe.');
       return;
     }
+    setMergePicks({});
     setRemoteConflict(remote);
   }
 
@@ -146,6 +148,23 @@ export default function RecordDetailScreen() {
     }
   }
 
+  async function saveMergedConflict() {
+    if (!remoteConflict) return;
+    try {
+      const db = await openDatabase();
+      const patch: Parameters<typeof updateLocalRecord>[2] = {};
+      for (const { key } of conflictFields) {
+        (patch as Record<string, unknown>)[key] = mergePicks[key] ? remoteConflict[key] : rec[key];
+      }
+      await updateLocalRecord(db, rec.record_id, patch);
+      await retryConflictingEdit(db, rec.record_id, remoteConflict.version);
+      setRemoteConflict(null);
+      await refresh();
+    } catch {
+      Alert.alert('Unable to merge', 'Your local copy is still safe. Please try again.');
+    }
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Modal visible={remoteConflict !== null} animationType="slide" onRequestClose={() => setRemoteConflict(null)}>
@@ -153,17 +172,34 @@ export default function RecordDetailScreen() {
           <Text style={styles.title}>Review conflicting edits</Text>
           <Text style={styles.editHint}>
             Server revision {remoteConflict?.version} vs your saved revision {rec.server_version ?? 'unknown'}.
-            Review every field below. Keeping your copy will replace the server observation fields and send the record for officer re-review. Photos are added separately.
+            Tap a value to choose it for each field, then save the merged record. Keeping your copy replaces the server fields and sends the record for officer re-review. Photos are added separately.
           </Text>
           {remoteConflict && conflictFields.map(({ key, label }) => (
             <View key={key} style={styles.card}>
               <Text style={styles.fieldLabel}>{label}</Text>
-              <Text style={styles.fieldValue}>Server: {String(remoteConflict[key] ?? '—')}</Text>
-              <Text style={styles.fieldValue}>Your copy: {String(rec[key] ?? '—')}</Text>
+              <Pressable
+                style={[styles.conflictOption, mergePicks[key] && styles.conflictOptionPicked]}
+                onPress={() => setMergePicks((picks) => ({ ...picks, [key]: true }))}
+                accessibilityRole="button"
+                accessibilityLabel={`Use server value for ${label}`}
+              >
+                <Text style={styles.fieldValue}>Server: {String(remoteConflict[key] ?? '—')}</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.conflictOption, !mergePicks[key] && styles.conflictOptionPicked]}
+                onPress={() => setMergePicks((picks) => ({ ...picks, [key]: false }))}
+                accessibilityRole="button"
+                accessibilityLabel={`Use your value for ${label}`}
+              >
+                <Text style={styles.fieldValue}>Your copy: {String(rec[key] ?? '—')}</Text>
+              </Pressable>
             </View>
           ))}
           <Pressable style={styles.editButton} onPress={() => setRemoteConflict(null)}>
             <Text style={styles.editText}>Cancel — keep conflict pending</Text>
+          </Pressable>
+          <Pressable style={styles.editButton} onPress={saveMergedConflict}>
+            <Text style={styles.editText}>Save merged record and retry on next sync</Text>
           </Pressable>
           <Pressable style={styles.editButton} onPress={keepLocalEdit}>
             <Text style={styles.editText}>Keep my local edit and retry on next sync</Text>
@@ -451,6 +487,17 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     fontSize: 14,
     color: colors.pine,
     lineHeight: 20,
+  },
+  conflictOption: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  conflictOptionPicked: {
+    borderColor: colors.emerald,
+    backgroundColor: colors.sprout,
   },
   syncError: {
     fontSize: 12,

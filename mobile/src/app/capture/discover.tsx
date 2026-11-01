@@ -44,7 +44,8 @@ export default function DiscoverPlantScreen() {
   const [saving, setSaving] = useState(false);
 
   const [speciesOptions, setSpeciesOptions] = useState<SpeciesOption[]>([]);
-  const [catalogSyncedAt, setCatalogSyncedAt] = useState<string | null>(null);
+  const [catalogSnapshotLabel, setCatalogSnapshotLabel] = useState('an earlier sync');
+  const [catalogStale, setCatalogStale] = useState(false);
   const [checkQuery, setCheckQuery] = useState('');
   const [checkOpen, setCheckOpen] = useState(false);
   const [selectedSpecies, setSelectedSpecies] = useState<SpeciesOption | null>(null);
@@ -65,7 +66,12 @@ export default function DiscoverPlantScreen() {
         const syncedAt = await getSpeciesCatalogSyncedAt(db);
         if (active) {
           setSpeciesOptions(options);
-          setCatalogSyncedAt(syncedAt);
+          setCatalogSnapshotLabel(
+            syncedAt ? new Date(syncedAt).toLocaleDateString() : 'an earlier sync'
+          );
+          setCatalogStale(
+            syncedAt !== null && Date.now() - new Date(syncedAt).getTime() > 7 * 24 * 60 * 60 * 1000
+          );
         }
       } catch {
         if (active) setSpeciesOptions([]);
@@ -325,10 +331,8 @@ export default function DiscoverPlantScreen() {
               <Text style={styles.matchNote}>
                 {speciesOptions.length === 0
                   ? 'Open Sync and press Sync now while signed in to download the species catalogue, then search again.'
-                  : `Looks like a new discovery. Name it below and we will issue a fresh tag. Catalogue snapshot from ${catalogSyncedAt ? new Date(catalogSyncedAt).toLocaleDateString() : 'an earlier sync'}.${
-                      catalogSyncedAt && Date.now() - new Date(catalogSyncedAt).getTime() > 7 * 24 * 60 * 60 * 1000
-                        ? ' It is over a week old, sync before trusting a no match.'
-                        : ''
+                  : `Looks like a new discovery. Name it below and we will issue a fresh tag. Catalogue snapshot from ${catalogSnapshotLabel}.${
+                      catalogStale ? ' It is over a week old, sync before trusting a no match.' : ''
                     }`}
               </Text>
             </View>

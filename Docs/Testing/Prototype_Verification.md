@@ -65,16 +65,16 @@ The in-app acceptance panel reported "Sync success: 4/8 attempts (50.0%)" after 
 
 ## Dependency remediation and SDK 58 verification (#43) — observed 1 to 2 November 2026
 
-Environment: Google Pixel 9 Pro XL (Android 17) with Expo Go (SDK 58), app served from a workstation (`npx expo start`), web app run with `npm run dev`, live Supabase project. Tested revision: `main` @ `dabe702` (expo 58.0.22, @expo/cli 58.1.18, overrides pinning shell-quote 1.12.0 and zod 4.6.7).
+Environment: Google Pixel 9 Pro XL (Android 17) with Expo Go (SDK 58), app served from a workstation (`npx expo start`), web app run with `npm run dev`, live Supabase project. Tested revision: `main` @ `9a4d99b` (expo 58.0.22, @expo/cli 58.1.18, overrides pinning shell-quote 1.12.0, zod 4.6.7, glob 14.0.2 and minimatch 11.0.3).
 
 Audits, dated, before and after the remediation:
 
 | App | Before | After | Residual |
 |---|---|---|---|
 | web (Next.js 16.4.3) | production 0; dev-only moderate entries in eslint tooling | unchanged, production 0 | dev tooling only, not shipped |
-| mobile (Expo SDK 58) | critical 1, high 2, moderate 21, low 1 | critical 0, high 0, moderate 23 | build tooling only, decision below |
+| mobile (Expo SDK 58) | critical 1, high 2, moderate 21, low 1 | critical 0, high 0, moderate 0, low 0 | none, `npm audit` reports zero |
 
-Reachability and remediation decisions: the critical `shell-quote` advisory and the high `zod` advisory were reachable only through dev dependencies, `@expo/cli` and `eslint-plugin-react-hooks`, never in code that runs on the device or in the browser bundle; both were remediated by raising expo within the SDK 58 line and pinning patched versions with npm overrides, no downgrade, per the issue rule. The remaining 23 moderate entries sit in build tooling (`@expo/config`, metro, fingerprint, glob and similar); they are not reachable from app runtime code and are accepted as residual risk for a student prototype, revisit at the next Expo SDK line bump.
+Reachability and remediation decisions: the critical `shell-quote` advisory and the high `zod` advisory were reachable only through dev dependencies, `@expo/cli` and `eslint-plugin-react-hooks`, never in code that runs on the device or in the browser bundle; both were remediated by raising expo within the SDK 58 line and pinning patched versions with npm overrides, no downgrade, per the issue rule. The remaining moderate advisories resolved to two distinct issues, a `minimatch` denial-of-service and a `glob` cancellation-bypass, both transitive build-tooling dependencies, remediated by the same override mechanism at patched versions; the toolchain was re-verified after the pins, type check, lint, unit tests, Metro Android bundle and the device session all pass with the overrides in place.
 
 | # | Step | Expected | Observed | Result |
 |---|---|---|---|---|
@@ -83,7 +83,7 @@ Reachability and remediation decisions: the critical `shell-quote` advisory and 
 | 3 | Sync now, then again | Upload lands, no duplicate | One server row with tag, photo stored as a valid 83 KB JPEG under the owner folder; second press created nothing new | PASS |
 | 4 | Scan the record's QR tag on the Capture tab | Decoder opens the synced record | Camera decoded the tag and opened the record detail directly | PASS |
 | 5 | Web after the upgrade: sign-in, officer view, public gating, reports | No regression from the dependency work (web untouched at 16.4.3) | Officer sign-in, record list, conflict banner path and reports page all rendered; R7 anonymous battery re-run green on the same day | PASS |
-| 6 | Automated checks linked to the tested revision | tsc, lint, unit tests, Metro build | All green at `dabe702`; Metro compiled the full Android bundle on the new expo | PASS |
+| 6 | Automated checks linked to the tested revision | tsc, lint, unit tests, Metro build | All green at `9a4d99b`; Metro compiled the full Android bundle on the new expo with the overrides in place | PASS |
 
 Local checks are as above; deployment verification against a hosted build has not been performed and is not claimed.
 

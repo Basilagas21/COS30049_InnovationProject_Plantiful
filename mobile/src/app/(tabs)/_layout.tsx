@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import type { ColorValue } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/lib/theme';
 
 function iconColor(color: ColorValue) {
@@ -9,6 +10,7 @@ function iconColor(color: ColorValue) {
 
 export default function TabsLayout() {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -24,6 +26,8 @@ export default function TabsLayout() {
           borderTopLeftRadius: 26,
           borderTopRightRadius: 26,
           paddingTop: 6,
+          height: 56 + insets.bottom,
+          paddingBottom: insets.bottom + 6,
         },
         headerStyle: { backgroundColor: colors.cream },
         headerTitleStyle: { color: colors.pine, fontWeight: '700', fontSize: 24 },

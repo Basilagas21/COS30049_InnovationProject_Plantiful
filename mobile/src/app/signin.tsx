@@ -145,10 +145,9 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   container: {
     flexGrow: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     padding: 16,
     gap: 16,
-    paddingBottom: 40,
   },
   logo: {
     width: 200,

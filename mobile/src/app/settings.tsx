@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable } from '@/lib/interactionLog';
 import { useTheme, useThemeStyles, type ThemePreference } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
-import { countUnsyncedRecords, deleteLocalRecord, getLocalRecords, openDatabase } from '@/db';
+import { clearSpeciesCatalog, countUnsyncedRecords, deleteLocalRecord, getLocalRecords, getSpeciesOptions, openDatabase } from '@/db';
 
 const themeOptions: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: 'System' },
@@ -24,6 +24,25 @@ export default function SettingsScreen() {
       await deleteLocalRecord(db, record.record_id);
     }
     Alert.alert('Cleared', `${records.length} local record(s) removed from this device.`);
+  }
+
+  async function clearCatalog() {
+    const db = await openDatabase();
+    await clearSpeciesCatalog(db);
+    Alert.alert('Cleared', 'Species catalogue removed from this device. Press Sync now to download it again.');
+  }
+
+  async function confirmClearCatalog() {
+    const db = await openDatabase();
+    const species = await getSpeciesOptions(db);
+    Alert.alert(
+      'Clear species catalogue?',
+      `${species.length} species entries and their photos will be removed from this device. Your captures and the central database are untouched. Press Sync now afterwards to download the catalogue again.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Clear', style: 'destructive', onPress: clearCatalog },
+      ],
+    );
   }
 
   async function confirmClear() {
@@ -73,6 +92,9 @@ export default function SettingsScreen() {
         </Text>
         <Pressable style={styles.ghostButton} onPress={confirmClear} accessibilityRole="button">
           <Text style={styles.ghostButtonText}>Clear all local records</Text>
+        </Pressable>
+        <Pressable style={styles.ghostButton} onPress={confirmClearCatalog} accessibilityRole="button">
+          <Text style={styles.ghostButtonText}>Clear species catalogue</Text>
         </Pressable>
       </View>
 

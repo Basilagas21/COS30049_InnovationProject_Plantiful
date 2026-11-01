@@ -783,6 +783,14 @@ export async function getSpeciesCatalogSyncedAt(db: SQLite.SQLiteDatabase): Prom
   return row?.synced_at ?? null;
 }
 
+// Empties the locally cached species catalogue and species photos so the
+// device can exercise the download path again. Captures are untouched; their
+// species links simply show as unsynced until the next Sync now.
+export async function clearSpeciesCatalog(db: SQLite.SQLiteDatabase) {
+  await db.runAsync('DELETE FROM local_species_photos');
+  await db.runAsync('DELETE FROM species_catalog');
+}
+
 // Persist and read the completion time of the last successful sync run so the
 // Sync tab can report it truthfully across app restarts.
 export async function setLastSyncAt(db: SQLite.SQLiteDatabase, iso: string) {

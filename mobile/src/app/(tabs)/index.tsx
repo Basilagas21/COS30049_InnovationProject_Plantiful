@@ -210,7 +210,7 @@ export default function CaptureScreen() {
             style={[styles.ghostButton, styles.discoverButton]}
             onPress={() => router.push('/capture/discover')}
           >
-            <Ionicons name="leaf-outline" size={18} color={colors.emerald} />
+            <Ionicons name="leaf-outline" size={18} color={colors.onChartreuse} />
             <Text style={styles.ghostButtonText}>Tag a new plant (no tag yet?)</Text>
           </Pressable>
         ) : (

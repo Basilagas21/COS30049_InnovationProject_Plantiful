@@ -116,15 +116,15 @@ export default function ProfileScreen() {
         </View>
         <Text style={styles.title}>Signed in</Text>
         <View style={styles.emailRow}>
-          <Text style={styles.email}>{userEmail}</Text>
           <View style={styles.roleBadge}>
-          <Ionicons
-            name={canCapture ? 'leaf' : 'eye'}
-            size={14}
-            color={colors.emerald}
-          />
-          <Text style={styles.roleBadgeText}>{roleLabel(role)}</Text>
+            <Ionicons
+              name={canCapture ? 'leaf' : 'eye'}
+              size={14}
+              color={colors.emerald}
+            />
+            <Text style={styles.roleBadgeText}>{roleLabel(role)}</Text>
           </View>
+          <Text style={styles.email}>{userEmail}</Text>
         </View>
         <Pressable style={[styles.button, styles.ghost]} onPress={confirmSignOut}>
           <Text style={styles.ghostText}>Sign out</Text>

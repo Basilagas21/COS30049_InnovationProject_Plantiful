@@ -72,8 +72,6 @@ export default function SpeciesDetailScreen() {
           <Field icon="git-branch-outline" label="Taxonomy" value={s.taxonomy} />
         ) : null}
 
-        <View style={styles.divider} />
-
         {s.description ? (
           <Field icon="document-text-outline" label="Description" value={s.description} last />
         ) : null}

@@ -71,7 +71,10 @@ function RootNavigator() {
         } as never,
         headerTintColor: colors.pine,
         headerTitleStyle: { fontWeight: '700', fontSize: 24, color: colors.pine },
-        headerShadowVisible: false,
+        // Android's native-stack header ignores border styles and draws its
+        // own subtle elevation divider when the shadow is visible, which is
+        // the platform-consistent way to separate header from content.
+        headerShadowVisible: true,
         contentStyle: { backgroundColor: colors.cream },
       }}>
         <Stack.Protected guard={authed}>

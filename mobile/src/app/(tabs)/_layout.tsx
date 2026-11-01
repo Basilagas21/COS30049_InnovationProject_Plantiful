@@ -23,8 +23,7 @@ export default function TabsLayout() {
         tabBarItemStyle: { paddingTop: 2 },
         tabBarStyle: {
           backgroundColor: colors.scrim,
-          borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: 'rgba(255, 255, 255, 0.25)',
+          borderTopWidth: 0,
           borderTopLeftRadius: 26,
           borderTopRightRadius: 26,
           paddingTop: 6,

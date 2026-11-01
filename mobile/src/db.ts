@@ -528,12 +528,12 @@ export async function getPendingRecords(db: SQLite.SQLiteDatabase, ownerUserId?:
 export async function getRecordsByStatus(db: SQLite.SQLiteDatabase, status: string, ownerUserId?: string): Promise<LocalRecord[]> {
   if (ownerUserId !== undefined) {
     return db.getAllAsync<LocalRecord>(
-      `SELECT * FROM local_records WHERE sync_status = ? AND owner_user_id = ? ORDER BY capture_ts ASC`,
+      `SELECT * FROM local_records WHERE sync_status = ? AND owner_user_id = ? ORDER BY capture_ts DESC`,
       [status, ownerUserId]
     );
   }
   return db.getAllAsync<LocalRecord>(
-    `SELECT * FROM local_records WHERE sync_status = ? ORDER BY capture_ts ASC`,
+    `SELECT * FROM local_records WHERE sync_status = ? ORDER BY capture_ts DESC`,
     [status]
   );
 }
@@ -866,19 +866,22 @@ export async function clearSpeciesCatalog(db: SQLite.SQLiteDatabase) {
   await db.runAsync('DELETE FROM species_catalog');
 }
 
-// Persist and read the completion time of the last successful sync run so the
-// Sync tab can report it truthfully across app restarts.
-export async function setLastSyncAt(db: SQLite.SQLiteDatabase, iso: string) {
+// Persist and read the completion time of the last successful sync run per
+// account, so switching users on a shared device never shows another
+// account's sync history as your own.
+export async function setLastSyncAt(db: SQLite.SQLiteDatabase, ownerUserId: string, iso: string) {
   await db.runAsync(
     'INSERT INTO app_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
-    'last_sync_at',
+    `last_sync_at:${ownerUserId}`,
     iso
   );
 }
 
-export async function getLastSyncAt(db: SQLite.SQLiteDatabase): Promise<string | null> {
+export async function getLastSyncAt(db: SQLite.SQLiteDatabase, ownerUserId?: string): Promise<string | null> {
+  if (ownerUserId === undefined) return null;
   const row = await db.getFirstAsync<{ value: string }>(
-    "SELECT value FROM app_meta WHERE key = 'last_sync_at'"
+    'SELECT value FROM app_meta WHERE key = ?',
+    [`last_sync_at:${ownerUserId}`]
   );
   return row?.value ?? null;
 }

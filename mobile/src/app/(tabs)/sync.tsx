@@ -176,7 +176,7 @@ export default function SyncScreen() {
     setSynced(syncedRows.length);
     setUnownedCount(await countUnownedRecords(db));
     setMeasurements(await getAcceptanceMeasurements(db));
-    const lastSyncAt = await getLastSyncAt(db);
+    const lastSyncAt = await getLastSyncAt(db, owner);
     setLastSyncLabel(lastSyncAt ? new Date(lastSyncAt).toLocaleString() : null);
   }, []);
 
@@ -280,7 +280,7 @@ export default function SyncScreen() {
     if (rows.length === 0) {
       await pullReviewOutcomes();
       const stamp = new Date().toISOString();
-      await setLastSyncAt(db, stamp);
+      await setLastSyncAt(db, session.session.user.id, stamp);
       setLastSyncLabel(new Date(stamp).toLocaleString());
       setState('done');
       setMessage('Nothing to sync. The species catalogue was refreshed; captures made offline appear here as pending.');
@@ -449,7 +449,7 @@ export default function SyncScreen() {
     const remaining = await getPendingRecords(db, session.session.user.id);
     setPending(remaining.length);
     await pullReviewOutcomes();
-    await setLastSyncAt(db, new Date().toISOString());
+    await setLastSyncAt(db, session.session.user.id, new Date().toISOString());
     await loadCounts();
     setState(failedCount > 0 ? 'error' : 'done');
     setMessage(failedCount > 0
@@ -515,18 +515,21 @@ export default function SyncScreen() {
         {pendingList.length > 0 ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Pending ({pendingList.length})</Text>
-            {pendingList.map((r) => (
+            {pendingList.slice(0, 10).map((r) => (
               <Text key={r.record_id} style={styles.listItem}>
                 • {r.provisional_name || r.species_id || 'Unknown'} — {new Date(r.capture_ts).toLocaleString()}
               </Text>
             ))}
+            {pendingList.length > 10 ? (
+              <Text style={styles.listItem}>and {pendingList.length - 10} more, see My records</Text>
+            ) : null}
           </View>
         ) : null}
 
         {failedList.length > 0 ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Failed ({failedList.length})</Text>
-            {failedList.map((r) => (
+            {failedList.slice(0, 10).map((r) => (
               <View key={r.record_id} style={styles.listBlock}>
                 <Text style={styles.listItem}>
                   • {r.provisional_name || r.species_id || 'Unknown'} — {new Date(r.capture_ts).toLocaleString()}
@@ -534,28 +537,37 @@ export default function SyncScreen() {
                 {r.sync_error ? <Text style={styles.errorText}>{r.sync_error}</Text> : null}
               </View>
             ))}
+            {failedList.length > 10 ? (
+              <Text style={styles.listItem}>and {failedList.length - 10} more, see My records</Text>
+            ) : null}
           </View>
         ) : null}
 
         {conflictList.length > 0 ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Conflicts ({conflictList.length}) — review before retrying</Text>
-            {conflictList.map((r) => (
+            {conflictList.slice(0, 10).map((r) => (
               <Pressable key={r.record_id} onPress={() => router.push(`/record/${r.record_id}`)}>
                 <Text style={styles.listItem}>• {r.provisional_name || r.qr_code || 'Unknown'} — Open record</Text>
               </Pressable>
             ))}
+            {conflictList.length > 10 ? (
+              <Text style={styles.listItem}>and {conflictList.length - 10} more, see My records</Text>
+            ) : null}
           </View>
         ) : null}
 
         {syncedList.length > 0 ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Synced ({syncedList.length})</Text>
-            {syncedList.map((r) => (
+            {syncedList.slice(0, 10).map((r) => (
               <Text key={r.record_id} style={styles.listItem}>
                 • {r.provisional_name || r.species_id || 'Unknown'} — {new Date(r.capture_ts).toLocaleString()}
               </Text>
             ))}
+            {syncedList.length > 10 ? (
+              <Text style={styles.listItem}>and {syncedList.length - 10} more, see My records</Text>
+            ) : null}
           </View>
         ) : null}
 

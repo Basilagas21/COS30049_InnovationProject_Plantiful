@@ -207,13 +207,10 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     lineHeight: 19,
   },
   row: {
+    ...surfaces.card,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.sand,
     padding: 16,
   },
   rowBody: {

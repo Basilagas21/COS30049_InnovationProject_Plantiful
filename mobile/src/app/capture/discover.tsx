@@ -457,7 +457,7 @@ export default function DiscoverPlantScreen() {
               keyboardType="numeric"
             />
           </View>
-          <Text style={styles.fieldHint}>PHENOLOGY</Text>
+          <Text style={styles.sectionLabel}>PHENOLOGY</Text>
           <View style={styles.phenologyRow}>
             {PHENOLOGY_OPTIONS.map((option) => {
               const active = phenology === option.value;

@@ -431,7 +431,7 @@ export default function EditRecordScreen() {
               keyboardType="numeric"
             />
           </View>
-          <Text style={styles.fieldHint}>Phenology</Text>
+          <Text style={styles.sectionLabel}>PHENOLOGY</Text>
           <View style={styles.phenologyRow}>
             {PHENOLOGY_OPTIONS.map((option) => {
               const active = phenology === option.value;

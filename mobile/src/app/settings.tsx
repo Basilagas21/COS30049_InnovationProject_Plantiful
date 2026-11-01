@@ -108,6 +108,7 @@ export default function SettingsScreen() {
           <Text style={styles.rowTitle}>Back to profile</Text>
           <Text style={styles.rowHint}>Return to account</Text>
         </View>
+        <Ionicons name="chevron-forward" size={18} color={colors.muted} />
       </Pressable>
     </View>
   );

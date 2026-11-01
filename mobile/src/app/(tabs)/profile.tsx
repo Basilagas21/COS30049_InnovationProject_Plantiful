@@ -115,14 +115,16 @@ export default function ProfileScreen() {
           <Ionicons name="person" size={28} color={colors.white} />
         </View>
         <Text style={styles.title}>Signed in</Text>
-        <Text style={styles.email}>{userEmail}</Text>
-        <View style={styles.roleBadge}>
+        <View style={styles.emailRow}>
+          <Text style={styles.email}>{userEmail}</Text>
+          <View style={styles.roleBadge}>
           <Ionicons
             name={canCapture ? 'leaf' : 'eye'}
             size={14}
             color={colors.emerald}
           />
           <Text style={styles.roleBadgeText}>{roleLabel(role)}</Text>
+          </View>
         </View>
         <Pressable style={[styles.button, styles.ghost]} onPress={confirmSignOut}>
           <Text style={styles.ghostText}>Sign out</Text>
@@ -160,7 +162,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     width: 140,
     height: 101,
     alignSelf: 'center',
-    marginTop: 8,
+    marginVertical: 12,
   },
   card: {
     ...surfaces.card,
@@ -185,6 +187,11 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     fontSize: 14,
     fontWeight: '600',
     color: colors.emerald,
+  },
+  emailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   roleBadge: {
     flexDirection: 'row',

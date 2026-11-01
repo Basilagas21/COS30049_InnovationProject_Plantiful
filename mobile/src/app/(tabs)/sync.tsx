@@ -12,6 +12,8 @@ import {
   getPendingRecords,
   bindRecordServerId,
   getAcceptanceMeasurements,
+  getLastSyncAt,
+  setLastSyncAt,
   getPhotosForRecord,
   getSyncedPhotos,
   markPhotoPending,
@@ -149,6 +151,7 @@ export default function SyncScreen() {
   const [conflictList, setConflictList] = useState<LocalRecord[]>([]);
   const [syncedList, setSyncedList] = useState<LocalRecord[]>([]);
   const [measurements, setMeasurements] = useState<AcceptanceMeasurement[]>([]);
+  const [lastSyncLabel, setLastSyncLabel] = useState<string | null>(null);
 
   const loadCounts = useCallback(async () => {
     const db = await openDatabase();
@@ -166,6 +169,8 @@ export default function SyncScreen() {
     setFailed(failedRows.length);
     setSynced(syncedRows.length);
     setMeasurements(await getAcceptanceMeasurements(db));
+    const lastSyncAt = await getLastSyncAt(db);
+    setLastSyncLabel(lastSyncAt ? new Date(lastSyncAt).toLocaleString() : null);
   }, []);
 
   useFocusEffect(
@@ -267,8 +272,9 @@ export default function SyncScreen() {
     const rows = await getPendingRecords(db);
     if (rows.length === 0) {
       await pullReviewOutcomes();
+      await setLastSyncAt(db, new Date().toISOString());
       setState('done');
-      setMessage('Nothing to sync. Captures made offline appear here as pending.');
+      setMessage('Nothing to sync. The species catalogue was refreshed; captures made offline appear here as pending.');
       return;
     }
 
@@ -435,10 +441,11 @@ export default function SyncScreen() {
     setPending(remaining.length);
     await pullReviewOutcomes();
     await loadCounts();
+    await setLastSyncAt(db, new Date().toISOString());
     setState(failedCount > 0 ? 'error' : 'done');
     setMessage(failedCount > 0
       ? `Synced ${syncedCount}, ${failedCount} need attention. Conflicts require review; other failures retry when you press Sync now.`
-      : `All done — ${syncedCount} record(s) pushed to the central database as submitted.`);
+      : `All done — ${syncedCount} record(s) pushed to the central database as submitted. Species catalogue refreshed.`);
   }, [loadCounts]);
 
   const connected = isSupabaseConfigured && supabase !== null;
@@ -557,7 +564,7 @@ export default function SyncScreen() {
 
         {message || state === 'idle' ? (
           <Text style={styles.lastSync}>
-            {message || 'Last sync: never'}
+            {message || (lastSyncLabel ? `Last sync: ${lastSyncLabel}` : 'Last sync: never')}
           </Text>
         ) : null}
         {!connected ? (

@@ -2,7 +2,7 @@ import { File } from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 
 const DATABASE_NAME = 'plantiful.db';
-const SCHEMA_VERSION = 10;
+const SCHEMA_VERSION = 11;
 
 async function migrateDbIfNeeded(db: SQLite.SQLiteDatabase) {
   const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -219,6 +219,14 @@ CREATE TABLE IF NOT EXISTS local_species_photos (
       await db.execAsync('ALTER TABLE local_records ADD COLUMN rejection_reason TEXT');
     }
     currentDbVersion = 10;
+  }
+
+  if (currentDbVersion < 11) {
+    await db.execAsync(`CREATE TABLE IF NOT EXISTS app_meta (
+      key TEXT PRIMARY KEY NOT NULL,
+      value TEXT NOT NULL
+    );`);
+    currentDbVersion = 11;
   }
 
   // `edited` marks a locally edited record so the next sync pushes an UPDATE to
@@ -774,6 +782,23 @@ export async function getSpeciesCatalogSyncedAt(db: SQLite.SQLiteDatabase): Prom
     'SELECT MAX(synced_at) AS synced_at FROM species_catalog'
   );
   return row?.synced_at ?? null;
+}
+
+// Persist and read the completion time of the last successful sync run so the
+// Sync tab can report it truthfully across app restarts.
+export async function setLastSyncAt(db: SQLite.SQLiteDatabase, iso: string) {
+  await db.runAsync(
+    'INSERT INTO app_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
+    'last_sync_at',
+    iso
+  );
+}
+
+export async function getLastSyncAt(db: SQLite.SQLiteDatabase): Promise<string | null> {
+  const row = await db.getFirstAsync<{ value: string }>(
+    "SELECT value FROM app_meta WHERE key = 'last_sync_at'"
+  );
+  return row?.value ?? null;
 }
 
 export async function upsertSpeciesCatalog(

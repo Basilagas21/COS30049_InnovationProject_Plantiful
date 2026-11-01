@@ -67,7 +67,7 @@ function RootNavigator() {
         headerStyle: {
           backgroundColor: colors.cream,
           borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: colors.sand,
+          borderBottomColor: colors.border,
         } as never,
         headerTintColor: colors.pine,
         headerTitleStyle: { fontWeight: '700', fontSize: 24, color: colors.pine },

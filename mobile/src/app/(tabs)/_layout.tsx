@@ -23,7 +23,8 @@ export default function TabsLayout() {
         tabBarItemStyle: { paddingTop: 2 },
         tabBarStyle: {
           backgroundColor: colors.scrim,
-          borderTopWidth: 0,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: 'rgba(255, 255, 255, 0.25)',
           borderTopLeftRadius: 26,
           borderTopRightRadius: 26,
           paddingTop: 6,
@@ -40,7 +41,7 @@ export default function TabsLayout() {
         headerStyle: {
           backgroundColor: colors.cream,
           borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: colors.sand,
+          borderBottomColor: colors.border,
         },
         headerTitleStyle: { color: colors.pine, fontWeight: '700', fontSize: 24 },
         headerShadowVisible: false,

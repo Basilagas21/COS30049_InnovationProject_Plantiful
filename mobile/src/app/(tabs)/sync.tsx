@@ -516,21 +516,23 @@ export default function SyncScreen() {
 
         {pendingList.length > 0 ? (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Pending ({pendingList.length})</Text>
+            <Text style={styles.sectionTitle}>Recent pending ({pendingList.length})</Text>
             {pendingList.slice(0, 10).map((r) => (
               <Text key={r.record_id} style={styles.listItem}>
                 • {r.provisional_name || r.species_id || 'Unknown'} — {new Date(r.capture_ts).toLocaleString()}
               </Text>
             ))}
             {pendingList.length > 10 ? (
-              <Text style={styles.listItem}>and {pendingList.length - 10} more, see My records</Text>
+              <Pressable onPress={() => router.navigate('/records')} accessibilityRole="link">
+                <Text style={styles.seeAll}>View all pending in My records</Text>
+              </Pressable>
             ) : null}
           </View>
         ) : null}
 
         {failedList.length > 0 ? (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Failed ({failedList.length})</Text>
+            <Text style={styles.sectionTitle}>Recent failed ({failedList.length})</Text>
             {failedList.slice(0, 10).map((r) => (
               <View key={r.record_id} style={styles.listBlock}>
                 <Text style={styles.listItem}>
@@ -540,35 +542,41 @@ export default function SyncScreen() {
               </View>
             ))}
             {failedList.length > 10 ? (
-              <Text style={styles.listItem}>and {failedList.length - 10} more, see My records</Text>
+              <Pressable onPress={() => router.navigate('/records')} accessibilityRole="link">
+                <Text style={styles.seeAll}>View all failed in My records</Text>
+              </Pressable>
             ) : null}
           </View>
         ) : null}
 
         {conflictList.length > 0 ? (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Conflicts ({conflictList.length}) — review before retrying</Text>
+            <Text style={styles.sectionTitle}>Recent conflicts ({conflictList.length}) — review before retrying</Text>
             {conflictList.slice(0, 10).map((r) => (
               <Pressable key={r.record_id} onPress={() => router.push(`/record/${r.record_id}`)}>
                 <Text style={styles.listItem}>• {r.provisional_name || r.qr_code || 'Unknown'} — Open record</Text>
               </Pressable>
             ))}
             {conflictList.length > 10 ? (
-              <Text style={styles.listItem}>and {conflictList.length - 10} more, see My records</Text>
+              <Pressable onPress={() => router.navigate('/records')} accessibilityRole="link">
+                <Text style={styles.seeAll}>View all conflict in My records</Text>
+              </Pressable>
             ) : null}
           </View>
         ) : null}
 
         {syncedList.length > 0 ? (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Synced ({syncedList.length})</Text>
+            <Text style={styles.sectionTitle}>Recent synced ({syncedList.length})</Text>
             {syncedList.slice(0, 10).map((r) => (
               <Text key={r.record_id} style={styles.listItem}>
                 • {r.provisional_name || r.species_id || 'Unknown'} — {new Date(r.capture_ts).toLocaleString()}
               </Text>
             ))}
             {syncedList.length > 10 ? (
-              <Text style={styles.listItem}>and {syncedList.length - 10} more, see My records</Text>
+              <Pressable onPress={() => router.navigate('/records')} accessibilityRole="link">
+                <Text style={styles.seeAll}>View all synced in My records</Text>
+              </Pressable>
             ) : null}
           </View>
         ) : null}
@@ -704,6 +712,12 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   listBlock: {
     gap: 2,
+  },
+  seeAll: {
+    color: colors.emerald,
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: 4,
   },
   errorText: {
     fontSize: 11,

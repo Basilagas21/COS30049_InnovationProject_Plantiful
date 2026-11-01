@@ -409,8 +409,22 @@ export default function SyncScreen() {
         setSynced(syncedCount);
       } catch (e) {
         const msg = describeSyncError(e, row.qr_code);
-        if (e instanceof EditConflict) await markRecordConflict(db, row.record_id, e.message);
-        else await markRecordFailed(db, row.record_id, msg);
+        if (e instanceof EditConflict) {
+          await markRecordConflict(db, row.record_id, e.message);
+          if (supabase && row.server_id) {
+            try {
+              await supabase.from('sync_conflicts').upsert({
+                record_id: row.server_id,
+                botanist_id: session.session.user.id,
+                device_id: row.record_id,
+                server_version: row.server_version,
+                message: e.message,
+              }, { onConflict: 'record_id,device_id' });
+            } catch {
+              // Filing the report must never change the sync outcome.
+            }
+          }
+        } else await markRecordFailed(db, row.record_id, msg);
         await logAcceptanceMeasurement(db, 'sync_record', e instanceof EditConflict ? 'conflict' : 'failed', startedAt, row.record_id);
         failedCount += 1;
         setFailed(failedCount);

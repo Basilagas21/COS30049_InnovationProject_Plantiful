@@ -302,7 +302,7 @@ export default function EditRecordScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={[styles.scroll, { paddingBottom: 16 + insets.bottom }]} keyboardShouldPersistTaps="handled">
-        <View style={[styles.headerRule, { marginBottom: 12 }]} />
+        <View style={[styles.headerRule, { marginHorizontal: -16, marginTop: -16, marginBottom: 16 }]} />
         <View style={styles.card}>
           <Text style={styles.sectionLabel}>{TAG_LABEL.toUpperCase()}</Text>
 

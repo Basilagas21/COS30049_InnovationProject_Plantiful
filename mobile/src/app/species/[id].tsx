@@ -48,7 +48,7 @@ export default function SpeciesDetailScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingBottom: 16 + insets.bottom }]}>
-      <View style={[styles.headerRule, { marginBottom: 16 }]} />
+      <View style={[styles.headerRule, { marginHorizontal: -16, marginTop: -16, marginBottom: 16 }]} />
       {photos.length > 0 ? (
         <Image source={{ uri: photos[0].photo_url }} style={styles.photo} resizeMode="cover" />
       ) : (

@@ -202,6 +202,10 @@ export default function SyncScreen() {
       return;
     }
 
+    setState('syncing');
+    setSynced(0);
+    setFailed(0);
+
     const { data: species } = await supabase
       .from('species')
       .select('species_id, scientific_name, common_name, conservation_status, taxonomy, description');
@@ -246,10 +250,6 @@ export default function SyncScreen() {
         console.warn('[sync] approval pull failed:', e instanceof Error ? e.message : e);
       }
     };
-
-    setState('syncing');
-    setSynced(0);
-    setFailed(0);
 
     // Self-heal pass: check photos already flagged synced against the bucket.
     // A missing or truncated object (older builds uploaded an error page

@@ -47,8 +47,9 @@ export default function SpeciesDetailScreen() {
   const s = species;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingBottom: 16 + insets.bottom }]}>
-      <View style={[styles.headerRule, { marginHorizontal: -16, marginTop: -16, marginBottom: 16 }]} />
+    <View style={styles.pageWrap}>
+      <View style={styles.headerRule} />
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 16 + insets.bottom }]}>
       {photos.length > 0 ? (
         <Image source={{ uri: photos[0].photo_url }} style={styles.photo} resizeMode="cover" />
       ) : (
@@ -99,7 +100,8 @@ export default function SpeciesDetailScreen() {
           </View>
         )}
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -147,6 +149,10 @@ function Field({
 }
 
 const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
+  pageWrap: {
+    flex: 1,
+    backgroundColor: colors.cream,
+  },
   headerRule: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: colors.sand,

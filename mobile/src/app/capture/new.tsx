@@ -260,8 +260,8 @@ export default function NewCaptureScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <View style={styles.headerRule} />
       <ScrollView contentContainerStyle={[styles.scroll, { paddingBottom: 16 + insets.bottom }]} keyboardShouldPersistTaps="handled">
-        <View style={[styles.headerRule, { marginHorizontal: -16, marginTop: -16, marginBottom: 16 }]} />
         <View style={styles.card}>
           <Text style={styles.sectionLabel}>{TAG_LABEL.toUpperCase()}</Text>
 

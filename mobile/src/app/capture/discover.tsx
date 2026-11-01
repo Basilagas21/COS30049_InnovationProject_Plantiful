@@ -279,8 +279,8 @@ export default function DiscoverPlantScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <View style={styles.headerRule} />
       <ScrollView contentContainerStyle={[styles.scroll, { paddingBottom: 16 + insets.bottom }]} keyboardShouldPersistTaps="handled">
-        <View style={[styles.headerRule, { marginHorizontal: -16, marginTop: -16, marginBottom: 16 }]} />
         <View style={styles.card}>
           <Text style={styles.sectionLabel}>KNOWN SPECIES? CHECK FIRST</Text>
           {speciesOptions.length === 0 ? (
@@ -395,7 +395,7 @@ export default function DiscoverPlantScreen() {
             </View>
             <View style={styles.qrInfo}>
               <Text style={styles.tagId}>{tagId}</Text>
-              <Text style={styles.hint}>
+              <Text style={[styles.hint, { textAlign: 'left' }]}>
                 Print or screenshot this tag and attach it to the plant. Future scans of it open this plant&apos;s record.
               </Text>
             </View>
@@ -457,7 +457,7 @@ export default function DiscoverPlantScreen() {
               keyboardType="numeric"
             />
           </View>
-          <Text style={styles.fieldHint}>Phenology</Text>
+          <Text style={styles.fieldHint}>PHENOLOGY</Text>
           <View style={styles.phenologyRow}>
             {PHENOLOGY_OPTIONS.map((option) => {
               const active = phenology === option.value;

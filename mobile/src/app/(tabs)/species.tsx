@@ -117,7 +117,6 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     alignItems: 'center',
     gap: 8,
     margin: 16,
-    marginBottom: 4,
     paddingHorizontal: 14,
     borderRadius: 24,
     borderWidth: 1,
@@ -132,7 +131,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   list: {
     padding: 16,
-    paddingTop: 12,
+    paddingTop: 0,
     gap: 12,
   },
   empty: {

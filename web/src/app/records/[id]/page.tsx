@@ -207,7 +207,7 @@ export default async function RecordDetailPage({
               </h2>
               <ul className="mt-2 space-y-1 text-sm text-moss">
                 {conflicts.map((conflict) => (
-                  <li key={conflict.createdAt}>
+                  <li key={conflict.conflictId}>
                     {conflict.message ?? "A device holds an edit that has not reached the central record."} ·{" "}
                     {new Date(conflict.createdAt).toLocaleString()}
                   </li>

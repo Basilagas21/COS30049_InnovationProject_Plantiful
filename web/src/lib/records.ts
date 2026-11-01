@@ -330,6 +330,7 @@ export async function fetchRecordById(id: string): Promise<RecordDetail | null> 
 }
 
 export type ConflictReport = {
+  conflictId: string;
   message: string | null;
   createdAt: string;
 };
@@ -341,11 +342,11 @@ export async function fetchConflictReports(id: string): Promise<ConflictReport[]
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("sync_conflicts")
-    .select("message, created_at")
+    .select("conflict_id, message, created_at")
     .eq("record_id", id)
     .order("created_at", { ascending: false });
   if (error || !data) {
     return [];
   }
-  return data.map((row) => ({ message: row.message, createdAt: row.created_at }));
+  return data.map((row) => ({ conflictId: row.conflict_id, message: row.message, createdAt: row.created_at }));
 }

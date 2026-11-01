@@ -42,7 +42,6 @@ function syncLabel(status: string, colors: ThemeColors) {
 function RecordThumbnail({ uri, label }: { uri: string | null; label: string }) {
   const [failed, setFailed] = useState(false);
   const { colors, styles } = useThemeStyles(createStyles);
-  const { scheme } = useTheme();
 
   if (!uri || failed) {
     return (

@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import { NavLogger } from '@/lib/interactionLog';
 import { RoleProvider, useRole } from '@/lib/role';
@@ -61,9 +61,13 @@ function RootNavigator() {
       <NavLogger />
       <Stack screenOptions={{
         headerShown: false,
-        headerStyle: { backgroundColor: colors.cream },
+        headerStyle: {
+          backgroundColor: colors.cream,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.sand,
+        },
         headerTintColor: colors.pine,
-        headerTitleStyle: { fontWeight: '700' },
+        headerTitleStyle: { fontWeight: '700', fontSize: 24, color: colors.pine },
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.cream },
       }}>

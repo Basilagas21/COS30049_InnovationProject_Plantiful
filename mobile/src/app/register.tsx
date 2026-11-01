@@ -13,12 +13,14 @@ import {
 } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
 import { useThemeStyles } from '@/lib/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { BotanicalBanner } from '@/components/botanical-banner';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 
 export default function RegisterScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -70,7 +72,7 @@ export default function RegisterScreen() {
 
   if (!isSupabaseConfigured) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingBottom: 40 + insets.bottom }]}>
         <View style={styles.card}>
           <Ionicons name="cloud-offline-outline" size={40} color={colors.muted} />
           <Text style={styles.title}>No connection configured</Text>

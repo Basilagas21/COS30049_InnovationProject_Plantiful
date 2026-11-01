@@ -313,10 +313,14 @@ export default function DiscoverPlantScreen() {
           ) : checkQuery.trim() && checkOpen ? (
             <View style={styles.matchList}>
               <View style={styles.matchRow}>
-                <Text style={styles.matchName}>No match in the catalogue</Text>
+                <Text style={styles.matchName}>
+                  {speciesOptions.length === 0 ? 'Catalogue not synced yet' : 'No match in the catalogue'}
+                </Text>
               </View>
               <Text style={styles.matchNote}>
-                Looks like a new discovery. Name it below and we will issue a fresh tag.
+                {speciesOptions.length === 0
+                  ? 'Open Sync and press Sync now while signed in to download the species catalogue, then search again.'
+                  : 'Looks like a new discovery. Name it below and we will issue a fresh tag.'}
               </Text>
             </View>
           ) : null}

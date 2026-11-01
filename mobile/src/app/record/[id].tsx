@@ -169,6 +169,7 @@ export default function RecordDetailScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingBottom: 16 + insets.bottom }]}>
+      <View style={[styles.headerRule, { marginBottom: 16 }]} />
       <Modal visible={remoteConflict !== null} animationType="slide" onRequestClose={() => setRemoteConflict(null)}>
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
           <Text style={styles.title}>Review conflicting edits</Text>
@@ -356,6 +357,10 @@ function Field({
 }
 
 const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
+  headerRule: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.sand,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.cream,

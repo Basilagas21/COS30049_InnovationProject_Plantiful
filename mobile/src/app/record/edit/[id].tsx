@@ -302,6 +302,7 @@ export default function EditRecordScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={[styles.scroll, { paddingBottom: 16 + insets.bottom }]} keyboardShouldPersistTaps="handled">
+        <View style={[styles.headerRule, { marginBottom: 12 }]} />
         <View style={styles.card}>
           <Text style={styles.sectionLabel}>{TAG_LABEL.toUpperCase()}</Text>
 
@@ -542,6 +543,10 @@ export default function EditRecordScreen() {
 }
 
 const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
+  headerRule: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.sand,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.cream,

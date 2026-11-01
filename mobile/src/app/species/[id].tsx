@@ -48,6 +48,7 @@ export default function SpeciesDetailScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={[styles.content, { paddingBottom: 16 + insets.bottom }]}>
+      <View style={[styles.headerRule, { marginBottom: 16 }]} />
       {photos.length > 0 ? (
         <Image source={{ uri: photos[0].photo_url }} style={styles.photo} resizeMode="cover" />
       ) : (
@@ -146,6 +147,10 @@ function Field({
 }
 
 const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
+  headerRule: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.sand,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.cream,

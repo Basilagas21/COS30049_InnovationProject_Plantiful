@@ -62,6 +62,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={[styles.container, { paddingBottom: 16 + insets.bottom }]}>
+      <View style={[styles.headerRule, { marginHorizontal: -16, marginTop: -16, marginBottom: 4 }]} />
       <View style={styles.appearanceBox}>
         <Text style={styles.sectionTitle}>Appearance</Text>
         <Text style={styles.hint}>
@@ -113,6 +114,10 @@ export default function SettingsScreen() {
 }
 
 const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleSheet.create({
+  headerRule: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.sand,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.cream,
@@ -183,7 +188,6 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     ...surfaces.card,
     alignItems: 'center',
     gap: 8,
-    marginTop: 8,
   },
   aboutTitle: {
     fontSize: 28,

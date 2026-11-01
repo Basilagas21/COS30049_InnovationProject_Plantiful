@@ -20,7 +20,7 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.chartreuse,
         tabBarInactiveTintColor: colors.onScrimMuted,
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
-        tabBarItemStyle: { paddingTop: 6 },
+        tabBarItemStyle: { paddingTop: 2 },
         tabBarStyle: {
           backgroundColor: colors.scrim,
           borderTopWidth: 0,
@@ -40,7 +40,7 @@ export default function TabsLayout() {
         headerStyle: {
           backgroundColor: colors.cream,
           borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: colors.border,
+          borderBottomColor: colors.sand,
         },
         headerTitleStyle: { color: colors.pine, fontWeight: '700', fontSize: 24 },
         headerShadowVisible: false,

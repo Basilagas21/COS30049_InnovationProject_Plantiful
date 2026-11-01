@@ -196,14 +196,15 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   ghostButton: {
     marginTop: 8,
+    alignSelf: 'stretch',
     backgroundColor: colors.sand,
     borderRadius: 24,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 14,
+    alignItems: 'center',
   },
   ghostButtonText: {
     color: colors.danger,
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '700',
   },
 });

@@ -7,8 +7,10 @@ import { Pressable } from '@/lib/interactionLog';
 import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+import { getCurrentUserId } from '@/lib/currentUser';
 import { EditConflict, pushEditedRecord } from '@/lib/sync-edit';
 import {
+  claimUnownedRecords,
   getPendingRecords,
   bindRecordServerId,
   getAcceptanceMeasurements,
@@ -155,11 +157,13 @@ export default function SyncScreen() {
 
   const loadCounts = useCallback(async () => {
     const db = await openDatabase();
+    const owner = (await getCurrentUserId()) ?? undefined;
+    if (owner) await claimUnownedRecords(db, owner);
     const [pendingRows, failedRows, conflictRows, syncedRows] = await Promise.all([
-      getRecordsByStatus(db, 'pending'),
-      getRecordsByStatus(db, 'failed'),
-      getRecordsByStatus(db, 'conflict'),
-      getRecordsByStatus(db, 'synced'),
+      getRecordsByStatus(db, 'pending', owner),
+      getRecordsByStatus(db, 'failed', owner),
+      getRecordsByStatus(db, 'conflict', owner),
+      getRecordsByStatus(db, 'synced', owner),
     ]);
     setPendingList(pendingRows);
     setFailedList(failedRows);
@@ -269,7 +273,7 @@ export default function SyncScreen() {
       console.warn('[sync] photo repair scan failed:', e instanceof Error ? e.message : e);
     }
 
-    const rows = await getPendingRecords(db);
+    const rows = await getPendingRecords(db, session.session.user.id);
     if (rows.length === 0) {
       await pullReviewOutcomes();
       const stamp = new Date().toISOString();
@@ -439,7 +443,7 @@ export default function SyncScreen() {
       }
     }
 
-    const remaining = await getPendingRecords(db);
+    const remaining = await getPendingRecords(db, session.session.user.id);
     setPending(remaining.length);
     await pullReviewOutcomes();
     await setLastSyncAt(db, new Date().toISOString());

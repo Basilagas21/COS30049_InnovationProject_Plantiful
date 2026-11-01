@@ -540,6 +540,18 @@ export async function getRecordsByStatus(db: SQLite.SQLiteDatabase, status: stri
 
 // Unsynced rows belonging to the given account: the sign-out warning counts
 // exactly what would be stranded or, in old builds, wrongly claimed.
+// Upgrade path for captures made before owner stamping existed: the first
+// account to use the device after upgrading claims the unowned history as its
+// own. On a genuinely shared device this hands old data to whoever syncs
+// first, which is the documented, deliberate behaviour; brand-new captures
+// are always stamped correctly.
+export async function claimUnownedRecords(db: SQLite.SQLiteDatabase, ownerUserId: string): Promise<void> {
+  await db.runAsync(
+    'UPDATE local_records SET owner_user_id = ? WHERE owner_user_id IS NULL',
+    [ownerUserId]
+  );
+}
+
 export async function countUnsyncedRecords(db: SQLite.SQLiteDatabase, ownerUserId?: string): Promise<number> {
   if (ownerUserId !== undefined) {
     const row = await db.getFirstAsync<{ n: number }>(

@@ -221,22 +221,21 @@ CREATE TABLE IF NOT EXISTS local_species_photos (
     currentDbVersion = 10;
   }
 
-  if (currentDbVersion < 11) {
+  // Repaired on EVERY open rather than version-gated, so a half-applied
+  // migration or a stale module cache can never leave a table or column
+  // missing and break saving. CREATE TABLE IF NOT EXISTS is a no-op once
+  // the table exists.
+  {
     await db.execAsync(`CREATE TABLE IF NOT EXISTS app_meta (
       key TEXT PRIMARY KEY NOT NULL,
       value TEXT NOT NULL
     );`);
-    currentDbVersion = 11;
-  }
-
-  // `edited` marks a locally edited record so the next sync pushes an UPDATE to
-  // the existing server row instead of creating a duplicate. Repaired on EVERY
-  // open rather than version-gated, so a half-applied migration can never leave
-  // the column missing and break saving.
-  {
     const columns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(local_records)');
     if (!columns.some((column) => column.name === 'edited')) {
       await db.execAsync('ALTER TABLE local_records ADD COLUMN edited INTEGER NOT NULL DEFAULT 0');
+    }
+    if (!columns.some((column) => column.name === 'rejection_reason')) {
+      await db.execAsync('ALTER TABLE local_records ADD COLUMN rejection_reason TEXT');
     }
   }
 

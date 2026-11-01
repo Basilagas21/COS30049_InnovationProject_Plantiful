@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import type { ColorValue } from 'react-native';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/lib/theme';
 
@@ -23,7 +23,8 @@ export default function TabsLayout() {
         tabBarItemStyle: { paddingTop: 6 },
         tabBarStyle: {
           backgroundColor: colors.scrim,
-          borderTopWidth: 0,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: colors.border,
           borderTopLeftRadius: 26,
           borderTopRightRadius: 26,
           paddingTop: 6,
@@ -37,7 +38,11 @@ export default function TabsLayout() {
         tabBarBackground: () => (
           <View style={{ flex: 1, backgroundColor: colors.scrim }} />
         ),
-        headerStyle: { backgroundColor: colors.cream },
+        headerStyle: {
+          backgroundColor: colors.cream,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.border,
+        },
         headerTitleStyle: { color: colors.pine, fontWeight: '700', fontSize: 24 },
         headerShadowVisible: false,
       }}

@@ -63,6 +63,30 @@ order by 1;
 
 The in-app acceptance panel reported "Sync success: 4/8 attempts (50.0%)" after this run, because the deliberate offline attempts count as failed attempts. This run is not a sync success-rate measurement; that belongs to #40.
 
+## Dependency remediation and SDK 58 verification (#43) — observed 1 to 2 November 2026
+
+Environment: Google Pixel 9 Pro XL (Android 17) with Expo Go (SDK 58), app served from a workstation (`npx expo start`), web app run with `npm run dev`, live Supabase project. Tested revision: `main` @ `dabe702` (expo 58.0.22, @expo/cli 58.1.18, overrides pinning shell-quote 1.12.0 and zod 4.6.7).
+
+Audits, dated, before and after the remediation:
+
+| App | Before | After | Residual |
+|---|---|---|---|
+| web (Next.js 16.4.3) | production 0; dev-only moderate entries in eslint tooling | unchanged, production 0 | dev tooling only, not shipped |
+| mobile (Expo SDK 58) | critical 1, high 2, moderate 21, low 1 | critical 0, high 0, moderate 23 | build tooling only, decision below |
+
+Reachability and remediation decisions: the critical `shell-quote` advisory and the high `zod` advisory were reachable only through dev dependencies, `@expo/cli` and `eslint-plugin-react-hooks`, never in code that runs on the device or in the browser bundle; both were remediated by raising expo within the SDK 58 line and pinning patched versions with npm overrides, no downgrade, per the issue rule. The remaining 23 moderate entries sit in build tooling (`@expo/config`, metro, fingerprint, glob and similar); they are not reachable from app runtime code and are accepted as residual risk for a student prototype, revisit at the next Expo SDK line bump.
+
+| # | Step | Expected | Observed | Result |
+|---|---|---|---|---|
+| 1 | Capture on the phone: name, GPS, photo, save | Camera, location and photo flows work on the new build | Tag screen saved "S2-01 pass plant" with photo attached and GPS fix with accuracy estimate | PASS |
+| 2 | Force-stop Expo Go and cold relaunch | Session and unsynced data survive | App reopened signed in, record present in My records still Pending | PASS |
+| 3 | Sync now, then again | Upload lands, no duplicate | One server row with tag, photo stored as a valid 83 KB JPEG under the owner folder; second press created nothing new | PASS |
+| 4 | Scan the record's QR tag on the Capture tab | Decoder opens the synced record | Camera decoded the tag and opened the record detail directly | PASS |
+| 5 | Web after the upgrade: sign-in, officer view, public gating, reports | No regression from the dependency work (web untouched at 16.4.3) | Officer sign-in, record list, conflict banner path and reports page all rendered; R7 anonymous battery re-run green on the same day | PASS |
+| 6 | Automated checks linked to the tested revision | tsc, lint, unit tests, Metro build | All green at `dabe702`; Metro compiled the full Android bundle on the new expo | PASS |
+
+Local checks are as above; deployment verification against a hosted build has not been performed and is not claimed.
+
 ## Two-device offline sync and conflict test (#39) — observed 1 November 2026
 
 Environment: Google Pixel 9 Pro XL (Android 17) with Expo Go (SDK 58), app served from a workstation (`npx expo start`), web app run with `npm run dev`, live Supabase project. Revision: `main` @ `73278e8` plus this document's commit. Accounts: botanist `dld@botanist.com` on the phone; the second client was a scripted session using the same botanist credentials and the same REST update path the app uses. The conflict mechanism is the `plant_records.version` compare-and-swap on the server row, so the second client's transport does not affect what is proven; the method is stated here rather than claiming two physical devices.

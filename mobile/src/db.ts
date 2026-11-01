@@ -315,6 +315,7 @@ export type LocalRecord = {
   reviewed_at: string | null;
   rejection_reason: string | null;
   edited: number;
+  owner_user_id: string | null;
   created_at: string;
 };
 
@@ -326,6 +327,7 @@ export type LocalRecordWithPhoto = LocalRecord & {
 export async function insertLocalRecord(
   db: SQLite.SQLiteDatabase,
   input: {
+    owner_user_id?: string | null;
     qr_code?: string | null;
     species_id?: string | null;
     provisional_name?: string | null;
@@ -345,8 +347,8 @@ export async function insertLocalRecord(
   await db.runAsync(
     `INSERT INTO local_records (
       record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm,
-      dbh_cm, taxonomy, phenology, morphology, notes, capture_ts, sync_status, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`,
+      dbh_cm, taxonomy, phenology, morphology, notes, capture_ts, sync_status, owner_user_id, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
     recordId,
     input.species_id ?? null,
     input.qr_code ?? null,
@@ -361,6 +363,7 @@ export async function insertLocalRecord(
     input.morphology ?? null,
     input.notes ?? null,
     now,
+    input.owner_user_id ?? null,
     now
   );
   return recordId;
@@ -410,15 +413,16 @@ export type RemoteRecordImport = {
 export async function importRemoteRecord(
   db: SQLite.SQLiteDatabase,
   remote: RemoteRecordImport,
-  photos: { photo_url: string; taken_at?: string | null }[]
+  photos: { photo_url: string; taken_at?: string | null }[],
+  ownerUserId?: string | null
 ): Promise<string> {
   const recordId = `rec-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const now = new Date().toISOString();
   await db.runAsync(
     `INSERT INTO local_records (
        record_id, species_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm,
-        dbh_cm, taxonomy, phenology, morphology, notes, capture_ts, sync_status, server_id, server_version, approval_status, reviewed_at, edited, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?, ?, 0, ?)`,
+        dbh_cm, taxonomy, phenology, morphology, notes, capture_ts, sync_status, server_id, server_version, approval_status, reviewed_at, edited, owner_user_id, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?, ?, 0, ?, ?)`,
     recordId,
     remote.species_id ?? null,
     remote.qr_code ? remote.qr_code.trim().toUpperCase() : null,
@@ -437,6 +441,7 @@ export async function importRemoteRecord(
     remote.version,
     remote.approval_status ?? null,
     remote.reviewed_at ?? null,
+    ownerUserId ?? null,
     now
   );
   for (const photo of photos) {
@@ -453,7 +458,23 @@ export async function importRemoteRecord(
   return recordId;
 }
 
-export async function getLocalRecords(db: SQLite.SQLiteDatabase): Promise<LocalRecordWithPhoto[]> {
+export async function getLocalRecords(db: SQLite.SQLiteDatabase, ownerUserId?: string): Promise<LocalRecordWithPhoto[]> {
+  if (ownerUserId !== undefined) {
+    return db.getAllAsync<LocalRecordWithPhoto>(
+      `SELECT
+         r.record_id, r.species_id, r.qr_code, r.provisional_name,
+         r.gps_lat, r.gps_lng, r.gps_accuracy_m,
+          r.height_cm, r.dbh_cm, r.taxonomy, r.phenology, r.morphology, r.notes, r.capture_ts, r.sync_status, r.server_id, r.server_version,
+         r.sync_error, r.approval_status, r.reviewed_at, r.rejection_reason, r.created_at,
+         COALESCE(s.common_name, s.scientific_name) AS species_name,
+         (SELECT p.local_uri FROM local_photos p WHERE p.record_id = r.record_id ORDER BY p.capture_ts DESC LIMIT 1) AS photo_uri
+       FROM local_records r
+       LEFT JOIN species_catalog s ON s.species_id = r.species_id
+       WHERE r.owner_user_id = ?
+       ORDER BY r.capture_ts DESC`,
+      [ownerUserId]
+    );
+  }
   return db.getAllAsync<LocalRecordWithPhoto>(
     `SELECT
        r.record_id, r.species_id, r.qr_code, r.provisional_name,
@@ -487,21 +508,46 @@ export async function getLocalRecord(
 }
 
 // Records still to push: new captures plus earlier attempts that failed, so a
-// lost connection mid-sync is retried on the next "Sync now".
-export async function getPendingRecords(db: SQLite.SQLiteDatabase): Promise<LocalRecord[]> {
+// lost connection mid-sync is retried on the next "Sync now". Only rows owned
+// by the signed-in account are returned: a shared device must never push one
+// botanist's captures under another's id. Rows with no owner (created before
+// owner stamping existed) are held back until re-stamped, never silently
+// claimed.
+export async function getPendingRecords(db: SQLite.SQLiteDatabase, ownerUserId?: string): Promise<LocalRecord[]> {
+  if (ownerUserId !== undefined) {
+    return db.getAllAsync<LocalRecord>(
+      `SELECT * FROM local_records WHERE sync_status IN ('pending', 'failed') AND owner_user_id = ? ORDER BY capture_ts ASC`,
+      [ownerUserId]
+    );
+  }
   return db.getAllAsync<LocalRecord>(
     `SELECT * FROM local_records WHERE sync_status IN ('pending', 'failed') ORDER BY capture_ts ASC`
   );
 }
 
-export async function getRecordsByStatus(db: SQLite.SQLiteDatabase, status: string): Promise<LocalRecord[]> {
+export async function getRecordsByStatus(db: SQLite.SQLiteDatabase, status: string, ownerUserId?: string): Promise<LocalRecord[]> {
+  if (ownerUserId !== undefined) {
+    return db.getAllAsync<LocalRecord>(
+      `SELECT * FROM local_records WHERE sync_status = ? AND owner_user_id = ? ORDER BY capture_ts ASC`,
+      [status, ownerUserId]
+    );
+  }
   return db.getAllAsync<LocalRecord>(
     `SELECT * FROM local_records WHERE sync_status = ? ORDER BY capture_ts ASC`,
     [status]
   );
 }
 
-export async function countUnsyncedRecords(db: SQLite.SQLiteDatabase): Promise<number> {
+// Unsynced rows belonging to the given account: the sign-out warning counts
+// exactly what would be stranded or, in old builds, wrongly claimed.
+export async function countUnsyncedRecords(db: SQLite.SQLiteDatabase, ownerUserId?: string): Promise<number> {
+  if (ownerUserId !== undefined) {
+    const row = await db.getFirstAsync<{ n: number }>(
+      "SELECT COUNT(*) AS n FROM local_records WHERE sync_status != 'synced' AND owner_user_id = ?",
+      [ownerUserId]
+    );
+    return row?.n ?? 0;
+  }
   const row = await db.getFirstAsync<{ n: number }>(
     "SELECT COUNT(*) AS n FROM local_records WHERE sync_status != 'synced'"
   );

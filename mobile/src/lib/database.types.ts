@@ -154,6 +154,23 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["sync_log"]["Insert"]>;
         Relationships: [];
       };
+      sync_conflicts: {
+        Row: {
+          conflict_id: string;
+          record_id: string;
+          botanist_id: string;
+          device_id: string;
+          server_version: number | null;
+          message: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["sync_conflicts"]["Row"], "conflict_id" | "created_at"> & {
+          conflict_id?: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["sync_conflicts"]["Insert"]>;
+        Relationships: [];
+      };
       sensors: {
         Row: {
           sensor_id: string;

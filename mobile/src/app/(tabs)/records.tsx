@@ -3,7 +3,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
-import { useThemeStyles } from '@/lib/theme';
+import { useTheme, useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { BotanicalBanner } from '@/components/botanical-banner';
 import {
@@ -42,6 +42,7 @@ function syncLabel(status: string, colors: ThemeColors) {
 function RecordThumbnail({ uri, label }: { uri: string | null; label: string }) {
   const [failed, setFailed] = useState(false);
   const { colors, styles } = useThemeStyles(createStyles);
+  const { scheme } = useTheme();
 
   if (!uri || failed) {
     return (
@@ -64,6 +65,7 @@ function RecordThumbnail({ uri, label }: { uri: string | null; label: string }) 
 
 export default function RecordsScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
+  const { scheme } = useTheme();
   const router = useRouter();
   const [records, setRecords] = useState<LocalRecordWithPhoto[]>([]);
   const [search, setSearch] = useState('');
@@ -171,6 +173,7 @@ export default function RecordsScreen() {
       <FlatList
         ListHeaderComponent={<BotanicalBanner title="Your discoveries." subtitle="Every observation adds a new page to the story of the forest." />}
         data={filteredRecords}
+        indicatorStyle={scheme === 'dark' ? 'white' : 'black'}
         keyExtractor={(item) => item.record_id}
         contentContainerStyle={styles.list}
         ListEmptyComponent={
@@ -252,8 +255,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   toolbar: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 4,
-    gap: 10,
+    gap: 8,
   },
   searchWrap: {
     flexDirection: 'row',

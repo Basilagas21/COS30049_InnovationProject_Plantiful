@@ -3,13 +3,14 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Pressable, TextInput } from '@/lib/interactionLog';
-import { useThemeStyles } from '@/lib/theme';
+import { useTheme, useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { BotanicalBanner } from '@/components/botanical-banner';
 import { openDatabase, getSpeciesOptions, type SpeciesOption } from '@/db';
 
 export default function SpeciesReferenceScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
+  const { scheme } = useTheme();
   const router = useRouter();
   const [species, setSpecies] = useState<SpeciesOption[]>([]);
   const [query, setQuery] = useState('');
@@ -61,6 +62,7 @@ export default function SpeciesReferenceScreen() {
         keyExtractor={(item) => item.species_id}
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
+        indicatorStyle={scheme === 'dark' ? 'white' : 'black'}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="book-outline" size={48} color={colors.muted} />

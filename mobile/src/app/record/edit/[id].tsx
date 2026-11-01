@@ -678,7 +678,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     justifyContent: 'center',
     gap: 8,
     backgroundColor: colors.white,
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: colors.sand,
     paddingVertical: 12,

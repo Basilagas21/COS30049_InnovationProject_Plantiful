@@ -122,7 +122,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     gap: 10,
   },
   sectionTitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700',
     color: colors.pine,
   },
@@ -197,7 +197,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   ghostButton: {
     marginTop: 8,
     backgroundColor: colors.sand,
-    borderRadius: 20,
+    borderRadius: 24,
     paddingVertical: 12,
     paddingHorizontal: 20,
   },

@@ -15,7 +15,7 @@ import {
 import { Alert, Pressable, TextInput } from '@/lib/interactionLog';
 import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
-import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, isTagInUse, type SpeciesOption } from '@/db';
+import { openDatabase, insertLocalRecord, addLocalPhoto, getSpeciesOptions, getSpeciesCatalogSyncedAt, isTagInUse, type SpeciesOption } from '@/db';
 import { getCurrentPosition, openLocationSettings, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 import { parseDbhCm, parseHeightCm } from '@/lib/validation';
 import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
@@ -44,6 +44,7 @@ export default function DiscoverPlantScreen() {
   const [saving, setSaving] = useState(false);
 
   const [speciesOptions, setSpeciesOptions] = useState<SpeciesOption[]>([]);
+  const [catalogSyncedAt, setCatalogSyncedAt] = useState<string | null>(null);
   const [checkQuery, setCheckQuery] = useState('');
   const [checkOpen, setCheckOpen] = useState(false);
   const [selectedSpecies, setSelectedSpecies] = useState<SpeciesOption | null>(null);
@@ -61,7 +62,11 @@ export default function DiscoverPlantScreen() {
       try {
         const db = await openDatabase();
         const options = await getSpeciesOptions(db);
-        if (active) setSpeciesOptions(options);
+        const syncedAt = await getSpeciesCatalogSyncedAt(db);
+        if (active) {
+          setSpeciesOptions(options);
+          setCatalogSyncedAt(syncedAt);
+        }
       } catch {
         if (active) setSpeciesOptions([]);
       }
@@ -320,7 +325,11 @@ export default function DiscoverPlantScreen() {
               <Text style={styles.matchNote}>
                 {speciesOptions.length === 0
                   ? 'Open Sync and press Sync now while signed in to download the species catalogue, then search again.'
-                  : 'Looks like a new discovery. Name it below and we will issue a fresh tag.'}
+                  : `Looks like a new discovery. Name it below and we will issue a fresh tag. Catalogue snapshot from ${catalogSyncedAt ? new Date(catalogSyncedAt).toLocaleDateString() : 'an earlier sync'}.${
+                      catalogSyncedAt && Date.now() - new Date(catalogSyncedAt).getTime() > 7 * 24 * 60 * 60 * 1000
+                        ? ' It is over a week old, sync before trusting a no match.'
+                        : ''
+                    }`}
               </Text>
             </View>
           ) : null}

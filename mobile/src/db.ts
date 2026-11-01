@@ -766,6 +766,16 @@ export async function getSpeciesOptions(db: SQLite.SQLiteDatabase): Promise<Spec
   );
 }
 
+// Timestamp of the most recent catalogue row written by a sync. Null when the
+// local catalogue has never been downloaded. Used to tell the botanist how old
+// the snapshot behind a "no match" answer is.
+export async function getSpeciesCatalogSyncedAt(db: SQLite.SQLiteDatabase): Promise<string | null> {
+  const row = await db.getFirstAsync<{ synced_at: string | null }>(
+    'SELECT MAX(synced_at) AS synced_at FROM species_catalog'
+  );
+  return row?.synced_at ?? null;
+}
+
 export async function upsertSpeciesCatalog(
   db: SQLite.SQLiteDatabase,
   species: SpeciesOption[]

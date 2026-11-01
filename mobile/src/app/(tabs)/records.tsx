@@ -284,6 +284,8 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     flexBasis: '28%',
     backgroundColor: colors.sprout,
     borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.sand,
     paddingHorizontal: 14,
     height: 34,
   },

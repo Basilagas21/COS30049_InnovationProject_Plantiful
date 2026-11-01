@@ -21,6 +21,7 @@ import {
   getSyncedPhotos,
   markPhotoPending,
   markPhotoSynced,
+  migrateLegacyLastSync,
   getRecordsByStatus,
   logAcceptanceMeasurement,
   markRecordFailed,
@@ -176,6 +177,7 @@ export default function SyncScreen() {
     setSynced(syncedRows.length);
     setUnownedCount(await countUnownedRecords(db));
     setMeasurements(await getAcceptanceMeasurements(db));
+    if (owner) await migrateLegacyLastSync(db, owner);
     const lastSyncAt = await getLastSyncAt(db, owner);
     setLastSyncLabel(lastSyncAt ? new Date(lastSyncAt).toLocaleString() : null);
   }, []);

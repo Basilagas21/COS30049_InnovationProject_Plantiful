@@ -877,6 +877,28 @@ export async function setLastSyncAt(db: SQLite.SQLiteDatabase, ownerUserId: stri
   );
 }
 
+// One-time adoption of the pre-per-account device stamp: the first account
+// to open the Sync tab after upgrading inherits the shared history, which is
+// correct for the single-user device that produced it. The legacy key is
+// removed so a second account can never inherit it as well.
+export async function migrateLegacyLastSync(db: SQLite.SQLiteDatabase, ownerUserId: string): Promise<void> {
+  const legacy = await db.getFirstAsync<{ value: string }>(
+    "SELECT value FROM app_meta WHERE key = 'last_sync_at'"
+  );
+  if (!legacy) return;
+  const own = await db.getFirstAsync<{ value: string }>(
+    'SELECT value FROM app_meta WHERE key = ?',
+    [`last_sync_at:${ownerUserId}`]
+  );
+  if (!own) {
+    await db.runAsync(
+      'INSERT INTO app_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
+      [`last_sync_at:${ownerUserId}`, legacy.value]
+    );
+  }
+  await db.runAsync("DELETE FROM app_meta WHERE key = 'last_sync_at'");
+}
+
 export async function getLastSyncAt(db: SQLite.SQLiteDatabase, ownerUserId?: string): Promise<string | null> {
   if (ownerUserId === undefined) return null;
   const row = await db.getFirstAsync<{ value: string }>(

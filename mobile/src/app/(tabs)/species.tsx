@@ -69,9 +69,15 @@ export default function SpeciesReferenceScreen() {
             </Text>
             <Text style={styles.emptyHint}>
               {species.length === 0
-                ? 'Run a Sync to download the latest plant species catalogue onto this device.'
+                ? 'Run a Sync to download the latest plant species catalogue onto this device. You can browse the full list afterwards, or filter it by name.'
                 : 'Try a different scientific or common name.'}
             </Text>
+            {species.length === 0 && (
+              <Pressable style={styles.syncButton} onPress={() => router.navigate('/sync')}>
+                <Ionicons name="cloud-upload-outline" size={18} color={colors.pine} />
+                <Text style={styles.syncButtonText}>Go to Sync</Text>
+              </Pressable>
+            )}
           </View>
         }
         renderItem={({ item }) => (
@@ -144,6 +150,23 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     fontSize: 14,
     color: colors.muted,
     textAlign: 'center',
+  },
+  syncButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    alignSelf: 'center',
+    marginTop: 4,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 999,
+    backgroundColor: colors.chartreuse,
+  },
+  syncButtonText: {
+    color: colors.pine,
+    fontSize: 15,
+    fontWeight: '600',
   },
   card: {
     ...surfaces.card,

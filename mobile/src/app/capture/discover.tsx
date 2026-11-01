@@ -335,6 +335,12 @@ export default function DiscoverPlantScreen() {
                       catalogStale ? ' It is over a week old, sync before trusting a no match.' : ''
                     }`}
               </Text>
+              {speciesOptions.length === 0 && (
+                <Pressable style={styles.ghostButton} onPress={() => router.navigate('/sync')}>
+                  <Ionicons name="cloud-upload-outline" size={18} color={colors.pine} />
+                  <Text style={styles.ghostButtonText}>Go to Sync</Text>
+                </Pressable>
+              )}
             </View>
           ) : null}
         </View>

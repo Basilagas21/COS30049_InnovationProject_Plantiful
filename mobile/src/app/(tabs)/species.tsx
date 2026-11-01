@@ -122,10 +122,10 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     borderWidth: 1,
     borderColor: colors.sand,
     backgroundColor: colors.white,
+    height: 50,
   },
   search: {
     flex: 1,
-    height: 50,
     fontSize: 14,
     color: colors.pine,
   },

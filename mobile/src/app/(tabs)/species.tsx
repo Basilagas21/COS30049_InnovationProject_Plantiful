@@ -63,7 +63,7 @@ export default function SpeciesReferenceScreen() {
         keyboardShouldPersistTaps="handled"
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Ionicons name="book-outline" size={48} color={colors.sand} />
+            <Ionicons name="book-outline" size={48} color={colors.muted} />
             <Text style={styles.emptyTitle}>
               {species.length === 0 ? 'No species reference yet' : 'No matches'}
             </Text>
@@ -74,7 +74,7 @@ export default function SpeciesReferenceScreen() {
             </Text>
             {species.length === 0 && (
               <Pressable style={styles.syncButton} onPress={() => router.navigate('/sync')}>
-                <Ionicons name="cloud-upload-outline" size={18} color={colors.pine} />
+                <Ionicons name="cloud-upload-outline" size={18} color={colors.onChartreuse} />
                 <Text style={styles.syncButtonText}>Go to Sync</Text>
               </Pressable>
             )}
@@ -164,7 +164,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     backgroundColor: colors.chartreuse,
   },
   syncButtonText: {
-    color: colors.pine,
+    color: colors.onChartreuse,
     fontSize: 15,
     fontWeight: '600',
   },

@@ -7,6 +7,7 @@ import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { countUnsyncedRecords, openDatabase } from '@/db';
+import { getCurrentUserId } from '@/lib/currentUser';
 import { roleLabel, useRole } from '@/lib/role';
 
 export default function ProfileScreen() {
@@ -39,9 +40,9 @@ export default function ProfileScreen() {
 
   async function confirmSignOut() {
     const db = await openDatabase();
-    const unsynced = await countUnsyncedRecords(db);
+    const unsynced = await countUnsyncedRecords(db, (await getCurrentUserId()) ?? undefined);
     const message = unsynced > 0
-      ? `${unsynced} record(s) on this device are not synced yet. Sync them first: whoever signs in next would upload them under their account.`
+      ? `${unsynced} record(s) belong to this account and are not synced yet. They stay on this device until you sign in here again and sync.`
       : 'You will need to sign in again to sync records.';
     Alert.alert('Sign out?', message, [
       { text: 'Cancel', style: 'cancel' },

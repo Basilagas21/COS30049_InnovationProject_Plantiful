@@ -7,11 +7,13 @@ import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { BotanicalBanner } from '@/components/botanical-banner';
 import {
+  claimUnownedRecords,
   deleteLocalRecord,
   getLocalRecords,
   openDatabase,
   type LocalRecordWithPhoto,
 } from '@/db';
+import { getCurrentUserId } from '@/lib/currentUser';
 
 type SortKey = 'newest' | 'oldest';
 type StatusFilter = 'all' | 'pending' | 'synced' | 'failed' | 'conflict';
@@ -86,7 +88,9 @@ export default function RecordsScreen() {
 
   const refresh = useCallback(async () => {
     const db = await openDatabase();
-    setRecords(await getLocalRecords(db));
+    const owner = (await getCurrentUserId()) ?? undefined;
+    if (owner) await claimUnownedRecords(db, owner);
+    setRecords(await getLocalRecords(db, owner));
   }, []);
 
   useFocusEffect(

@@ -290,9 +290,11 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     height: 34,
   },
   sortButtonText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
     color: colors.emerald,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   chipRow: {
     flexDirection: 'row',
@@ -313,7 +315,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   chipActive: {
     backgroundColor: colors.emerald,
-    borderColor: colors.emerald,
+    borderColor: colors.sand,
   },
   chipText: {
     fontSize: 12,

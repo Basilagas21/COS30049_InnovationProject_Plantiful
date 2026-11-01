@@ -1,0 +1,7 @@
+...Alert evaluation failed (offline); retry with python iot/evaluate.py
+....
+----------------------------------------------------------------------
+Ran 7 tests in 0.002s
+
+OK
+Raised sensor_silent [high] for sensor b7e2c4a1 (no readings in window, last reading none in window)

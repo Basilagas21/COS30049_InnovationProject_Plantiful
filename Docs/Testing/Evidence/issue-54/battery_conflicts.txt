@@ -1,0 +1,14 @@
+PASS: botanist files report on own record | [{"conflict_id":"a297ea48-74ba-4e48-82c9-4d257e46a7c1","record_id":"b45f674f-a206-4b6e-9c9a-79e3640461fe"}]
+HOLE PROBE cross-owner insert status: 403 {"code":"42501","details":null,"hint":null,"message":"new row violates row-level security policy for
+PASS: cross-owner botanist_id spoof denied | status 403
+PASS: anon sees no reports
+PASS: botanist reads only own reports | rows 1
+PASS: officer reads reports | rows 1
+PASS: officer delete denied | rows 0
+PASS: botanist delete own allowed
+PASS: duplicate pair refreshed to one row | [{"conflict_id":"329bbfee-cac4-438b-943c-98dd18377a61","message":"refreshed"}]
+cascade parent delete: 200
+PASS: cascade removed report | rows 0
+PASS: zero report residue | []
+
+BATTERY: 10 pass, 0 fail

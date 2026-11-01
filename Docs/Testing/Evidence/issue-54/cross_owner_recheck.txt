@@ -1,0 +1,4 @@
+cross-owner insert: status 403
+PASS: cross-owner insert denied by qualified policy
+own-record merge: status 201, rows 1
+PASS: own filing unaffected

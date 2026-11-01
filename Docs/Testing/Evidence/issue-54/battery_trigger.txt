@@ -1,0 +1,13 @@
+PASS: officer approve transition passes | [{"approval_status":"approved"}]
+PASS: officer content edit on reviewed blocked | status 400 msg: Officers may only change the review status of a record, not its content
+PASS: notes unchanged after blocked edit | [{"notes":null}]
+PASS: officer re-review with reason passes | [{"approval_status":"rejected","rejection_reason":"Battery recheck"}]
+PASS: botanist resubmit passes | [{"approval_status":"pending"}]
+PASS: botanist self-approve still 403 | status 403
+PASS: officer edit on pending blocked | status 403
+PASS: admin content edit allowed | [{"notes":"admin data hygiene edit"}]
+PASS: admin delete allowed
+PASS: officer delete still denied
+PASS: cleanup done
+
+BATTERY: 11 pass, 0 fail

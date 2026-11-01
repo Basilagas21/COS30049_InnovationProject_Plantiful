@@ -7,7 +7,7 @@ import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { BotanicalBanner } from '@/components/botanical-banner';
 import {
-  claimUnownedRecords,
+  adoptLegacyUnownedRecords,
   deleteLocalRecord,
   getLocalRecords,
   openDatabase,
@@ -89,7 +89,7 @@ export default function RecordsScreen() {
   const refresh = useCallback(async () => {
     const db = await openDatabase();
     const owner = (await getCurrentUserId()) ?? undefined;
-    if (owner) await claimUnownedRecords(db, owner);
+    if (owner) await adoptLegacyUnownedRecords(db, owner);
     setRecords(await getLocalRecords(db, owner));
   }, []);
 

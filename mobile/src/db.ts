@@ -540,16 +540,30 @@ export async function getRecordsByStatus(db: SQLite.SQLiteDatabase, status: stri
 
 // Unsynced rows belonging to the given account: the sign-out warning counts
 // exactly what would be stranded or, in old builds, wrongly claimed.
-// Upgrade path for captures made before owner stamping existed: the first
-// account to use the device after upgrading claims the unowned history as its
-// own. On a genuinely shared device this hands old data to whoever syncs
-// first, which is the documented, deliberate behaviour; brand-new captures
-// are always stamped correctly.
-export async function claimUnownedRecords(db: SQLite.SQLiteDatabase, ownerUserId: string): Promise<void> {
-  await db.runAsync(
-    'UPDATE local_records SET owner_user_id = ? WHERE owner_user_id IS NULL',
-    [ownerUserId]
+// Captures made before owner stamping existed have no owner. The first
+// account to use the device after upgrading adopts that legacy history as
+// its own, which matches the old behaviour where whatever synced last owned
+// it; on a single-user device, the normal case, that is simply correct.
+// Once an account has adopted, unowned rows left behind (only possible on a
+// genuinely shared device) are held for another account and counted by
+// countUnownedRecords so the Sync tab can say so instead of hiding them.
+export async function adoptLegacyUnownedRecords(db: SQLite.SQLiteDatabase, ownerUserId: string): Promise<void> {
+  const claimer = await db.getFirstAsync<{ value: string }>(
+    "SELECT value FROM app_meta WHERE key = 'legacy_owner_claim'"
   );
+  if (claimer) {
+    if (claimer.value !== ownerUserId) return;
+  } else {
+    await db.runAsync("INSERT INTO app_meta (key, value) VALUES ('legacy_owner_claim', ?)", [ownerUserId]);
+  }
+  await db.runAsync('UPDATE local_records SET owner_user_id = ? WHERE owner_user_id IS NULL', [ownerUserId]);
+}
+
+export async function countUnownedRecords(db: SQLite.SQLiteDatabase): Promise<number> {
+  const row = await db.getFirstAsync<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM local_records WHERE owner_user_id IS NULL AND sync_status IN ('pending', 'failed')"
+  );
+  return row?.n ?? 0;
 }
 
 export async function countUnsyncedRecords(db: SQLite.SQLiteDatabase, ownerUserId?: string): Promise<number> {

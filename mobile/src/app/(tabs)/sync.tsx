@@ -10,8 +10,9 @@ import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { getCurrentUserId } from '@/lib/currentUser';
 import { EditConflict, pushEditedRecord } from '@/lib/sync-edit';
 import {
-  claimUnownedRecords,
   getPendingRecords,
+  adoptLegacyUnownedRecords,
+  countUnownedRecords,
   bindRecordServerId,
   getAcceptanceMeasurements,
   getLastSyncAt,
@@ -154,11 +155,12 @@ export default function SyncScreen() {
   const [syncedList, setSyncedList] = useState<LocalRecord[]>([]);
   const [measurements, setMeasurements] = useState<AcceptanceMeasurement[]>([]);
   const [lastSyncLabel, setLastSyncLabel] = useState<string | null>(null);
+  const [unownedCount, setUnownedCount] = useState(0);
 
   const loadCounts = useCallback(async () => {
     const db = await openDatabase();
     const owner = (await getCurrentUserId()) ?? undefined;
-    if (owner) await claimUnownedRecords(db, owner);
+    if (owner) await adoptLegacyUnownedRecords(db, owner);
     const [pendingRows, failedRows, conflictRows, syncedRows] = await Promise.all([
       getRecordsByStatus(db, 'pending', owner),
       getRecordsByStatus(db, 'failed', owner),
@@ -172,6 +174,7 @@ export default function SyncScreen() {
     setPending(pendingRows.length);
     setFailed(failedRows.length);
     setSynced(syncedRows.length);
+    setUnownedCount(await countUnownedRecords(db));
     setMeasurements(await getAcceptanceMeasurements(db));
     const lastSyncAt = await getLastSyncAt(db);
     setLastSyncLabel(lastSyncAt ? new Date(lastSyncAt).toLocaleString() : null);
@@ -562,6 +565,11 @@ export default function SyncScreen() {
             Sync success: {successfulAttempts}/{attempts.length} attempts
             {attempts.length ? ` (${(100 * successfulAttempts / attempts.length).toFixed(1)}%)` : ''}
           </Text>
+          {unownedCount > 0 ? (
+            <Text style={styles.listItem}>
+              {unownedCount} older capture(s) on this device have no account owner yet and were not synced. Sign in with the account that made them.
+            </Text>
+          ) : null}
           <Text style={styles.listItem}>
             Attempt outcomes: {successfulAttempts} synced, {conflictAttempts} conflicts, {failedAttempts} failed
           </Text>

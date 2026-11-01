@@ -129,6 +129,14 @@ export default function ProfileScreen() {
         </Pressable>
       </View>
 
+      <View style={styles.card}>
+        <Text style={styles.hint}>
+          {canCapture
+            ? 'Records you sync are stamped with your botanist account so officers can verify them.'
+            : 'Your role is read-only. You can browse and review records, but capture is limited to botanist accounts.'}
+        </Text>
+      </View>
+
       <Pressable style={styles.row} onPress={() => router.push('/settings')}>
         <Ionicons name="settings-outline" size={22} color={colors.pine} />
         <View style={styles.rowBody}>
@@ -137,14 +145,6 @@ export default function ProfileScreen() {
         </View>
         <Ionicons name="chevron-forward" size={18} color={colors.muted} />
       </Pressable>
-
-      <View style={styles.card}>
-        <Text style={styles.hint}>
-          {canCapture
-            ? 'Records you sync are stamped with your botanist account so officers can verify them.'
-            : 'Your role is read-only. You can browse and review records, but capture is limited to botanist accounts.'}
-        </Text>
-      </View>
     </View>
   );
 }

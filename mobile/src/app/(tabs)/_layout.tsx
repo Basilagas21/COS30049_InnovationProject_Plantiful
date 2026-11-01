@@ -24,7 +24,7 @@ export default function TabsLayout() {
         tabBarStyle: {
           backgroundColor: colors.scrim,
           borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: colors.border,
+          borderTopColor: 'rgba(255, 255, 255, 0.18)',
           borderTopLeftRadius: 26,
           borderTopRightRadius: 26,
           paddingTop: 6,

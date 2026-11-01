@@ -328,6 +328,19 @@ export default function SyncScreen() {
           );
           // An upload may fail afterwards; retrying must not repeat this edit.
           await setRecordServerId(db, row.record_id, serverId, serverVersion);
+          // The resubmit landing clears the server-side conflict report, the
+          // divergence this record carried is resolved.
+          if (row.server_id && supabase) {
+            try {
+              await supabase.from('sync_conflicts')
+                .delete()
+                .eq('record_id', serverId)
+                .eq('botanist_id', session.session.user.id)
+                .eq('device_id', row.record_id);
+            } catch {
+              // Report cleanup must never block a successful sync.
+            }
+          }
         };
 
         if (serverRecordId && row.edited) {

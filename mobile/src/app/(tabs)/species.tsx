@@ -38,7 +38,7 @@ export default function SpeciesReferenceScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.searchWrap}>
-        <Ionicons name="search-outline" size={18} color={colors.muted} />
+        <Ionicons name="search-outline" size={16} color={colors.muted} />
         <TextInput
           style={styles.search}
           value={query}
@@ -50,7 +50,7 @@ export default function SpeciesReferenceScreen() {
         />
         {query ? (
           <Pressable onPress={() => setQuery('')} hitSlop={8} accessibilityLabel="Clear search">
-            <Ionicons name="close-circle-outline" size={18} color={colors.muted} />
+            <Ionicons name="close-circle-outline" size={16} color={colors.muted} />
           </Pressable>
         ) : null}
       </View>
@@ -118,7 +118,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     gap: 8,
     margin: 16,
     paddingHorizontal: 14,
-    borderRadius: 24,
+    borderRadius: 999,
     borderWidth: 1,
     borderColor: colors.sand,
     backgroundColor: colors.white,

@@ -95,7 +95,7 @@ export default function CaptureScreen() {
         recordId = await importScannedRemoteRecord(db, data);
         if (recordId) outcome = 'remote_found';
       }
-      await logAcceptanceMeasurement(db, 'qr_lookup', outcome, startedAt);
+      await logAcceptanceMeasurement(db, 'qr_lookup', outcome, startedAt, null, await getCurrentUserId());
       setLastScan({ data, recordId });
       if (recordId) {
         router.push({ pathname: '/record/[id]', params: { id: recordId } });
@@ -103,7 +103,7 @@ export default function CaptureScreen() {
     } catch (error) {
       try {
         const db = await openDatabase();
-        await logAcceptanceMeasurement(db, 'qr_lookup', 'error', startedAt);
+        await logAcceptanceMeasurement(db, 'qr_lookup', 'error', startedAt, null, await getCurrentUserId());
       } catch { /* Measurement storage must not mask the scan error. */ }
       console.warn('[scan] lookup failed:', error);
     } finally {

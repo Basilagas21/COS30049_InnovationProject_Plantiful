@@ -240,6 +240,10 @@ CREATE TABLE IF NOT EXISTS local_species_photos (
     if (!columns.some((column) => column.name === 'owner_user_id')) {
       await db.execAsync('ALTER TABLE local_records ADD COLUMN owner_user_id TEXT');
     }
+    const measuredColumns = await db.getAllAsync<{ name: string }>('PRAGMA table_info(acceptance_measurements)');
+    if (!measuredColumns.some((column) => column.name === 'owner_user_id')) {
+      await db.execAsync('ALTER TABLE acceptance_measurements ADD COLUMN owner_user_id TEXT');
+    }
   }
 
   await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION}`);
@@ -557,6 +561,7 @@ export async function adoptLegacyUnownedRecords(db: SQLite.SQLiteDatabase, owner
     await db.runAsync("INSERT INTO app_meta (key, value) VALUES ('legacy_owner_claim', ?)", [ownerUserId]);
   }
   await db.runAsync('UPDATE local_records SET owner_user_id = ? WHERE owner_user_id IS NULL', [ownerUserId]);
+  await db.runAsync('UPDATE acceptance_measurements SET owner_user_id = ? WHERE owner_user_id IS NULL', [ownerUserId]);
 }
 
 export async function countUnownedRecords(db: SQLite.SQLiteDatabase): Promise<number> {
@@ -688,19 +693,26 @@ export async function logAcceptanceMeasurement(
   operation: AcceptanceMeasurement['operation'],
   outcome: string,
   startedAt: number,
-  detail: string | null = null
+  detail: string | null = null,
+  ownerUserId: string | null = null
 ) {
   try {
     await db.runAsync(
-      'INSERT INTO acceptance_measurements (measured_at, operation, outcome, duration_ms, detail) VALUES (?, ?, ?, ?, ?)',
-      new Date().toISOString(), operation, outcome, Math.max(0, Date.now() - startedAt), detail
+      'INSERT INTO acceptance_measurements (measured_at, operation, outcome, duration_ms, detail, owner_user_id) VALUES (?, ?, ?, ?, ?, ?)',
+      new Date().toISOString(), operation, outcome, Math.max(0, Date.now() - startedAt), detail, ownerUserId
     );
   } catch (error) {
     console.warn('[measurement] unable to save result:', error);
   }
 }
 
-export async function getAcceptanceMeasurements(db: SQLite.SQLiteDatabase): Promise<AcceptanceMeasurement[]> {
+export async function getAcceptanceMeasurements(db: SQLite.SQLiteDatabase, ownerUserId?: string): Promise<AcceptanceMeasurement[]> {
+  if (ownerUserId !== undefined) {
+    return db.getAllAsync<AcceptanceMeasurement>(
+      'SELECT * FROM acceptance_measurements WHERE owner_user_id = ? ORDER BY id DESC LIMIT 1000',
+      [ownerUserId]
+    );
+  }
   return db.getAllAsync<AcceptanceMeasurement>(
     'SELECT * FROM acceptance_measurements ORDER BY id DESC LIMIT 1000'
   );

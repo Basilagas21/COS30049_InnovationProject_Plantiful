@@ -176,7 +176,7 @@ export default function SyncScreen() {
     setFailed(failedRows.length);
     setSynced(syncedRows.length);
     setUnownedCount(await countUnownedRecords(db));
-    setMeasurements(await getAcceptanceMeasurements(db));
+    setMeasurements(await getAcceptanceMeasurements(db, owner));
     if (owner) await migrateLegacyLastSync(db, owner);
     const lastSyncAt = await getLastSyncAt(db, owner);
     setLastSyncLabel(lastSyncAt ? new Date(lastSyncAt).toLocaleString() : null);
@@ -420,7 +420,7 @@ export default function SyncScreen() {
         }
 
         await markRecordSynced(db, row.record_id, serverRecordId!, serverVersion!);
-        await logAcceptanceMeasurement(db, 'sync_record', 'synced', startedAt, row.record_id);
+        await logAcceptanceMeasurement(db, 'sync_record', 'synced', startedAt, row.record_id, session.session.user.id);
 
         syncedCount += 1;
         setSynced(syncedCount);
@@ -442,7 +442,7 @@ export default function SyncScreen() {
             }
           }
         } else await markRecordFailed(db, row.record_id, msg);
-        await logAcceptanceMeasurement(db, 'sync_record', e instanceof EditConflict ? 'conflict' : 'failed', startedAt, row.record_id);
+        await logAcceptanceMeasurement(db, 'sync_record', e instanceof EditConflict ? 'conflict' : 'failed', startedAt, row.record_id, session.session.user.id);
         failedCount += 1;
         setFailed(failedCount);
       }
@@ -603,10 +603,10 @@ export default function SyncScreen() {
           </Text>
         </View>
 
-        {message || state === 'idle' ? (
-          <Text style={styles.lastSync}>
-            {message || 'No sync has run on this device yet.'}
-          </Text>
+        {message ? (
+          <Text style={styles.lastSync}>{message}</Text>
+        ) : state === 'idle' && !lastSyncLabel ? (
+          <Text style={styles.lastSync}>No sync has run for this account on this device yet.</Text>
         ) : null}
         {state !== 'syncing' ? (
           <Text style={styles.lastSync}>

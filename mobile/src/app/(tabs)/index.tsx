@@ -5,7 +5,6 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Pressable } from '@/lib/interactionLog';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { getRecordByTag, importRemoteRecord, logAcceptanceMeasurement, openDatabase } from '@/db';
@@ -58,7 +57,6 @@ async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promi
 export default function CaptureScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { canCapture } = useRole();
   const [permission, requestPermission] = useCameraPermissions();
   const [torchOn, setTorchOn] = useState(false);
@@ -154,7 +152,7 @@ export default function CaptureScreen() {
       )}
 
       <Pressable
-        style={[styles.torchButton, { top: insets.top + 16 }]}
+        style={styles.torchButton}
         onPress={() => setTorchOn((on) => !on)}
         accessibilityRole="button"
         accessibilityLabel={torchOn ? 'Turn flashlight off' : 'Turn flashlight on'}
@@ -270,6 +268,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   torchButton: {
     position: 'absolute',
+    top: 16,
     right: 16,
     width: 48,
     height: 48,

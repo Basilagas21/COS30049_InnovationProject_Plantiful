@@ -3,135 +3,147 @@
 > node --experimental-strip-types --import ./alias-register.mjs --experimental-test-coverage --test src/lib/*.test.mjs
 
 TAP version 13
-# (node:1467540) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
+# (node:1473593) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: fetchSpecies returns sample rows and honours publishedOnly
 ok 1 - fetchSpecies returns sample rows and honours publishedOnly
   ---
-  duration_ms: 1.495526
+  duration_ms: 1.048259
   type: 'test'
   ...
 # Subtest: fetchSpeciesById returns a detail shape or null
 ok 2 - fetchSpeciesById returns a detail shape or null
   ---
-  duration_ms: 0.311761
+  duration_ms: 0.306903
   type: 'test'
   ...
 # Subtest: fetchRecords falls back to sample data with the usingSampleData flag
 ok 3 - fetchRecords falls back to sample data with the usingSampleData flag
   ---
-  duration_ms: 0.22008
+  duration_ms: 0.223788
   type: 'test'
   ...
 # Subtest: fetchRecordById resolves sample rows and misses
 ok 4 - fetchRecordById resolves sample rows and misses
   ---
-  duration_ms: 0.248233
+  duration_ms: 0.311732
   type: 'test'
   ...
 # Subtest: fetchConflictReports is empty in sample mode
 ok 5 - fetchConflictReports is empty in sample mode
   ---
-  duration_ms: 0.707157
+  duration_ms: 0.698174
   type: 'test'
   ...
-# (node:1467541) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
+# (node:1473594) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: fetchSpecies maps live rows through the real client path
 ok 6 - fetchSpecies maps live rows through the real client path
   ---
-  duration_ms: 32.914746
+  duration_ms: 39.552916
   type: 'test'
   ...
 # Subtest: fetchSpeciesById merges live photos
 ok 7 - fetchSpeciesById merges live photos
   ---
-  duration_ms: 7.626206
+  duration_ms: 15.590748
   type: 'test'
   ...
 # Subtest: fetchSpecies falls back to sample data when the backend errors
 ok 8 - fetchSpecies falls back to sample data when the backend errors
   ---
-  duration_ms: 4.222106
+  duration_ms: 4.540773
   type: 'test'
   ...
 # Subtest: fetchRecords maps live rows and reports no error
 ok 9 - fetchRecords maps live rows and reports no error
   ---
-  duration_ms: 3.978371
+  duration_ms: 4.971097
   type: 'test'
   ...
 # Subtest: fetchRecords surfaces a backend error
 ok 10 - fetchRecords surfaces a backend error
   ---
-  duration_ms: 2.921592
+  duration_ms: 3.764213
   type: 'test'
   ...
 # Subtest: fetchRecordById returns a mapped live row
 ok 11 - fetchRecordById returns a mapped live row
   ---
-  duration_ms: 3.809006
+  duration_ms: 4.137741
   type: 'test'
   ...
 # Subtest: fetchRecordById throws on backend error
 ok 12 - fetchRecordById throws on backend error
   ---
-  duration_ms: 4.388174
+  duration_ms: 3.987449
   type: 'test'
   ...
 # Subtest: fetchConflictReports maps live reports
 ok 13 - fetchConflictReports maps live reports
   ---
-  duration_ms: 2.902127
+  duration_ms: 3.435659
   type: 'test'
   ...
 # Subtest: fetchConflictReports returns empty on backend error
 ok 14 - fetchConflictReports returns empty on backend error
   ---
-  duration_ms: 3.453243
+  duration_ms: 3.637997
   type: 'test'
   ...
-# (node:1467542) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/telemetry.ts is not specified and it doesn't parse as CommonJS.
+# Subtest: fetchSpeciesById falls back to sample data when the species query fails
+ok 15 - fetchSpeciesById falls back to sample data when the species query fails
+  ---
+  duration_ms: 7.043008
+  type: 'test'
+  ...
+# Subtest: fetchSpeciesById tolerates a photos lookup failure
+ok 16 - fetchSpeciesById tolerates a photos lookup failure
+  ---
+  duration_ms: 7.071131
+  type: 'test'
+  ...
+# (node:1473600) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/telemetry.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: rangeStart maps ranges to day windows and all to null
-ok 15 - rangeStart maps ranges to day windows and all to null
+ok 17 - rangeStart maps ranges to day windows and all to null
   ---
-  duration_ms: 1.328254
+  duration_ms: 1.363908
   type: 'test'
   ...
 # Subtest: readingStatus classifies fresh, stale, warning and critical telemetry
-ok 16 - readingStatus classifies fresh, stale, warning and critical telemetry
+ok 18 - readingStatus classifies fresh, stale, warning and critical telemetry
   ---
-  duration_ms: 0.251538
+  duration_ms: 0.294761
   type: 'test'
   ...
 # Subtest: overallStatus escalates by severity order
-ok 17 - overallStatus escalates by severity order
+ok 19 - overallStatus escalates by severity order
   ---
-  duration_ms: 0.168123
+  duration_ms: 0.171932
   type: 'test'
   ...
 # Subtest: report catalogues expose stable values and labels
-ok 18 - report catalogues expose stable values and labels
+ok 20 - report catalogues expose stable values and labels
   ---
-  duration_ms: 0.816671
+  duration_ms: 0.827295
   type: 'test'
   ...
-1..18
-# tests 18
+1..20
+# tests 20
 # suites 0
-# pass 18
+# pass 20
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 378.536021
+# duration_ms 401.011712
 # start of coverage report
 # --------------------------------------------------------------------------
 # file                      | line % | branch % | funcs % | uncovered lines
@@ -141,10 +153,10 @@ ok 18 - report catalogues expose stable values and labels
 # src                       |        |          |         | 
 #  lib                      |        |          |         | 
 #   data-fallback.test.mjs  | 100.00 |   100.00 |  100.00 | 
-#   live-queries.test.mjs   |  97.92 |    95.65 |  100.00 | 74-76
+#   live-queries.test.mjs   |  98.24 |    96.15 |  100.00 | 80-82
 #   records.ts              | 100.00 |    55.56 |  100.00 | 
 #   report-types.ts         | 100.00 |   100.00 |  100.00 | 
-#   species.ts              |  98.83 |    77.27 |   87.50 | 232-234
+#   species.ts              | 100.00 |    93.33 |  100.00 | 
 #   supabase                |        |          |         | 
 #    env.ts                 | 100.00 |   100.00 |  100.00 | 
 #    server.ts              |  70.00 |   100.00 |   66.67 | 17-25
@@ -153,6 +165,6 @@ ok 18 - report catalogues expose stable values and labels
 # test-stubs                |        |          |         | 
 #  next-headers.mjs         |  88.24 |   100.00 |   33.33 | 11 14
 # --------------------------------------------------------------------------
-# all files                 |  98.38 |    86.47 |   88.68 | 
+# all files                 |  98.70 |    89.58 |   90.91 | 
 # --------------------------------------------------------------------------
 # end of coverage report

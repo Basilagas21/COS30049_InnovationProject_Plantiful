@@ -48,6 +48,7 @@ const recordRow = {
 };
 
 let failNext = false;
+let failSpeciesPhotos = false;
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://127.0.0.1:4599');
@@ -61,6 +62,11 @@ const server = http.createServer((req, res) => {
     // PostgREST embeds the requested species_photos relation as an array.
     res.end(JSON.stringify([{ ...speciesRow, species_photos: [{ photo_url: 'https://example.invalid/s1.jpg' }] }]));
   } else if (url.pathname === '/rest/v1/species_photos') {
+    if (failSpeciesPhotos) {
+      res.statusCode = 400;
+      res.end(JSON.stringify({ message: 'photos unavailable' }));
+      return;
+    }
     res.end(JSON.stringify([
       { photo_id: 'p1', photo_url: 'https://example.invalid/s1.jpg', uploaded_at: '2026-11-01T00:00:00Z' },
     ]));
@@ -139,6 +145,26 @@ test('fetchConflictReports returns empty on backend error', async () => {
   failNext = true;
   assert.deepEqual(await records.fetchConflictReports('any'), []);
   failNext = false;
+});
+
+test('fetchSpeciesById falls back to sample data when the species query fails', async () => {
+  const mockId = 'SP-0001';
+  failNext = true;
+  const found = await species.fetchSpeciesById(mockId);
+  assert.ok(found, 'sample row returned for a known mock id');
+  const missing = await species.fetchSpeciesById(speciesRow.species_id);
+  assert.equal(missing, null, 'unknown id still resolves to null after failure');
+  failNext = false;
+});
+
+test('fetchSpeciesById tolerates a photos lookup failure', async () => {
+  failSpeciesPhotos = true;
+  const detail = await species.fetchSpeciesById(speciesRow.species_id);
+  failSpeciesPhotos = false;
+  assert.ok(detail);
+  assert.deepEqual(detail.photos, []);
+  assert.equal(detail.photoUrl, null);
+  assert.equal(detail.photoCount, 0);
 });
 
 test.after(() => server.close());

@@ -40,7 +40,7 @@ Line coverage, measured 2 November 2026 with the committed runners: the mobile s
 
 ## 4. Prioritised missing tests (criterion 3)
 
-1. Web page-level and route tests beyond the data layer (the runner and a stub-server pattern now exist, extending them to page checks is mechanical work).
+1. Web authenticated route tests: the API route surface now has committed tests (telemetry officer gate, interaction-log handler), but exercising authenticated telemetry bodies needs the real Next request scope, which plain Node cannot simulate; that belongs with a Playwright-class browser suite if the team adds one.
 2. IoT payload validation before insertion (lane owner's call, #45 to #47 adjacent; the existing 7-test pipeline suite covers host timestamp, ingestion, cooldown, invalid node ids, silence detection, alert retry and severity).
 
 ## 5. Failures and retests, retained (criterion 4)

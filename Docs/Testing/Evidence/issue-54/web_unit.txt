@@ -1,146 +1,170 @@
 
 > web@0.1.0 test
-> node --experimental-strip-types --import ./alias-register.mjs --test src/lib/*.test.mjs
+> node --experimental-strip-types --import ./alias-register.mjs --test src/lib/*.test.mjs src/app/api/*.test.mjs
 
 TAP version 13
-# (node:1473645) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
+# (node:1492291) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/app/api/telemetry/route.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to web/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# [ui] 20:34:53 records.tab
+# [ui] 20:34:53 unknown
+# Subtest: telemetry route rejects anonymous callers with 403
+ok 1 - telemetry route rejects anonymous callers with 403
+  ---
+  duration_ms: 7.87925
+  type: 'test'
+  ...
+# Subtest: interaction-log route accepts a target payload
+ok 2 - interaction-log route accepts a target payload
+  ---
+  duration_ms: 1.853745
+  type: 'test'
+  ...
+# Subtest: interaction-log route tolerates a malformed payload
+ok 3 - interaction-log route tolerates a malformed payload
+  ---
+  duration_ms: 0.798858
+  type: 'test'
+  ...
+# (node:1492292) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: fetchSpecies returns sample rows and honours publishedOnly
-ok 1 - fetchSpecies returns sample rows and honours publishedOnly
+ok 4 - fetchSpecies returns sample rows and honours publishedOnly
   ---
-  duration_ms: 1.487799
+  duration_ms: 0.838082
   type: 'test'
   ...
 # Subtest: fetchSpeciesById returns a detail shape or null
-ok 2 - fetchSpeciesById returns a detail shape or null
+ok 5 - fetchSpeciesById returns a detail shape or null
   ---
-  duration_ms: 0.40666
+  duration_ms: 0.263795
   type: 'test'
   ...
 # Subtest: fetchRecords falls back to sample data with the usingSampleData flag
-ok 3 - fetchRecords falls back to sample data with the usingSampleData flag
+ok 6 - fetchRecords falls back to sample data with the usingSampleData flag
   ---
-  duration_ms: 0.274323
+  duration_ms: 0.202637
   type: 'test'
   ...
 # Subtest: fetchRecordById resolves sample rows and misses
-ok 4 - fetchRecordById resolves sample rows and misses
+ok 7 - fetchRecordById resolves sample rows and misses
   ---
-  duration_ms: 0.351116
+  duration_ms: 0.275798
   type: 'test'
   ...
 # Subtest: fetchConflictReports is empty in sample mode
-ok 5 - fetchConflictReports is empty in sample mode
+ok 8 - fetchConflictReports is empty in sample mode
   ---
-  duration_ms: 1.135021
+  duration_ms: 0.660654
   type: 'test'
   ...
-# (node:1473646) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
+# (node:1492294) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: fetchSpecies maps live rows through the real client path
-ok 6 - fetchSpecies maps live rows through the real client path
+ok 9 - fetchSpecies maps live rows through the real client path
   ---
-  duration_ms: 26.828012
+  duration_ms: 26.137983
   type: 'test'
   ...
 # Subtest: fetchSpeciesById merges live photos
-ok 7 - fetchSpeciesById merges live photos
+ok 10 - fetchSpeciesById merges live photos
   ---
-  duration_ms: 9.882694
+  duration_ms: 9.975499
   type: 'test'
   ...
 # Subtest: fetchSpecies falls back to sample data when the backend errors
-ok 8 - fetchSpecies falls back to sample data when the backend errors
+ok 11 - fetchSpecies falls back to sample data when the backend errors
   ---
-  duration_ms: 4.200408
+  duration_ms: 4.033585
   type: 'test'
   ...
 # Subtest: fetchRecords maps live rows and reports no error
-ok 9 - fetchRecords maps live rows and reports no error
+ok 12 - fetchRecords maps live rows and reports no error
   ---
-  duration_ms: 4.939849
+  duration_ms: 5.073424
   type: 'test'
   ...
 # Subtest: fetchRecords surfaces a backend error
-ok 10 - fetchRecords surfaces a backend error
+ok 13 - fetchRecords surfaces a backend error
   ---
-  duration_ms: 4.370776
+  duration_ms: 4.215894
   type: 'test'
   ...
 # Subtest: fetchRecordById returns a mapped live row
-ok 11 - fetchRecordById returns a mapped live row
+ok 14 - fetchRecordById returns a mapped live row
   ---
-  duration_ms: 3.051491
+  duration_ms: 3.471911
   type: 'test'
   ...
 # Subtest: fetchRecordById throws on backend error
-ok 12 - fetchRecordById throws on backend error
+ok 15 - fetchRecordById throws on backend error
   ---
-  duration_ms: 3.144334
+  duration_ms: 4.052151
   type: 'test'
   ...
 # Subtest: fetchConflictReports maps live reports
-ok 13 - fetchConflictReports maps live reports
+ok 16 - fetchConflictReports maps live reports
   ---
-  duration_ms: 5.88206
+  duration_ms: 5.288766
   type: 'test'
   ...
 # Subtest: fetchConflictReports returns empty on backend error
-ok 14 - fetchConflictReports returns empty on backend error
+ok 17 - fetchConflictReports returns empty on backend error
   ---
-  duration_ms: 4.388458
+  duration_ms: 3.747428
   type: 'test'
   ...
 # Subtest: fetchSpeciesById falls back to sample data when the species query fails
-ok 15 - fetchSpeciesById falls back to sample data when the species query fails
+ok 18 - fetchSpeciesById falls back to sample data when the species query fails
   ---
-  duration_ms: 8.952366
+  duration_ms: 6.218113
   type: 'test'
   ...
 # Subtest: fetchSpeciesById tolerates a photos lookup failure
-ok 16 - fetchSpeciesById tolerates a photos lookup failure
+ok 19 - fetchSpeciesById tolerates a photos lookup failure
   ---
-  duration_ms: 6.709395
+  duration_ms: 4.981527
   type: 'test'
   ...
-# (node:1473652) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/telemetry.ts is not specified and it doesn't parse as CommonJS.
+# (node:1492299) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/telemetry.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: rangeStart maps ranges to day windows and all to null
-ok 17 - rangeStart maps ranges to day windows and all to null
+ok 20 - rangeStart maps ranges to day windows and all to null
   ---
-  duration_ms: 1.711508
+  duration_ms: 1.097759
   type: 'test'
   ...
 # Subtest: readingStatus classifies fresh, stale, warning and critical telemetry
-ok 18 - readingStatus classifies fresh, stale, warning and critical telemetry
+ok 21 - readingStatus classifies fresh, stale, warning and critical telemetry
   ---
-  duration_ms: 0.381964
+  duration_ms: 0.233587
   type: 'test'
   ...
 # Subtest: overallStatus escalates by severity order
-ok 19 - overallStatus escalates by severity order
+ok 22 - overallStatus escalates by severity order
   ---
-  duration_ms: 0.225411
+  duration_ms: 0.153584
   type: 'test'
   ...
 # Subtest: report catalogues expose stable values and labels
-ok 20 - report catalogues expose stable values and labels
+ok 23 - report catalogues expose stable values and labels
   ---
-  duration_ms: 1.189452
+  duration_ms: 0.708755
   type: 'test'
   ...
-1..20
-# tests 20
+1..23
+# tests 23
 # suites 0
-# pass 20
+# pass 23
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 383.043764
+# duration_ms 334.652359

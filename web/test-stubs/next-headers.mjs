@@ -6,6 +6,7 @@ const store = new Map();
 export async function cookies() {
   return {
     getAll: () => [...store.entries()].map(([name, value]) => ({ name, value })),
+    setAll: (cookiesToSet) => cookiesToSet.forEach(({ name, value }) => store.set(name, value)),
     get: (name) => (store.has(name) ? { name, value: store.get(name) } : undefined),
     set: (name, value) => {
       store.set(name, value);

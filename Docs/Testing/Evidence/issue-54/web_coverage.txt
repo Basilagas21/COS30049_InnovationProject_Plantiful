@@ -1,170 +1,202 @@
 
 > web@0.1.0 test:coverage
-> node --experimental-strip-types --import ./alias-register.mjs --experimental-test-coverage --test src/lib/*.test.mjs
+> node --experimental-strip-types --import ./alias-register.mjs --experimental-test-coverage --test src/lib/*.test.mjs src/app/api/*.test.mjs
 
 TAP version 13
-# (node:1473593) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
+# (node:1492238) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/app/api/telemetry/route.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to web/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# [ui] 20:34:52 records.tab
+# [ui] 20:34:52 unknown
+# Subtest: telemetry route rejects anonymous callers with 403
+ok 1 - telemetry route rejects anonymous callers with 403
+  ---
+  duration_ms: 9.444183
+  type: 'test'
+  ...
+# Subtest: interaction-log route accepts a target payload
+ok 2 - interaction-log route accepts a target payload
+  ---
+  duration_ms: 2.131698
+  type: 'test'
+  ...
+# Subtest: interaction-log route tolerates a malformed payload
+ok 3 - interaction-log route tolerates a malformed payload
+  ---
+  duration_ms: 0.528561
+  type: 'test'
+  ...
+# (node:1492239) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: fetchSpecies returns sample rows and honours publishedOnly
-ok 1 - fetchSpecies returns sample rows and honours publishedOnly
+ok 4 - fetchSpecies returns sample rows and honours publishedOnly
   ---
-  duration_ms: 1.048259
+  duration_ms: 1.142495
   type: 'test'
   ...
 # Subtest: fetchSpeciesById returns a detail shape or null
-ok 2 - fetchSpeciesById returns a detail shape or null
+ok 5 - fetchSpeciesById returns a detail shape or null
   ---
-  duration_ms: 0.306903
+  duration_ms: 0.314201
   type: 'test'
   ...
 # Subtest: fetchRecords falls back to sample data with the usingSampleData flag
-ok 3 - fetchRecords falls back to sample data with the usingSampleData flag
+ok 6 - fetchRecords falls back to sample data with the usingSampleData flag
   ---
-  duration_ms: 0.223788
+  duration_ms: 0.340341
   type: 'test'
   ...
 # Subtest: fetchRecordById resolves sample rows and misses
-ok 4 - fetchRecordById resolves sample rows and misses
+ok 7 - fetchRecordById resolves sample rows and misses
   ---
-  duration_ms: 0.311732
+  duration_ms: 0.241122
   type: 'test'
   ...
 # Subtest: fetchConflictReports is empty in sample mode
-ok 5 - fetchConflictReports is empty in sample mode
+ok 8 - fetchConflictReports is empty in sample mode
   ---
-  duration_ms: 0.698174
+  duration_ms: 0.741478
   type: 'test'
   ...
-# (node:1473594) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
+# (node:1492240) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: fetchSpecies maps live rows through the real client path
-ok 6 - fetchSpecies maps live rows through the real client path
+ok 9 - fetchSpecies maps live rows through the real client path
   ---
-  duration_ms: 39.552916
+  duration_ms: 28.946646
   type: 'test'
   ...
 # Subtest: fetchSpeciesById merges live photos
-ok 7 - fetchSpeciesById merges live photos
+ok 10 - fetchSpeciesById merges live photos
   ---
-  duration_ms: 15.590748
+  duration_ms: 10.770631
   type: 'test'
   ...
 # Subtest: fetchSpecies falls back to sample data when the backend errors
-ok 8 - fetchSpecies falls back to sample data when the backend errors
+ok 11 - fetchSpecies falls back to sample data when the backend errors
   ---
-  duration_ms: 4.540773
+  duration_ms: 3.281296
   type: 'test'
   ...
 # Subtest: fetchRecords maps live rows and reports no error
-ok 9 - fetchRecords maps live rows and reports no error
+ok 12 - fetchRecords maps live rows and reports no error
   ---
-  duration_ms: 4.971097
+  duration_ms: 3.386006
   type: 'test'
   ...
 # Subtest: fetchRecords surfaces a backend error
-ok 10 - fetchRecords surfaces a backend error
+ok 13 - fetchRecords surfaces a backend error
   ---
-  duration_ms: 3.764213
+  duration_ms: 2.984128
   type: 'test'
   ...
 # Subtest: fetchRecordById returns a mapped live row
-ok 11 - fetchRecordById returns a mapped live row
+ok 14 - fetchRecordById returns a mapped live row
   ---
-  duration_ms: 4.137741
+  duration_ms: 2.8336
   type: 'test'
   ...
 # Subtest: fetchRecordById throws on backend error
-ok 12 - fetchRecordById throws on backend error
+ok 15 - fetchRecordById throws on backend error
   ---
-  duration_ms: 3.987449
+  duration_ms: 4.194964
   type: 'test'
   ...
 # Subtest: fetchConflictReports maps live reports
-ok 13 - fetchConflictReports maps live reports
+ok 16 - fetchConflictReports maps live reports
   ---
-  duration_ms: 3.435659
+  duration_ms: 3.124125
   type: 'test'
   ...
 # Subtest: fetchConflictReports returns empty on backend error
-ok 14 - fetchConflictReports returns empty on backend error
+ok 17 - fetchConflictReports returns empty on backend error
   ---
-  duration_ms: 3.637997
+  duration_ms: 4.134979
   type: 'test'
   ...
 # Subtest: fetchSpeciesById falls back to sample data when the species query fails
-ok 15 - fetchSpeciesById falls back to sample data when the species query fails
+ok 18 - fetchSpeciesById falls back to sample data when the species query fails
   ---
-  duration_ms: 7.043008
+  duration_ms: 7.386588
   type: 'test'
   ...
 # Subtest: fetchSpeciesById tolerates a photos lookup failure
-ok 16 - fetchSpeciesById tolerates a photos lookup failure
+ok 19 - fetchSpeciesById tolerates a photos lookup failure
   ---
-  duration_ms: 7.071131
+  duration_ms: 5.168747
   type: 'test'
   ...
-# (node:1473600) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/telemetry.ts is not specified and it doesn't parse as CommonJS.
+# (node:1492246) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/telemetry.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: rangeStart maps ranges to day windows and all to null
-ok 17 - rangeStart maps ranges to day windows and all to null
+ok 20 - rangeStart maps ranges to day windows and all to null
   ---
-  duration_ms: 1.363908
+  duration_ms: 1.117367
   type: 'test'
   ...
 # Subtest: readingStatus classifies fresh, stale, warning and critical telemetry
-ok 18 - readingStatus classifies fresh, stale, warning and critical telemetry
+ok 21 - readingStatus classifies fresh, stale, warning and critical telemetry
   ---
-  duration_ms: 0.294761
+  duration_ms: 0.278613
   type: 'test'
   ...
 # Subtest: overallStatus escalates by severity order
-ok 19 - overallStatus escalates by severity order
+ok 22 - overallStatus escalates by severity order
   ---
-  duration_ms: 0.171932
+  duration_ms: 0.153274
   type: 'test'
   ...
 # Subtest: report catalogues expose stable values and labels
-ok 20 - report catalogues expose stable values and labels
+ok 23 - report catalogues expose stable values and labels
   ---
-  duration_ms: 0.827295
+  duration_ms: 0.969775
   type: 'test'
   ...
-1..20
-# tests 20
+1..23
+# tests 23
 # suites 0
-# pass 20
+# pass 23
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 401.011712
+# duration_ms 366.843836
 # start of coverage report
-# --------------------------------------------------------------------------
-# file                      | line % | branch % | funcs % | uncovered lines
-# --------------------------------------------------------------------------
-# alias-register.mjs        | 100.00 |   100.00 |  100.00 | 
-# alias-resolve.mjs         | 100.00 |   100.00 |  100.00 | 
-# src                       |        |          |         | 
-#  lib                      |        |          |         | 
-#   data-fallback.test.mjs  | 100.00 |   100.00 |  100.00 | 
-#   live-queries.test.mjs   |  98.24 |    96.15 |  100.00 | 80-82
-#   records.ts              | 100.00 |    55.56 |  100.00 | 
-#   report-types.ts         | 100.00 |   100.00 |  100.00 | 
-#   species.ts              | 100.00 |    93.33 |  100.00 | 
-#   supabase                |        |          |         | 
-#    env.ts                 | 100.00 |   100.00 |  100.00 | 
-#    server.ts              |  70.00 |   100.00 |   66.67 | 17-25
-#   telemetry.test.mjs      | 100.00 |   100.00 |  100.00 | 
-#   telemetry.ts            | 100.00 |   100.00 |  100.00 | 
-# test-stubs                |        |          |         | 
-#  next-headers.mjs         |  88.24 |   100.00 |   33.33 | 11 14
-# --------------------------------------------------------------------------
-# all files                 |  98.70 |    89.58 |   90.91 | 
-# --------------------------------------------------------------------------
+# --------------------------------------------------------------------------------
+# file                       | line % | branch % | funcs % | uncovered lines
+# --------------------------------------------------------------------------------
+# alias-register.mjs         | 100.00 |   100.00 |  100.00 | 
+# alias-resolve.mjs          | 100.00 |   100.00 |  100.00 | 
+# src                        |        |          |         | 
+#  app                       |        |          |         | 
+#   api                      |        |          |         | 
+#    api-routes.test.mjs     |  94.12 |   100.00 |   83.33 | 12-14
+#    interaction-log         |        |          |         | 
+#     route.ts               | 100.00 |   100.00 |  100.00 | 
+#    telemetry               |        |          |         | 
+#     route.ts               |  50.00 |    20.00 |   50.00 | 21 27-50 58-67 72-73
+#  lib                       |        |          |         | 
+#   auth.ts                  |  70.97 |    50.00 |   66.67 | 14-20 30-31
+#   data-fallback.test.mjs   | 100.00 |   100.00 |  100.00 | 
+#   live-queries.test.mjs    |  98.24 |    96.15 |  100.00 | 80-82
+#   records.ts               | 100.00 |    55.56 |  100.00 | 
+#   report-types.ts          | 100.00 |   100.00 |  100.00 | 
+#   species.ts               | 100.00 |    93.33 |  100.00 | 
+#   supabase                 |        |          |         | 
+#    env.ts                  | 100.00 |   100.00 |  100.00 | 
+#    server.ts               |  70.00 |   100.00 |   66.67 | 17-25
+#   telemetry.test.mjs       | 100.00 |   100.00 |  100.00 | 
+#   telemetry.ts             | 100.00 |   100.00 |  100.00 | 
+# test-stubs                 |        |          |         | 
+#  next-headers.mjs          |  88.89 |   100.00 |   28.57 | 12 15
+# --------------------------------------------------------------------------------
+# all files                  |  95.04 |    82.95 |   85.71 | 
+# --------------------------------------------------------------------------------
 # end of coverage report

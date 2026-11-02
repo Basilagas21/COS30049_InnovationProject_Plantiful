@@ -675,13 +675,15 @@ The final presentation and Learning Summary Report each carry ten individual mar
 
 The internal completion date is 5 November. Exact submission time, final presentation split and any separate Learning Summary Report format remain to be confirmed.
 
-### 8.2 Development build decision
+### 8.2 Mobile run workflow
 
-The mobile project originally ran inside Expo Go. Expo Go supports a fixed SDK version per client release, so the installed phone application and the project SDK can drift apart. A development build removes that dependency.
+The primary team workflow uses Expo Go. Each teammate installs Expo Go from the app store, runs `npm ci` in `mobile`, then runs `npm start`. The start script passes `--go` so Metro targets Expo Go explicitly. The shared lockfile and exact package pins keep the dependency tree identical across machines. `npm run doctor` checks the installed packages against the Expo SDK.
 
-The development build compiles the native modules into an application installed on the phone. Metro then serves JavaScript and assets to that application. The Expo Go version is no longer involved. A native rebuild is needed only when a native library, the Expo SDK or the application configuration changes.
+The pasted version warning came from stale `node_modules`, not from Expo Go. The declared Expo packages were at SDK 58 patch versions while the installed tree remained on earlier patches. `npx expo install --fix` synchronised the tree. Expo Doctor now reports 20 of 20 checks passed, and the mobile production audit reports 0 entries across 575 production dependencies within the recorded scope.
 
-Prepared configuration is recorded in `mobile/eas.json` and `mobile/package.json`. The setup uses the `development` profile and the `expo-dev-client` package. The build evidence must record the build identifier, install result and first successful connection.
+A development build is retained as an optional fallback. Expo Go supports a fixed SDK version per client release, so a future store update can stop an older project from opening. The development build compiles the native modules into an application installed on the phone. Metro then serves JavaScript and assets to that application and the Expo Go version is not involved. A native rebuild is needed only when a native library, the Expo SDK or the application configuration changes.
+
+Prepared configuration is recorded in `mobile/eas.json` and `mobile/package.json`. The setup uses the `development` profile and the `expo-dev-client` package. `npm run build:dev:android` starts a cloud build. `npm run start:dev` connects to the installed development build. The build evidence must record the build identifier, install result and first successful connection.
 
 ### 8.3 Readiness summary
 

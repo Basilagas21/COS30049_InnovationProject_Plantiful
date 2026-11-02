@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --import tsx --import ./alias-register.mjs --test src/lib/*.test.mjs src/app/api/*.test.mjs src/components/*.test.mjs",
-    "test:coverage": "node --import tsx --import ./alias-register.mjs --experimental-test-coverage --test src/lib/*.test.mjs src/app/api/*.test.mjs src/components/*.test.mjs"
+    "test:coverage": "node --import tsx --import ./alias-register.mjs --experimental-test-coverage --test src/lib/*.test.mjs src/app/api/*.test.mjs src/components/*.test.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -22,6 +23,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

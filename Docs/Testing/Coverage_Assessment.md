@@ -40,7 +40,7 @@ Line coverage, measured 2 November 2026 with the committed runners: the mobile s
 
 ## 4. Prioritised missing tests (criterion 3)
 
-1. Web browser coverage beyond the current eight flows: the visitor map and report download interactions are natural extensions of the same harness; the record edit path lives in the mobile app and is covered there by device trials.
+1. Report file generation through the browser form is exercised only up to the gate, submitting it would upload a CSV into the private reports bucket, which has no storage delete policy, so a test artefact could not be cleaned from the client side; the officer page, form and redirect guard are covered.
 2. IoT payload validation before insertion (lane owner's call, #45 to #47 adjacent; the existing 7-test pipeline suite covers host timestamp, ingestion, cooldown, invalid node ids, silence detection, alert retry and severity).
 
 ## 5. Failures and retests, retained (criterion 4)

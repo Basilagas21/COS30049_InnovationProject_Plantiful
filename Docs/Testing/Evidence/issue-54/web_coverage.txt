@@ -1,0 +1,99 @@
+
+> web@0.1.0 test:coverage
+> node --experimental-strip-types --import ./alias-register.mjs --experimental-test-coverage --test src/lib/*.test.mjs
+
+TAP version 13
+# (node:1447095) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to web/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: fetchSpecies returns sample rows and honours publishedOnly
+ok 1 - fetchSpecies returns sample rows and honours publishedOnly
+  ---
+  duration_ms: 1.059596
+  type: 'test'
+  ...
+# Subtest: fetchSpeciesById returns a detail shape or null
+ok 2 - fetchSpeciesById returns a detail shape or null
+  ---
+  duration_ms: 0.322348
+  type: 'test'
+  ...
+# Subtest: fetchRecords falls back to sample data with the usingSampleData flag
+ok 3 - fetchRecords falls back to sample data with the usingSampleData flag
+  ---
+  duration_ms: 0.345929
+  type: 'test'
+  ...
+# Subtest: fetchRecordById resolves sample rows and misses
+ok 4 - fetchRecordById resolves sample rows and misses
+  ---
+  duration_ms: 0.213416
+  type: 'test'
+  ...
+# Subtest: fetchConflictReports is empty in sample mode
+ok 5 - fetchConflictReports is empty in sample mode
+  ---
+  duration_ms: 0.66412
+  type: 'test'
+  ...
+# (node:1447096) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/telemetry.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to web/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: rangeStart maps ranges to day windows and all to null
+ok 6 - rangeStart maps ranges to day windows and all to null
+  ---
+  duration_ms: 1.188122
+  type: 'test'
+  ...
+# Subtest: readingStatus classifies fresh, stale, warning and critical telemetry
+ok 7 - readingStatus classifies fresh, stale, warning and critical telemetry
+  ---
+  duration_ms: 0.325043
+  type: 'test'
+  ...
+# Subtest: overallStatus escalates by severity order
+ok 8 - overallStatus escalates by severity order
+  ---
+  duration_ms: 0.199862
+  type: 'test'
+  ...
+# Subtest: report catalogues expose stable values and labels
+ok 9 - report catalogues expose stable values and labels
+  ---
+  duration_ms: 0.994722
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 247.395492
+# start of coverage report
+# ----------------------------------------------------------------------------------------------------------------------
+# file                      | line % | branch % | funcs % | uncovered lines
+# ----------------------------------------------------------------------------------------------------------------------
+# alias-register.mjs        | 100.00 |   100.00 |  100.00 | 
+# alias-resolve.mjs         | 100.00 |   100.00 |  100.00 | 
+# src                       |        |          |         | 
+#  lib                      |        |          |         | 
+#   data-fallback.test.mjs  | 100.00 |   100.00 |  100.00 | 
+#   records.ts              |  68.75 |    50.00 |   66.67 | 208-269 283-296 298-304 311-328 342-347 349-351
+#   report-types.ts         | 100.00 |   100.00 |  100.00 | 
+#   species.ts              |  61.09 |    52.63 |   50.00 | 127-156 158-184 194-204 206-210 212 220-230 232-243 246-248
+#   supabase                |        |          |         | 
+#    env.ts                 | 100.00 |    50.00 |  100.00 | 
+#    server.ts              |  16.67 |   100.00 |    0.00 | 6-30
+#   telemetry.test.mjs      | 100.00 |   100.00 |  100.00 | 
+#   telemetry.ts            | 100.00 |   100.00 |  100.00 | 
+# test-stubs                |        |          |         | 
+#  next-headers.mjs         |  60.00 |   100.00 |    0.00 | 4-5
+# ----------------------------------------------------------------------------------------------------------------------
+# all files                 |  73.46 |    82.02 |   75.76 | 
+# ----------------------------------------------------------------------------------------------------------------------
+# end of coverage report

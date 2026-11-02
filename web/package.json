@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --import ./alias-register.mjs --test src/lib/*.test.mjs"
+    "test": "node --experimental-strip-types --import ./alias-register.mjs --test src/lib/*.test.mjs",
+    "test:coverage": "node --experimental-strip-types --import ./alias-register.mjs --experimental-test-coverage --test src/lib/*.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

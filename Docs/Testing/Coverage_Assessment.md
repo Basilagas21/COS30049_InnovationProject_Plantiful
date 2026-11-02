@@ -16,7 +16,7 @@ The proposal target is more than 80% coverage on backend API and mobile sync. Tw
 | Permission matrix | Allowed and denied operations per role from the agreed role model | 33 checks across four batteries |
 | End-to-end flows | Offline capture, restart persistence, sync, duplicate prevention, conflict cycle, cross-owner rejection, officer review, public gating | 8 flows, all observed on device or live API |
 
-Exclusions, stated up front: IoT physical wiring and sensor calibration (Basil's lane, tracked by #48 and #49), the five-user usability walkthrough (#40, scheduling-blocked), hosted-deployment verification (never performed), and line-level coverage instrumentation (the runners execute statements but do not emit per-line reports; behaviour coverage is what this document measures).
+Exclusions, stated up front: IoT physical wiring and sensor calibration (Basil's lane, tracked by #48 and #49; the IoT logic itself carries a 7-test unit suite), and hosted-deployment verification (never performed). Line-level coverage is measured for the mobile and web TypeScript surfaces below; SQL functions and policies cannot carry line instrumentation, so the backend is reported as behaviour coverage only.
 
 ## 2. Requirement to test map
 
@@ -27,7 +27,7 @@ Exclusions, stated up front: IoT physical wiring and sensor calibration (Basil's
 | Access control (objective 3) | owner-scoping suite (push filter, counts, adoption, steal guard) | policy battery 10, trigger battery 11, R7 SQL battery 18 | banner gating browser check |
 | Publication rules | publish-gate unit path | trigger battery (publish gate, reviewer stamp) | #16 reject-and-resubmit loop trial |
 | Species knowledge system (objective 2) | none | S2-11 zero-row probe | web tour screenshots, officer CRUD trials |
-| IoT (objective 4) | 7 pipeline tests | 2 summariser tests | hardware path excluded, #48 #49 |
+| IoT (objective 4) | 7 pipeline tests | 2 summariser tests | hardware path excluded by lane, #48 #49 |
 | Data integrity | revision-checked edit | duplicate probes in batteries | #43 no-duplicate re-sync |
 
 ## 3. Measured result against the stated target
@@ -36,13 +36,13 @@ Backend behaviour coverage of the defined denominator: every one of the 11 table
 
 Mobile sync: the compare-and-swap helper carries 100% line, branch and function coverage from its own suite, the owner-scoping store queries carry 7 committed behaviour tests (push filter, unsynced count, adoption once, steal guard, queue order), and the full loop is device-proven across three dated trials. The remaining screens and db.ts surface have no line coverage, excluded honestly.
 
-The web surface gained a committed runner on 2 November 2026, npm test in web/ executes 9 node:test suites over the telemetry helpers and the data-layer fallback contract, and the mobile suite carries 11 tests. The proposal's greater-than-80% wording is therefore met in behaviour terms on backend API, mobile sync and the web data layer, with committed runners for all three; line-level instrumentation remains unmeasured, and the final report should state exactly that rather than quote a bare percentage.
+Line coverage, measured 2 November 2026 with the committed runners: the mobile sync surface, sync-edit.ts, reports 100% of lines, branches and functions. The web data layer reports telemetry.ts and report-types.ts at 100%, records.ts at 68.75% of lines and species.ts at 61.09%, the uncovered portions being the live-query branches that unit tests deliberately skip by running in fallback mode; raw tables are retained in Evidence/issue-54. The backend SQL surface cannot carry line instrumentation, so it is reported as behaviour coverage only, all 11 tables, 41 policies, 5 functions and 4 triggers exercised by the pgTAP battery and the live batteries. The proposal's greater-than-80% wording is therefore met in behaviour terms on backend API and mobile sync, and the mobile sync line coverage meets it outright; the final report should state exactly which numbers exist and which surfaces are behaviour-only, rather than quote one blended percentage.
 
 ## 4. Prioritised missing tests (criterion 3)
 
-1. Web component and route tests beyond the data layer (the runner now exists, npm test, extending it to page-level checks is now cheap).
+1. Web live-query branches: records.ts and species.ts sit below 80% line coverage because unit tests run in fallback mode; raising them needs query-mocked tests, now cheap since the runner exists.
 2. Publication-rule negative tests beyond the trigger battery and the pgTAP gate check, specifically bulk publish attempts.
-3. IoT payload validation tests for malformed readings before insertion (lane owner's call, #45 to #47 adjacent).
+3. IoT payload validation before insertion (lane owner's call, #45 to #47 adjacent; the existing 7-test pipeline suite covers host timestamp, ingestion, cooldown, invalid node ids, silence detection, alert retry and severity).
 
 ## 5. Failures and retests, retained (criterion 4)
 

@@ -3,52 +3,97 @@
 > node --experimental-strip-types --experimental-test-coverage --test src/lib/*.test.mjs
 
 TAP version 13
-# (node:971558) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/mobile/src/lib/sync-edit.ts is not specified and it doesn't parse as CommonJS.
+# (node:1447132) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: pending push only returns the signed-in owner rows
+ok 1 - pending push only returns the signed-in owner rows
+  ---
+  duration_ms: 10.564836
+  type: 'test'
+  ...
+# Subtest: synced rows are never pushed
+ok 2 - synced rows are never pushed
+  ---
+  duration_ms: 0.578579
+  type: 'test'
+  ...
+# Subtest: push queue walks oldest capture first
+ok 3 - push queue walks oldest capture first
+  ---
+  duration_ms: 0.915452
+  type: 'test'
+  ...
+# Subtest: unsynced count is scoped to the owner
+ok 4 - unsynced count is scoped to the owner
+  ---
+  duration_ms: 0.568301
+  type: 'test'
+  ...
+# Subtest: first account adopts legacy unowned rows once
+ok 5 - first account adopts legacy unowned rows once
+  ---
+  duration_ms: 0.593064
+  type: 'test'
+  ...
+# Subtest: second account cannot steal unowned rows after adoption
+ok 6 - second account cannot steal unowned rows after adoption
+  ---
+  duration_ms: 0.44865
+  type: 'test'
+  ...
+# Subtest: adoption never reassigns rows that already have an owner
+ok 7 - adoption never reassigns rows that already have an owner
+  ---
+  duration_ms: 0.395997
+  type: 'test'
+  ...
+# (node:1447133) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/mobile/src/lib/sync-edit.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to mobile/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: simultaneous owner devices preserve the first edit and stop the stale edit
-ok 1 - simultaneous owner devices preserve the first edit and stop the stale edit
+ok 8 - simultaneous owner devices preserve the first edit and stop the stale edit
   ---
-  duration_ms: 1.60059
+  duration_ms: 1.540443
   type: 'test'
   ...
 # Subtest: an unknown revision or another owner cannot overwrite the server
-ok 2 - an unknown revision or another owner cannot overwrite the server
+ok 9 - an unknown revision or another owner cannot overwrite the server
   ---
-  duration_ms: 0.334584
+  duration_ms: 0.223514
   type: 'test'
   ...
 # Subtest: database errors surface without treating the row as synced
-ok 3 - database errors surface without treating the row as synced
+ok 10 - database errors surface without treating the row as synced
   ---
-  duration_ms: 0.584297
+  duration_ms: 0.530755
   type: 'test'
   ...
 # Subtest: resubmitting a rejected record clears the stored rejection reason
-ok 4 - resubmitting a rejected record clears the stored rejection reason
+ok 11 - resubmitting a rejected record clears the stored rejection reason
   ---
-  duration_ms: 0.192602
+  duration_ms: 0.15289
   type: 'test'
   ...
-1..4
-# tests 4
+1..11
+# tests 11
 # suites 0
-# pass 4
+# pass 11
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 107.351144
+# duration_ms 107.141714
 # start of coverage report
-# ---------------------------------------------------------------------
-# file                 | line % | branch % | funcs % | uncovered lines
-# ---------------------------------------------------------------------
-# src                  |        |          |         | 
-#  lib                 |        |          |         | 
-#   sync-edit.test.mjs | 100.00 |   100.00 |  100.00 | 
-#   sync-edit.ts       | 100.00 |   100.00 |  100.00 | 
-# ---------------------------------------------------------------------
-# all files            | 100.00 |   100.00 |  100.00 | 
-# ---------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# file                        | line % | branch % | funcs % | uncovered lines
+# ----------------------------------------------------------------------------
+# src                         |        |          |         | 
+#  lib                        |        |          |         | 
+#   db-owner-scoping.test.mjs | 100.00 |   100.00 |  100.00 | 
+#   sync-edit.test.mjs        | 100.00 |   100.00 |  100.00 | 
+#   sync-edit.ts              | 100.00 |   100.00 |  100.00 | 
+# ----------------------------------------------------------------------------
+# all files                   | 100.00 |   100.00 |  100.00 | 
+# ----------------------------------------------------------------------------
 # end of coverage report

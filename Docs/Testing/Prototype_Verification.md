@@ -15,6 +15,7 @@ This is an as-built test plan and a record of checks run locally on 16 October 2
 | Mobile typing | `cd mobile; npx tsc --noEmit` | PASS | Static typecheck |
 | Mobile lint | `cd mobile; npx expo lint` | PASS | Source lint |
 | Revision-checked edit | `cd mobile; npm run test:coverage` | PASS, 3 tests; 100% **of `sync-edit.ts` only** | Two-device stale update, unknown revision/other owner, server error |
+| Mobile owner-scoping | `cd mobile; npm test` | PASS, 11 tests (2 November 2026) | Adds 7 owner-scoping behaviour tests: push filter, counts, legacy adoption, steal guard, queue order |
 | Measurement summarizer | `python -m unittest discover -s mobile/scripts -p 'test_*.py'` | PASS, 2 tests | Retries/denominators and zero samples |
 | IoT bridge/evaluator | `python -m unittest discover -s iot -p 'test_*.py'` | PASS, 7 tests | Host timestamp, ingestion, immediate alert/cooldown, invalid node IDs, empty-window silence, alert retry, severity |
 | Web typing | `cd web; npx tsc --noEmit` | PASS | Static typecheck |

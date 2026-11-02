@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --import ./alias-register.mjs --test src/lib/*.test.mjs src/app/api/*.test.mjs",
-    "test:coverage": "node --experimental-strip-types --import ./alias-register.mjs --experimental-test-coverage --test src/lib/*.test.mjs src/app/api/*.test.mjs"
+    "test": "node --import tsx --import ./alias-register.mjs --test src/lib/*.test.mjs src/app/api/*.test.mjs src/components/*.test.mjs",
+    "test:coverage": "node --import tsx --import ./alias-register.mjs --experimental-test-coverage --test src/lib/*.test.mjs src/app/api/*.test.mjs src/components/*.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -29,6 +29,7 @@
     "eslint": "^9",
     "eslint-config-next": "^16.4.3",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

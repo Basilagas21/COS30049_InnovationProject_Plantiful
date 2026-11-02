@@ -23,9 +23,24 @@ export async function createSpecies(
   }
 
   const supabase = await createClient();
+  const trimmedName = input.scientific_name.trim();
+
+  const { data: existing, error: lookupError } = await supabase
+    .from("species")
+    .select("species_id")
+    .ilike("scientific_name", trimmedName)
+    .limit(1);
+
+  if (lookupError) {
+    return { ok: false, error: lookupError.message };
+  }
+  if (existing && existing.length > 0) {
+    return { ok: false, error: "A species with this scientific name already exists." };
+  }
+
   const { data, error } = await supabase
     .from("species")
-    .insert(input)
+    .insert({ ...input, scientific_name: trimmedName })
     .select("species_id")
     .single();
 

@@ -3,74 +3,132 @@
 > node --experimental-strip-types --import ./alias-register.mjs --test src/lib/*.test.mjs
 
 TAP version 13
-# (node:1436247) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
+# (node:1467497) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: fetchSpecies returns sample rows and honours publishedOnly
 ok 1 - fetchSpecies returns sample rows and honours publishedOnly
   ---
-  duration_ms: 0.80564
+  duration_ms: 0.908703
   type: 'test'
   ...
 # Subtest: fetchSpeciesById returns a detail shape or null
 ok 2 - fetchSpeciesById returns a detail shape or null
   ---
-  duration_ms: 0.242677
+  duration_ms: 0.293237
   type: 'test'
   ...
 # Subtest: fetchRecords falls back to sample data with the usingSampleData flag
 ok 3 - fetchRecords falls back to sample data with the usingSampleData flag
   ---
-  duration_ms: 0.178397
+  duration_ms: 0.202638
   type: 'test'
   ...
 # Subtest: fetchRecordById resolves sample rows and misses
 ok 4 - fetchRecordById resolves sample rows and misses
   ---
-  duration_ms: 0.241866
+  duration_ms: 0.231692
   type: 'test'
   ...
 # Subtest: fetchConflictReports is empty in sample mode
 ok 5 - fetchConflictReports is empty in sample mode
   ---
-  duration_ms: 0.560246
+  duration_ms: 0.575673
   type: 'test'
   ...
-# (node:1436248) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/telemetry.ts is not specified and it doesn't parse as CommonJS.
+# (node:1467498) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to web/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: fetchSpecies maps live rows through the real client path
+ok 6 - fetchSpecies maps live rows through the real client path
+  ---
+  duration_ms: 22.785627
+  type: 'test'
+  ...
+# Subtest: fetchSpeciesById merges live photos
+ok 7 - fetchSpeciesById merges live photos
+  ---
+  duration_ms: 9.212551
+  type: 'test'
+  ...
+# Subtest: fetchSpecies falls back to sample data when the backend errors
+ok 8 - fetchSpecies falls back to sample data when the backend errors
+  ---
+  duration_ms: 3.134028
+  type: 'test'
+  ...
+# Subtest: fetchRecords maps live rows and reports no error
+ok 9 - fetchRecords maps live rows and reports no error
+  ---
+  duration_ms: 3.125352
+  type: 'test'
+  ...
+# Subtest: fetchRecords surfaces a backend error
+ok 10 - fetchRecords surfaces a backend error
+  ---
+  duration_ms: 4.150041
+  type: 'test'
+  ...
+# Subtest: fetchRecordById returns a mapped live row
+ok 11 - fetchRecordById returns a mapped live row
+  ---
+  duration_ms: 3.84356
+  type: 'test'
+  ...
+# Subtest: fetchRecordById throws on backend error
+ok 12 - fetchRecordById throws on backend error
+  ---
+  duration_ms: 4.005351
+  type: 'test'
+  ...
+# Subtest: fetchConflictReports maps live reports
+ok 13 - fetchConflictReports maps live reports
+  ---
+  duration_ms: 5.098699
+  type: 'test'
+  ...
+# Subtest: fetchConflictReports returns empty on backend error
+ok 14 - fetchConflictReports returns empty on backend error
+  ---
+  duration_ms: 5.931359
+  type: 'test'
+  ...
+# (node:1467504) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/telemetry.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to web/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: rangeStart maps ranges to day windows and all to null
-ok 6 - rangeStart maps ranges to day windows and all to null
+ok 15 - rangeStart maps ranges to day windows and all to null
   ---
-  duration_ms: 1.086889
+  duration_ms: 1.084611
   type: 'test'
   ...
 # Subtest: readingStatus classifies fresh, stale, warning and critical telemetry
-ok 7 - readingStatus classifies fresh, stale, warning and critical telemetry
+ok 16 - readingStatus classifies fresh, stale, warning and critical telemetry
   ---
-  duration_ms: 0.242728
+  duration_ms: 0.217525
   type: 'test'
   ...
 # Subtest: overallStatus escalates by severity order
-ok 8 - overallStatus escalates by severity order
+ok 17 - overallStatus escalates by severity order
   ---
-  duration_ms: 0.227699
+  duration_ms: 0.147044
   type: 'test'
   ...
 # Subtest: report catalogues expose stable values and labels
-ok 9 - report catalogues expose stable values and labels
+ok 18 - report catalogues expose stable values and labels
   ---
-  duration_ms: 0.686113
+  duration_ms: 0.600609
   type: 'test'
   ...
-1..9
-# tests 9
+1..18
+# tests 18
 # suites 0
-# pass 9
+# pass 18
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 251.260595
+# duration_ms 301.976791

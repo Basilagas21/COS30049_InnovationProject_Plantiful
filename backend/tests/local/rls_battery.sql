@@ -8,7 +8,7 @@
 -- and unique conflicts raise 42501 and 23505.
 
 begin;
-select plan(29);
+select plan(34);
 
 -- Fixtures ---------------------------------------------------------------
 set local role service_role;
@@ -171,6 +171,37 @@ select isnt_empty('select 1 from storage.objects where bucket_id = ''record-phot
   'anon reads public record photos');
 select is_empty('select 1 from storage.objects where bucket_id = ''reports''',
   'anon cannot read report objects');
+
+-- Bulk publish attempts ------------------------------------------------------
+-- A single statement touching many species must still be gated row by row:
+-- species with an approved record pass, the rest all fail the same gate.
+select as_role('authenticated', '44444444-4444-4444-4444-444444444444');
+insert into public.species (species_id, scientific_name, is_published) values
+  ('aaaaaaaa-0000-0000-0000-000000000003', 'Testus bulkus one', false),
+  ('aaaaaaaa-0000-0000-0000-000000000004', 'Testus bulkus two', false);
+select throws_ok($$update public.species set is_published = true
+  where species_id in ('aaaaaaaa-0000-0000-0000-000000000003',
+                       'aaaaaaaa-0000-0000-0000-000000000004',
+                       'aaaaaaaa-0000-0000-0000-000000000002')$$,
+  'P0001', 'Species cannot be published until at least one record is approved',
+  'bulk publish of unapproved species is rejected row by row');
+set local role service_role;
+select is((select count(*)::int from public.species where is_published), 1,
+  'bulk publish left no species newly published');
+
+-- Republish after rejection: approval withdrawn, gate must re-engage.
+select as_role('authenticated', '33333333-3333-3333-3333-333333333333');
+select lives_ok($$update public.plant_records set approval_status = 'rejected'
+  where record_id = 'bbbbbbbb-0000-0000-0000-000000000001'$$,
+  'officer withdraws approval to rejected');
+select as_role('authenticated', '44444444-4444-4444-4444-444444444444');
+select lives_ok($$update public.species set is_published = false
+  where species_id = 'aaaaaaaa-0000-0000-0000-000000000001'$$,
+  'unpublishing is always allowed');
+select throws_ok($$update public.species set is_published = true where species_id =
+  'aaaaaaaa-0000-0000-0000-000000000001'$$,
+  'P0001', 'Species cannot be published until at least one record is approved',
+  'republish blocked after the approving record was rejected');
 
 select * from finish();
 rollback;

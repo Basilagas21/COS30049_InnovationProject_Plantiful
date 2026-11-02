@@ -51,7 +51,7 @@ NOTICE:  policy "officer_read_reports" for relation "storage.objects" does not e
 BEGIN
  plan  
 -------
- 1..29
+ 1..34
 (1 row)
 
 SET
@@ -264,6 +264,48 @@ UPDATE 1
                 is_empty                 
 -----------------------------------------
  ok 29 - anon cannot read report objects
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+INSERT 0 2
+                             throws_ok                             
+-------------------------------------------------------------------
+ ok 30 - bulk publish of unapproved species is rejected row by row
+(1 row)
+
+SET
+                          is                          
+------------------------------------------------------
+ ok 31 - bulk publish left no species newly published
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+                    lives_ok                    
+------------------------------------------------
+ ok 32 - officer withdraws approval to rejected
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+                lives_ok                
+----------------------------------------
+ ok 33 - unpublishing is always allowed
+(1 row)
+
+                             throws_ok                             
+-------------------------------------------------------------------
+ ok 34 - republish blocked after the approving record was rejected
 (1 row)
 
  finish 

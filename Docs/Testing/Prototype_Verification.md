@@ -22,7 +22,7 @@ This is an as-built test plan and a record of checks run locally on 16 October 2
 | Web lint | `cd web; npm run lint` | PASS with one existing `<img>` optimisation warning in `records/[id]/page.tsx` | Source lint |
 | Web production | `cd web; npm run build` | PASS | Compiles routes; no live request verification |
 | Web unit | `cd web; npm test` | PASS, 26 tests (2 November 2026) | Telemetry, data-layer fallback, live-query branches via a local stub server, API route gates and officer-gated component markup |
-| Web browser flows | `cd web; npm run test:e2e` | PASS, 5 tests (2 November 2026) | Playwright on system Chrome: sign-in, officer approve, reject with reason, botanist role gate, visitor explore; disposable records, zero residue |
+| Web browser flows | `cd web; npm run test:e2e` | PASS, 7 tests (2 November 2026) | Playwright on system Chrome: sign-in, officer approve, reject with reason, botanist role gate, visitor explore, species create through the form with detail navigation, non-officer page guard; disposable data, zero residue |
 | Backend pgTAP | `backend/tests/local/run.sh` | PASS, 34 assertions (2 November 2026) | RLS, triggers, publish gate including bulk publish and republish-after-rejection, conflict rules, storage policies on a fresh Postgres 17 with the real migrations |
 
 ## Integration test cases — not yet observed

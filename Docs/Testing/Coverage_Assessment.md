@@ -11,12 +11,12 @@ The proposal target is more than 80% coverage on backend API and mobile sync. Tw
 
 | Surface | Denominator (from source, not memory) | Count |
 |---|---|---|
-| Backend data layer | Tables, row-level security policies, database functions and triggers defined in the migrations | 11 tables, 41 policies, 5 functions, 4 triggers |
+| Backend data layer | Tables, row-level security policies, database functions and triggers defined in the migrations | 11 tables, 41 policies, 5 functions, 4 triggers, asserted by a 29-check pgTAP battery |
 | Mobile sync logic | The revision-checked edit helper and the owner-scoped local store operations | sync-edit.ts (100% line coverage, all branches) plus 7 owner-scoping behaviour tests in the committed suite |
 | Permission matrix | Allowed and denied operations per role from the agreed role model | 33 checks across four batteries |
 | End-to-end flows | Offline capture, restart persistence, sync, duplicate prevention, conflict cycle, cross-owner rejection, officer review, public gating | 8 flows, all observed on device or live API |
 
-Exclusions, stated up front: IoT physical wiring and sensor calibration (Basil's lane, tracked by #48 and #49), the five-user usability walkthrough (#40, scheduling-blocked), hosted-deployment verification (never performed), and web line coverage (no runner, decision outstanding, see section 4).
+Exclusions, stated up front: IoT physical wiring and sensor calibration (Basil's lane, tracked by #48 and #49), the five-user usability walkthrough (#40, scheduling-blocked), hosted-deployment verification (never performed), and line-level coverage instrumentation (the runners execute statements but do not emit per-line reports; behaviour coverage is what this document measures).
 
 ## 2. Requirement to test map
 
@@ -32,16 +32,16 @@ Exclusions, stated up front: IoT physical wiring and sensor calibration (Basil's
 
 ## 3. Measured result against the stated target
 
-Backend behaviour coverage of the defined denominator: every one of the 11 tables, all 41 policies grouped by their 6 role patterns, all 5 functions and 4 triggers is exercised by at least one dated check in the four batteries or the R7 script, with allowed and denied paths both probed for the permission-bearing objects. That is full behavioural coverage of the data layer at the granularity the target names, reported as exercised surfaces over denominator, 100% of the table, policy, function and trigger inventory touched, not a line percentage.
+Backend behaviour coverage of the defined denominator: every one of the 11 tables, all 41 policies grouped by their role patterns, all 5 functions and 4 triggers is exercised by at least one dated check. As of 2 November 2026 this includes a committed pgTAP battery, backend/tests/local/rls_battery.sql, run by backend/tests/local/run.sh against a dockerised Postgres 17 with the real migrations applied from zero, 29 assertions covering the anon surface, botanist ownership, officer review limits, the publish gate, conflict-report rules and storage policies, all passing. The live-project batteries (policy, trigger, conflict, R7) additionally prove the same behaviours against the deployed database.
 
 Mobile sync: the compare-and-swap helper carries 100% line, branch and function coverage from its own suite, the owner-scoping store queries carry 7 committed behaviour tests (push filter, unsynced count, adoption once, steal guard, queue order), and the full loop is device-proven across three dated trials. The remaining screens and db.ts surface have no line coverage, excluded honestly.
 
-The proposal's greater-than-80% line-coverage wording is therefore met in behaviour terms on backend API and mobile sync, and is not measurable as a line percentage without a web test runner. The final report should state exactly that, with this document as the backing, rather than quote a bare percentage.
+The web surface gained a committed runner on 2 November 2026, npm test in web/ executes 9 node:test suites over the telemetry helpers and the data-layer fallback contract, and the mobile suite carries 11 tests. The proposal's greater-than-80% wording is therefore met in behaviour terms on backend API, mobile sync and the web data layer, with committed runners for all three; line-level instrumentation remains unmeasured, and the final report should state exactly that rather than quote a bare percentage.
 
 ## 4. Prioritised missing tests (criterion 3)
 
-1. Web test runner decision and first regression suite (blocks any web line-coverage claim; team decision, smallest useful start is the species and records action handlers).
-2. Publication-rule negative tests beyond the trigger battery, specifically bulk publish attempts and republish after rejection.
+1. Web component and route tests beyond the data layer (the runner now exists, npm test, extending it to page-level checks is now cheap).
+2. Publication-rule negative tests beyond the trigger battery and the pgTAP gate check, specifically bulk publish attempts.
 3. IoT payload validation tests for malformed readings before insertion (lane owner's call, #45 to #47 adjacent).
 
 ## 5. Failures and retests, retained (criterion 4)

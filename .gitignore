@@ -70,6 +70,7 @@ yarn-error.log*
 # Backend (supabase config, migrations, scripts) — README + SQL scripts kept; local-only files ignored
 backend/*
 !backend/README.md
+!backend/tests/
 
 # Python (IoT service / scripts)
 __pycache__/

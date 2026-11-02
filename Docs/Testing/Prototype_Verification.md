@@ -21,6 +21,8 @@ This is an as-built test plan and a record of checks run locally on 16 October 2
 | Web typing | `cd web; npx tsc --noEmit` | PASS | Static typecheck |
 | Web lint | `cd web; npm run lint` | PASS with one existing `<img>` optimisation warning in `records/[id]/page.tsx` | Source lint |
 | Web production | `cd web; npm run build` | PASS | Compiles routes; no live request verification |
+| Web unit | `cd web; npm test` | PASS, 9 tests (2 November 2026) | Telemetry helpers and data-layer fallback contract |
+| Backend pgTAP | `backend/tests/local/run.sh` | PASS, 29 assertions (2 November 2026) | RLS, triggers, publish gate, conflict rules, storage policies on a fresh Postgres 17 with the real migrations |
 
 ## Integration test cases — not yet observed
 

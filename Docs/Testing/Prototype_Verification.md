@@ -74,7 +74,7 @@ Audits, dated, before and after the remediation:
 
 | App | Before | After | Residual |
 |---|---|---|---|
-| web (Next.js 16.4.3) | production 0; dev-only moderate entries in eslint tooling | unchanged, production 0 | dev tooling only, not shipped |
+| web (Next.js 16.4.3) | production 0; dev-only moderate entries in eslint tooling | zero, full and production audits, after a minimatch override on 2 November | none |
 | mobile (Expo SDK 58) | critical 1, high 2, moderate 21, low 1 | critical 0, high 0, moderate 0, low 0 | none, `npm audit` reports zero |
 
 Reachability and remediation decisions: the critical `shell-quote` advisory and the high `zod` advisory were reachable only through dev dependencies, `@expo/cli` and `eslint-plugin-react-hooks`, never in code that runs on the device or in the browser bundle; both were remediated by raising expo within the SDK 58 line and pinning patched versions with npm overrides, no downgrade, per the issue rule. The remaining moderate advisories resolved to two distinct issues, a `minimatch` denial-of-service and a `glob` cancellation-bypass, both transitive build-tooling dependencies, remediated by the same override mechanism at patched versions; the toolchain was re-verified after the pins, type check, lint, unit tests, Metro Android bundle and the device session all pass with the overrides in place.

@@ -27,6 +27,7 @@ Usage:
 
 import argparse
 import json
+import math
 import sys
 from datetime import datetime, timezone
 
@@ -49,6 +50,16 @@ DEFAULT_INSTALL_DATE = "2026-10-15"
 
 READING_FIELDS = ("temperature", "humidity", "movement", "soil_moisture", "rain")
 
+# Accepted range per numeric field (#45 / S2-04). Temperature allows the widest
+# common DHT-family datasheet range so a genuine heat reading is never dropped;
+# the DHT11 itself reports 0-50 C. Percentages are physical 0-100 bounds.
+NUMERIC_BOUNDS = {
+    "temperature": (-40.0, 80.0),
+    "humidity": (0.0, 100.0),
+    "soil_moisture": (0.0, 100.0),
+}
+BOOLEAN_FIELDS = ("movement", "rain")
+
 
 def parse_line(raw):
     """Return the payload dict for a 'DATA {...}' line, or None to ignore it."""
@@ -68,6 +79,33 @@ def parse_line(raw):
     return payload if isinstance(payload, dict) else None
 
 
+def validate_payload(payload):
+    """Raise ValueError unless every reading field is null/absent or valid.
+
+    Missing-value policy: an absent or null field means the sensor could not
+    be read (the firmware sends null on a failed read) and is stored as null.
+    Anything else must have the right type and be in range; a single bad field
+    rejects the whole line so no partial or corrected reading is ever stored.
+    """
+    for field, (low, high) in NUMERIC_BOUNDS.items():
+        value = payload.get(field)
+        if value is None:
+            continue
+        # bool is a subclass of int in Python, so exclude it explicitly.
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError(f"Invalid sensor reading type: {field} must be a number or null")
+        if not math.isfinite(value):
+            raise ValueError(f"Invalid sensor reading: {field} must be a finite number")
+        if not low <= value <= high:
+            raise ValueError(f"Invalid sensor reading: {field}={value} outside {low:g} to {high:g}")
+    for field in BOOLEAN_FIELDS:
+        value = payload.get(field)
+        if value is not None and not isinstance(value, bool):
+            raise ValueError(f"Invalid sensor reading type: {field} must be true, false or null")
+    if all(payload.get(field) is None for field in READING_FIELDS):
+        raise ValueError("Invalid sensor reading: no measurements in payload")
+
+
 def build_row(payload, sensor_id, recorded_at):
     row = {"sensor_id": sensor_id, "recorded_at": recorded_at}
     for field in READING_FIELDS:
@@ -82,11 +120,10 @@ def process_line(client, raw, sensor_id, recorded_at):
         return None
     if payload.get("sensor_id", sensor_id) != sensor_id:
         raise ValueError("Node sensor_id does not match the registered sensor")
+    # Reject before any insert or alert evaluation (#45 / S2-04).
+    validate_payload(payload)
     # The node has no trusted clock; never use a timestamp supplied by serial.
     row = build_row(payload, sensor_id, recorded_at)
-    if any(value is not None and not isinstance(value, (int, float, bool)) for
-           field, value in row.items() if field in READING_FIELDS):
-        raise ValueError("Invalid sensor reading type")
     client.insert("sensor_readings", [row])
     try:
         alerts = evaluate_live_reading(client, row)

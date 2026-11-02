@@ -104,6 +104,26 @@ boolean taken from the rain board's `AO` threshold. The node has no clock, so it
 sends device uptime and the bridge stamps `recorded_at` with the host's UTC time
 when the line arrives.
 
+### Validation (#45, S2-04)
+
+`validate_payload` in `bridge.py` checks every line **before** anything is
+inserted or evaluated. One bad field rejects the whole line (logged as
+`Rejected node line: …`), and the bridge keeps listening for the next one.
+Values are never clamped or corrected.
+
+| Field | Accepted | Rejected examples |
+|---|---|---|
+| `temperature` | finite number from -40 to 80 °C, or `null` | `80.1`, `NaN`, `Infinity`, `"28"`, `true` |
+| `humidity` | finite number from 0 to 100 %, or `null` | `150`, `-1` |
+| `soil_moisture` | finite number from 0 to 100 %, or `null` | `-10`, `101` |
+| `movement`, `rain` | `true`, `false` or `null` | `2`, `1`, `0`, `"true"` |
+
+An absent field is treated as `null` (sensor not read). A line in which **all**
+five fields are null or absent is rejected because it carries no measurement.
+The temperature range is the widest common DHT-family datasheet range, so a
+genuine heat reading is never dropped; the DHT11 itself reports 0–50 °C.
+Regression tests: `PayloadValidationTests` in `test_pipeline.py`.
+
 ## How it maps to the database
 
 | Table | Written by | Columns used |

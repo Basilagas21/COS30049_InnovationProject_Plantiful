@@ -117,5 +117,82 @@ class HardwarePipelineTests(unittest.TestCase):
         self.assertEqual(alerts, [])
 
 
+
+class PayloadValidationTests(unittest.TestCase):
+    """#45 / S2-04: invalid node payloads must never be inserted or alerted on."""
+
+    def setUp(self):
+        self.client = FakeSupabase()
+        self.timestamp = datetime.now(timezone.utc).isoformat()
+
+    def assert_rejected(self, line, message):
+        with self.assertRaisesRegex(ValueError, message):
+            process_line(self.client, line, DEFAULT_SENSOR_ID, self.timestamp)
+        self.assertEqual(self.client.readings, [])
+        self.assertEqual(self.client.alerts, [])
+
+    def test_out_of_range_numbers_are_rejected(self):
+        cases = [
+            {"humidity": 150}, {"humidity": -1}, {"humidity": 100.1},
+            {"soil_moisture": -10}, {"soil_moisture": 101},
+            {"temperature": -40.1}, {"temperature": 80.1}, {"temperature": 1e9},
+        ]
+        for values in cases:
+            with self.subTest(values):
+                self.assert_rejected(node_line(**values), "outside")
+
+    def test_non_finite_numbers_are_rejected(self):
+        # Python's json module accepts these literals, so they must be caught.
+        for literal in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(literal):
+                line = node_line(temperature=0).replace(b'"temperature": 0', b'"temperature": ' + literal.encode())
+                self.assert_rejected(line, "finite")
+
+    def test_wrong_types_are_rejected(self):
+        cases = [
+            ({"movement": 2}, "movement"), ({"movement": 1}, "movement"),
+            ({"movement": "true"}, "movement"), ({"rain": 5}, "rain"),
+            ({"rain": 0}, "rain"), ({"temperature": True}, "temperature"),
+            ({"humidity": "87"}, "humidity"), ({"soil_moisture": [41]}, "soil_moisture"),
+            ({"temperature": {"value": 28}}, "temperature"),
+        ]
+        for values, field in cases:
+            with self.subTest(values):
+                self.assert_rejected(node_line(**values), field)
+
+    def test_payload_without_any_measurement_is_rejected(self):
+        empty = node_line(temperature=None, humidity=None, movement=None,
+                          soil_moisture=None, rain=None)
+        self.assert_rejected(empty, "no measurements")
+        self.assert_rejected(b'DATA {"sensor_id": "%s"}' % DEFAULT_SENSOR_ID.encode(), "no measurements")
+
+    def test_boundary_and_null_values_are_accepted(self):
+        accepted = [
+            {"temperature": -40, "humidity": 0, "soil_moisture": 0},
+            {"temperature": 80, "humidity": 100, "soil_moisture": 100},
+            # Firmware sends null when the DHT11 or an analog probe fails to read.
+            {"temperature": None, "humidity": None, "soil_moisture": None, "rain": None},
+            {"temperature": 28, "humidity": 87},  # integers are valid numbers
+        ]
+        for values in accepted:
+            with self.subTest(values):
+                row, _ = process_line(self.client, node_line(**values), DEFAULT_SENSOR_ID, self.timestamp)
+                for field, value in values.items():
+                    self.assertEqual(row[field], value)
+        self.assertEqual(len(self.client.readings), len(accepted))
+
+    def test_valid_payload_still_reaches_alert_evaluation(self):
+        row, alerts = process_line(self.client, node_line(temperature=40.0, humidity=24.0),
+                                   DEFAULT_SENSOR_ID, self.timestamp)
+        self.assertEqual(len(self.client.readings), 1)
+        self.assertEqual({(a["alert_type"], a["severity"]) for a in alerts},
+                         {("heat_stress", "critical"), ("drought_stress", "high")})
+
+    def test_rejected_line_does_not_block_the_next_valid_line(self):
+        self.assert_rejected(node_line(humidity=150), "outside")
+        process_line(self.client, node_line(), DEFAULT_SENSOR_ID, self.timestamp)
+        self.assertEqual(len(self.client.readings), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

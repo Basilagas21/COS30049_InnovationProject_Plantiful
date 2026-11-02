@@ -1,0 +1,76 @@
+
+> web@0.1.0 test
+> node --experimental-strip-types --import ./alias-register.mjs --test src/lib/*.test.mjs
+
+TAP version 13
+# (node:1436247) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/species.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to web/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: fetchSpecies returns sample rows and honours publishedOnly
+ok 1 - fetchSpecies returns sample rows and honours publishedOnly
+  ---
+  duration_ms: 0.80564
+  type: 'test'
+  ...
+# Subtest: fetchSpeciesById returns a detail shape or null
+ok 2 - fetchSpeciesById returns a detail shape or null
+  ---
+  duration_ms: 0.242677
+  type: 'test'
+  ...
+# Subtest: fetchRecords falls back to sample data with the usingSampleData flag
+ok 3 - fetchRecords falls back to sample data with the usingSampleData flag
+  ---
+  duration_ms: 0.178397
+  type: 'test'
+  ...
+# Subtest: fetchRecordById resolves sample rows and misses
+ok 4 - fetchRecordById resolves sample rows and misses
+  ---
+  duration_ms: 0.241866
+  type: 'test'
+  ...
+# Subtest: fetchConflictReports is empty in sample mode
+ok 5 - fetchConflictReports is empty in sample mode
+  ---
+  duration_ms: 0.560246
+  type: 'test'
+  ...
+# (node:1436248) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/web/src/lib/telemetry.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to web/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: rangeStart maps ranges to day windows and all to null
+ok 6 - rangeStart maps ranges to day windows and all to null
+  ---
+  duration_ms: 1.086889
+  type: 'test'
+  ...
+# Subtest: readingStatus classifies fresh, stale, warning and critical telemetry
+ok 7 - readingStatus classifies fresh, stale, warning and critical telemetry
+  ---
+  duration_ms: 0.242728
+  type: 'test'
+  ...
+# Subtest: overallStatus escalates by severity order
+ok 8 - overallStatus escalates by severity order
+  ---
+  duration_ms: 0.227699
+  type: 'test'
+  ...
+# Subtest: report catalogues expose stable values and labels
+ok 9 - report catalogues expose stable values and labels
+  ---
+  duration_ms: 0.686113
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 251.260595

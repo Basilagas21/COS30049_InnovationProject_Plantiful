@@ -32,6 +32,10 @@ from datetime import datetime, timezone
 
 from supabase_rest import SupabaseError, SupabaseRest
 from evaluate import evaluate_live_reading
+from time import sleep as wait_seconds
+
+from recovery import (DEFAULT_BUFFER_SIZE, Backoff, ReadingBuffer, SerialReconnector,
+                      Uploader, UPLOAD_RETRY_INITIAL_S, UPLOAD_RETRY_MAX_S)
 
 try:
     import serial
@@ -129,52 +133,83 @@ def main():
                         help="longitude registered for the node sensor")
     parser.add_argument("--install-date", default=DEFAULT_INSTALL_DATE,
                         help="install date registered for the node sensor")
+    parser.add_argument("--buffer-size", type=int, default=DEFAULT_BUFFER_SIZE,
+                        help="readings held in memory while Supabase is unreachable "
+                             f"(default: {DEFAULT_BUFFER_SIZE}, about 1 hour at 2 s)")
     args = parser.parse_args()
+    if args.buffer_size < 1:
+        parser.error("--buffer-size must be at least 1")
 
     if serial is None:
         sys.exit("pyserial is not installed. Run: pip install pyserial")
 
     client = SupabaseRest()
+    register_sensor(client, args)
 
-    client.insert(
-        "sensors",
-        [{
-            "sensor_id": args.sensor_id,
-            "gps_lat": args.gps_lat,
-            "gps_lng": args.gps_lng,
-            "install_date": args.install_date,
-        }],
-        on_conflict="sensor_id",
-    )
-    print(f"Registered sensor {args.sensor_id[:8]} "
-          f"({args.gps_lat:.4f}, {args.gps_lng:.4f})")
+    def open_link():
+        return serial.Serial(args.port, args.baud, timeout=5)
 
     try:
-        link = serial.Serial(args.port, args.baud, timeout=5)
+        link = open_link()
     except serial.SerialException as exc:
+        # A port that never opened is a configuration problem, not an outage.
         sys.exit(f"Could not open serial port {args.port}: {exc}")
 
+    uploader = Uploader(client, args.sensor_id, process_line, ReadingBuffer(args.buffer_size),
+                        log=log)
+    port = SerialReconnector(open_link, (serial.SerialException, OSError), link=link,
+                             on_idle=uploader.flush, log=log)
     print(f"Listening on {args.port} at {args.baud} baud. Ctrl-C to stop.")
 
     try:
-        with link:
-            while True:
-                recorded_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
-                try:
-                    result = process_line(client, link.readline(), args.sensor_id, recorded_at)
-                except ValueError as exc:
-                    print(f"Rejected node line: {exc}", file=sys.stderr)
-                    continue
-                if result is not None:
-                    row, alerts = result
-                    print(f"{recorded_at} {describe(row)} alerts={len(alerts)}", flush=True)
+        while True:
+            raw = port.readline()
+            # Stamp after the read returns: readline can block for up to 5 s.
+            recorded_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+            if parse_line(raw) is None:
+                uploader.flush()  # idle line: still let pending retries run
+                continue
+            for row, alerts in uploader.submit(raw, recorded_at):
+                print(f"{row['recorded_at']} {describe(row)} alerts={len(alerts)}", flush=True)
     except KeyboardInterrupt:
+        pending = len(uploader.buffer)
+        if pending:
+            log(f"Stopped with {pending} reading(s) not yet stored; the buffer is in memory "
+                "only, so they are lost.")
         print("Stopped.")
-    except serial.SerialException as exc:
-        sys.exit(f"Serial connection lost: {exc}")
-    except SupabaseError as exc:
-        sys.exit(f"Supabase error: {exc}")
+    finally:
+        port.close()
 
+
+def log(message):
+    print(message, file=sys.stderr, flush=True)
+
+
+def register_sensor(client, args, sleep=wait_seconds):
+    """Upsert the node's sensors row, waiting out a Supabase outage at startup."""
+    backoff = Backoff(UPLOAD_RETRY_INITIAL_S, UPLOAD_RETRY_MAX_S)
+    while True:
+        try:
+            client.insert(
+                "sensors",
+                [{
+                    "sensor_id": args.sensor_id,
+                    "gps_lat": args.gps_lat,
+                    "gps_lng": args.gps_lng,
+                    "install_date": args.install_date,
+                }],
+                on_conflict="sensor_id",
+            )
+        except SupabaseError as exc:
+            if not exc.retryable:
+                sys.exit(f"Supabase rejected the sensor registration: {exc}")
+            wait = backoff.failed()
+            log(f"Could not register the sensor ({exc}); retrying in {wait:g}s. Ctrl-C to stop.")
+            sleep(wait)
+            continue
+        print(f"Registered sensor {args.sensor_id[:8]} "
+              f"({args.gps_lat:.4f}, {args.gps_lng:.4f})")
+        return
 
 if __name__ == "__main__":
     main()

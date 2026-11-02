@@ -15,8 +15,20 @@ import urllib.request
 REQUIRED_ENV = ("SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY")
 
 
+# HTTP statuses that mean the request itself is invalid (bad or conflicting
+# data), so sending the same row again can never succeed. Everything else,
+# including network failures, timeouts, 5xx and auth errors, may recover.
+PERMANENT_STATUSES = frozenset({400, 409, 422})
+
+
 class SupabaseError(RuntimeError):
-    pass
+    def __init__(self, message, status=None):
+        super().__init__(message)
+        self.status = status
+
+    @property
+    def retryable(self):
+        return self.status not in PERMANENT_STATUSES
 
 
 def load_config():
@@ -61,9 +73,13 @@ class SupabaseRest:
                 raw = resp.read().decode("utf-8")
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode("utf-8", "replace")
-            raise SupabaseError(f"{method} {path} -> HTTP {exc.code}: {detail}") from None
+            raise SupabaseError(f"{method} {path} -> HTTP {exc.code}: {detail}", exc.code) from None
         except urllib.error.URLError as exc:
             raise SupabaseError(f"{method} {path} -> {exc.reason}") from None
+        except OSError as exc:
+            # A timeout or reset while reading the response is not a URLError;
+            # without this it escaped and crashed the bridge (#46).
+            raise SupabaseError(f"{method} {path} -> {type(exc).__name__}: {exc}") from None
         if not raw:
             return None
         return json.loads(raw)

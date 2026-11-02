@@ -69,7 +69,10 @@ def evaluate_live_reading(client, row, cooldown_hours=6.0):
     The periodic evaluator remains useful for sensor_silent (no new reading can
     trigger this function) and for retrying a failed alert insertion.
     """
-    findings, _ = evaluate_readings([row], silent_after_minutes=30)
+    # Silence is the periodic evaluator's job, judged from the newest stored
+    # reading. A reading delivered late after an outage (#46) is old, not silent.
+    findings = {key: value for key, value in evaluate_readings([row], 30)[0].items()
+                if key[1] != "sensor_silent"}
     sensor_id = row["sensor_id"]
     cutoff = (now_utc() - timedelta(hours=cooldown_hours)).isoformat(timespec="seconds")
     recent = client.select("alerts", params={

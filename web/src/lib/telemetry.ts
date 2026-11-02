@@ -24,6 +24,10 @@ export type ThreatAlert = {
   severity: "low" | "medium" | "high" | "critical";
   resolved: boolean;
   created_at: string;
+  // Absent until backend/scripts/013_alert_resolution.sql has been applied.
+  resolved_by?: string | null;
+  resolved_at?: string | null;
+  resolved_by_name?: string | null;
 };
 export type LiveTelemetry = {
   checkedAt: string;
@@ -32,6 +36,8 @@ export type LiveTelemetry = {
   alerts: ThreatAlert[];
   alertCount: number;
   openCount: number;
+  // False until the alert-resolution migration has been applied in Supabase.
+  resolutionReady: boolean;
 };
 export type HistoryPoint = {
   time: string;
@@ -62,6 +68,11 @@ export type TelemetryHistory = {
   // Optional while an existing deployment still has the previous SQL function.
   activity?: ActivityHistory;
 };
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export function isUuid(value: string): boolean {
+  return UUID_PATTERN.test(value);
+}
 
 export function rangeStart(range: TelemetryRange, now: number): string | null {
   const days = { "1d": 1, "5d": 5, "7d": 7, all: 0 }[range];

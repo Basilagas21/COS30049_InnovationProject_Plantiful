@@ -215,10 +215,14 @@ export interface Database {
           severity: "low" | "medium" | "high" | "critical";
           resolved: boolean;
           created_at: string;
+          resolved_by: string | null;
+          resolved_at: string | null;
         };
-        Insert: Omit<Database["public"]["Tables"]["alerts"]["Row"], "alert_id" | "created_at"> & {
+        Insert: Omit<Database["public"]["Tables"]["alerts"]["Row"], "alert_id" | "created_at" | "resolved_by" | "resolved_at"> & {
           alert_id?: string;
           created_at?: string;
+          resolved_by?: string | null;
+          resolved_at?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["alerts"]["Insert"]>;
         Relationships: [];

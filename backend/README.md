@@ -14,7 +14,8 @@ backend/
 └── scripts/
     ├── verify_public_write_block.sql   ← R7 check: anon writes must fail
     ├── verify_record_photo_write.sql   ← storage write-path check before device sync
-    └── verify_alerts_history.sql       ← monitoring history consistency check
+    ├── verify_alerts_history.sql       ← monitoring history consistency check
+    └── 013_alert_resolution.sql        ← officer alert resolution (#31): audit columns, policy, guard trigger
 ```
 
 ## Tech stack
@@ -72,6 +73,7 @@ backend/
 5. **Storage buckets** (`record-photos`, `species-photos`, `reports`) are created and policy-configured by `apply_project.sql` — the `reports` bucket is deliberately private (`public = false`) so officer CSVs with sensitive-species GPS stay behind RLS.
 6. **Verify security** (issue #26): run `scripts/verify_public_write_block.sql` in the SQL editor and confirm every check passes — anonymous inserts, updates, and deletes are rejected, anonymous reads return only approved and published data, and no species can be published before it has an approved record (R7).
 7. **Verify the photo write path:** run `scripts/verify_record_photo_write.sql`. Every line must read `PASS` (or `SKIP` where noted) before pressing **Sync now** on a device; otherwise photo uploads fail with an access-rules error.
+8. **Alert resolution (#31, S2-09):** run `scripts/013_alert_resolution.sql` once (idempotent). It adds `alerts.resolved_by` / `resolved_at`, lets conservation officers and admins mark an open alert resolved, and installs the `guard_alert_resolution` trigger, which stamps who and when, blocks reopening, and blocks edits to any other alert column. The IoT bridge and evaluator (service key) are unaffected. Until it is applied, `/alerts` still loads but shows a setup notice instead of the **Mark resolved** button. Because `backend/` is gitignored, this file is tracked with `git add -f`.
 
 ## Data model
 

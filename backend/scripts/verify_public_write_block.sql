@@ -143,6 +143,7 @@ declare
   hidden_records bigint;
   report_rows bigint;
   hidden_photos bigint;
+  sync_conflict_rows bigint;
   log text;
 begin
   select count(*) into hidden_species from public.species where not is_published;
@@ -183,6 +184,15 @@ begin
   else log := 'PASS: anon cannot read photos of unpublished species'; end if;
   perform set_config('plantiful.log', coalesce(current_setting('plantiful.log', true), '') || log || E'\n', true);
   if hidden_photos > 0 then
+    perform set_config('plantiful.fails',
+      ((coalesce(nullif(current_setting('plantiful.fails', true), ''), '0'))::int + 1)::text, true);
+  end if;
+
+  select count(*) into sync_conflict_rows from public.sync_conflicts;
+  if sync_conflict_rows > 0 then log := 'FAIL: anon can read ' || sync_conflict_rows || ' sync_conflicts rows';
+  else log := 'PASS: anon cannot read sync_conflicts'; end if;
+  perform set_config('plantiful.log', coalesce(current_setting('plantiful.log', true), '') || log || E'\n', true);
+  if sync_conflict_rows > 0 then
     perform set_config('plantiful.fails',
       ((coalesce(nullif(current_setting('plantiful.fails', true), ''), '0'))::int + 1)::text, true);
   end if;

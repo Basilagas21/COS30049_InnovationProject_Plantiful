@@ -24,8 +24,10 @@ iot/
 ├── publisher.py         ← simulated sensor registration + reading feed
 ├── evaluate.py          ← threat-rule evaluator, writes rows to alerts
 ├── bridge.py            ← USB-serial → Supabase bridge for the real node
+├── recovery.py          ← bridge outage handling: upload buffer/retry, serial reconnect
 ├── requirements.txt     ← pyserial (only external dependency, used by the bridge)
 ├── test_pipeline.py     ← offline contract tests (no hardware or Supabase)
+├── test_recovery.py     ← outage, reconnect and data-loss policy tests
 └── sketch_oct9a/
     └── sketch_oct9a.ino ← ESP32 firmware (DHT11 + PIR + soil + rain + LED)
 ```
@@ -218,6 +220,22 @@ The bridge exclusively owns the COM port: close Arduino Serial Monitor before
 running it. The node has no GPS or clock; the bridge uses host UTC time and
 registers the sensor's fixed location. Pass `--gps-lat` and `--gps-lng` for its
 actual installation location rather than using the demonstration defaults.
+
+### Outages and recovery (#46, S2-05)
+
+The bridge keeps running through interruptions instead of exiting. Every
+recovery step is logged to the terminal.
+
+| Interruption | What the bridge does | Data loss |
+|---|---|---|
+| Supabase unreachable (network down, timeout, 5xx, auth error) | Keeps reading the node and stamping each reading with its arrival time, holds readings in memory, and retries oldest-first after 2 s, doubling to at most 60 s. On recovery the backlog is stored in order and alert rules run on each reading. | None, up to `--buffer-size` readings (default 1800, about 1 hour at the 2 s interval). After that the **oldest** are dropped, and the count is logged when Supabase returns. |
+| Supabase rejects one reading (HTTP 400/409/422) | Logs it, skips that reading, and carries on with the rest. | That reading only. |
+| Supabase unreachable at startup | Retries the sensor registration with the same backoff until it succeeds. | None (nothing read yet). |
+| USB cable unplugged or port error | Closes the port and reopens it every 2 s, doubling to at most 30 s, while still retrying buffered uploads. | **Readings during the gap are not captured**: the node has no storage. `/alerts` shows the sensor as stale, and `evaluate.py` raises `sensor_silent` after 30 minutes. |
+| Bridge stopped (Ctrl-C, crash, PC sleeps) | Prints how many buffered readings were not yet stored. | Everything still buffered: the buffer is in memory only. |
+
+If the port cannot be opened at all when the bridge starts, it exits with an
+error, because that is a wrong `--port` rather than an outage.
 
 Run the local contract checks without hardware or Supabase:
 

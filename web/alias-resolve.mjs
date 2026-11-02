@@ -14,8 +14,6 @@ const require = createRequire(import.meta.url);
 
 const NEXT_SUBPATHS = {
   'next/headers': path.join(root, 'test-stubs', 'next-headers.mjs'),
-  'next/navigation': path.join(root, 'test-stubs', 'next-navigation.mjs'),
-  'next/link': path.join(root, 'test-stubs', 'next-link.mjs'),
   'next/server': require.resolve('next/server.js'),
 };
 

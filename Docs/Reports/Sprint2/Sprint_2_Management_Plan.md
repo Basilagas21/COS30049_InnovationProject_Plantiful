@@ -592,6 +592,8 @@ The main text should contain essential reasoning, figures and results. Place lon
 
 Use `[picture of ... here]` while drafting. Replace every placeholder in the final version. A diagram caption should explain the implemented behaviour. A test screenshot caption should identify the test and observed outcome.
 
+Use images to reinforce the explained changes. Capture the actual application rather than a mockup or a design reference. Use the same viewport, role, task and data state for a before and after pair. Include the empty, error and missing-data states where they explain the refinement. Label each image with its test or change ID, build or commit, date and role. Redact personal data and sensitive locations. Keep the original files and place only reviewed copies in the submission package. Do not use an image of a plant as proof of functionality. Do not count a screenshot as a substitute for a recorded test.
+
 #### Requirement coverage template
 
 | Requirement | User need | Implementation | Test IDs | Figure and evidence IDs | Final status and limitation |

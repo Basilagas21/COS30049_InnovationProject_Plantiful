@@ -165,6 +165,27 @@ PR #65 reports a default capacity of 1,800 readings, approximately one hour at a
 | No application-level field encryption | Rationale recorded in the security assessment | RLS and platform controls are distinct from field encryption. Acceptance against the original objective still needs explicit confirmation |
 | Curved navigation and glass/image-backed cards | User-supplied design references, not an implemented scope commitment | Potential visual coherence must be weighed against readability, rendering cost and navigation stability |
 
+### 3.4 Visual change evidence
+
+Screenshots will make the Sprint 2 improvements easier to inspect. They must show the actual application, not mockups or design references. Each capture uses the same viewport, account role and data state for the before and after views.
+
+The IMG-S2 series is planned. Insert a capture only after the change is implemented and verified on the recorded build. Label every image with its test ID, build or commit, date and role. Redact personal data and sensitive locations.
+
+| Image ID | Change shown | Required capture | Caption must state |
+|---|---|---|---|
+| IMG-S2-01 | Web homepage glass and image-backed cards | Discover, Connect and Conserve sections at one viewport. Include the previous layout for comparison | Image source and licence. Cards shown are implemented content. Do not claim a usability gain without participant evidence |
+| IMG-S2-02 | Officer approval photograph review | Queue with thumbnails, a larger inspection view and one record with no photo | Record IDs are redacted. The missing-photo state is deliberate. The photo is the botanist submission, not a catalogue substitute |
+| IMG-S2-03 | Mobile curved bottom navigation | All five tabs at rest, with each selected state in light and dark appearance | Tab labels remain visible. Touch targets and gesture-area clearance were checked. Decoration does not replace the accessible name |
+| IMG-S2-04 | QR scanner guide animation | Two or three still frames showing the guide and scan line at different positions, or a short muted clip | The animation shows readiness only. It does not prove a successful decode |
+| IMG-S2-05 | Photo-led species list | Before and after cards for the same species. Include one species with no photograph | The long description moved to the detail screen. The fallback is deliberate |
+| IMG-S2-06 | Unknown QR resolution states | Found locally, found online, offline unavailable, not accessible, unsupported tag and deliberate new-tag confirmation | Each panel names the input state and observed message. A failed lookup does not automatically start a new record |
+| IMG-S2-07 | Light and dark appearance | Web and mobile screens at the same task and viewport | Contrast was checked by the stated method. Fixed camera and QR surfaces are excluded from theme inversion |
+| IMG-S2-08 | Offline sync and conflict feedback | Pending, synced, failed and conflict states. Include the officer conflict banner | Test ID, revisions and whether the second client was scripted. The banner is visible to the intended role |
+| IMG-S2-09 | IoT reading to dashboard trail | Annotated assembly, serial output, stored reading and dashboard alert with correlated values | Physical and synthetic labelled separately. Calibration and wiring limitations stated |
+| IMG-S2-10 | Layout and spacing refinements | Before and after mobile screens at the same viewport, including the gesture-bar area | The observed defect, the change and the retest result. Device and build identified |
+
+Do not place an unlabelled image between two paragraphs and leave the reader to infer its meaning. Introduce it in the text, keep the caption factual and link it to the change or test it supports.
+
 ## 4. Architecture and integration
 
 ### 4.1 Deployment and trust boundaries
@@ -406,6 +427,8 @@ Six images were supplied during report preparation. Their provenance and licence
 | Image 5 | Plantiful Capture screen with camera view, torch, scanner guide, new-tag action and five tabs | Shows the existing capture interface and the context for navigation refinements | Camera preview is visible. Successful decoding, timing and persistence are not demonstrated |
 | Image 6 | Handwritten web notes and card sketches | Appears to propose glass effects, image-backed cards and images in officer approval sections | Product suggestions requiring confirmation, not approved implementation requirements |
 
+These six items are design references or existing-state captures. They are not proof that a refinement was implemented. Implemented changes use the IMG-S2 captures defined in Section 3.4. A reference image may appear beside a change only when the caption distinguishes the concept from the delivered result.
+
 ### 7.2 Proposed design decisions and evaluation
 
 Plant imagery can strengthen species recognition when it is linked to the correct entity and accompanied by a readable name. In officer review, the primary image should be the submitted observation photo. A catalogue image may be shown separately and labelled as a reference. Substituting a generic species image could obscure whether the botanist supplied adequate evidence.
@@ -556,8 +579,11 @@ Absence of hosted verification is a limitation, not automatically an approved sc
 | D-05 | Separate observation review from species publication | Review and export draft against live policy outcomes |
 | D-06 | Show real entity keys and cardinalities | Generate from final schema, including conflicts and alert audit fields |
 | D-07 | Explain role-based tasks and recovery | Map botanist, officer, admin and visitor journeys |
+| IMG-S2-01 to IMG-S2-10 | Show implemented Sprint 2 changes and before/after states | Capture from the recorded build using the requirements in Section 3.4. Replace every planned placeholder |
 
 Each figure needs a caption explaining its claim and an introduction in the text. An image of a plant is contextual illustration. A workflow diagram explains design. A correlated screenshot/log sequence demonstrates a test. These serve different purposes and should not be counted interchangeably as evidence.
+
+Use images deliberately. A paired before and after capture is strongest when the viewport, task, role and data are the same. Show error and empty states as well as the successful state. Keep the original screenshots and place only reviewed, redacted copies in the submission package. Do not use a design reference as a substitute for an implemented screen.
 
 ### 9.4 Demonstration and sign-off preparation
 

@@ -217,10 +217,21 @@ applies:
 | `unusual_movement` | `movement` flag set on a reading | `medium` |
 | `sensor_silent` | no reading for `--silent-after-minutes` (default 30) | `high` |
 
-Dedupe: before inserting, the evaluator loads alerts raised in the last
-`--cooldown-hours` (default 6) and skips any sensor/rule pair already alerted
-inside that window, so a persistently hot afternoon produces one alert per
-cooldown period rather than one per reading.
+Dedupe and escalation (#47, S2-06, decided 2 November 2026): before inserting,
+the bridge and the evaluator both load alerts raised in the last
+`--cooldown-hours` (default 6).
+
+- **Same or lower severity is suppressed.** A sensor/rule pair already alerted
+  at that severity or higher inside the window is skipped, so a persistently hot
+  afternoon produces one alert per cooldown period rather than one per reading.
+- **A worse condition escalates immediately.** If the severity rises above every
+  same-type alert in the window (heat `high` → `critical`, drought `medium` →
+  `high`), a new alert is raised straight away, once, not on every reading.
+- **Resolved alerts still count.** Marking an alert resolved on `/alerts` does
+  not reset the cooldown, so a condition that is still present does not
+  re-alert on the next reading. It repeats after the window as before.
+
+Regression tests: `iot/test_escalation.py`.
 
 The rules read temperature, humidity and movement only. The soil-moisture and
 rain columns now carry data from the hardware node, so rules for them (e.g.

@@ -78,6 +78,38 @@ test("officer creates a species through the form and finds it in the catalogue",
   }
 });
 
+test("officer edits a species through the form and the change persists", async ({ page }) => {
+  test.setTimeout(60_000);
+  const name = "Testus e2editus";
+  let createdId: string | null = null;
+  try {
+    // Seed directly so the test exercises only the edit path.
+    const off = await token("dld@officer.com");
+    const created = await (await fetch(`${SUPABASE_URL}/rest/v1/species`, {
+      method: "POST",
+      headers: { apikey: ANON_KEY, Authorization: `Bearer ${off.access_token}`, "Content-Type": "application/json", Prefer: "return=representation" },
+      body: JSON.stringify({ scientific_name: name, common_name: "Before edit" }),
+    })).json() as { species_id: string }[];
+    createdId = created[0].species_id;
+
+    await signIn(page, "dld@officer.com");
+    await page.goto(`/species/${createdId}/edit`);
+    await page.fill('input[placeholder*="Low\'s pitcher plant"]', "After edit");
+    await page.click('button:has-text("Save changes")');
+
+    await expect(page).toHaveURL(new RegExp(`/species/${createdId}`), { timeout: 20_000 });
+    await expect(page.getByText("After edit")).toBeVisible({ timeout: 20_000 });
+
+    const rows = await (await fetch(
+      `${SUPABASE_URL}/rest/v1/species?species_id=eq.${createdId}&select=common_name`,
+      { headers: { apikey: ANON_KEY, Authorization: `Bearer ${off.access_token}` } }
+    )).json() as { common_name: string }[];
+    expect(rows[0].common_name).toBe("After edit");
+  } finally {
+    if (createdId) await deleteSpecies(createdId);
+  }
+});
+
 test("non-officer cannot reach the new species page", async ({ page }) => {
   await signIn(page, "dld@botanist.com");
   await page.goto("/species/new");

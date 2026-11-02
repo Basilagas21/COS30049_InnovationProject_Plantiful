@@ -40,7 +40,7 @@ Line coverage, measured 2 November 2026 with the committed runners: the mobile s
 
 ## 4. Prioritised missing tests (criterion 3)
 
-1. Web browser coverage beyond the current seven flows: record edit submission through the browser and mobile web click-throughs are natural extensions of the same harness.
+1. Web browser coverage beyond the current eight flows: the visitor map and report download interactions are natural extensions of the same harness; the record edit path lives in the mobile app and is covered there by device trials.
 2. IoT payload validation before insertion (lane owner's call, #45 to #47 adjacent; the existing 7-test pipeline suite covers host timestamp, ingestion, cooldown, invalid node ids, silence detection, alert retry and severity).
 
 ## 5. Failures and retests, retained (criterion 4)

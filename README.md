@@ -150,11 +150,15 @@ Open [http://localhost:3000](http://localhost:3000). Sign in with an officer or 
 
 ```
 cd mobile
-npm install --legacy-peer-deps
-npx expo start
+npm ci
+npm start
 ```
 
-Scan the QR code shown by Expo with Expo Go on your phone, or press `a` for an Android emulator. Then:
+`npm ci` installs the exact dependency versions recorded in `package-lock.json`, so every teammate gets the same working tree. `npm start` targets Expo Go explicitly, even though an optional development client package is installed. Scan the QR code with Expo Go on your phone, or press `a` for an Android emulator.
+
+Run `npm run doctor` if a dependency warning appears. It checks the installed packages against Expo SDK 58.
+
+A development build is available as an optional fallback if Expo Go becomes incompatible after an app store update. It requires an Expo account once and installs an app on the phone. Run `npm run build:dev:android`, install the APK, then run `npm run start:dev`. The Expo Go version is not involved in that workflow. Then:
 
 1. Sign in on the Profile tab with a botanist account.
 2. Scan a plant QR tag on the Scan tab.

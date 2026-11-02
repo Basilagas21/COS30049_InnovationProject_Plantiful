@@ -30,8 +30,10 @@ class FakeSupabase:
     def select(self, table, params=None):
         if table == "alerts":
             cutoff = datetime.fromisoformat(params["created_at"].removeprefix("gte."))
-            return [row for row in self.alerts if row["sensor_id"] ==
-                    params["sensor_id"].removeprefix("eq.") and
+            # The periodic evaluator queries every sensor; the live path filters one.
+            sensor = params.get("sensor_id", "").removeprefix("eq.")
+            return [row for row in self.alerts
+                    if (not sensor or row["sensor_id"] == sensor) and
                     datetime.fromisoformat(row["created_at"]) >= cutoff]
         if table == "sensors":
             return [{"sensor_id": DEFAULT_SENSOR_ID}]

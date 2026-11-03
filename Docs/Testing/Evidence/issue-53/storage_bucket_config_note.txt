@@ -4,8 +4,12 @@
 # date: 2026-11-03 (UTC)
 # result: all three buckets (record-photos, species-photos, reports) return
 #   file_size_limit: null and allowed_mime_types: null.
-# Finding: no server-side size or MIME restriction is configured on any
-#   bucket. The register's R-07 proposal (implement and verify, or record
-#   accepted limits and residual exposure) remains open on the live project.
+# Finding (3 November): no server-side size or MIME restriction was configured
+#   on any bucket. A hardening patch has been drafted in the local reference
+#   SQL (record-photos 10 MB jpeg/png; species-photos 10 MB jpeg/png/webp/gif,
+#   svg excluded as an XSS vector; reports 5 MB csv/pdf) and pinned by the
+#   pgTAP battery (41 assertions). Applying it to the live project is a
+#   Dashboard update of storage.buckets rows, owner decision; R-07 remains
+#   open until applied and confirmed by its owner.
 # note: values withheld here because bucket config is project infrastructure;
 #   any team member can reproduce the probe against the Dashboard or REST API.

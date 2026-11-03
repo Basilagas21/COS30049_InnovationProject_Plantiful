@@ -9,10 +9,17 @@
 #   payload. GET /records/<approved-id> anonymously returns 200 and DOES show
 #   the tag and location, which is the scoped QR deep-link feature itself
 #   (project scope: users view recorded plant details via the QR).
-# finding: no anonymous leakage of qr_code on list surfaces; the register's
-#   concern is the server-side select list still pulling qr_code through
-#   fetchRecords even where the map page never renders it. Removing it from
-#   that path is a trivial data-layer split; whether it is worth doing is the
-#   R-10 owner's minimisation decision. The record-detail deep link needs it
-#   by design and is the only anonymous surface that shows a tag.
+# finding and remediation (3 November): the register's suspicion was half
+#   real: no anonymous exposure existed (server rendering kept internal
+#   selects out of the payload), but fetchRecords did select qr_code on the
+#   map and records-list path that never renders it. Remediated: the list
+#   query no longer selects qr_code while fetchRecordById keeps it for the
+#   deep-link page, and the split is pinned by a request-capture assertion
+#   (live-queries suite, 27 tests) proving the list select excludes the
+#   column and the detail select retains it. Regression verified: full
+#   browser suite passes twice back-to-back cold, and the anonymous detail
+#   page still renders the tag and QR image, list surfaces and map unchanged.
+# remaining for R-10 closure: owner confirmation that the minimisation is
+#   accepted and that the by-design deep-link exposure of tag plus location
+#   is the intended public behaviour, after @Badrul.
 # privacy: this note intentionally records no record ids, tags or coordinates.

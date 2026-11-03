@@ -119,7 +119,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 EXPO_PUBLIC_SUPABASE_PHOTO_BUCKET=record-photos
 ```
 
-`web/.env.local`:
+`web/.env`:
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co

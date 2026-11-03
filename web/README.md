@@ -9,7 +9,7 @@ cd web
 npm install
 ```
 
-Create `web/.env.local` (git-ignored) with the Supabase project values (Dashboard > Project Settings > API Keys):
+Create `web/.env` (git-ignored; the legacy name `web/.env.local` still works if an older checkout has it) with the Supabase project values (Dashboard > Project Settings > API Keys):
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co

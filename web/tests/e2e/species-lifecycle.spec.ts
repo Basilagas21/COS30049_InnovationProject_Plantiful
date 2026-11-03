@@ -1,17 +1,11 @@
 import { test, expect } from "@playwright/test";
-import { readFileSync } from "node:fs";
-import path from "node:path";
+import { SUPABASE_URL, ANON_KEY, TEST_PASSWORD } from "./env";
 
 // Species lifecycle through the browser: an officer creates a species via the
 // form, sees it in the catalogue, opens its detail page, and the record is
 // deleted afterwards over REST so the live project keeps zero residue.
 
-const envFile = readFileSync(path.resolve(__dirname, "../../.env.local"), "utf8");
-const envValue = (key: string) => envFile.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1].trim() ?? "";
 
-const SUPABASE_URL = envValue("NEXT_PUBLIC_SUPABASE_URL");
-const ANON_KEY = envValue("NEXT_PUBLIC_SUPABASE_ANON_KEY");
-const TEST_PASSWORD = envValue("E2E_TEST_PASSWORD");
 
 // Unique per run: leftovers from a crashed run cannot collide with
 // deterministic QR codes or catalogue names on the next run.

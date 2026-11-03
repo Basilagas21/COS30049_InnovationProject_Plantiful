@@ -1,6 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { readFileSync } from "node:fs";
-import path from "node:path";
+import { SUPABASE_URL, ANON_KEY, TEST_PASSWORD } from "./env";
 
 // Full report round trip through the browser: officer generates a CSV,
 // downloads it and the bytes parse as the expected table, then the report
@@ -9,12 +8,7 @@ import path from "node:path";
 // officer_delete_reports storage policy grants, so this test doubles as the
 // live verification that the Dashboard change took effect. Zero residue.
 
-const envFile = readFileSync(path.resolve(__dirname, "../../.env.local"), "utf8");
-const envValue = (key: string) => envFile.match(new RegExp(`^${key}=(.*)$`, "m"))?.[1].trim() ?? "";
 
-const SUPABASE_URL = envValue("NEXT_PUBLIC_SUPABASE_URL");
-const ANON_KEY = envValue("NEXT_PUBLIC_SUPABASE_ANON_KEY");
-const TEST_PASSWORD = envValue("E2E_TEST_PASSWORD");
 
 async function officerHeaders() {
   const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {

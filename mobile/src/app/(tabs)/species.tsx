@@ -1,12 +1,25 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { Pressable, TextInput } from '@/lib/interactionLog';
 import { useTheme, useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { BotanicalBanner } from '@/components/botanical-banner';
 import { openDatabase, getSpeciesOptions, type SpeciesOption } from '@/db';
+
+function SpeciesCover({ uri, name }: { uri?: string | null; name: string }) {
+  const [failed, setFailed] = useState(false);
+  const { colors } = useTheme();
+  return uri && !failed ? (
+    <Image source={{ uri }} accessibilityLabel={name} onError={() => setFailed(true)} style={{ width: '100%', aspectRatio: 1.8 }} resizeMode="cover" />
+  ) : (
+    <View style={{ padding: 18, backgroundColor: colors.sprout, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      <Ionicons name="leaf-outline" size={24} color={colors.emerald} />
+      <Text style={{ color: colors.pine, flex: 1, fontSize: 12 }}>{uri ? 'Reference photo unavailable' : 'Reference photo not added yet'}</Text>
+    </View>
+  );
+}
 
 export default function SpeciesReferenceScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
@@ -14,10 +27,20 @@ export default function SpeciesReferenceScreen() {
   const router = useRouter();
   const [species, setSpecies] = useState<SpeciesOption[]>([]);
   const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const db = await openDatabase();
-    setSpecies(await getSpeciesOptions(db));
+    setLoading(true);
+    setError(null);
+    try {
+      const db = await openDatabase();
+      setSpecies(await getSpeciesOptions(db));
+    } catch {
+      setError('Could not read the saved catalogue. Pull down to retry.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useFocusEffect(
@@ -57,14 +80,21 @@ export default function SpeciesReferenceScreen() {
       </View>
 
       <FlatList
-        ListHeaderComponent={<BotanicalBanner title="The field guide." subtitle="A closer look at the plants around you. Available offline after sync." />}
+        ListHeaderComponent={<View style={{ gap: 12 }}>
+          <BotanicalBanner title="The field guide." subtitle="Catalogue text is saved after sync. Photos may need a connection." />
+          <Text accessibilityLiveRegion="polite" style={styles.meta}>{error ?? `${filtered.length} species${query ? ' matching your search' : ' in your field guide'}`}</Text>
+        </View>}
         data={filtered}
         keyExtractor={(item) => item.species_id}
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
+        refreshing={loading}
+        onRefresh={refresh}
         indicatorStyle={scheme === 'dark' ? 'white' : 'black'}
         ListEmptyComponent={
-          <View style={styles.empty}>
+          loading ? <ActivityIndicator color={colors.emerald} style={{ marginTop: 24 }} /> : error ? <View style={styles.empty}>
+            <Pressable onPress={refresh} style={styles.syncButton} accessibilityRole="button"><Text style={styles.syncButtonText}>Retry catalogue</Text></Pressable>
+          </View> : <View style={styles.empty}>
             <Ionicons name="book-outline" size={48} color={colors.muted} />
             <Text style={styles.emptyTitle}>
               {species.length === 0 ? 'No species reference yet' : 'No matches'}
@@ -85,23 +115,23 @@ export default function SpeciesReferenceScreen() {
         renderItem={({ item }) => (
           <Pressable
             style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+            accessibilityRole="button"
+            accessibilityLabel={`${item.scientific_name}${item.common_name ? `, ${item.common_name}` : ''}. View species details`}
             onPress={() => router.push({ pathname: '/species/[id]', params: { id: item.species_id } })}
           >
+            <SpeciesCover key={item.cover_photo ?? item.species_id} uri={item.cover_photo} name={item.scientific_name} />
+            <View style={{ padding: 16, gap: 8 }}>
             <View style={styles.cardHeader}>
               <Text style={styles.sciName}>{item.scientific_name}</Text>
+              <Ionicons name="arrow-forward" size={20} color={colors.emerald} />
+            </View>
+            {item.common_name ? <Text style={styles.commonName}>{item.common_name}</Text> : null}
               {item.conservation_status ? (
                 <View style={styles.pill}>
-                  <Text style={styles.pillText}>{item.conservation_status}</Text>
+                  <Text style={styles.pillText}>Conservation: {item.conservation_status}</Text>
                 </View>
               ) : null}
             </View>
-            {item.common_name ? <Text style={styles.commonName}>{item.common_name}</Text> : null}
-            {item.taxonomy ? <Text style={styles.meta}>{item.taxonomy}</Text> : null}
-            {item.description ? (
-              <Text style={styles.description} numberOfLines={4}>
-                {item.description}
-              </Text>
-            ) : null}
           </Pressable>
         )}
       />
@@ -171,7 +201,8 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   card: {
     ...surfaces.card,
-    gap: 8,
+    padding: 0,
+    overflow: 'hidden',
   },
   cardPressed: {
     opacity: 0.7,
@@ -205,6 +236,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     marginTop: 4,
   },
   pill: {
+    alignSelf: 'flex-start',
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 3,

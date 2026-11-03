@@ -45,9 +45,5 @@ grant select, insert, update, delete on all tables in schema public to anon, aut
 grant insert, update, delete on all tables in schema public to authenticated;
 grant all on all tables in schema public to service_role;
 grant create on schema public to service_role;
--- Align with the live database: rejection_reason was added to the deployed
--- schema directly (issue #16) and is still pending in the reference
--- migration; the local battery mirrors the live shape.
-alter table public.plant_records add column if not exists rejection_reason text;
 SQL
 psql -X -d plantiful_test -v ON_ERROR_STOP=1 < "$here/rls_battery.sql"

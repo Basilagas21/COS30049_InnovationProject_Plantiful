@@ -1,0 +1,15 @@
+# Security response headers, dev-mode capture (SEC-03 partial evidence)
+# command: curl -sI http://localhost:3000/signin | grep headers
+# revision: 0960f40
+# date: 2026-11-03 (UTC)
+# limitation: dev server, so CSP script-src includes 'unsafe-eval' for hot
+#   reload; next.config.ts sets script-src 'self' 'unsafe-inline' in
+#   production. 'unsafe-inline' for scripts remains in both modes (R-09
+#   inline-script allowance). X-Frame-Options DENY, Referrer-Policy,
+#   Permissions-Policy and HSTS present. ZAP dynamic scanning is owner
+#   assigned (R-01/SEC-03); no authenticated scanner run is implied here.
+X-Frame-Options: DENY
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: camera=(), microphone=(), geolocation=(), browsing-topics=()
+Strict-Transport-Security: max-age=63072000; includeSubDomains
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://vmiytfciwvinulupobkm.supabase.co https://tiles.openfreemap.org https://s3.amazonaws.com; font-src 'self' data:; connect-src 'self' https://vmiytfciwvinulupobkm.supabase.co https://tiles.openfreemap.org https://s3.amazonaws.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'

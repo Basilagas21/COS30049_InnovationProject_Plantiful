@@ -1,0 +1,11 @@
+# Storage bucket restriction probe (R-07 evidence)
+# command: GET /storage/v1/bucket/<id> with the anon key, three buckets
+# revision: 0960f40
+# date: 2026-11-03 (UTC)
+# result: all three buckets (record-photos, species-photos, reports) return
+#   file_size_limit: null and allowed_mime_types: null.
+# Finding: no server-side size or MIME restriction is configured on any
+#   bucket. The register's R-07 proposal (implement and verify, or record
+#   accepted limits and residual exposure) remains open on the live project.
+# note: values withheld here because bucket config is project infrastructure;
+#   any team member can reproduce the probe against the Dashboard or REST API.

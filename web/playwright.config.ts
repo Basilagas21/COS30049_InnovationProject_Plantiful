@@ -10,7 +10,9 @@ export default defineConfig({
   workers: 1,
   reporter: [["list"]],
   use: {
-    baseURL: "http://localhost:3000",
+    // Default 3000; PW_BASE_URL points the suite elsewhere when the port is
+    // taken by something unrelated (a stray process must not block testing).
+    baseURL: process.env.PW_BASE_URL ?? "http://localhost:3000",
     headless: true,
     viewport: { width: 1280, height: 900 },
     launchOptions: {
@@ -19,7 +21,7 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run dev",
-    url: "http://localhost:3000",
+    url: process.env.PW_BASE_URL ?? "http://localhost:3000",
     reuseExistingServer: true,
     timeout: 120_000,
   },

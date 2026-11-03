@@ -7,10 +7,14 @@ here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../.." && pwd)"
 container="plantiful-pgtap"
 
-docker start "$container" >/dev/null 2>&1 || \
+# Truly throwaway, the container is created fresh every run and removed on
+# exit, success or failure. The old design kept a warm container for speed
+# but nothing ever reaped it, so residue persisted forever.
+docker rm -f -v "$container" >/dev/null 2>&1 || true
+trap 'docker rm -f -v "$container" >/dev/null 2>&1 || true' EXIT
 docker run -d --name "$container" \
   -e POSTGRES_PASSWORD=*** -e POSTGRES_DB=plantiful_test \
-  postgres:17 sleep infinity >/dev/null
+  postgres:17 >/dev/null
 
 wait_ready() {
   for _ in $(seq 1 30); do

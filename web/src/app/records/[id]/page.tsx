@@ -111,6 +111,9 @@ export default async function RecordDetailPage({
                   <div className="mt-2 flex flex-col items-start gap-2">
                     {qrDataUrl ? (
                       <>
+                        {/* Locally generated base64 data URL, not a network
+                            image, next/image optimisation does not apply. */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={qrDataUrl}
                           alt={`QR for ${record.qrCode}`}

@@ -9,26 +9,19 @@ import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
 import { getRecordByTag, importRemoteRecord, logAcceptanceMeasurement, openDatabase } from '@/db';
 import { getCurrentUserId } from '@/lib/currentUser';
-import { normalizeTag, TAG_LABEL } from '@/lib/tags';
+import { isValidTag, normalizeTag, TAG_LABEL } from '@/lib/tags';
+import { ScannerGuide } from '@/components/scanner-guide';
+import { lookupRecord, withLookupTimeout, type LookupResult } from '@/lib/qr-lookup';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
 
-// Caps a central-database request so a stalled network can't hang the scan
-// handler; resolves null on timeout.
-async function withLookupTimeout<T>(request: PromiseLike<T>): Promise<T | null> {
-  const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 4000));
-  return Promise.race([request, timeout]);
-}
-
-// Scan-time lookup of the central database for a tag that isn't stored on
-// this device. Best-effort by design: an offline, slow or signed-out lookup
-// resolves to null so the scan falls back to the local "New tag detected"
-// flow instead of failing.
-async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promise<string | null> {
-  if (!isSupabaseConfigured || !supabase) return null;
+async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promise<LookupResult> {
+  if (!isSupabaseConfigured || !supabase) return { recordId: null, message: 'Online lookup is not configured. This tag is not saved on this device.' };
   try {
-    const { data: session } = await supabase.auth.getSession();
-    if (!session.session) return null;
+    const auth = await withLookupTimeout(supabase.auth.getSession());
+    if (!auth || auth.error) return { recordId: null, message: 'Could not check your sign-in session. Reconnect and try again.' };
+    const { data: session } = auth;
+    if (!session.session) return { recordId: null, message: 'This tag is not saved on this device. Sign in to check the shared records.' };
 
     const result = await withLookupTimeout(
       supabase
@@ -40,7 +33,8 @@ async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promi
         .limit(1)
         .maybeSingle()
     );
-    if (!result || result.error || !result.data) return null;
+    if (!result || result.error) return { recordId: null, message: 'Could not reach the shared records. You may be offline or the service may be unavailable. Reconnect and retry.' };
+    if (!result.data) return { recordId: null, message: 'No accessible record was found for this tag. It may not exist or your account may not have access. This does not mean the plant is new.' };
 
     // Photos are best-effort: the record still opens if they can't be pulled.
     const photos = await withLookupTimeout(
@@ -49,9 +43,9 @@ async function importScannedRemoteRecord(db: SQLiteDatabase, tag: string): Promi
         .select('photo_url, taken_at')
         .eq('record_id', result.data.record_id)
     );
-    return await importRemoteRecord(db, result.data, photos?.data ?? [], await getCurrentUserId());
+    return { recordId: await importRemoteRecord(db, result.data, photos?.data ?? [], await getCurrentUserId()), message: 'Record found online.' };
   } catch {
-    return null;
+    return { recordId: null, message: 'Lookup could not finish. Check your connection and retry.' };
   }
 }
 
@@ -61,7 +55,9 @@ export default function CaptureScreen() {
   const { canCapture } = useRole();
   const [permission, requestPermission] = useCameraPermissions();
   const [torchOn, setTorchOn] = useState(false);
-  const [lastScan, setLastScan] = useState<{ data: string; recordId: string | null } | null>(null);
+  const [lastScan, setLastScan] = useState<({ data: string } & LookupResult) | null>(null);
+  const [lookingUp, setLookingUp] = useState(false);
+  const scanGeneration = useRef(0);
   // Android keeps handing the camera to whichever screen asks last; release it
   // while this tab is blurred so a pushed camera screen doesn't leave a black
   // frozen preview behind it.
@@ -76,7 +72,7 @@ export default function CaptureScreen() {
       lastHandledRef.current = null;
       setLastScan(null);
       setFocused(true);
-      return () => setFocused(false);
+      return () => { scanGeneration.current += 1; setFocused(false); };
     }, [])
   );
 
@@ -84,19 +80,27 @@ export default function CaptureScreen() {
     if (result.type !== 'qr') return;
     const data = normalizeTag(result.data);
     if (!data || handlingRef.current || lastHandledRef.current === data) return;
+    if (!isValidTag(data)) {
+      lastHandledRef.current = data;
+      setLastScan({ data: data.slice(0, 80), recordId: null, message: 'Unsupported QR code. Scan a printed Plantiful plant tag, not a website or another app’s QR code.' });
+      return;
+    }
     handlingRef.current = true;
+    setLookingUp(true);
+    const generation = scanGeneration.current;
     lastHandledRef.current = data;
     const startedAt = Date.now();
     try {
       const db = await openDatabase();
-      let recordId = (await getRecordByTag(db, data))?.record_id ?? null;
-      let outcome = recordId ? 'local_found' : 'not_found';
-      if (!recordId) {
-        recordId = await importScannedRemoteRecord(db, data);
-        if (recordId) outcome = 'remote_found';
-      }
-      await logAcceptanceMeasurement(db, 'qr_lookup', outcome, startedAt, null, await getCurrentUserId());
-      setLastScan({ data, recordId });
+      const { recordId, message, outcome } = await lookupRecord(
+        async () => (await getRecordByTag(db, data))?.record_id ?? null,
+        () => importScannedRemoteRecord(db, data),
+      );
+      try {
+        await logAcceptanceMeasurement(db, 'qr_lookup', outcome, startedAt, null, await getCurrentUserId());
+      } catch { /* A measurement failure must not prevent a successful lookup. */ }
+      if (generation !== scanGeneration.current) return;
+      setLastScan({ data, recordId, message });
       if (recordId) {
         router.push({ pathname: '/record/[id]', params: { id: recordId } });
       }
@@ -106,17 +110,15 @@ export default function CaptureScreen() {
         await logAcceptanceMeasurement(db, 'qr_lookup', 'error', startedAt, null, await getCurrentUserId());
       } catch { /* Measurement storage must not mask the scan error. */ }
       console.warn('[scan] lookup failed:', error);
+      if (generation === scanGeneration.current) setLastScan({ data, recordId: null, message: 'Could not read the local record. Retry the lookup before creating anything new.' });
     } finally {
       handlingRef.current = false;
+      setLookingUp(false);
     }
   }
 
   function openRecord(recordId: string) {
     router.push({ pathname: '/record/[id]', params: { id: recordId } });
-  }
-
-  function createRecord(id: string) {
-    router.push(`/capture/new?qr=${encodeURIComponent(id)}`);
   }
 
   if (!permission) {
@@ -148,7 +150,7 @@ export default function CaptureScreen() {
           facing="back"
           enableTorch={torchOn}
           barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
-          onBarcodeScanned={onBarcodeScanned}
+           onBarcodeScanned={lookingUp || lastScan ? undefined : onBarcodeScanned}
         />
       )}
 
@@ -162,7 +164,7 @@ export default function CaptureScreen() {
       </Pressable>
 
       <View style={styles.finder} pointerEvents="none">
-        <View style={styles.scanLine} />
+        <ScannerGuide active={focused && !lookingUp && !lastScan} />
         <View style={[styles.corner, styles.topLeft]} />
         <View style={[styles.corner, styles.topRight]} />
         <View style={[styles.corner, styles.bottomLeft]} />
@@ -174,9 +176,10 @@ export default function CaptureScreen() {
         {lastScan ? (
           <>
             <Text style={styles.cardTitle}>
-              {lastScan.recordId ? 'Tag detected' : canCapture ? 'New tag detected' : 'Tag not found'}
+              {lastScan.recordId ? 'Tag detected' : 'Record unavailable'}
             </Text>
             <Text style={styles.cardMeta}>{TAG_LABEL}: {lastScan.data}</Text>
+            <Text style={styles.cardMeta} accessibilityLiveRegion="polite">{lastScan.message}</Text>
             <View style={styles.cardActions}>
               {lastScan.recordId ? (
                 <Pressable
@@ -185,22 +188,18 @@ export default function CaptureScreen() {
                 >
                   <Text style={styles.primaryButtonText}>Open record</Text>
                 </Pressable>
-              ) : canCapture ? (
-                <Pressable style={[styles.primaryButton, { flex: 1 }]} onPress={() => createRecord(lastScan.data)}>
-                  <Text style={styles.primaryButtonText}>New record</Text>
-                </Pressable>
               ) : (
-                <Text style={styles.cardMeta}>
-                  This tag is not in the catalogue. Only botanists can create records.
-                </Text>
+                <Pressable disabled={lookingUp} style={[styles.primaryButton, { flex: 1 }]} onPress={() => { lastHandledRef.current = null; setLastScan(null); }}>
+                  <Text style={styles.primaryButtonText}>Scan again</Text>
+                </Pressable>
               )}
             </View>
           </>
         ) : (
           <>
             <Ionicons name="scan-circle-outline" size={36} color={colors.emerald} />
-            <Text style={styles.cardTitle}>Ready to scan</Text>
-            <Text style={styles.cardMeta}>A scanned tag will appear here</Text>
+            <Text style={styles.cardTitle}>{lookingUp ? 'Looking up tag…' : 'Ready to scan'}</Text>
+            <Text style={styles.cardMeta} accessibilityLiveRegion="polite">{lookingUp ? 'Checking this device and accessible shared records.' : 'A scanned tag will appear here'}</Text>
           </>
         )}
 

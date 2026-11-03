@@ -842,6 +842,7 @@ export async function deleteLocalPhoto(db: SQLite.SQLiteDatabase, photoId: strin
 }
 
 export type SpeciesOption = {
+  cover_photo?: string | null;
   species_id: string;
   scientific_name: string;
   common_name: string | null;
@@ -854,7 +855,8 @@ export type SpeciesReference = SpeciesOption;
 
 export async function getSpeciesOptions(db: SQLite.SQLiteDatabase): Promise<SpeciesOption[]> {
   return db.getAllAsync<SpeciesOption>(
-    `SELECT species_id, scientific_name, common_name, conservation_status, taxonomy, description
+    `SELECT species_id, scientific_name, common_name, conservation_status, taxonomy, description,
+       (SELECT photo_url FROM local_species_photos p WHERE p.species_id = species_catalog.species_id ORDER BY photo_id LIMIT 1) AS cover_photo
      FROM species_catalog
      ORDER BY scientific_name ASC`
   );

@@ -163,7 +163,7 @@ PR #65 reports a default capacity of 1,800 readings, approximately one hour at a
 | USB bridge rather than MQTT deployment | Existing delivered transport | Reduces prototype integration dependencies but requires a trusted host and cable |
 | Severity escalation and final alert resolution | Open PR policies as at 2 November | Reduce suppressed critical alerts and ambiguous resolution, but need owner confirmation and integrated tests |
 | No application-level field encryption | Rationale recorded in the security assessment | RLS and platform controls are distinct from field encryption. Acceptance against the original objective still needs explicit confirmation |
-| Curved navigation and glass/image-backed cards | User-supplied design references, not an implemented scope commitment | Potential visual coherence must be weighed against readability, rendering cost and navigation stability |
+| Curved navigation and photo-led cards | Implemented in the working tree from user-supplied references. Not merged, captured or device-verified | Potential visual coherence must be weighed against readability, rendering cost and navigation stability |
 
 ### 3.4 Visual change evidence
 
@@ -173,7 +173,7 @@ The IMG-S2 series is planned. Insert a capture only after the change is implemen
 
 | Image ID | Change shown | Required capture | Caption must state |
 |---|---|---|---|
-| IMG-S2-01 | Web homepage glass and image-backed cards | Discover, Connect and Conserve sections at one viewport. Include the previous layout for comparison | Image source and licence. Cards shown are implemented content. Do not claim a usability gain without participant evidence |
+| IMG-S2-01 | Web homepage photo-led cards | Discover, Connect and Conserve sections at one viewport. Include the previous layout for comparison | Image source and licence. Cards shown are implemented content. Do not claim a usability gain without participant evidence |
 | IMG-S2-02 | Officer approval photograph review | Queue with thumbnails, a larger inspection view and one record with no photo | Record IDs are redacted. The missing-photo state is deliberate. The photo is the botanist submission, not a catalogue substitute |
 | IMG-S2-03 | Mobile curved bottom navigation | All five tabs at rest, with each selected state in light and dark appearance | Tab labels remain visible. Touch targets and gesture-area clearance were checked. Decoration does not replace the accessible name |
 | IMG-S2-04 | QR scanner guide animation | Two or three still frames showing the guide and scan line at different positions, or a short muted clip | The animation shows readiness only. It does not prove a successful decode |
@@ -185,6 +185,19 @@ The IMG-S2 series is planned. Insert a capture only after the change is implemen
 | IMG-S2-10 | Layout and spacing refinements | Before and after mobile screens at the same viewport, including the gesture-bar area | The observed defect, the change and the retest result. Device and build identified |
 
 Do not place an unlabelled image between two paragraphs and leave the reader to infer its meaning. Introduce it in the text, keep the caption factual and link it to the change or test it supports.
+
+### 3.5 Working-tree refinements awaiting integration
+
+These refinements exist in the current working tree. They are not merged, captured or verified on a physical device. Treat them as implementation status, not delivered results.
+
+| Area | Refinement | Verification boundary |
+|---|---|---|
+| Unknown QR resolution | Distinguish local, online, offline, inaccessible and unsupported outcomes. Replace the automatic new-record path with Scan again | Six helper tests pass on the working tree. Device states and final captures remain outstanding |
+| Species list readability | Lead with the reference photograph, trim the summary and label the conservation value explicitly | Working-tree implementation. Photograph licence and offline image behaviour still need verification |
+| Scanner guidance | Add a reduced-motion-aware scan line that pauses when the tab loses focus or the app is backgrounded | Animation indicates readiness only. It does not prove a successful decode |
+| Bottom navigation | Use a curved animated selected indicator while keeping tab order, labels and accessible names stable | Touch targets, gesture-area clearance and both appearances need device checks |
+| Officer review evidence | Show submitted observation photographs with a larger inspection view and an explicit missing-photo state | Photograph is the botanist submission, never a catalogue substitute. Queue capture outstanding |
+| Homepage discovery | Use owner-supplied Rafflesia, hornbill and orangutan photographs behind forest-green frosted panels. Keep a solid fallback for unsupported blur and reduced transparency | Images are homepage artwork, not field evidence. Image provenance and contrast checks remain outstanding. No usability benefit is claimed |
 
 ## 4. Architecture and integration
 
@@ -283,11 +296,27 @@ Figure D-05. Observation review and species publication are separate lifecycles.
 
 ### 4.4 IoT flow and hardware evidence
 
+The IoT path uses an ESP32-WROOM-32 node with a DHT11 temperature and humidity sensor, a PIR movement sensor, an analogue soil-moisture board, an analogue rain board and a status LED. The firmware prints a human-readable QC table and then one `DATA {json}` line for each reading. The host bridge reads only the data line, rejects malformed or non-finite values and out-of-range readings, stamps the arrival time with host UTC time and inserts the row into `sensor_readings` with the service role. The evaluator then applies the heat, low-humidity and movement rules and writes alerts. The `/alerts` page reads the stored readings and alerts for officers.
+
+The node-to-host link is USB serial. It is not HTTPS. Transport security applies to the bridge-to-Supabase request, not to the cable. The node has no clock and no GPS receiver. The bridge supplies the timestamp and registers a fixed deployment coordinate. The simulator writes to the same tables through the same insert path, so a simulated reading must never be presented as a physical trial.
+
+Figure D-02 is the physical wiring review draft. It maps each module to the ESP32 pins, shows the shared power and ground rails and colours each signal path. The soil and rain boards use their analogue outputs. The LED is driven through a series resistor. Rain AO to D35 is confirmed by the hardware owner. Supply voltage, resistor value, exact module variants and an annotated assembly photograph remain outstanding. The draft is a design review artefact, not electrical verification.
+
+![Figure D-02. Physical wiring review draft showing the ESP32, DHT11, PIR, soil-moisture board, rain board, status LED and shared rails. Component values and the final assembly photograph are not yet recorded.](diagrams/exported/D-02_physical_build.png)
+
+| Sensor or output | ESP32 pin | Stored field | Reading behaviour |
+|---|---|---|---|
+| DHT11 data | GPIO4 | `temperature`, `humidity` | A failed read is stored as null rather than a fabricated value |
+| PIR output | GPIO27 | `movement` | Digital output, already 3.3 V |
+| Soil board AO | GPIO34 | `soil_moisture` | Analogue value converted to a percentage |
+| Rain board AO | GPIO35 | `rain` | Analogue value converted to a boolean by threshold |
+| LED anode via resistor | GPIO26 | none | Local status indication only |
+
 The final D-03 must distinguish the baseline from the proposed pipeline. After PR integration, it should show serial receipt, arrival timestamping, validation, bounded buffering, upload retry, independent rule checks, severity-aware cooldown, periodic silence checks and dashboard resolution. The simulator must appear as a separate source rather than as evidence of a physical run.
 
 [picture of D-03 reading-to-alert and recovery flow after final PR integration here]
 
-The [D-02 wiring draft](diagrams/exported/D-02_physical_build.png) is available with editable sources. Rain AO to D35 is user-confirmed. Supply voltage, resistor value, exact module specifications and the assembly photograph remain outstanding. Node location is a configured deployment coordinate. An on-board GPS receiver is not claimed.
+Physical evidence still needs an annotated assembly photograph beside the verified D-02 wiring diagram, a correlated serial line, stored row and resulting alert, and an interruption trial. The current D-02 image supports wiring review only.
 
 [picture of annotated assembled hardware beside the verified D-02 wiring diagram here]
 
@@ -373,12 +402,15 @@ Do not rewrite this as both applications having zero vulnerabilities in every sc
 | Suite or branch | Recorded result | Reporting constraint |
 |---|---|---|
 | Mobile sync helper | Four tests and 100% helper coverage reported in the execution backlog | Not overall mobile or full sync-screen coverage |
+| QR lookup helper | Six tests recorded on the current working tree, covering cached, remote, unresolved, storage-failure and timeout paths | Working-tree result. Not a merged-release result and not device coverage |
 | Measurement summariser | Historical two-test pass | Attach a release-revision rerun before quoting it as final |
 | IoT baseline | Seven-test suite recorded historically | Does not include new branch regression tests |
 | PR #63 | Fourteen tests reported, including seven validation additions | Branch result, not merged-release result |
 | PR #64 | Fifteen tests reported, or twenty-two combined with #63 | Branch result with explicit combination |
 | PR #65 | Twenty-one tests reported, or thirty-six combined with #63 and #64 | PR author reports all six merge orders checked. Final release rerun still required |
 | Web | Type/lint/build checks recorded. No web test runner recorded | Build success is not runtime behaviour or coverage |
+
+A repeat on the current working tree passed mobile type check, lint, ten helper tests, Expo Doctor 20/20 and an Android Metro export. The web type check and production build also passed, with one image-optimisation lint warning recorded. These are pre-integration working-tree checks.
 
 Do not sum hypothetical future test counts into a current release total. Likewise, route counts from different revisions or build-output conventions should not be treated as a quality metric.
 
@@ -433,7 +465,7 @@ These six items are design references or existing-state captures. They are not p
 
 Plant imagery can strengthen species recognition when it is linked to the correct entity and accompanied by a readable name. In officer review, the primary image should be the submitted observation photo. A catalogue image may be shown separately and labelled as a reference. Substituting a generic species image could obscure whether the botanist supplied adequate evidence.
 
-Glass effects should be limited to surfaces where text remains readable across every background. Dense tables, review decisions and error messages need stable contrast. A solid fallback is appropriate for dark mode, reduced transparency or low-performance devices. No usability or performance benefit is claimed until tested.
+Early glass, gradient-overlay and split-card versions were revised following user feedback. The user clarified a preference for visibly frosted, forest-green glass over real nature photographs and supplied three homepage images. The current working-tree design uses full-card photographs, translucent blurred text panels, fine highlighted edges and warm-white text. The original images are organised under `web/public/images/home/`. Approval cards place an observation preview beside the record details on wider screens and above them on phones. The inspection dialog preserves the full photograph and supports previous and next controls. Rendering cost, contrast and participant outcomes have not been measured for this revision.
 
 A curved selected tab may make the current location more visible. It must retain stable tab positions, text labels, accessible names, adequate hit areas and separation from the phone's gesture area. Selection cannot depend on colour alone. Animation should respect reduced-motion preferences. The decorative movement must not shift the usable touch target unpredictably.
 

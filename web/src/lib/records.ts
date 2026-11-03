@@ -207,7 +207,8 @@ const mockRecords: RecordDetail[] = [
 
 function toListItem(row: {
   record_id: string;
-  qr_code: string | null;
+  // Present only on the detail query; list callers never request it.
+  qr_code?: string | null;
   provisional_name: string | null;
   gps_lat: number | null;
   gps_lng: number | null;
@@ -240,7 +241,7 @@ function toListItem(row: {
 }): RecordDetail {
   return {
     id: row.record_id,
-    qrCode: row.qr_code,
+    qrCode: row.qr_code ?? null,
     scientificName: row.species?.scientific_name ?? row.provisional_name ?? "Unknown species",
     commonName: row.species?.common_name ?? null,
     provisionalName: row.provisional_name ?? null,
@@ -269,6 +270,8 @@ function toListItem(row: {
 }
 
 export type RecordsResult = {
+  // List rows carry qrCode as null: the field is fetched only by
+  // fetchRecordById, where the QR deep-link feature actually renders it.
   records: RecordDetail[];
   // Set when Supabase is configured but the query failed. Sample data is never
   // shown in that case, so officers can't mistake it for real observations.
@@ -286,7 +289,7 @@ export async function fetchRecords(): Promise<RecordsResult> {
   const { data, error } = await supabase
     .from("plant_records")
     .select(
-      `record_id, qr_code, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id, rejection_reason,
+      `record_id, provisional_name, gps_lat, gps_lng, gps_accuracy_m, height_cm, dbh_cm, taxonomy, phenology, morphology, notes, approval_status, status, created_at, reviewed_at, synced_at, device_id, rejection_reason,
        species (
          species_id, scientific_name, common_name, taxonomy, conservation_status, description, is_published
        ),

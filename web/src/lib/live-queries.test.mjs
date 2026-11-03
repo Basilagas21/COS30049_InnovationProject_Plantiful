@@ -49,6 +49,7 @@ const recordRow = {
 
 let failNext = false;
 let failSpeciesPhotos = false;
+const recordSelects = [];
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://127.0.0.1:4599');
@@ -71,6 +72,7 @@ const server = http.createServer((req, res) => {
       { photo_id: 'p1', photo_url: 'https://example.invalid/s1.jpg', uploaded_at: '2026-11-01T00:00:00Z' },
     ]));
   } else if (url.pathname === '/rest/v1/plant_records') {
+    recordSelects.push(url.searchParams.get('select') ?? '');
     res.end(JSON.stringify([recordRow]));
   } else if (url.pathname === '/rest/v1/sync_conflicts') {
     res.end(JSON.stringify([
@@ -112,7 +114,17 @@ test('fetchRecords maps live rows and reports no error', async () => {
   const result = await records.fetchRecords();
   assert.equal(result.error, null);
   assert.equal(result.usingSampleData, false);
-  assert.equal(result.records[0].qrCode, 'PLT-STUB01');
+});
+
+test('R-10 minimisation: list query omits qr_code, detail query keeps it', async () => {
+  recordSelects.length = 0;
+  await records.fetchRecords();
+  await records.fetchRecordById('22222222-2222-4222-8222-222222222222');
+  assert.equal(recordSelects.length, 2);
+  assert.ok(!recordSelects[0].includes('qr_code'),
+    'fetchRecords must not select qr_code (map/records list never render it)');
+  assert.ok(recordSelects[1].includes('qr_code'),
+    'fetchRecordById must still select qr_code for the QR deep-link page');
 });
 
 test('fetchRecords surfaces a backend error', async () => {

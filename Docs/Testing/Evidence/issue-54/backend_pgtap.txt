@@ -1,0 +1,341 @@
+NOTICE:  column "gps_accuracy_m" of relation "plant_records" already exists, skipping
+NOTICE:  column "morphology" of relation "plant_records" already exists, skipping
+NOTICE:  column "notes" of relation "plant_records" already exists, skipping
+NOTICE:  column "provisional_name" of relation "plant_records" already exists, skipping
+NOTICE:  policy "anon_read_published_species" for relation "public.species" does not exist, skipping
+NOTICE:  policy "authenticated_read_species" for relation "public.species" does not exist, skipping
+NOTICE:  policy "officer_insert_species" for relation "public.species" does not exist, skipping
+NOTICE:  policy "officer_update_species" for relation "public.species" does not exist, skipping
+NOTICE:  policy "officer_delete_species" for relation "public.species" does not exist, skipping
+NOTICE:  policy "anon_read_approved_records" for relation "public.plant_records" does not exist, skipping
+NOTICE:  policy "botanist_insert_own_records" for relation "public.plant_records" does not exist, skipping
+NOTICE:  policy "botanist_read_own_records" for relation "public.plant_records" does not exist, skipping
+NOTICE:  policy "botanist_update_own_records" for relation "public.plant_records" does not exist, skipping
+NOTICE:  policy "officer_full_access_records" for relation "public.plant_records" does not exist, skipping
+NOTICE:  policy "admin_full_access_records" for relation "public.plant_records" does not exist, skipping
+NOTICE:  policy "officer_update_approval" for relation "public.plant_records" does not exist, skipping
+NOTICE:  policy "botanist_insert_own_conflict_report" for relation "public.sync_conflicts" does not exist, skipping
+NOTICE:  policy "botanist_update_own_conflict_report" for relation "public.sync_conflicts" does not exist, skipping
+NOTICE:  policy "botanist_read_own_conflict_report" for relation "public.sync_conflicts" does not exist, skipping
+NOTICE:  policy "botanist_delete_own_conflict_report" for relation "public.sync_conflicts" does not exist, skipping
+NOTICE:  policy "officer_read_conflict_reports" for relation "public.sync_conflicts" does not exist, skipping
+NOTICE:  policy "admin_delete_conflict_reports" for relation "public.sync_conflicts" does not exist, skipping
+NOTICE:  policy "anon_read_plant_photos" for relation "public.plant_record_photos" does not exist, skipping
+NOTICE:  policy "botanist_manage_own_photos" for relation "public.plant_record_photos" does not exist, skipping
+NOTICE:  policy "officer_read_all_records" for relation "public.plant_records" does not exist, skipping
+NOTICE:  policy "officer_read_all_photos" for relation "public.plant_record_photos" does not exist, skipping
+NOTICE:  policy "anon_read_public_species_photos" for relation "public.species_photos" does not exist, skipping
+NOTICE:  policy "authenticated_read_species_photos" for relation "public.species_photos" does not exist, skipping
+NOTICE:  policy "officer_manage_species_photos" for relation "public.species_photos" does not exist, skipping
+NOTICE:  policy "officer_read_reports" for relation "public.reports" does not exist, skipping
+NOTICE:  policy "officer_write_reports" for relation "public.reports" does not exist, skipping
+NOTICE:  policy "officer_read_sensors" for relation "public.sensors" does not exist, skipping
+NOTICE:  policy "officer_read_readings" for relation "public.sensor_readings" does not exist, skipping
+NOTICE:  policy "officer_read_alerts" for relation "public.alerts" does not exist, skipping
+NOTICE:  policy "user_read_own_profile" for relation "public.user_profiles" does not exist, skipping
+NOTICE:  policy "admin_update_profile_role" for relation "public.user_profiles" does not exist, skipping
+NOTICE:  trigger "on_auth_user_created" for relation "auth.users" does not exist, skipping
+NOTICE:  trigger "trg_stamp_reviewer" for relation "public.plant_records" does not exist, skipping
+NOTICE:  trigger "trg_deny_officer_content_edit" for relation "public.plant_records" does not exist, skipping
+NOTICE:  trigger "trg_deny_unapproved_publish" for relation "public.species" does not exist, skipping
+NOTICE:  policy "public_read_record_photos" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "authenticated_insert_record_photos" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "authenticated_update_record_photos" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "authenticated_delete_record_photos" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "authenticated_read_record_photos" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "public_read_species_photos" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "officer_insert_species_photos" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "officer_delete_species_photos" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "officer_insert_reports" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "officer_read_reports" for relation "storage.objects" does not exist, skipping
+NOTICE:  policy "officer_delete_reports" for relation "storage.objects" does not exist, skipping
+BEGIN
+ plan  
+-------
+ 1..38
+(1 row)
+
+SET
+INSERT 0 4
+UPDATE 2
+UPDATE 1
+UPDATE 1
+INSERT 0 2
+INSERT 0 2
+CREATE FUNCTION
+CREATE FUNCTION
+ as_anon 
+---------
+ 
+(1 row)
+
+                  is_empty                   
+---------------------------------------------
+ ok 1 - anon cannot read unpublished species
+(1 row)
+
+                   is_empty                   
+----------------------------------------------
+ ok 2 - anon cannot read non-approved records
+(1 row)
+
+             throws_ok             
+-----------------------------------
+ ok 3 - anon cannot insert species
+(1 row)
+
+             throws_ok             
+-----------------------------------
+ ok 4 - anon cannot insert records
+(1 row)
+
+               lives_ok               
+--------------------------------------
+ ok 5 - anon publish attempt executes
+(1 row)
+
+SET
+                 is                 
+------------------------------------
+ ok 6 - anon cannot publish species
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+UPDATE 1
+            isnt_empty            
+----------------------------------
+ ok 7 - officer reads all records
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+UPDATE 1
+ as_anon 
+---------
+ 
+(1 row)
+
+             isnt_empty              
+-------------------------------------
+ ok 8 - anon reads published species
+(1 row)
+
+                  isnt_empty                  
+----------------------------------------------
+ ok 9 - anon reads approved submitted records
+(1 row)
+
+                 is                 
+------------------------------------
+ ok 10 - anon cannot delete records
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+                   is                    
+-----------------------------------------
+ ok 11 - botanist A sees only own record
+(1 row)
+
+                        is                         
+---------------------------------------------------
+ ok 12 - botanist cannot edit another owner record
+(1 row)
+
+              throws_ok               
+--------------------------------------
+ ok 13 - botanist cannot self-approve
+(1 row)
+
+                    throws_ok                    
+-------------------------------------------------
+ ok 14 - botanist cannot edit an approved record
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+              lives_ok               
+-------------------------------------
+ ok 15 - officer rejects with reason
+(1 row)
+
+                  is                   
+---------------------------------------
+ ok 16 - officer cannot delete records
+(1 row)
+
+                      throws_ok                      
+-----------------------------------------------------
+ ok 17 - officer cannot edit reviewed record content
+(1 row)
+
+            lives_ok             
+---------------------------------
+ ok 18 - officer inserts species
+(1 row)
+
+                           throws_ok                            
+----------------------------------------------------------------
+ ok 19 - publish gate blocks species without an approved record
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+                  lives_ok                  
+--------------------------------------------
+ ok 20 - botanist files own conflict report
+(1 row)
+
+                          throws_ok                          
+-------------------------------------------------------------
+ ok 21 - duplicate report on same record and device rejected
+(1 row)
+
+              throws_ok              
+-------------------------------------
+ ok 22 - cross-owner filing rejected
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+               isnt_empty               
+----------------------------------------
+ ok 23 - officer reads conflict reports
+(1 row)
+
+ as_anon 
+---------
+ 
+(1 row)
+
+                 is_empty                  
+-------------------------------------------
+ ok 24 - anon cannot read conflict reports
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+            lives_ok             
+---------------------------------
+ ok 25 - owner uploads own photo
+(1 row)
+
+                 throws_ok                 
+-------------------------------------------
+ ok 26 - cannot upload into another folder
+(1 row)
+
+               throws_ok                
+----------------------------------------
+ ok 27 - botanist cannot upload reports
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+            lives_ok            
+--------------------------------
+ ok 28 - officer uploads report
+(1 row)
+
+              isnt_empty              
+--------------------------------------
+ ok 29 - officer reads report objects
+(1 row)
+
+               lives_ok                
+---------------------------------------
+ ok 30 - officer deletes report object
+(1 row)
+
+                    is_empty                     
+-------------------------------------------------
+ ok 31 - report object gone after officer delete
+(1 row)
+
+ as_anon 
+---------
+ 
+(1 row)
+
+               isnt_empty                
+-----------------------------------------
+ ok 32 - anon reads public record photos
+(1 row)
+
+                is_empty                 
+-----------------------------------------
+ ok 33 - anon cannot read report objects
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+INSERT 0 2
+                             throws_ok                             
+-------------------------------------------------------------------
+ ok 34 - bulk publish of unapproved species is rejected row by row
+(1 row)
+
+SET
+                          is                          
+------------------------------------------------------
+ ok 35 - bulk publish left no species newly published
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+                    lives_ok                    
+------------------------------------------------
+ ok 36 - officer withdraws approval to rejected
+(1 row)
+
+ as_role 
+---------
+ 
+(1 row)
+
+                lives_ok                
+----------------------------------------
+ ok 37 - unpublishing is always allowed
+(1 row)
+
+                             throws_ok                             
+-------------------------------------------------------------------
+ ok 38 - republish blocked after the approving record was rejected
+(1 row)
+
+ finish 
+--------
+(0 rows)
+
+ROLLBACK

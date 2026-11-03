@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Node test stubs are deliberately CommonJS so they can patch
+    // Module._resolveFilename before tsx transpiles app code.
+    "test-stubs/**",
   ]),
 ]);
 

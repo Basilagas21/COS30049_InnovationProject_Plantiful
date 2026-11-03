@@ -15,11 +15,15 @@ This is an as-built test plan and a record of checks run locally on 16 October 2
 | Mobile typing | `cd mobile; npx tsc --noEmit` | PASS | Static typecheck |
 | Mobile lint | `cd mobile; npx expo lint` | PASS | Source lint |
 | Revision-checked edit | `cd mobile; npm run test:coverage` | PASS, 3 tests; 100% **of `sync-edit.ts` only** | Two-device stale update, unknown revision/other owner, server error |
+| Mobile owner-scoping | `cd mobile; npm test` | PASS, 12 tests (3 November 2026) | Adds 7 owner-scoping behaviour tests: push filter, counts, legacy adoption, steal guard, queue order |
 | Measurement summarizer | `python -m unittest discover -s mobile/scripts -p 'test_*.py'` | PASS, 2 tests | Retries/denominators and zero samples |
 | IoT bridge/evaluator | `python -m unittest discover -s iot -p 'test_*.py'` | PASS, 7 tests | Host timestamp, ingestion, immediate alert/cooldown, invalid node IDs, empty-window silence, alert retry, severity |
 | Web typing | `cd web; npx tsc --noEmit` | PASS | Static typecheck |
 | Web lint | `cd web; npm run lint` | PASS with one existing `<img>` optimisation warning in `records/[id]/page.tsx` | Source lint |
 | Web production | `cd web; npm run build` | PASS | Compiles routes; no live request verification |
+| Web unit | `cd web; npm test` | PASS, 26 tests (2 November 2026) | Telemetry, data-layer fallback, live-query branches via a local stub server, API route gates and officer-gated component markup |
+| Web browser flows | `cd web; npm run test:e2e` | PASS, 12 tests (3 November 2026) | Playwright on system Chrome: sign-in, officer approve, reject with reason, botanist role gate, visitor explore, species create and edit through the forms with detail navigation, non-officer page guard, visitor map filter chips, reports page gate both roles, full report generate-download-delete round trip with live policy verification; disposable data, zero residue |
+| Backend pgTAP | `backend/tests/local/run.sh` | PASS, 38 assertions (2 November 2026) | RLS, triggers, publish gate including bulk publish and republish-after-rejection, conflict rules, storage policies including officer report-object upload-read-delete; fresh Postgres 17 applies reference migrations from zero, rejection_reason included |
 
 ## Integration test cases — not yet observed
 
@@ -71,7 +75,7 @@ Audits, dated, before and after the remediation:
 
 | App | Before | After | Residual |
 |---|---|---|---|
-| web (Next.js 16.4.3) | production 0; dev-only moderate entries in eslint tooling | unchanged, production 0 | dev tooling only, not shipped |
+| web (Next.js 16.4.3) | production 0; dev-only moderate entries in eslint tooling | zero, full and production audits, after a minimatch override on 2 November | none |
 | mobile (Expo SDK 58) | critical 1, high 2, moderate 21, low 1 | critical 0, high 0, moderate 0, low 0 | none, `npm audit` reports zero |
 
 Reachability and remediation decisions: the critical `shell-quote` advisory and the high `zod` advisory were reachable only through dev dependencies, `@expo/cli` and `eslint-plugin-react-hooks`, never in code that runs on the device or in the browser bundle; both were remediated by raising expo within the SDK 58 line and pinning patched versions with npm overrides, no downgrade, per the issue rule. The remaining moderate advisories resolved to two distinct issues, a `minimatch` denial-of-service and a `glob` cancellation-bypass, both transitive build-tooling dependencies, remediated by the same override mechanism at patched versions; the toolchain was re-verified after the pins, type check, lint, unit tests, Metro Android bundle and the device session all pass with the overrides in place.

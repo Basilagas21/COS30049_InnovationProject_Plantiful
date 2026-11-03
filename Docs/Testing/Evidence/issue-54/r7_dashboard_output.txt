@@ -1,0 +1,25 @@
+R7 public write-block verification
+Run: Supabase Dashboard SQL Editor, 1 November 2026
+Recorded in issue #21 completion thread; copied here for the #54 evidence index.
+
+[
+  { "check_result": "PASS: RLS enabled on all public tables" },
+  { "check_result": "PASS: no anonymous write policy on any public table" },
+  { "check_result": "PASS: publish-gate trigger present" },
+  { "check_result": "PASS: no anonymous write policy on storage.objects" },
+  { "check_result": "PASS: anon cannot read unpublished species" },
+  { "check_result": "PASS: anon cannot read non-approved records" },
+  { "check_result": "PASS: anon cannot read report artifacts" },
+  { "check_result": "PASS: anon cannot read photos of unpublished species" },
+  { "check_result": "PASS: anonymous INSERT into plant_records rejected (RLS)" },
+  { "check_result": "PASS: anonymous INSERT into species rejected (RLS)" },
+  { "check_result": "PASS: anonymous UPDATE on species rejected (0 rows)" },
+  { "check_result": "PASS: anonymous cannot change approval_status" },
+  { "check_result": "PASS: anonymous DELETE on species rejected (0 rows)" },
+  { "check_result": "PASS: authenticated (non-officer) session cannot approve records" },
+  { "check_result": "PASS: authenticated (non-officer) session cannot delete species" },
+  { "check_result": "PASS: publish gate rejected publishing unapproved species" },
+  { "check_result": "PASS: record-photos / species-photos / reports buckets exist" },
+  { "check_result": "PASS: storage policy matrix complete (public read / role-gated writes)" },
+  { "check_result": "VERDICT: ALL CHECKS PASSED - R7 public write-block CONFIRMED." }
+]

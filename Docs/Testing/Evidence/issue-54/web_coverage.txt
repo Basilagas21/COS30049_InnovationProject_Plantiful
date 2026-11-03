@@ -1,0 +1,215 @@
+
+> web@0.1.0 test:coverage
+> node --import tsx --import ./alias-register.mjs --experimental-test-coverage --test src/lib/*.test.mjs src/app/api/*.test.mjs src/components/*.test.mjs
+
+TAP version 13
+# [ui] 10:34:43 records.tab
+# [ui] 10:34:43 unknown
+# Subtest: telemetry route rejects anonymous callers with 403
+ok 1 - telemetry route rejects anonymous callers with 403
+  ---
+  duration_ms: 10.874529
+  type: 'test'
+  ...
+# Subtest: interaction-log route accepts a target payload
+ok 2 - interaction-log route accepts a target payload
+  ---
+  duration_ms: 4.102964
+  type: 'test'
+  ...
+# Subtest: interaction-log route tolerates a malformed payload
+ok 3 - interaction-log route tolerates a malformed payload
+  ---
+  duration_ms: 1.231833
+  type: 'test'
+  ...
+# Subtest: records browser renders rows for non-officers without review actions
+ok 4 - records browser renders rows for non-officers without review actions
+  ---
+  duration_ms: 23.533038
+  type: 'test'
+  ...
+# Subtest: records browser shows review affordances for officers
+ok 5 - records browser shows review affordances for officers
+  ---
+  duration_ms: 1.764313
+  type: 'test'
+  ...
+# Subtest: approve reject buttons render both decisions
+ok 6 - approve reject buttons render both decisions
+  ---
+  duration_ms: 0.337443
+  type: 'test'
+  ...
+# Subtest: fetchSpecies returns sample rows and honours publishedOnly
+ok 7 - fetchSpecies returns sample rows and honours publishedOnly
+  ---
+  duration_ms: 1.799539
+  type: 'test'
+  ...
+# Subtest: fetchSpeciesById returns a detail shape or null
+ok 8 - fetchSpeciesById returns a detail shape or null
+  ---
+  duration_ms: 0.624733
+  type: 'test'
+  ...
+# Subtest: fetchRecords falls back to sample data with the usingSampleData flag
+ok 9 - fetchRecords falls back to sample data with the usingSampleData flag
+  ---
+  duration_ms: 0.290927
+  type: 'test'
+  ...
+# Subtest: fetchRecordById resolves sample rows and misses
+ok 10 - fetchRecordById resolves sample rows and misses
+  ---
+  duration_ms: 0.304782
+  type: 'test'
+  ...
+# Subtest: fetchConflictReports is empty in sample mode
+ok 11 - fetchConflictReports is empty in sample mode
+  ---
+  duration_ms: 1.205554
+  type: 'test'
+  ...
+# Subtest: fetchSpecies maps live rows through the real client path
+ok 12 - fetchSpecies maps live rows through the real client path
+  ---
+  duration_ms: 31.035846
+  type: 'test'
+  ...
+# Subtest: fetchSpeciesById merges live photos
+ok 13 - fetchSpeciesById merges live photos
+  ---
+  duration_ms: 6.123859
+  type: 'test'
+  ...
+# Subtest: fetchSpecies falls back to sample data when the backend errors
+ok 14 - fetchSpecies falls back to sample data when the backend errors
+  ---
+  duration_ms: 4.007915
+  type: 'test'
+  ...
+# Subtest: fetchRecords maps live rows and reports no error
+ok 15 - fetchRecords maps live rows and reports no error
+  ---
+  duration_ms: 3.796328
+  type: 'test'
+  ...
+# Subtest: fetchRecords surfaces a backend error
+ok 16 - fetchRecords surfaces a backend error
+  ---
+  duration_ms: 3.068191
+  type: 'test'
+  ...
+# Subtest: fetchRecordById returns a mapped live row
+ok 17 - fetchRecordById returns a mapped live row
+  ---
+  duration_ms: 3.370288
+  type: 'test'
+  ...
+# Subtest: fetchRecordById throws on backend error
+ok 18 - fetchRecordById throws on backend error
+  ---
+  duration_ms: 3.800626
+  type: 'test'
+  ...
+# Subtest: fetchConflictReports maps live reports
+ok 19 - fetchConflictReports maps live reports
+  ---
+  duration_ms: 3.604889
+  type: 'test'
+  ...
+# Subtest: fetchConflictReports returns empty on backend error
+ok 20 - fetchConflictReports returns empty on backend error
+  ---
+  duration_ms: 3.547722
+  type: 'test'
+  ...
+# Subtest: fetchSpeciesById falls back to sample data when the species query fails
+ok 21 - fetchSpeciesById falls back to sample data when the species query fails
+  ---
+  duration_ms: 7.968652
+  type: 'test'
+  ...
+# Subtest: fetchSpeciesById tolerates a photos lookup failure
+ok 22 - fetchSpeciesById tolerates a photos lookup failure
+  ---
+  duration_ms: 6.727091
+  type: 'test'
+  ...
+# Subtest: rangeStart maps ranges to day windows and all to null
+ok 23 - rangeStart maps ranges to day windows and all to null
+  ---
+  duration_ms: 1.489277
+  type: 'test'
+  ...
+# Subtest: readingStatus classifies fresh, stale, warning and critical telemetry
+ok 24 - readingStatus classifies fresh, stale, warning and critical telemetry
+  ---
+  duration_ms: 0.329629
+  type: 'test'
+  ...
+# Subtest: overallStatus escalates by severity order
+ok 25 - overallStatus escalates by severity order
+  ---
+  duration_ms: 0.176752
+  type: 'test'
+  ...
+# Subtest: report catalogues expose stable values and labels
+ok 26 - report catalogues expose stable values and labels
+  ---
+  duration_ms: 0.930968
+  type: 'test'
+  ...
+1..26
+# tests 26
+# suites 0
+# pass 26
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 633.651518
+# start of coverage report
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# file                       | line % | branch % | funcs % | uncovered lines
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# alias-register.mjs         | 100.00 |   100.00 |  100.00 | 
+# alias-resolve.mjs          |  67.50 |    50.00 |  100.00 | 25-26 28-38
+# src                        |        |          |         | 
+#  app                       |        |          |         | 
+#   api                      |        |          |         | 
+#    api-routes.test.mjs     |  94.12 |    80.00 |   87.50 | 12-14
+#    interaction-log         |        |          |         | 
+#     route.ts               | 100.00 |   100.00 |  100.00 | 
+#    telemetry               |        |          |         | 
+#     route.ts               |  63.51 |    50.00 |   83.33 | 12 30 36 38-52 58-64 66-67
+#   records                  |        |          |         | 
+#    actions.ts              |  84.44 |    87.50 |   62.50 | 22 40-45
+#  components                |        |          |         | 
+#   approve-reject.tsx       |  83.08 |    92.86 |   90.91 | 48-58
+#   components.test.mjs      | 100.00 |    75.00 |  100.00 | 
+#   photo-img.tsx            |  90.32 |    92.86 |  100.00 | 24-26
+#   records-browser.tsx      |  76.82 |    40.98 |   54.29 | 55 81 94 106-107 109 114-115 117-118 122-126 129-134 138-141 144-146 161 167-180 182-194 196-207 234 250-251 278-289 292-296 333
+#  lib                       |        |          |         | 
+#   auth.ts                  |  96.77 |    93.75 |  100.00 | 20
+#   data-fallback.test.mjs   | 100.00 |    84.62 |  100.00 | 
+#   live-queries.test.mjs    |  98.24 |    90.00 |  100.00 | 80-82
+#   records.ts               |  98.86 |    66.67 |  100.00 | 183 239 282-283
+#   report-types.ts          | 100.00 |    91.67 |  100.00 | 
+#   species.ts               | 100.00 |    88.89 |  100.00 | 
+#   supabase                 |        |          |         | 
+#    env.ts                  | 100.00 |   100.00 |  100.00 | 
+#    server.ts               | 100.00 |    91.67 |  100.00 | 
+#   telemetry.test.mjs       | 100.00 |   100.00 |  100.00 | 
+#   telemetry.ts             |  97.75 |    95.12 |  100.00 | 21 75
+# test-stubs                 |        |          |         | 
+#  cjs-hook.cjs              | 100.00 |   100.00 |  100.00 | 
+#  next-cache.cjs            | 100.00 |   100.00 |    0.00 | 
+#  next-headers.cjs          | 100.00 |   100.00 |   28.57 | 
+#  next-link.cjs             | 100.00 |   100.00 |  100.00 | 
+#  next-navigation.cjs       | 100.00 |   100.00 |   11.11 | 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# all files                  |  91.31 |    78.15 |   83.41 | 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# end of coverage report

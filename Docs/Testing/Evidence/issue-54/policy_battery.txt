@@ -1,0 +1,13 @@
+PASS: botanist self-approve rejected | status 403
+PASS: officer approve succeeds | [{"approval_status":"approved"}]
+PASS: officer reject with reason succeeds | [{"approval_status":"rejected","rejection_reason":"Battery check"}]
+PASS: officer delete denied | rows returned 0, record exists true
+PASS: officer notes edit on pending record denied | status 403
+NOTE: officer notes edit on reviewed record: rows err (Officers may only change the review status of a record, not its content)
+PASS: admin delete succeeds | rows 1
+PASS: admin delete second record succeeds
+PASS: officer read-all works | rows 21
+PASS: anon cannot read pending records | rows 0
+PASS: zero probe residue
+
+BATTERY: 10 pass, 0 fail

@@ -71,6 +71,11 @@ yarn-error.log*
 backend/*
 !backend/README.md
 
+# Playwright run artefacts
+test-results/
+playwright-report/
+!backend/tests/
+
 # Python (IoT service / scripts)
 __pycache__/
 *.py[cod]

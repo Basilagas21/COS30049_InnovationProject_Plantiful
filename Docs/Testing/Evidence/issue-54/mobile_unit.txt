@@ -3,76 +3,76 @@
 > node --experimental-strip-types --test src/lib/*.test.mjs
 
 TAP version 13
-# (node:1436289) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (node:2039578) ExperimentalWarning: SQLite is an experimental feature and might change at any time
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: pending push only returns the signed-in owner rows
 ok 1 - pending push only returns the signed-in owner rows
   ---
-  duration_ms: 8.805565
+  duration_ms: 2.020574
   type: 'test'
   ...
 # Subtest: synced rows are never pushed
 ok 2 - synced rows are never pushed
   ---
-  duration_ms: 0.566728
+  duration_ms: 0.398438
   type: 'test'
   ...
 # Subtest: push queue walks oldest capture first
 ok 3 - push queue walks oldest capture first
   ---
-  duration_ms: 0.633074
+  duration_ms: 0.364494
   type: 'test'
   ...
 # Subtest: unsynced count is scoped to the owner
 ok 4 - unsynced count is scoped to the owner
   ---
-  duration_ms: 1.504908
+  duration_ms: 1.349264
   type: 'test'
   ...
 # Subtest: first account adopts legacy unowned rows once
 ok 5 - first account adopts legacy unowned rows once
   ---
-  duration_ms: 0.631791
+  duration_ms: 0.48481
   type: 'test'
   ...
 # Subtest: second account cannot steal unowned rows after adoption
 ok 6 - second account cannot steal unowned rows after adoption
   ---
-  duration_ms: 0.635949
+  duration_ms: 0.403779
   type: 'test'
   ...
 # Subtest: adoption never reassigns rows that already have an owner
 ok 7 - adoption never reassigns rows that already have an owner
   ---
-  duration_ms: 0.490896
+  duration_ms: 0.311455
   type: 'test'
   ...
-# (node:1436290) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/mobile/src/lib/sync-edit.ts is not specified and it doesn't parse as CommonJS.
+# (node:2039579) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://mobile/src/lib/sync-edit.ts is not specified and it doesn't parse as CommonJS.
 # Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 # To eliminate this warning, add "type": "module" to mobile/package.json.
 # (Use `node --trace-warnings ...` to show where the warning was created)
 # Subtest: simultaneous owner devices preserve the first edit and stop the stale edit
 ok 8 - simultaneous owner devices preserve the first edit and stop the stale edit
   ---
-  duration_ms: 1.283671
+  duration_ms: 1.136374
   type: 'test'
   ...
 # Subtest: an unknown revision or another owner cannot overwrite the server
 ok 9 - an unknown revision or another owner cannot overwrite the server
   ---
-  duration_ms: 0.208132
+  duration_ms: 0.190438
   type: 'test'
   ...
 # Subtest: database errors surface without treating the row as synced
 ok 10 - database errors surface without treating the row as synced
   ---
-  duration_ms: 0.439589
+  duration_ms: 0.403969
   type: 'test'
   ...
 # Subtest: resubmitting a rejected record clears the stored rejection reason
 ok 11 - resubmitting a rejected record clears the stored rejection reason
   ---
-  duration_ms: 0.171003
+  duration_ms: 0.168226
   type: 'test'
   ...
 1..11
@@ -83,4 +83,4 @@ ok 11 - resubmitting a rejected record clears the stored rejection reason
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 99.514269
+# duration_ms 91.201098

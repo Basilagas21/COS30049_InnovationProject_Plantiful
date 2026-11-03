@@ -1,14 +1,18 @@
 # Public qr_code exposure, behavioural observation (R-10 evidence)
 # revision: 0960f40
 # date: 2026-11-03 (UTC)
-# observed: the visitor explore data path selects no qr_code (species.ts and
-#   map.ts field lists); the record detail page, reachable anonymously for
-#   approved records, renders the tag QR deep link and location by design
-#   (project scope: 'Generate a QR code for each plant record, allowing users
-#   to view the recorded plant details'); officer surfaces (approvals page,
-#   report CSVs, fetchRecords in records.ts) do select qr_code.
-# statement: qr_code does not appear in anonymous species/map listings; it
-#   appears where the record itself is the target, which is the feature.
-#   Whether any remaining selection is unnecessary is a minimisation
-#   disposition for the R-10 owner, not a factual gap.
+# observed (behavioural probe, dev server, anonymous request, no session
+#   cookies): GET /map returns 200 and its HTML contains the rendered record
+#   list (names, coordinates to five decimals visible), but zero qr_code
+#   strings and no 'qr_code' key; GET /explore likewise contains none. The
+#   pages are server-rendered, so internal selects never reach the browser as
+#   payload. GET /records/<approved-id> anonymously returns 200 and DOES show
+#   the tag and location, which is the scoped QR deep-link feature itself
+#   (project scope: users view recorded plant details via the QR).
+# finding: no anonymous leakage of qr_code on list surfaces; the register's
+#   concern is the server-side select list still pulling qr_code through
+#   fetchRecords even where the map page never renders it. Removing it from
+#   that path is a trivial data-layer split; whether it is worth doing is the
+#   R-10 owner's minimisation decision. The record-detail deep link needs it
+#   by design and is the only anonymous surface that shows a tag.
 # privacy: this note intentionally records no record ids, tags or coordinates.

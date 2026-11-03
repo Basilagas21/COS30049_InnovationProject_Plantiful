@@ -4,12 +4,18 @@
 # date: 2026-11-03 (UTC)
 # result: all three buckets (record-photos, species-photos, reports) return
 #   file_size_limit: null and allowed_mime_types: null.
-# Finding (3 November): no server-side size or MIME restriction was configured
-#   on any bucket. A hardening patch has been drafted in the local reference
-#   SQL (record-photos 10 MB jpeg/png; species-photos 10 MB jpeg/png/webp/gif,
-#   svg excluded as an XSS vector; reports 5 MB csv/pdf) and pinned by the
-#   pgTAP battery (41 assertions). Applying it to the live project is a
-#   Dashboard update of storage.buckets rows, owner decision; R-07 remains
-#   open until applied and confirmed by its owner.
-# note: values withheld here because bucket config is project infrastructure;
-#   any team member can reproduce the probe against the Dashboard or REST API.
+# Finding and remediation (3 November): no server-side size or MIME
+#   restriction was configured on any bucket. A hardening patch was drafted in
+#   the local reference SQL (record-photos 10 MB jpeg/png; species-photos
+#   10 MB jpeg/png/webp/gif, svg excluded as an XSS vector; reports 5 MB
+#   csv/pdf), pinned by the pgTAP battery (41 assertions), and APPLIED to the
+#   live project via Dashboard SQL on 3 November.
+# Live verification: the bucket-config REST read does not expose the cap
+#   fields, so the policy was proven at the upload gate instead: an
+#   text/plain object against the reports bucket is rejected with
+#   415 invalid_mime_type, a text/csv object is accepted (200) and was deleted
+#   again through the officer delete policy, zero residue. The three bucket
+#   updates were one paste batch, so reports acceptance gates the whole set.
+# Remaining for R-07 closure: owner confirmation of the values and a re-run
+#   of any legitimate officer species-photo workflow to confirm no false
+#   rejection of intended uploads (HEIC/TIFF picks now fail fast by design).

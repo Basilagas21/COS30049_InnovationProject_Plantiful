@@ -38,23 +38,20 @@ This is the single documentation index for Plantiful. It replaces the separate R
 
 | File | Purpose |
 |---|---|
-| [01 Baseline audit](Reports/Sprint2/01_Baseline_Audit.md) | Dated repository and GitHub findings, executed local checks and initial delivery recommendations |
-| [02 Execution backlog](Reports/Sprint2/02_Execution_Backlog.md) | Authoritative current work status, priorities, dependencies, optional enhancements and schedule |
-| [03 Testing and evidence plan](Reports/Sprint2/03_Testing_and_Evidence_Plan.md) | Definition of Done, procedures, environment record, usability sessions and result templates |
-| [04 Diagrams and hardware plan](Reports/Sprint2/04_Diagrams_and_Hardware_Plan.md) | Figure specifications, actual breadboard mapping, open hardware questions and illustration quality checks |
-| [05 Report and sign-off plan](Reports/Sprint2/05_Report_and_Signoff_Plan.md) | Rubric mapping, writing structure, meeting preparation, demonstration and final submission checks |
+| [Sprint 2 report draft](Reports/Sprint2/Sprint_Report_2.md) | Evidence-backed report with implementation status, rationale, results analysis, visual-design discussion and remaining release gates |
+| [Sprint 2 management plan](Reports/Sprint2/Sprint_2_Management_Plan.md) | Consolidated baseline audit, work package register, testing and evidence plan, usability method, diagrams and hardware record, report and sign-off plan |
 
-The planning files are not the final Sprint 2 report. Create `Sprint_Report_2.md` in `Reports/Sprint2/` when drafting begins, using document 05. Do not add empty test results or invented participant observations.
+The [Sprint 2 report](Reports/Sprint2/Sprint_Report_2.md) is a working draft based on the 2 November evidence review. The [management plan](Reports/Sprint2/Sprint_2_Management_Plan.md) is the single supporting plan. The report distinguishes branch work from integrated results and identifies missing measurements, figures and sign-off evidence. Resolve its placeholders with actual results or explicit limitations before submission.
 
 ### What is complete
 
-The 27 October baseline review and local checks are recorded in document 01. Both application typechecks passed. Mobile lint passed. Web lint had one existing image warning and the web production build passed. The existing unit suites passed 12 tests in total. Fresh dependency audits identified remediation work. A malformed IoT payload was reproduced against a fake client. The web tree was moved to Next.js 16.4.3 and returned zero recorded production advisories. Mobile moved to Expo SDK 58 and the user confirmed the app opens in Expo Go on 28 October.
+The 27 October baseline review and local checks are recorded in section 2 of the management plan. Both application typechecks passed. Mobile lint passed. Web lint had one existing image warning and the web production build passed. The existing unit suites passed 12 tests in total. Fresh dependency audits identified remediation work. A malformed IoT payload was reproduced against a fake client. The web tree was moved to Next.js 16.4.3 and returned zero recorded production advisories. Mobile moved to Expo SDK 58 and the user confirmed the app opens in Expo Go on 28 October.
 
 These checks do not establish physical integration, current live permissions, participant outcomes or complete coverage. No remediation is marked complete merely because it appears in the plan.
 
 ### Maintaining this workspace
 
-Update document 02 when work starts, is blocked, or has been verified. Use the same `S2-` finding IDs, test IDs and `D-` figure IDs across the files. Record a dated result before marking an item Verified. Keep the audit as a historical snapshot.
+Update the work package register in section 3 when work starts, is blocked, or has been verified. Use the same `S2-` finding IDs, test IDs and `D-` figure IDs across the report and plan. Record a dated result before marking an item Verified. Keep the baseline record as a historical snapshot.
 
 ## Sprint 1
 
@@ -155,7 +152,7 @@ Evidence rules are cumulative. Never overwrite a historical file, add a dated fi
 
 ## Diagrams
 
-The D-02 physical wiring review draft was generated on 28 October 2026. Its image, editable source and online editing instructions are below. Other figure specifications remain in the [diagrams and hardware plan](Reports/Sprint2/04_Diagrams_and_Hardware_Plan.md).
+The D-02 physical wiring review draft was generated on 28 October 2026. Its image, editable source and online editing instructions are below. Other figure specifications are recorded in the [diagrams and hardware section](Reports/Sprint2/Sprint_2_Management_Plan.md#6-diagrams-and-hardware).
 
 ### D-02 physical build
 
@@ -272,7 +269,8 @@ The following paths were reorganised on 27 October 2026. The per-folder README f
 | `Prototype_Verification.md` | `Testing/Prototype_Verification.md` |
 | `Reports/Sprint_Report 1.md` | `Reports/Sprint1/Sprint_Report_1.md` |
 | `Reports/diagrams/FIGURES.md` | `Reports/Sprint1/diagrams/FIGURES.md` |
-| `Reports/Sprint_2_Baseline_and_Delivery_Plan.md` | `Reports/Sprint2/01_Baseline_Audit.md` |
+| `Reports/Sprint_2_Baseline_and_Delivery_Plan.md` | `Reports/Sprint2/01_Baseline_Audit.md`, later consolidated |
+| `Reports/Sprint2/01_Baseline_Audit.md` to `05_Report_and_Signoff_Plan.md` | `Reports/Sprint2/Sprint_2_Management_Plan.md` |
 | `Reports/Security_Assessment_Report.md` | `Security/02_Assessment_Report.md` |
 | `Reports/SECURITY_EVIDENCE_README.md` | `Security/04_Evidence_Guide.md` |
 | `Reports/evidence/` | `Security/Evidence/` |

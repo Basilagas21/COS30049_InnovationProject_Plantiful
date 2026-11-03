@@ -40,7 +40,7 @@ Line coverage, measured 2 November 2026 with the committed runners: the mobile s
 
 ## 4. Prioritised missing tests (criterion 3)
 
-1. Report file generation through the browser form is exercised only up to the gate, submitting it would upload a CSV into the private reports bucket, which has no storage delete policy, so a test artefact could not be cleaned from the client side; the officer page, form and redirect guard are covered.
+1. Report file generation through the browser form is exercised up to the gate. Filling in the form and submitting would upload a CSV into the private reports bucket, and the deployed storage policies grant officers insert and read there but no delete, so an uploaded test file could not be removed from the client side. That one-way bucket is a genuine flaw, not merely a test limitation: real report files can never be reclaimed by the app either. The delete policy has been added to the local reference SQL and pinned by the pgTAP round trip (38 assertions), but the migrations folder is gitignored by team convention and the live project cannot be patched from here, so applying the policy is a Dashboard SQL step for whoever holds that access. Once it is applied, the generate-and-download-and-delete browser flow can close the loop.
 2. IoT payload validation before insertion (lane owner's call, #45 to #47 adjacent; the existing 7-test pipeline suite covers host timestamp, ingestion, cooldown, invalid node ids, silence detection, alert retry and severity).
 
 ## 5. Failures and retests, retained (criterion 4)

@@ -39,7 +39,7 @@ async function deleteSpecies(id: string) {
 
 test("officer creates a species through the form and finds it in the catalogue", async ({ page }) => {
   test.setTimeout(60_000);
-  const name = "Testus e2elifera-${RUN_ID}";
+  const name = `Testus e2elifera-${RUN_ID}`;
   let createdId: string | null = null;
   try {
     await signIn(page, "dld@officer.com");
@@ -78,7 +78,7 @@ test("officer creates a species through the form and finds it in the catalogue",
 
 test("officer edits a species through the form and the change persists", async ({ page }) => {
   test.setTimeout(60_000);
-  const name = "Testus e2editus-${RUN_ID}";
+  const name = `Testus e2editus-${RUN_ID}`;
   let createdId: string | null = null;
   try {
     // Seed directly so the test exercises only the edit path.

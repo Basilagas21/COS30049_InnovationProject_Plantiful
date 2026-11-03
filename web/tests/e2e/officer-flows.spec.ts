@@ -85,7 +85,7 @@ test("officer sign-in reaches the records view with officer affordances", async 
 });
 
 test("officer approves a pending record through the browser", async ({ page }) => {
-  const name = "E2E approve flow ${RUN_ID}";
+  const name = `E2E approve flow ${RUN_ID}`;
   const { id } = await createPendingRecord(name);
   try {
     await signIn(page, "dld@officer.com");
@@ -102,7 +102,7 @@ test("officer approves a pending record through the browser", async ({ page }) =
 });
 
 test("officer rejects with a reason and the reason is shown", async ({ page }) => {
-  const name = "E2E reject flow ${RUN_ID}";
+  const name = `E2E reject flow ${RUN_ID}`;
   const { id } = await createPendingRecord(name);
   try {
     await signIn(page, "dld@officer.com");
@@ -122,7 +122,7 @@ test("officer rejects with a reason and the reason is shown", async ({ page }) =
 });
 
 test("botanist sign-in does not see officer review affordances", async ({ page }) => {
-  const name = "E2E role gate ${RUN_ID}";
+  const name = `E2E role gate ${RUN_ID}`;
   const { id } = await createPendingRecord(name);
   try {
     await signIn(page, "dld@botanist.com");

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { isOfficer, isAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ApproveRejectButtons } from "@/components/approve-reject";
+import { ObservationPhotos } from "@/components/observation-photos";
 
 type PendingRow = {
   record_id: string;
@@ -36,6 +37,19 @@ export default async function ApprovalsPage() {
     .limit(50);
 
   const pending: PendingRow[] = rows ?? [];
+  const photosByRecord = new Map<string, string[]>();
+  let photosFailed = false;
+  if (pending.length > 0) {
+    const { data: photos, error: photoError } = await supabase
+      .from("plant_record_photos")
+      .select("record_id, photo_url")
+      .in("record_id", pending.map(row => row.record_id))
+      .order("taken_at", { ascending: true });
+    photosFailed = Boolean(photoError);
+    for (const photo of photos ?? []) {
+      photosByRecord.set(photo.record_id, [...(photosByRecord.get(photo.record_id) ?? []), photo.photo_url]);
+    }
+  }
 
   const botanistIds = [
     ...new Set(
@@ -76,8 +90,8 @@ export default async function ApprovalsPage() {
             Approvals
           </h1>
           <p className="mt-2 text-moss">
-            Submissions from botanists waiting for review. Approving publishes
-            the record to the map and species pages.
+            Submissions from botanists waiting for review. Inspect the submitted
+            photographs before deciding. Public visibility also depends on species publication.
           </p>
         </div>
         <span className="rounded-full bg-sprout px-4 py-1.5 text-sm font-semibold text-emerald">
@@ -115,7 +129,10 @@ export default async function ApprovalsPage() {
                 key={row.record_id}
                 className="rounded-2xl border border-pine/10 bg-white p-5"
               >
-                <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className={`grid gap-5 ${!photosFailed && (photosByRecord.get(row.record_id)?.length ?? 0) > 0 ? 'sm:grid-cols-[minmax(0,240px)_minmax(0,1fr)]' : ''}`}>
+                <ObservationPhotos photos={photosByRecord.get(row.record_id) ?? []} title={title} failed={photosFailed} />
+                <div className="min-w-0">
+                <div className="flex flex-col gap-4">
                   <div>
                     <p className="font-semibold text-pine">
                       <Link
@@ -137,7 +154,7 @@ export default async function ApprovalsPage() {
                     </p>
                   </div>
 
-                  <dl className="flex gap-6 text-sm">
+                  <dl className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
                     <div>
                       <dt className="text-xs uppercase tracking-wide text-moss">
                         Height
@@ -161,6 +178,8 @@ export default async function ApprovalsPage() {
 
                 <div className="mt-4 border-t border-pine/10 pt-4">
                   <ApproveRejectButtons recordId={row.record_id} />
+                </div>
+                </div>
                 </div>
               </li>
             );

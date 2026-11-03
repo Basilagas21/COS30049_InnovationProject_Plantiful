@@ -6,17 +6,17 @@ Date: 2 November 2026. Tested revision: `main` @ `874e992`. Environment: live Su
 
 The proposal target is more than 80% coverage on backend API and mobile sync. Two different measurements are commonly called coverage, and only one of them is honest here:
 
-- **Line coverage** counts executed source lines. It cannot be computed for the backend, which is SQL, and the web app has no test runner, so a line-coverage percentage against the proposal target is not currently measurable for either surface. Stating one would be fabrication.
+- **Line coverage** counts executed source lines. It cannot be computed for the backend, which is SQL. The web app now has a line-instrumented runner (npm test with coverage) and a browser suite, so web line coverage is measured, reported in section 4; the backend remains behaviour-coverage only, a line percentage there would still be fabrication.
 - **Behaviour coverage** counts required behaviours exercised by at least one recorded check. This is measurable today and is what this assessment reports, per surface, with the denominator fixed before the counting:
 
 | Surface | Denominator (from source, not memory) | Count |
 |---|---|---|
-| Backend data layer | Tables, row-level security policies, database functions and triggers defined in the migrations | 11 tables, 41 policies, 5 functions, 4 triggers, asserted by a 29-check pgTAP battery |
+| Backend data layer | Tables, row-level security policies, database functions and triggers defined in the migrations | 11 tables, 41 policies, 5 functions, 4 triggers, asserted by a 41-check pgTAP battery |
 | Mobile sync logic | The revision-checked edit helper and the owner-scoped local store operations | sync-edit.ts (100% line coverage, all branches) plus 7 owner-scoping behaviour tests in the committed suite |
 | Permission matrix | Allowed and denied operations per role from the agreed role model | 33 checks across four batteries |
 | End-to-end flows | Offline capture, restart persistence, sync, duplicate prevention, conflict cycle, cross-owner rejection, officer review, public gating | 8 flows, all observed on device or live API |
 
-Exclusions, stated up front: IoT physical wiring and sensor calibration (Basil's lane, tracked by #48 and #49; the IoT logic itself carries a 7-test unit suite), and hosted-deployment verification (never performed). Line-level coverage is measured for the mobile and web TypeScript surfaces below; SQL functions and policies cannot carry line instrumentation, so the backend is reported as behaviour coverage only.
+Exclusions, stated up front: IoT physical wiring and sensor calibration (Badrul's lane, tracked by #48 and #49; the IoT logic itself carries a 7-test unit suite), and hosted-deployment verification (never performed). Line-level coverage is measured for the mobile and web TypeScript surfaces below; SQL functions and policies cannot carry line instrumentation, so the backend is reported as behaviour coverage only.
 
 ## 2. Requirement to test map
 
@@ -32,7 +32,7 @@ Exclusions, stated up front: IoT physical wiring and sensor calibration (Basil's
 
 ## 3. Measured result against the stated target
 
-Backend behaviour coverage of the defined denominator: every one of the 11 tables, all 41 policies grouped by their role patterns, all 5 functions and 4 triggers is exercised by at least one dated check. As of 2 November 2026 this includes a committed pgTAP battery, backend/tests/local/rls_battery.sql, run by backend/tests/local/run.sh against a dockerised Postgres 17 with the real migrations applied from zero, 29 assertions covering the anon surface, botanist ownership, officer review limits, the publish gate, conflict-report rules and storage policies, all passing. The live-project batteries (policy, trigger, conflict, R7) additionally prove the same behaviours against the deployed database.
+Backend behaviour coverage of the defined denominator: every one of the 11 tables, all 41 policies grouped by their role patterns, all 5 functions and 4 triggers is exercised by at least one dated check. As of 2 November 2026 this includes a committed pgTAP battery, backend/tests/local/rls_battery.sql, run by backend/tests/local/run.sh against a dockerised Postgres 17 with the real migrations applied from zero, 41 assertions covering the anon surface, botanist ownership, officer review limits, the publish gate, conflict-report rules and storage policies, all passing. The live-project batteries (policy, trigger, conflict, R7) additionally prove the same behaviours against the deployed database.
 
 Mobile sync: the compare-and-swap helper carries 100% line, branch and function coverage from its own suite, the owner-scoping store queries carry 7 committed behaviour tests (push filter, unsynced count, adoption once, steal guard, queue order), and the full loop is device-proven across three dated trials. The remaining screens and db.ts surface have no line coverage, excluded honestly.
 
@@ -40,7 +40,7 @@ Line coverage, measured 2 November 2026 with the committed runners: the mobile s
 
 ## 4. Prioritised missing tests (criterion 3)
 
-1. Report file generation through the browser form is exercised up to the gate. Filling in the form and submitting would upload a CSV into the private reports bucket, and the deployed storage policies grant officers insert and read there but no delete, so an uploaded test file could not be removed from the client side. That one-way bucket is not a spec breach, the scope PDF requires officers only to generate and export reports, but it is poor hygiene for files carrying GPS of sensitive species. The delete policy, officer and admin as for species photos, has been added to the local reference SQL and pinned by the pgTAP round trip (38 assertions); applying it to the live project is a Dashboard SQL step for whoever holds service access, and once applied the generate-and-download-and-delete browser flow can close the loop. The reference SQL also now carries the `rejection_reason` column that existed live since issue #16, so fresh rebuilds and the live project agree, verified by the battery applying migrations from zero.
+1. Report file generation through the browser form is exercised up to the gate. Filling in the form and submitting would upload a CSV into the private reports bucket, and the deployed storage policies grant officers insert and read there but no delete, so an uploaded test file could not be removed from the client side. That one-way bucket is not a spec breach, the scope PDF requires officers only to generate and export reports, but it is poor hygiene for files carrying GPS of sensitive species. The delete policy, officer and admin as for species photos, has been added to the local reference SQL, pinned by the pgTAP battery (41 assertions) and applied to the live project, the generate-download-delete browser flow now closes the loop against the live bucket, proven in Evidence/issue-53. The reference SQL also now carries the `rejection_reason` column that existed live since issue #16, so fresh rebuilds and the live project agree, verified by the battery applying migrations from zero.
 2. IoT payload validation before insertion (lane owner's call, #45 to #47 adjacent; the existing 7-test pipeline suite covers host timestamp, ingestion, cooldown, invalid node ids, silence detection, alert retry and severity).
 
 ## 5. Failures and retests, retained (criterion 4)

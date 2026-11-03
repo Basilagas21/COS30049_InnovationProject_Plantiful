@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -23,17 +24,23 @@ export default function Home() {
         </div>
         <div className="grid gap-5 md:grid-cols-3">
           {[
-            { number: "01", title: "Discover", description: "Get to know the plants of Niah through the published species catalogue.", href: "/explore", label: "Browse the guide" },
-            { number: "02", title: "Connect", description: "See where approved plant observations connect across the landscape.", href: "/map", label: "Explore the map" },
-            { number: "03", title: "Conserve", description: "Sign in to review field records and contribute to a growing body of knowledge.", href: "/signin", label: "Join the workspace" },
-          ].map((item) => (
-            <Link key={item.number} href={item.href} className="journey-card group">
-              <span className="eyebrow text-emerald">{item.number} / Plantiful</span>
-              <h3 className="mt-10 text-3xl font-semibold tracking-tight">{item.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-moss">{item.description}</p>
-              <div className="mt-8 flex items-center justify-between text-sm font-semibold">{item.label}<span className="flex h-10 w-10 items-center justify-center rounded-full bg-pine text-cream transition group-hover:bg-emerald">↗</span></div>
-            </Link>
-          ))}
+            { number: "01", title: "Discover", description: "Get to know the plants of Niah through the published species catalogue.", href: "/explore", label: "Browse the guide", image: "rafflesia.jpg", position: "50% 25%" },
+            { number: "02", title: "Connect", description: "See where approved plant observations connect across the landscape.", href: "/map", label: "Explore the map", image: "hornbill.jpeg", position: "70% 15%" },
+            { number: "03", title: "Conserve", description: "Sign in to review field records and contribute to a growing body of knowledge.", href: "/signin", label: "Join the workspace", image: "orangutan.jpeg", position: "50% 20%" },
+          ].map((item) => {
+            return (
+              <Link key={item.number} href={item.href} className="nature-card group">
+                <Image src={`/images/home/${item.image}`} alt="" fill sizes="(min-width: 1152px) 352px, (min-width: 768px) 33vw, 100vw" className="nature-card-photo" style={{ objectPosition: item.position }} />
+                <div aria-hidden="true" className="nature-card-shade" />
+                <span className="nature-card-number">{item.number} / Plantiful</span>
+                <div className="nature-card-glass">
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                  <div className="nature-card-action">{item.label}<span aria-hidden="true">↗</span></div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
     </div>

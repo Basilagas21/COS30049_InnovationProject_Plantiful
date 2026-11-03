@@ -8,7 +8,7 @@
 -- and unique conflicts raise 42501 and 23505.
 
 begin;
-select plan(34);
+select plan(38);
 
 -- Fixtures ---------------------------------------------------------------
 set local role service_role;
@@ -165,6 +165,21 @@ select throws_ok($$insert into storage.objects (bucket_id, name)
   values ('reports', 'officer/report.csv')$$,
   42501, 'new row violates row-level security policy for table "objects"',
   'botanist cannot upload reports');
+
+-- Officer report object round trip: upload, read, delete. The delete policy
+-- is what lets the app and browser tests clean generated reports; without it
+-- the bucket grows one-way forever.
+select as_role('authenticated', '33333333-3333-3333-3333-333333333333');
+select lives_ok($$insert into storage.objects (bucket_id, name, owner)
+  values ('reports', 'officer/report.csv',
+          '33333333-3333-3333-3333-333333333333')$$, 'officer uploads report');
+select isnt_empty('select 1 from storage.objects where bucket_id = ''reports''',
+  'officer reads report objects');
+select lives_ok($$delete from storage.objects
+  where bucket_id = 'reports' and name = 'officer/report.csv'$$,
+  'officer deletes report object');
+select is_empty('select 1 from storage.objects where bucket_id = ''reports''',
+  'report object gone after officer delete');
 
 select as_anon();
 select isnt_empty('select 1 from storage.objects where bucket_id = ''record-photos''',

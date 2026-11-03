@@ -8,7 +8,7 @@
 -- and unique conflicts raise 42501 and 23505.
 
 begin;
-select plan(38);
+select plan(41);
 
 -- Fixtures ---------------------------------------------------------------
 set local role service_role;
@@ -217,6 +217,21 @@ select throws_ok($$update public.species set is_published = true where species_i
   'aaaaaaaa-0000-0000-0000-000000000001'$$,
   'P0001', 'Species cannot be published until at least one record is approved',
   'republish blocked after the approving record was rejected');
+
+-- Bucket hardening caps (R-07) ---------------------------------------------
+select is(
+  (select file_size_limit from storage.buckets where id = 'record-photos'),
+  10485760::bigint, 'record-photos has 10 MB cap');
+select is(
+  (select allowed_mime_types @> array['image/jpeg','image/png']
+     and array_length(allowed_mime_types,1) = 2
+   from storage.buckets where id = 'record-photos'),
+  true, 'record-photos allows exactly jpeg and png');
+select is(
+  (select allowed_mime_types @> array['text/csv','application/pdf']
+     and not (allowed_mime_types && array['image/svg+xml'])
+   from storage.buckets where id = 'reports'),
+  true, 'reports allows csv and pdf only, never svg');
 
 select * from finish();
 rollback;

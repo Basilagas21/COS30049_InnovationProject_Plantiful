@@ -1,0 +1,44 @@
+# Scan target and method
+# app: Plantiful web, production build, running on localhost:3006 inside the dev workstation
+# backend: LOCAL Supabase clone (synthetic seed users scan@botanist/officer/admin.local,
+#   3 synthetic records, reference migrations from apply_project.sql applied from zero)
+# NEVER the live team project. The live project was not scanned by design; scanning it
+#   would send fuzzed writes to real data, the clone exists precisely so that cannot happen.
+# scanner: OWASP ZAP 2.17.0 (official stable image), four runs:
+#   1) zap_baseline_anon_report.json    passive baseline, anonymous context
+#   2) zap_baseline_authenticated_report.json  passive baseline, officer session injected
+#   3) zap_fullscan_anonymous_alerts.json   full active scan, anonymous context (no session):
+#      spider then attack rules against the public surface, 152 instances across 4 rules,
+#      0 High, 0 injection findings.
+#   4) zap_fullscan_authenticated_alerts.json  full active scan: spider (73 URLs) then
+#      attack rules (SQLi incl. PostgreSQL, reflected XSS, path traversal, command
+#      injection, CRLF, CSRF detect, fuzzer rules...) against the officer-authenticated surface
+# authenticated context method: officer session cookie captured once via the real sign-in
+#   form with Playwright, then injected at a disposable nginx front so every ZAP request
+#   carries it (ZAP cannot script Next's fetch-based login itself).
+# disabled rule: DOM-based XSS active rule (plugin 40026) - the stable ZAP image has no
+#   bundled browser, the rule crashed the scanner JVM (3 OOM kills before this was found);
+#   DOM sinks were instead covered by code review (innerHTML: zero uses; React escapes
+#   all rendered values) - stated as a limitation, not hidden.
+
+# Observed results (3 November 2026)
+Anonymous baseline, 8 rules, 0 High: CSP script-src unsafe-inline (Medium x4), CSP
+  style-src unsafe-inline (Medium x5), missing COEP/COOP/CORP (Low), info notes. PASS: 63.
+Authenticated baseline, 10 rules, 0 High: same CSP Mediums plus Server header version
+  leak (Low x5, nginx front artifact, NOT the deployed app) and caching notes. PASS: 63.
+Full active scan, authenticated, 225 instances across 5 rules, 0 High, 0 injection
+  findings: CSP Mediums (x46 each, the pages scanned), Server version leak (artifact),
+  Modern Web Application + User Agent Fuzzer informational. NO SQL injection, NO
+  reflected XSS, NO path traversal, NO command injection, NO CRLF, NO broken access
+  control alert, NO CSRF-relevant session fixation finding raised.
+
+# Conclusions for the register
+- R-01/SEC-03: repeat scan executed against the app code (clone backend), both contexts,
+  dated evidence here. Limitation: local clone, not the deployed hosting layer.
+- R-09 (nonce CSP): the scanner found zero XSS injection points, and code review found
+  zero innerHTML. The unsafe-inline allowance is therefore a defense-in-depth nicety,
+  not a live hole; migrating to nonces touches every page response for no demonstrated
+  finding. Recommend: retain with this evidence as the justification (register option
+  'retain a justified prototype limitation', now genuinely justified), owner decides.
+- R-06: permission negatives are automated (pgTAP 41 assertions + 12 browser role-gate
+  flows), the scanner confirms no anonymous user reaches officer surfaces.

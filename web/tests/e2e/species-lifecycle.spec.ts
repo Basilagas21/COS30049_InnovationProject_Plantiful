@@ -13,6 +13,10 @@ const SUPABASE_URL = envValue("NEXT_PUBLIC_SUPABASE_URL");
 const ANON_KEY = envValue("NEXT_PUBLIC_SUPABASE_ANON_KEY");
 const TEST_PASSWORD = envValue("E2E_TEST_PASSWORD");
 
+// Unique per run: leftovers from a crashed run cannot collide with
+// deterministic QR codes or catalogue names on the next run.
+const RUN_ID = Date.now().toString(36).toUpperCase();
+
 async function token(email: string) {
   const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method: "POST",
@@ -41,7 +45,7 @@ async function deleteSpecies(id: string) {
 
 test("officer creates a species through the form and finds it in the catalogue", async ({ page }) => {
   test.setTimeout(60_000);
-  const name = "Testus e2elifera";
+  const name = "Testus e2elifera-${RUN_ID}";
   let createdId: string | null = null;
   try {
     await signIn(page, "dld@officer.com");
@@ -80,7 +84,7 @@ test("officer creates a species through the form and finds it in the catalogue",
 
 test("officer edits a species through the form and the change persists", async ({ page }) => {
   test.setTimeout(60_000);
-  const name = "Testus e2editus";
+  const name = "Testus e2editus-${RUN_ID}";
   let createdId: string | null = null;
   try {
     // Seed directly so the test exercises only the edit path.

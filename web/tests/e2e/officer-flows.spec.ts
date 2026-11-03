@@ -18,6 +18,10 @@ const ANON_KEY = envValue("NEXT_PUBLIC_SUPABASE_ANON_KEY");
 // Test-account password lives in the gitignored .env.local, never committed.
 const TEST_PASSWORD = envValue("E2E_TEST_PASSWORD");
 
+// Unique per run: leftovers from a crashed run cannot collide with
+// deterministic QR codes or catalogue names on the next run.
+const RUN_ID = Date.now().toString(36).toUpperCase();
+
 async function token(email: string) {
   const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method: "POST",
@@ -90,7 +94,7 @@ test("officer sign-in reaches the records view with officer affordances", async 
 });
 
 test("officer approves a pending record through the browser", async ({ page }) => {
-  const name = "E2E approve flow";
+  const name = "E2E approve flow ${RUN_ID}";
   const { id } = await createPendingRecord(name);
   try {
     await signIn(page, "dld@officer.com");
@@ -107,7 +111,7 @@ test("officer approves a pending record through the browser", async ({ page }) =
 });
 
 test("officer rejects with a reason and the reason is shown", async ({ page }) => {
-  const name = "E2E reject flow";
+  const name = "E2E reject flow ${RUN_ID}";
   const { id } = await createPendingRecord(name);
   try {
     await signIn(page, "dld@officer.com");
@@ -127,7 +131,7 @@ test("officer rejects with a reason and the reason is shown", async ({ page }) =
 });
 
 test("botanist sign-in does not see officer review affordances", async ({ page }) => {
-  const name = "E2E role gate";
+  const name = "E2E role gate ${RUN_ID}";
   const { id } = await createPendingRecord(name);
   try {
     await signIn(page, "dld@botanist.com");

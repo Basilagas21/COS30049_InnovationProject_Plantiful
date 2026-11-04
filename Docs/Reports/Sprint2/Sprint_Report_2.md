@@ -296,18 +296,18 @@ Figure D-05. Observation review and species publication are separate lifecycles.
 
 ### 4.4 IoT flow and hardware evidence
 
-The IoT path uses an ESP32-WROOM-32 node with a DHT11 temperature and humidity sensor, a PIR movement sensor, an analogue soil-moisture board, an analogue rain board and a status LED. The firmware prints a human-readable QC table and then one `DATA {json}` line for each reading. The host bridge reads only the data line, rejects malformed or non-finite values and out-of-range readings, stamps the arrival time with host UTC time and inserts the row into `sensor_readings` with the service role. The evaluator then applies the heat, low-humidity and movement rules and writes alerts. The `/alerts` page reads the stored readings and alerts for officers.
+The documented IoT path uses an ESP32-WROOM-32 node with a DHT11 temperature and humidity sensor, a PIR movement sensor, an analogue soil-moisture board, an analogue rain board and a status LED. The firmware prints a human-readable QC table and then one `DATA {json}` line for each reading. The host bridge reads the data line, stamps the arrival time with host UTC time and inserts the row into `sensor_readings` with the service role. PR #63 adds stricter malformed, non-finite and out-of-range rejection. Its release status must be confirmed before claiming integrated validation. The evaluator applies the heat, low-humidity and movement rules and writes alerts. The `/alerts` page reads the stored readings and alerts for officers.
 
 The node-to-host link is USB serial. It is not HTTPS. Transport security applies to the bridge-to-Supabase request, not to the cable. The node has no clock and no GPS receiver. The bridge supplies the timestamp and registers a fixed deployment coordinate. The simulator writes to the same tables through the same insert path, so a simulated reading must never be presented as a physical trial.
 
-Figure D-02 is the physical wiring review draft. It maps each module to the ESP32 pins, shows the shared power and ground rails and colours each signal path. The soil and rain boards use their analogue outputs. The LED is driven through a series resistor. Rain AO to D35 is confirmed by the hardware owner. Supply voltage, resistor value, exact module variants and an annotated assembly photograph remain outstanding. The draft is a design review artefact, not electrical verification.
+Figure D-02 is the physical wiring review draft. It maps each module to the ESP32 pins, shows the shared power and ground rails and colours each signal path. The soil and rain boards use their analogue outputs. The draft shows an LED driven through a series resistor. Rain AO to D35 is confirmed by the hardware owner. An actual assembly photograph is now included below. Supply voltage, resistor value, exact module variants and a pin-by-pin comparison remain outstanding. The draft is a design review artefact, not electrical verification.
 
-![Figure D-02. Physical wiring review draft showing the ESP32, DHT11, PIR, soil-moisture board, rain board, status LED and shared rails. Component values and the final assembly photograph are not yet recorded.](diagrams/exported/D-02_physical_build.png)
+![Figure D-02. Physical wiring review draft showing the ESP32, DHT11, PIR, soil-moisture board, rain board, status LED and shared rails. Electrical values remain unconfirmed.](diagrams/exported/D-02_physical_build.png)
 
 | Sensor or output | ESP32 pin | Stored field | Reading behaviour |
 |---|---|---|---|
 | DHT11 data | GPIO4 | `temperature`, `humidity` | A failed read is stored as null rather than a fabricated value |
-| PIR output | GPIO27 | `movement` | Digital output, already 3.3 V |
+| PIR output | GPIO27 | `movement` | Digital movement indication. Actual module output voltage needs confirmation |
 | Soil board AO | GPIO34 | `soil_moisture` | Analogue value converted to a percentage |
 | Rain board AO | GPIO35 | `rain` | Analogue value converted to a boolean by threshold |
 | LED anode via resistor | GPIO26 | none | Local status indication only |
@@ -316,9 +316,15 @@ The final D-03 must distinguish the baseline from the proposed pipeline. After P
 
 [picture of D-03 reading-to-alert and recovery flow after final PR integration here]
 
-Physical evidence still needs an annotated assembly photograph beside the verified D-02 wiring diagram, a correlated serial line, stored row and resulting alert, and an interruption trial. The current D-02 image supports wiring review only.
+The supplied assembly photograph is explained below. Physical evidence still needs a verified wiring comparison, a correlated serial line, stored row and resulting alert, and an interruption trial. The current D-02 image supports wiring review only.
 
-[picture of annotated assembled hardware beside the verified D-02 wiring diagram here]
+![Actual user-supplied IoT assembly with USB-connected controller, breadboard, sensor modules, soil probe and rain plate.](../../Testing/Evidence/sprint2-iot/01-actual-assembly.jpeg)
+
+Figure IMG-S2-09a. Actual assembly supplied by the hardware owner. The root original `IOT.jpeg` is retained and an unchanged evidence copy is organised under `Docs/Testing/Evidence/sprint2-iot/`. The controller is at the upper left, the breadboard is central, the blue temperature and humidity module is below it, the soil probe is at the centre right and the rain plate is at the far right. The lower sensor board is viewed from underneath and needs a readable model label. Red and green LED packages are visible, so the single-LED draft needs reconciliation. This photograph documents the assembly but does not prove the pin mapping, electrical values, calibration or a successful data upload. See the [assembly evidence notes](../../Testing/Evidence/sprint2-iot/README.md).
+
+### 4.5 Follow-up user checks
+
+The owner reports that the mobile phone checks work fine. This is informal feedback covering the supplied checklist, not individually recorded test results. Device details, timings and screenshots are still needed for reproducible evidence. A [short usability session sheet](../../Testing/Sprint2_Usability_Session.md) provides participant tasks, outcome recording and a simple task-ease question. Participant sessions remain unrecorded.
 
 ## 5. Testing plan and environment
 

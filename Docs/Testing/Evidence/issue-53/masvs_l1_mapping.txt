@@ -1,0 +1,138 @@
+# MASVS mapping for register line R-02, draft evidence for the recorded owner
+# Environment: repository main @ 4179fed, reviewed 4 November 2026
+# Standard note: the register line cites "MASVS L1" from the 2024 structure
+# (categories V1 to V12 with verification levels). The cited URL now serves the
+# restructured MAS standard: eight categories, 24 controls, levels dropped.
+# This map uses the live standard and says so, rather than quoting a retired
+# numbering from memory.
+# Verdicts: CHECKED (evidence exists in this repo), N/A (mechanism absent by
+# construction), DEFERRED (not implemented, named), GAP (known weakness, documented).
+# Evidence paths are repo relative. Functional trials alone do not complete the
+# map; each row names the actual check.
+
+STORAGE-1  secure storage of sensitive data
+  verdict: CHECKED with one named GAP
+  observation records live in device-private SQLite inside the app sandbox,
+  capture photos in app-private files, all server data behind RLS, private
+  buckets carry the delete and MIME caps (see storage_bucket_config_note.txt)
+  GAP: the mobile auth session is persisted in AsyncStorage
+  (mobile/src/lib/supabase.ts:13), which is not encrypted at rest;
+  Expo SecureStore is the usual mitigation, not adopted, disclosed here and
+  in Docs/README.md ("stores the session in AsyncStorage"), owner decision to defer or fix
+
+STORAGE-2  prevents leakage of sensitive data
+  verdict: CHECKED
+  committed artefacts scrubbed of session tokens, tester identities and GPS
+  coordinates (privacy review, docs test convention), qr_code removed from all
+  public payload selects (R-10, see qr_public_exposure_note.txt), the interaction
+  log records routes and targets only, no credential fields, bucket MIME allow
+  lists block arbitrary stored content (R-07)
+
+CRYPTO-1   current strong cryptography
+  verdict: CHECKED
+  no custom cryptography exists in either app (code review), password hashing
+  is bcrypt server side through Supabase Auth, transport is TLS
+
+CRYPTO-2   key management per best practice
+  verdict: CHECKED
+  no key material ships in app code beyond the public anon key by design,
+  the service role key is server only, its rotation is the open item #41
+
+AUTH-1     secure authentication and authorisation protocols
+  verdict: CHECKED
+  email and password through Supabase Auth with JWT sessions, authorisation
+  proven by the 41 assertion RLS matrix (pgtap_battery.txt) and the browser
+  role-gate flows, not assumed
+
+AUTH-2     secure local authentication
+  verdict: N/A
+  no local or biometric unlock exists, sign-in is always network based
+
+AUTH-3     sensitive operations require additional authentication
+  verdict: CHECKED
+  approve, reject and species mutation are gated server side by role via
+  current_role() checks, proven by the battery negatives and by the officer
+  403 on the telemetry route (web API tests), UI hiding is not the control
+
+NETWORK-1  secures all network traffic
+  verdict: CHECKED
+  zero cleartext http endpoints in app code (grep of mobile/src and web/src),
+  the only 127.0.0.1 references are test and local-clone paths gated in CSP
+
+NETWORK-2  identity pinning for remote endpoints
+  verdict: DEFERRED
+  no certificate pinning, standard omission at prototype scale, named here
+  rather than left silent
+
+PLATFORM-1 secure IPC
+  verdict: N/A
+  no exported components, no deep links, no content providers, the app
+  initiates only (camera, location)
+
+PLATFORM-2 secure WebViews
+  verdict: N/A
+  no WebView import anywhere in the mobile source
+
+PLATFORM-3 secure user interface
+  verdict: CHECKED within prototype scope
+  conflict banner renders for officer only, record content absent for
+  anonymous, per browser flows and the R-10 probes, overlay and sensitive
+  screen capture risks not tested at prototype scope
+
+CODE-1     requires an up-to-date platform version
+  verdict: CHECKED, partial
+  Expo SDK 58 current at trial time (Prototype_Verification device rows),
+  no end-of-life enforcement beyond the toolchain
+
+CODE-2     mechanism for enforcing app updates
+  verdict: DEFERRED
+  none implemented, no update channel in a prototype distributed by hand
+
+CODE-3     only components without known vulnerabilities
+  verdict: CHECKED
+  dated zero-advisory audits for both apps (web_audit.json, mobile_audit.json),
+  recurring monitoring remains the separate open line R-03
+
+CODE-4     validates and sanitises untrusted inputs
+  verdict: CHECKED
+  client validation module (mobile/src/lib/validation.ts), server constraints,
+  the publish deny trigger and review gates, pgTAP negative cases including
+  bulk publish and republish after rejection, ZAP active scanning raised no
+  injection finding against the fuzzed parameters
+
+RESILIENCE-1..4  platform integrity, anti-tampering, anti-static and
+  anti-dynamic analysis
+  verdict: N/A at this line
+  MAS 2.x separates resilience from the baseline, these were never L1-tier
+  controls in the 2024 structure either, unreachable in an Expo Go development
+  build, the release artefact question belongs to R-04
+
+PRIVACY-1  minimises access to sensitive data and resources
+  verdict: CHECKED
+  location requested on an explicit GPS action with recovery states (device
+  trials), camera on capture intent, qr_code field minimisation per STORAGE-2,
+  per-account local scoping for shared devices (#43 owner binding)
+
+PRIVACY-2  prevents identification of the user
+  verdict: CHECKED for artefacts
+  probe data uses neutral role labels, committed docs carry no tester names,
+  devices named by model only, real user profiles are visible only to officer
+  and admin roles (browser flows, RLS matrix)
+
+PRIVACY-3  transparent about data collection
+  verdict: CHECKED, partial
+  permission prompts state purpose (location hint wording reviewed), collection
+  scope documented in the proposal, no standalone privacy notice page, recorded
+  as a future enhancement rather than claimed complete
+
+PRIVACY-4  user control over their data
+  verdict: CHECKED
+  botanist edits and deletes own records, conflict resolution preserves the
+  local copy and merge is explicit per field, officer corrections arrive as
+  reject with reason
+
+# Summary for the owner: of 24 controls, 14 CHECKED with in-repo evidence,
+# 4 N/A by construction, 2 DEFERRED and named, 1 GAP disclosed (AsyncStorage
+# session), 3 recorded as partial. Nothing on this line requires new code to
+# complete the map; the AsyncStorage session fix and the pinning deferral are
+# Basill's disposition calls.

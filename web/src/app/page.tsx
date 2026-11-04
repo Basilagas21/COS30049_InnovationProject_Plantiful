@@ -15,12 +15,10 @@ export default function Home() {
             <Link href="/map" className="rounded-full border border-cream/35 px-7 py-4 font-medium text-cream transition hover:bg-white/10">Open the species map</Link>
           </div>
         </div>
-        <div className="hero-caption"><span className="h-2 w-2 rounded-full bg-chartreuse" /> Rooted in discovery. Growing through knowledge.</div>
       </section>
       <section className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-24">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
-          <div><p className="eyebrow text-emerald">A connected conservation journey</p><h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">For the forest.<br />For the future.</h2></div>
-          <p className="max-w-sm text-sm leading-7 text-moss">Field observations, carefully reviewed knowledge, and environmental insights — all in one place.</p>
+        <div className="mb-10">
+          <p className="eyebrow text-emerald">A connected conservation journey</p><h2 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">For the forest.<br />For the future.</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
           {[

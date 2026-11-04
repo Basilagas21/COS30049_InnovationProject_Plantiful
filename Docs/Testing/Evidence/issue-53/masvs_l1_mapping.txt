@@ -15,10 +15,14 @@ STORAGE-1  secure storage of sensitive data
   observation records live in device-private SQLite inside the app sandbox,
   capture photos in app-private files, all server data behind RLS, private
   buckets carry the delete and MIME caps (see storage_bucket_config_note.txt)
-  GAP: the mobile auth session is persisted in AsyncStorage
-  (mobile/src/lib/supabase.ts:13), which is not encrypted at rest;
-  Expo SecureStore is the usual mitigation, not adopted, disclosed here and
-  in Docs/README.md ("stores the session in AsyncStorage"), owner decision to defer or fix
+  FIXED 4 November after first disclosure: the mobile auth session moved from
+  AsyncStorage to expo-secure-store (Android keystore, iOS keychain) through a
+  chunked adapter, because the live session measured 2220 bytes over the 2048
+  byte Android item limit and the storage key 34 characters over the 31 key
+  limit; nine behaviour tests pin both limits and the one-time legacy
+  migration, see mobile/src/lib/session-store-core.test.mjs. The original
+  exposure: session persisted unencrypted at rest in AsyncStorage
+  (mobile/src/lib/supabase.ts:13 as it stood)
 
 STORAGE-2  prevents leakage of sensitive data
   verdict: CHECKED

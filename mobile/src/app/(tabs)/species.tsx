@@ -80,6 +80,9 @@ export default function SpeciesReferenceScreen() {
       </View>
 
       <FlatList
+        key="species-two-columns"
+        numColumns={2}
+        columnWrapperStyle={styles.gridRow}
         ListHeaderComponent={<View style={{ gap: 12 }}>
           <BotanicalBanner title="The field guide." subtitle="Catalogue text is saved after sync. Photos may need a connection." />
           <Text accessibilityLiveRegion="polite" style={styles.meta}>{error ?? `${filtered.length} species${query ? ' matching your search' : ' in your field guide'}`}</Text>
@@ -120,7 +123,7 @@ export default function SpeciesReferenceScreen() {
             onPress={() => router.push({ pathname: '/species/[id]', params: { id: item.species_id } })}
           >
             <SpeciesCover key={item.cover_photo ?? item.species_id} uri={item.cover_photo} name={item.scientific_name} />
-            <View style={{ padding: 16, gap: 8 }}>
+            <View style={{ padding: 12, gap: 8 }}>
             <View style={styles.cardHeader}>
               <Text style={styles.sciName}>{item.scientific_name}</Text>
               <Ionicons name="arrow-forward" size={20} color={colors.emerald} />
@@ -201,8 +204,13 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   card: {
     ...surfaces.card,
+    width: '48%',
     padding: 0,
     overflow: 'hidden',
+  },
+  gridRow: {
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
   },
   cardPressed: {
     opacity: 0.7,
@@ -211,7 +219,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 4,
   },
   sciName: {
     flex: 1,

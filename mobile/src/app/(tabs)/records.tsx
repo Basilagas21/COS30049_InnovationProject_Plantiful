@@ -70,6 +70,14 @@ export default function RecordsScreen() {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<SortKey>('newest');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [syncSummaryState, setSyncSummaryState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const unsynced = records.filter(record => record.sync_status !== 'synced').length;
+  const needsAttention = records.some(record => record.sync_status === 'failed' || record.sync_status === 'conflict');
+  const syncSummary = syncSummaryState === 'loading' ? 'Checking local sync status…'
+    : syncSummaryState === 'error' ? 'Unable to check sync status'
+    : needsAttention ? `Sync needs attention · ${unsynced} unsynced`
+    : unsynced > 0 ? `${unsynced} record${unsynced === 1 ? '' : 's'} waiting to sync`
+    : records.length > 0 ? 'All local records synced' : 'No local records waiting to sync';
 
   const filteredRecords = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -88,10 +96,16 @@ export default function RecordsScreen() {
   }, [records, search, sort, statusFilter]);
 
   const refresh = useCallback(async () => {
-    const db = await openDatabase();
-    const owner = (await getCurrentUserId()) ?? undefined;
-    if (owner) await adoptLegacyUnownedRecords(db, owner);
-    setRecords(await getLocalRecords(db, owner));
+    setSyncSummaryState('loading');
+    try {
+      const db = await openDatabase();
+      const owner = (await getCurrentUserId()) ?? undefined;
+      if (owner) await adoptLegacyUnownedRecords(db, owner);
+      setRecords(await getLocalRecords(db, owner));
+      setSyncSummaryState('ready');
+    } catch {
+      setSyncSummaryState('error');
+    }
   }, []);
 
   useFocusEffect(
@@ -121,6 +135,14 @@ export default function RecordsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.toolbar}>
+        <Pressable accessibilityRole="button" accessibilityLabel={`${syncSummary}. Open Sync`}
+          onPress={() => router.push('/sync')}
+          style={({ pressed }) => [styles.syncEntry, pressed && styles.cardPressed]}>
+          <Ionicons name={needsAttention ? 'alert-circle-outline' : 'cloud-upload-outline'} size={24} color={colors.emerald} />
+          <Text style={styles.syncSummary} accessibilityLiveRegion="polite">{syncSummary}</Text>
+          <Text style={styles.syncAction}>Sync</Text>
+          <Ionicons name="chevron-forward" size={18} color={colors.emerald} />
+        </Pressable>
         <View style={styles.searchWrap}>
           <Ionicons name="search-outline" size={16} color={colors.muted} />
           <TextInput
@@ -170,6 +192,9 @@ export default function RecordsScreen() {
       </View>
 
       <FlatList
+        key="records-two-columns"
+        numColumns={2}
+        columnWrapperStyle={styles.gridRow}
         ListHeaderComponent={<BotanicalBanner title="Your discoveries." subtitle="Every observation adds a new page to the story of the forest." />}
         data={filteredRecords}
         indicatorStyle={scheme === 'dark' ? 'white' : 'black'}
@@ -257,6 +282,17 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     paddingBottom: 16,
     gap: 8,
   },
+  syncEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    minHeight: 48,
+    padding: 12,
+    borderRadius: 16,
+    backgroundColor: colors.sprout,
+  },
+  syncSummary: { flex: 1, fontSize: 13, color: colors.pine },
+  syncAction: { fontSize: 13, fontWeight: '700', color: colors.emerald },
   searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -350,14 +386,19 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   card: {
     ...surfaces.card,
-    flexDirection: 'row',
+    width: '48%',
+    flexDirection: 'column',
     alignItems: 'stretch',
-    padding: 14,
-    gap: 14,
+    padding: 10,
+    gap: 10,
+  },
+  gridRow: {
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
   },
   thumbnail: {
-    width: 124,
-    minHeight: 168,
+    width: '100%',
+    aspectRatio: 1,
     alignSelf: 'stretch',
     borderRadius: 20,
     borderWidth: 1,
@@ -380,26 +421,26 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 4,
   },
   cardTitleWrap: {
     flex: 1,
     gap: 2,
   },
   cardTitle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '800',
     color: colors.pine,
     letterSpacing: -0.3,
   },
   cardMeta: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 12,
+    lineHeight: 18,
     color: colors.muted,
   },
   cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     gap: 8,
     marginTop: 8,
   },
@@ -415,7 +456,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     textTransform: 'uppercase',
   },
   syncError: {
-    flex: 1,
+    alignSelf: 'stretch',
     fontSize: 12,
     color: colors.danger,
   },

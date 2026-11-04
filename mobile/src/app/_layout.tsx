@@ -76,6 +76,8 @@ function RootNavigator() {
       }}>
         <Stack.Protected guard={authed}>
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="profile" options={{ headerShown: true, title: 'Profile' }} />
+          <Stack.Screen name="sync" options={{ headerShown: true, title: 'Sync' }} />
           <Stack.Screen name="record/[id]" options={{ headerShown: true, title: 'Record details' }} />
           <Stack.Screen name="species/[id]" options={{ headerShown: true, title: 'Species details' }} />
           <Stack.Screen name="settings" options={{ headerShown: true, title: 'Settings' }} />

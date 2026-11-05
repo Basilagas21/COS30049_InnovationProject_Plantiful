@@ -22,6 +22,7 @@ import { parseDbhCm, parseHeightCm } from '@/lib/validation';
 import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
 import { generateTag, TAG_LABEL } from '@/lib/tags';
 import { getCurrentUserId } from '@/lib/currentUser';
+import { FieldEvidenceChecklist } from '@/components/field-evidence-checklist';
 
 export default function DiscoverPlantScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
@@ -506,6 +507,9 @@ export default function DiscoverPlantScreen() {
           )}
         </View>
 
+        <FieldEvidenceChecklist photoCount={photoUri ? 1 : 0} latitude={location?.lat} longitude={location?.lng}
+          accuracyM={location?.accuracyM} identified={Boolean(selectedSpecies)} provisionalName={scientificName || commonName}
+          morphology={morphology} notes={notes} onNotesChange={setNotes} />
         <Pressable
           style={[styles.primaryButton, saving && styles.buttonBusy]}
           onPress={saveDiscovery}

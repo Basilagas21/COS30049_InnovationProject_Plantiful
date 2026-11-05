@@ -31,6 +31,7 @@ import {
 import { getCurrentPosition, openLocationSettings, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 import { generateTag, isValidTag, normalizeTag, TAG_LABEL } from '@/lib/tags';
 import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
+import { FieldEvidenceChecklist } from '@/components/field-evidence-checklist';
 
 type PhotoRow = { id: string; local_uri: string };
 
@@ -482,6 +483,9 @@ export default function EditRecordScreen() {
           </Pressable>
         </View>
 
+        <FieldEvidenceChecklist photoCount={photos.length} latitude={location?.lat} longitude={location?.lng}
+          accuracyM={location?.accuracyM} identified={Boolean(selectedSpecies)} provisionalName={provisionalName}
+          morphology={morphology} notes={notes} onNotesChange={setNotes} />
         <Pressable
           style={[styles.primaryButton, saving && styles.buttonBusy]}
           onPress={save}

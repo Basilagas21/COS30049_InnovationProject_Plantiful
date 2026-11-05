@@ -662,6 +662,10 @@ The final presentation and Learning Summary Report each carry ten individual mar
 
 ## 8. Submission readiness
 
+### Optional Additional Innovation tracking
+
+Use the [Additional Innovation tracker](Additional_Innovation_Tracker.md) for AI Field Assist tasks #76 through #84, verification results, remaining activation and evaluation gates, and planned screenshots. The implementation is development-verified. Live deployment, provider accuracy and participant outcomes remain outstanding and must not be counted as completed acceptance evidence.
+
 ### 8.1 Quality checks
 
 - Review criterion coverage on 3 November and again on 5 November.

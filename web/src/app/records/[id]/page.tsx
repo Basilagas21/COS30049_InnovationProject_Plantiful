@@ -5,6 +5,7 @@ import { fetchRecordById, fetchConflictReports } from "@/lib/records";
 import { isOfficer } from "@/lib/auth";
 import { ApproveRejectButtons } from "@/components/approve-reject";
 import { PhotoImg } from "@/components/photo-img";
+import { FieldAssistReview } from "@/components/field-assist-review";
 
 const PHENOLOGY_LABELS: Record<string, string> = {
   vegetative: "Vegetative",
@@ -45,6 +46,7 @@ export default async function RecordDetailPage({
         ← Back to records
       </Link>
 
+      {officer && <FieldAssistReview recordId={id} />}
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         <div>
           <div className="relative">

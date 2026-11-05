@@ -1,6 +1,5 @@
 import { isValidElement, useEffect, type ReactNode } from 'react';
 import {
-  Alert as NativeAlert,
   Pressable as NativePressable,
   TextInput as NativeTextInput,
   type AlertButton,
@@ -11,6 +10,7 @@ import {
   type TextInputProps,
 } from 'react-native';
 import { usePathname } from 'expo-router';
+import { showDialog, type DialogButtonStyle } from '@/components/app-dialog';
 
 let currentRoute = 'launch';
 
@@ -73,22 +73,32 @@ export function TextInput({ onFocus, accessibilityLabel, placeholder, ...rest }:
   );
 }
 
+function buttonStyle(style: AlertButton['style']): DialogButtonStyle {
+  return style === 'cancel' || style === 'destructive' ? style : 'default';
+}
+
 export const Alert = {
   alert: (title: string, message?: string, buttons?: AlertButton[], options?: AlertOptions): void => {
     logInteraction(`alert "${title}"`);
-    const wrapped = buttons?.map((button) => {
+    const mapped = (buttons?.length ? buttons : [{ text: 'OK' }]).map((button) => {
       const handler = button.onPress as ((value?: string) => void) | undefined;
       return {
-        ...button,
+        text: button.text || 'OK',
+        style: buttonStyle(button.style),
         onPress: handler
-          ? (value?: string) => {
+          ? () => {
               logInteraction(`alert-tap "${title}" -> "${button.text ?? 'OK'}"`);
-              handler(value);
+              handler();
             }
           : undefined,
       };
     });
-    NativeAlert.alert(title, message, wrapped, options);
+    showDialog({
+      title,
+      message,
+      buttons: mapped,
+      cancelable: options?.cancelable !== false,
+    });
   },
 };
 

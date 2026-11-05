@@ -75,12 +75,23 @@ backend/*
 test-results/
 playwright-report/
 !backend/tests/
+!backend/migrations/
 
 # Python (IoT service / scripts)
 __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# AI model downloads and datasets (Ai/)
+Ai/datasets/raw/
+Ai/datasets/cache/
+Ai/models/downloads/
+Ai/**/*.onnx
+Ai/**/*.pth
+Ai/**/*.tflite
+Ai/**/*.tar
+Ai/**/*.zip
 
 # Personal / local-only files (agent persona, editor settings, private templates)
 Basilagas21/

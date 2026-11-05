@@ -1,0 +1,1 @@
+participant_id,device,app_revision,task_id,condition,task_order,outcome,seconds,final_identification_correct,missing_evidence_count,officer_corrections,incorrect_ai_suggestion_accepted,help_given,ease_1_to_5,notes

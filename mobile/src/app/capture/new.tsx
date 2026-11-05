@@ -30,6 +30,7 @@ import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
 import { getCurrentPosition, openLocationSettings, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 import { generateTag, isValidTag, normalizeTag, TAG_LABEL } from '@/lib/tags';
 import { getCurrentUserId } from '@/lib/currentUser';
+import { FieldEvidenceChecklist } from '@/components/field-evidence-checklist';
 
 export default function NewCaptureScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
@@ -442,6 +443,8 @@ export default function NewCaptureScreen() {
           )}
         </View>
 
+        <FieldEvidenceChecklist photoCount={photoUri ? 1 : 0} latitude={location?.lat} longitude={location?.lng}
+          accuracyM={location?.accuracyM} identified={Boolean(selectedSpecies)} morphology={morphology} notes={notes} onNotesChange={setNotes} />
         <Pressable
           style={[styles.primaryButton, saving && styles.buttonBusy]}
           onPress={saveDraft}

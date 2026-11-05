@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { supabase } from '@/lib/supabase';
+import { DialogHost } from '@/components/app-dialog';
 import { NavLogger } from '@/lib/interactionLog';
 import { RoleProvider, useRole } from '@/lib/role';
 import { ThemeProvider, useTheme } from '@/lib/theme';
@@ -12,6 +13,7 @@ export default function RootLayout() {
     <ThemeProvider>
       <RoleProvider>
         <RootNavigator />
+        <DialogHost />
       </RoleProvider>
     </ThemeProvider>
   );

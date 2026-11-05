@@ -199,6 +199,14 @@ These refinements exist in the current working tree. They are not merged, captur
 | Officer review evidence | Show submitted observation photographs with a larger inspection view and an explicit missing-photo state | Photograph is the botanist submission, never a catalogue substitute. Queue capture outstanding |
 | Homepage discovery | Use owner-supplied Rafflesia, hornbill and orangutan photographs behind forest-green frosted panels. Keep a solid fallback for unsupported blur and reduced transparency | Images are homepage artwork, not field evidence. Image provenance and contrast checks remain outstanding. No usability benefit is claimed |
 
+### 3.6 Optional Additional Innovation implementation
+
+The [Additional Innovation tracker](Additional_Innovation_Tracker.md) maintains the issue register, development verification snapshot, activation checklist and planned screenshots for this section. Update it as deployment and evaluation evidence becomes available.
+
+AI Field Assist is implemented in the working tree under issues #76 through #84. It combines offline evidence-completeness checks, hosted species suggestions, reviewed catalogue guidance and separate collector and officer identification decisions. The checklist supports incomplete offline saves. The backend validates record access, archives analysed images privately and detects changed evidence before accepting a decision. AI output does not automatically confirm a species or change publication status.
+
+The [implementation and setup guide](../../Guides/AI_Field_Assist.md) records provider contracts, deployment configuration and limitations. The [evaluation protocol](../../Testing/Additional_Innovation/README.md) separates software regression tests from live species-accuracy and participant results. The new migration has not been applied to the deployed project. Provider credentials, independently labelled observations and participant trials remain necessary. No improved identification accuracy, fieldwork speed or scalability is claimed yet.
+
 ## 4. Architecture and integration
 
 ### 4.1 Deployment and trust boundaries

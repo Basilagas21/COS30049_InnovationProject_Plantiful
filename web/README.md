@@ -50,3 +50,19 @@ The `/alerts` dashboard's environmental charts call a `monitoring_history(...)` 
 | `/profile`, `/profile/change-password` | Account and role |
 
 Officer actions require a `user_profiles.role` of `conservation_officer` or `admin`; the `/users` page and its role changes require `admin`.
+
+## Homepage photography
+
+The project owner supplied the homepage files in `public/images/home/`. Original root files are retained without image edits. Display cropping is controlled in `src/app/page.tsx`. These images are decorative homepage photography, not catalogue records or field observations.
+
+| File | Original root filename | Card | Source status |
+|---|---|---|---|
+| `rafflesia.jpg` | `rafflesia(homepage).jpg` | Discover | Square red-flower close-up. No exact source verified |
+| `hornbill.jpeg` | `hornbill bird (homepage).jpeg` | Connect | Embedded blue credit retained. Full spelling and original publication unverified |
+| `orangutan.jpeg` | `orangutan(homepage).jpeg` | Conserve | Seated animal with hand near chin. No exact source verified |
+
+The owner cannot currently recall the source links. Visual inspection and searches for the hornbill credit, orangutan portrait and Rafflesia image did not establish exact source matches. Photographers, source URLs and reuse terms remain unconfirmed. Similar photographs do not establish provenance. Record the matching source, creator and reuse terms separately. A source link alone does not establish a licence.
+
+## AI Field Assist
+
+The web backend hosts provider requests and officer review. See the [setup guide](../Docs/Guides/AI_Field_Assist.md) and [AI research index](../Ai/README.md). Provider keys and the Supabase service credential belong only in the ignored `.env.local` or backend deployment environment.

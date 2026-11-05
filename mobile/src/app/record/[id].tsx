@@ -13,6 +13,8 @@ import { TAG_LABEL } from '@/lib/tags';
 import { phenologyLabel } from '@/lib/phenology';
 import { useRole } from '@/lib/role';
 import type { Database } from '@/lib/database.types';
+import { FieldAssistPanel } from '@/components/field-assist-panel';
+import { FieldEvidenceChecklist } from '@/components/field-evidence-checklist';
 
 type ObservationKey = 'qr_code' | 'species_id' | 'provisional_name' | 'gps_lat' | 'gps_lng' |
   'gps_accuracy_m' | 'height_cm' | 'dbh_cm' | 'taxonomy' | 'phenology' | 'morphology' | 'notes';
@@ -218,6 +220,10 @@ export default function RecordDetailScreen() {
         </View>
       )}
 
+      <FieldEvidenceChecklist photoCount={rec.photo_uri ? 1 : 0} latitude={rec.gps_lat} longitude={rec.gps_lng}
+        accuracyM={rec.gps_accuracy_m} identified={Boolean(rec.species_id)} provisionalName={rec.provisional_name}
+        morphology={rec.morphology ?? ''} notes={rec.notes ?? ''} />
+      <FieldAssistPanel serverId={rec.server_id} synced={rec.sync_status === 'synced'} />
 <View style={styles.card}>
           <View style={styles.titleRow}>
             <Text style={styles.title}>{rec.provisional_name ?? 'Unnamed plant'}</Text>

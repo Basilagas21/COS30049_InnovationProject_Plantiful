@@ -34,6 +34,42 @@ Reproduce the audit from the repository root with `node --env-file=web/.env.loca
 
 Do not select MobileNet solely for its small file size. Resolve catalogue coverage and the artifact discrepancies first. Do not substitute the newer 1,000-class v2 metadata for a 1,081-class model. Search broader plant-specific pretrained models if relevant coverage remains inadequate. A limited supported-species demonstration would require an explicit scope decision.
 
+## Follow-up screening on 5 November 2026
+
+| Candidate | Source facts checked in this pass | Plantiful assessment |
+|---|---|---|
+| iNaturalist public small model, release `v25.01.15` | Android `INatVision_Small_2_fact256_8bit.tflite` is 22,197,168 bytes. The official Seek setup references this release family. The model-files README says public small models cover approximately 500 taxa and full species models remain private | Fits the initial download-size target, but only 4 catalogue names match the 507 output-label entries. Not a general catalogue solution |
+| BioCLIP | Official model card describes a ViT-B/16, MIT-licensed model trained on TreeOfLife-10M covering over 450K taxa. Published `open_clip_pytorch_model.bin` is 598,599,013 bytes | Useful desktop zero-shot evaluation candidate, not an approved phone bundle |
+| BioCLIP 2 | Official card describes a ViT-L/14, MIT-licensed model trained on TreeOfLife-200M. Published `open_clip_model.safetensors` is 1,710,517,724 bytes | Desktop comparison or potential teacher for later distillation. Published checkpoint exceeds the mobile size target |
+
+The BioCLIP sizes are full published checkpoints, not measured image-only mobile exports. Precomputing text embeddings could remove the text encoder from a deployed classifier, but no export, quantisation, latency measurement or memory measurement has been performed. Accepting arbitrary species names as prompts is not proof of training coverage or recognition accuracy. Restricting prompts to the catalogue can still force an unsupported plant into an incorrect catalogue choice.
+
+### iNaturalist coverage result
+
+Read-only audit completed at `2026-11-05T01:50:37.896Z` against 263 distinct catalogue names. Only taxonomy rows with nonnegative integer `leaf_class_id` were treated as candidate output labels. Ancestor taxonomy nodes were excluded from the count.
+
+- Output-label entries screened: 507.
+- Catalogue names matched: 4, approximately 1.5%.
+- Matches: Oxalis corniculata, Bidens alba, Ricinus communis and Lantana camara.
+- Metadata SHA256: `7df72a7a05afe53f20344339552b6c980423e1bd25e5cc69587f4f4619edc0e8`.
+- Metadata source: `https://github.com/inaturalist/model-files/releases/download/v25.01.15/taxonomy.json`.
+
+Reproduce with `node --env-file=web/.env.local Ai/research/audit-coverage.mjs inaturalist`. The default argument remains `plantnet`. Both modes report the downloaded metadata hash. Catalogue data can change. Synonyms, model tensor correspondence and iNaturalist weight redistribution terms remain unverified. No model binary was downloaded.
+
+### Recommended next implementation step
+
+Neither screened small model provides adequate direct coverage for general identification across the current catalogue. This limited search does not establish that no suitable public model exists.
+
+For a useful offline catalogue feature, the recommended next experiment is transfer learning on a small, explicitly supported local-species set using a lightweight pretrained backbone. This requires confirmed photographs of the target species. An ImageNet-pretrained backbone alone cannot identify our catalogue species, and changing labels cannot add recognition capability.
+
+1. Select an initial supported-species set based on available confirmed photographs, with similar-looking species represented.
+2. Build an image manifest with source, licence, observation identity, confirmed label and validation/test split. Keep observations together across splits.
+3. Fine-tune a lightweight classifier and evaluate against unsupported plants and non-plant inputs before choosing an abstention threshold.
+4. Export and compare float and INT8 artifacts, then measure cold and warm inference on the actual target Android phone.
+5. Integrate only after useful held-out recognition and device performance are demonstrated. Hosted Field Assist remains the existing online path.
+
+This is a proposed training experiment, not an approved scope change or a claim that all 263 species can be supported. The immediate inputs needed are the target phone model and the availability of independently confirmed photographs. If training is outside scope, a narrowly labelled pretrained demonstration requires an explicit supported-species decision instead.
+
 ## Sources
 
 - https://huggingface.co/cpoisson/plantnet300k-mobilenetv3-small
@@ -42,3 +78,10 @@ Do not select MobileNet solely for its small file size. Resolve catalogue covera
 - https://raw.githubusercontent.com/plantnet/PlantNet-300K/main/legacy_v1/README.md
 - https://huggingface.co/litert-community/PlantNet-300K-ResNet18-LiteRT
 - https://zenodo.org/api/records/10419064
+- https://github.com/inaturalist/model-files
+- https://github.com/inaturalist/model-files/releases/tag/v25.01.15
+- https://raw.githubusercontent.com/inaturalist/SeekReactNative/main/README.md
+- https://huggingface.co/imageomics/bioclip
+- https://huggingface.co/api/models/imageomics/bioclip/tree/main
+- https://huggingface.co/imageomics/bioclip-2
+- https://huggingface.co/api/models/imageomics/bioclip-2/tree/main

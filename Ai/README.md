@@ -6,6 +6,8 @@ Central index for AI research, datasets, model evaluation and integration record
 
 Offline identification is in feasibility research. No model is approved or integrated. The existing hosted Field Assist workflow still needs connectivity. Lightweight model files exist, but catalogue coverage and artifact provenance must be resolved before integration.
 
+The latest screening found 14 of 263 catalogue names in the PlantNet MobileNet labels and 4 of 263 in the public iNaturalist small model's output labels. BioCLIP offers a broader zero-shot evaluation route, but its published checkpoints exceed the 10 to 30 MB target. The proposed next experiment is a lightweight pretrained backbone fine-tuned on confirmed photographs of an explicitly supported local-species set. This requires a scope decision and labelled images before training.
+
 - [Pretrained model investigation](research/pretrained-models.md)
 - [Read-only coverage audit](research/audit-coverage.mjs)
 - [Dataset acquisition](#dataset-acquisition)

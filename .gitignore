@@ -75,6 +75,7 @@ backend/*
 test-results/
 playwright-report/
 !backend/tests/
+!backend/migrations/
 
 # Python (IoT service / scripts)
 __pycache__/

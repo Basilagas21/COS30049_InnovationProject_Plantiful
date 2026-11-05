@@ -4,6 +4,8 @@ Status recorded on 4 November 2026. Update this file when deployment or new evid
 
 ## Current position
 
+Offline pretrained identification is now being investigated in the [AI research index](../../../Ai/README.md). No offline model has been selected or benchmarked. The research records candidate sizes, catalogue label gaps and dataset acquisition requirements separately from the existing hosted implementation.
+
 The owner subsequently reported that the migration tables are visible in Supabase. This is owner-reported progress, not a completed deployed-policy or end-to-end test. Local configuration and the precise resume steps are recorded in the [handover note](Additional_Innovation_Handover.md).
 
 AI Field Assist code is implemented and development checks pass. Deployment, real provider identification and participant evaluation are outstanding. Do not describe the optional innovation as fully delivered or its benefits as proven until those gates are completed.

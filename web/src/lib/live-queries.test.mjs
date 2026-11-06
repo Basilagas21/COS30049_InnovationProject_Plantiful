@@ -101,10 +101,10 @@ test('fetchSpeciesById merges live photos', async () => {
   assert.equal(detail.photoUrl, 'https://example.invalid/s1.jpg');
 });
 
-test('fetchSpecies falls back to sample data when the backend errors', async () => {
+test('fetchSpecies returns no rows when the backend errors', async () => {
   failNext = true;
   const list = await species.fetchSpecies({ publishedOnly: true });
-  assert.ok(list.length > 0, 'sample rows returned');
+  assert.deepEqual(list, [], 'no sample rows are presented as live data');
   failNext = false;
 });
 
@@ -147,13 +147,12 @@ test('fetchConflictReports returns empty on backend error', async () => {
   failNext = false;
 });
 
-test('fetchSpeciesById falls back to sample data when the species query fails', async () => {
-  const mockId = 'SP-0001';
+test('fetchSpeciesById returns null when the species query fails', async () => {
   failNext = true;
-  const found = await species.fetchSpeciesById(mockId);
-  assert.ok(found, 'sample row returned for a known mock id');
-  const missing = await species.fetchSpeciesById(speciesRow.species_id);
-  assert.equal(missing, null, 'unknown id still resolves to null after failure');
+  const knownMock = await species.fetchSpeciesById('SP-0001');
+  assert.equal(knownMock, null, 'sample rows are not presented as live data');
+  const liveId = await species.fetchSpeciesById(speciesRow.species_id);
+  assert.equal(liveId, null);
   failNext = false;
 });
 

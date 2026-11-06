@@ -208,7 +208,7 @@ export async function fetchSpecies(options?: {
 
   const { data, error } = await query;
 
-  if (error || !data) return mockSpecies;
+  if (error || !data) return [];
   return data.map(toListItem);
 }
 
@@ -228,10 +228,7 @@ export async function fetchSpeciesById(id: string): Promise<SpeciesDetail | null
     .eq("species_id", id)
     .maybeSingle();
 
-  if (error || !data) {
-    const base = mockSpecies.find((s) => s.id === id);
-    return base ? { ...base, photos: [] } : null;
-  }
+  if (error || !data) return null;
 
   const { data: photoRows, error: photoError } = await supabase
     .from("species_photos")

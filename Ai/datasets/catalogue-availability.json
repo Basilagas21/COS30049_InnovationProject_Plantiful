@@ -1,0 +1,2105 @@
+{
+  "generated_at": "2026-11-05T02:21:50.572Z",
+  "filter_version": 1,
+  "catalogue_species": 263,
+  "audited_species": 263,
+  "scope": "Global iNaturalist observations, not restricted to Malaysia",
+  "filters": {
+    "quality_grade": "research",
+    "photos": true,
+    "photo_license": "cc0,cc-by,cc-by-sa",
+    "captive": false
+  },
+  "method": "Unique active exact scientific-name match. No fuzzy or synonym acceptance. Counts are observations with eligible photos, not reviewed images or independent specimens. Cached rows expire after seven days.",
+  "caveats": "Research grade is community consensus, not independently verified training ground truth. Recheck individual photo licences and attribution before download. Deduplicate photographs and group observations before splitting.",
+  "summary": {
+    "resolved": 252,
+    "needs_taxonomy_review": 11,
+    "at_least_100_observations": 135,
+    "at_least_300_observations": 99
+  },
+  "rows": [
+    {
+      "name": "Acacia auriculiformis",
+      "checked_at": "2026-11-05T02:08:27.092Z",
+      "status": "resolved",
+      "taxon_id": 52445,
+      "source": "https://www.inaturalist.org/taxa/52445",
+      "eligible_observations": 316
+    },
+    {
+      "name": "Acacia mangium",
+      "checked_at": "2026-11-05T02:08:30.087Z",
+      "status": "resolved",
+      "taxon_id": 199319,
+      "source": "https://www.inaturalist.org/taxa/199319",
+      "eligible_observations": 316
+    },
+    {
+      "name": "Acalypha hispida",
+      "checked_at": "2026-11-05T02:08:33.110Z",
+      "status": "resolved",
+      "taxon_id": 208742,
+      "source": "https://www.inaturalist.org/taxa/208742",
+      "eligible_observations": 78
+    },
+    {
+      "name": "Adenanthera pavonina",
+      "checked_at": "2026-11-05T02:08:36.167Z",
+      "status": "resolved",
+      "taxon_id": 158007,
+      "source": "https://www.inaturalist.org/taxa/158007",
+      "eligible_observations": 116
+    },
+    {
+      "name": "Ageratum conyzoides",
+      "checked_at": "2026-11-05T02:08:39.397Z",
+      "status": "resolved",
+      "taxon_id": 143422,
+      "source": "https://www.inaturalist.org/taxa/143422",
+      "eligible_observations": 956
+    },
+    {
+      "name": "Allamanda cathartica",
+      "checked_at": "2026-11-05T02:08:42.519Z",
+      "status": "resolved",
+      "taxon_id": 62937,
+      "source": "https://www.inaturalist.org/taxa/62937",
+      "eligible_observations": 257
+    },
+    {
+      "name": "Alocasia longiloba",
+      "checked_at": "2026-11-05T02:08:45.514Z",
+      "status": "resolved",
+      "taxon_id": 354277,
+      "source": "https://www.inaturalist.org/taxa/354277",
+      "eligible_observations": 24
+    },
+    {
+      "name": "Alocasia macrorrhizos",
+      "checked_at": "2026-11-05T02:08:48.561Z",
+      "status": "resolved",
+      "taxon_id": 126165,
+      "source": "https://www.inaturalist.org/taxa/126165",
+      "eligible_observations": 183
+    },
+    {
+      "name": "Amorphophallus niahensis",
+      "checked_at": "2026-11-05T02:08:51.523Z",
+      "status": "resolved",
+      "taxon_id": 1427626,
+      "source": "https://www.inaturalist.org/taxa/1427626",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Anisoptera costata",
+      "checked_at": "2026-11-05T02:08:54.509Z",
+      "status": "resolved",
+      "taxon_id": 189277,
+      "source": "https://www.inaturalist.org/taxa/189277",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Antigonon leptopus",
+      "checked_at": "2026-11-05T02:08:57.469Z",
+      "status": "resolved",
+      "taxon_id": 48380,
+      "source": "https://www.inaturalist.org/taxa/48380",
+      "eligible_observations": 1473
+    },
+    {
+      "name": "Artocarpus heterophyllus",
+      "checked_at": "2026-11-05T02:09:00.522Z",
+      "status": "resolved",
+      "taxon_id": 123003,
+      "source": "https://www.inaturalist.org/taxa/123003",
+      "eligible_observations": 408
+    },
+    {
+      "name": "Arundina graminifolia",
+      "checked_at": "2026-11-05T02:09:03.742Z",
+      "status": "resolved",
+      "taxon_id": 117504,
+      "source": "https://www.inaturalist.org/taxa/117504",
+      "eligible_observations": 673
+    },
+    {
+      "name": "Asplenium nidus",
+      "checked_at": "2026-11-05T02:09:06.778Z",
+      "status": "resolved",
+      "taxon_id": 84356,
+      "source": "https://www.inaturalist.org/taxa/84356",
+      "eligible_observations": 254
+    },
+    {
+      "name": "Asystasia gangetica",
+      "checked_at": "2026-11-05T02:09:10.152Z",
+      "status": "resolved",
+      "taxon_id": 159049,
+      "source": "https://www.inaturalist.org/taxa/159049",
+      "eligible_observations": 864
+    },
+    {
+      "name": "Asystasia intrusa",
+      "checked_at": "2026-11-05T02:09:13.289Z",
+      "status": "resolved",
+      "taxon_id": 344320,
+      "source": "https://www.inaturalist.org/taxa/344320",
+      "eligible_observations": 1457
+    },
+    {
+      "name": "Averrhoa bilimbi",
+      "checked_at": "2026-11-05T02:09:16.340Z",
+      "status": "resolved",
+      "taxon_id": 319218,
+      "source": "https://www.inaturalist.org/taxa/319218",
+      "eligible_observations": 113
+    },
+    {
+      "name": "Averrhoa carambola",
+      "checked_at": "2026-11-05T02:09:19.359Z",
+      "status": "resolved",
+      "taxon_id": 146977,
+      "source": "https://www.inaturalist.org/taxa/146977",
+      "eligible_observations": 205
+    },
+    {
+      "name": "Avicennia alba",
+      "checked_at": "2026-11-05T02:09:22.396Z",
+      "status": "resolved",
+      "taxon_id": 189583,
+      "source": "https://www.inaturalist.org/taxa/189583",
+      "eligible_observations": 31
+    },
+    {
+      "name": "Axonopus compressus",
+      "checked_at": "2026-11-05T02:09:25.418Z",
+      "status": "resolved",
+      "taxon_id": 159110,
+      "source": "https://www.inaturalist.org/taxa/159110",
+      "eligible_observations": 228
+    },
+    {
+      "name": "Azadirachta indica",
+      "checked_at": "2026-11-05T02:09:28.566Z",
+      "status": "resolved",
+      "taxon_id": 319135,
+      "source": "https://www.inaturalist.org/taxa/319135",
+      "eligible_observations": 731
+    },
+    {
+      "name": "Begonia kachak",
+      "checked_at": "2026-11-05T02:09:31.598Z",
+      "status": "resolved",
+      "taxon_id": 1117486,
+      "source": "https://www.inaturalist.org/taxa/1117486",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Begonia kasutensis",
+      "checked_at": "2026-11-05T02:09:34.582Z",
+      "status": "resolved",
+      "taxon_id": 1613140,
+      "source": "https://www.inaturalist.org/taxa/1613140",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Begonia niahensis",
+      "checked_at": "2026-11-05T02:09:37.517Z",
+      "status": "resolved",
+      "taxon_id": 1712758,
+      "source": "https://www.inaturalist.org/taxa/1712758",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Begonia stichochaete",
+      "checked_at": "2026-11-05T02:09:40.498Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 0
+    },
+    {
+      "name": "Begonia subisensis",
+      "checked_at": "2026-11-05T02:09:41.967Z",
+      "status": "resolved",
+      "taxon_id": 1613146,
+      "source": "https://www.inaturalist.org/taxa/1613146",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Bergera koenigii",
+      "checked_at": "2026-11-05T02:09:44.949Z",
+      "status": "resolved",
+      "taxon_id": 1579705,
+      "source": "https://www.inaturalist.org/taxa/1579705",
+      "eligible_observations": 130
+    },
+    {
+      "name": "Bidens alba",
+      "checked_at": "2026-11-05T02:09:47.967Z",
+      "status": "resolved",
+      "taxon_id": 1095846,
+      "source": "https://www.inaturalist.org/taxa/1095846",
+      "eligible_observations": 5099
+    },
+    {
+      "name": "Blechnum orientale",
+      "checked_at": "2026-11-05T02:09:51.011Z",
+      "status": "resolved",
+      "taxon_id": 345928,
+      "source": "https://www.inaturalist.org/taxa/345928",
+      "eligible_observations": 245
+    },
+    {
+      "name": "Boesenbergia rotunda",
+      "checked_at": "2026-11-05T02:09:54.051Z",
+      "status": "resolved",
+      "taxon_id": 139956,
+      "source": "https://www.inaturalist.org/taxa/139956",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Bromheadia finlaysoniana",
+      "checked_at": "2026-11-05T02:09:57.000Z",
+      "status": "resolved",
+      "taxon_id": 142176,
+      "source": "https://www.inaturalist.org/taxa/142176",
+      "eligible_observations": 20
+    },
+    {
+      "name": "Bruguiera gymnorhiza",
+      "checked_at": "2026-11-05T02:10:00.078Z",
+      "status": "resolved",
+      "taxon_id": 1361284,
+      "source": "https://www.inaturalist.org/taxa/1361284",
+      "eligible_observations": 300
+    },
+    {
+      "name": "Bulbophyllum lobbii",
+      "checked_at": "2026-11-05T02:10:03.125Z",
+      "status": "resolved",
+      "taxon_id": 428050,
+      "source": "https://www.inaturalist.org/taxa/428050",
+      "eligible_observations": 17
+    },
+    {
+      "name": "Caesalpinia pulcherrima",
+      "checked_at": "2026-11-05T02:10:06.118Z",
+      "status": "resolved",
+      "taxon_id": 60439,
+      "source": "https://www.inaturalist.org/taxa/60439",
+      "eligible_observations": 775
+    },
+    {
+      "name": "Caladium bicolor",
+      "checked_at": "2026-11-05T02:10:09.214Z",
+      "status": "resolved",
+      "taxon_id": 283377,
+      "source": "https://www.inaturalist.org/taxa/283377",
+      "eligible_observations": 564
+    },
+    {
+      "name": "Calamus manan",
+      "checked_at": "2026-11-05T02:10:12.226Z",
+      "status": "resolved",
+      "taxon_id": 364813,
+      "source": "https://www.inaturalist.org/taxa/364813",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Calanthe triplicata",
+      "checked_at": "2026-11-05T02:10:15.192Z",
+      "status": "resolved",
+      "taxon_id": 369261,
+      "source": "https://www.inaturalist.org/taxa/369261",
+      "eligible_observations": 218
+    },
+    {
+      "name": "Carica papaya",
+      "checked_at": "2026-11-05T02:10:18.269Z",
+      "status": "resolved",
+      "taxon_id": 62811,
+      "source": "https://www.inaturalist.org/taxa/62811",
+      "eligible_observations": 1414
+    },
+    {
+      "name": "Cassia fistula",
+      "checked_at": "2026-11-05T02:10:21.403Z",
+      "status": "resolved",
+      "taxon_id": 68679,
+      "source": "https://www.inaturalist.org/taxa/68679",
+      "eligible_observations": 531
+    },
+    {
+      "name": "Casuarina equisetifolia",
+      "checked_at": "2026-11-05T02:10:24.502Z",
+      "status": "resolved",
+      "taxon_id": 62888,
+      "source": "https://www.inaturalist.org/taxa/62888",
+      "eligible_observations": 1175
+    },
+    {
+      "name": "Catharanthus roseus",
+      "checked_at": "2026-11-05T02:10:27.671Z",
+      "status": "resolved",
+      "taxon_id": 62924,
+      "source": "https://www.inaturalist.org/taxa/62924",
+      "eligible_observations": 1556
+    },
+    {
+      "name": "Celosia argentea",
+      "checked_at": "2026-11-05T02:10:30.880Z",
+      "status": "resolved",
+      "taxon_id": 160259,
+      "source": "https://www.inaturalist.org/taxa/160259",
+      "eligible_observations": 616
+    },
+    {
+      "name": "Centratherum punctatum",
+      "checked_at": "2026-11-05T02:10:34.981Z",
+      "status": "resolved",
+      "taxon_id": 160297,
+      "source": "https://www.inaturalist.org/taxa/160297",
+      "eligible_observations": 428
+    },
+    {
+      "name": "Ceriops tagal",
+      "checked_at": "2026-11-05T02:10:38.040Z",
+      "status": "resolved",
+      "taxon_id": 190475,
+      "source": "https://www.inaturalist.org/taxa/190475",
+      "eligible_observations": 24
+    },
+    {
+      "name": "Chromolaena odorata",
+      "checked_at": "2026-11-05T02:10:41.087Z",
+      "status": "resolved",
+      "taxon_id": 199400,
+      "source": "https://www.inaturalist.org/taxa/199400",
+      "eligible_observations": 2145
+    },
+    {
+      "name": "Chrysopogon aciculatus",
+      "checked_at": "2026-11-05T02:10:44.118Z",
+      "status": "resolved",
+      "taxon_id": 160547,
+      "source": "https://www.inaturalist.org/taxa/160547",
+      "eligible_observations": 102
+    },
+    {
+      "name": "Cleome rutidosperma",
+      "checked_at": "2026-11-05T02:10:47.188Z",
+      "status": "resolved",
+      "taxon_id": 160705,
+      "source": "https://www.inaturalist.org/taxa/160705",
+      "eligible_observations": 957
+    },
+    {
+      "name": "Clerodendrum paniculatum",
+      "checked_at": "2026-11-05T02:10:50.299Z",
+      "status": "resolved",
+      "taxon_id": 343901,
+      "source": "https://www.inaturalist.org/taxa/343901",
+      "eligible_observations": 234
+    },
+    {
+      "name": "Clitoria ternatea",
+      "checked_at": "2026-11-05T02:10:53.373Z",
+      "status": "resolved",
+      "taxon_id": 160759,
+      "source": "https://www.inaturalist.org/taxa/160759",
+      "eligible_observations": 759
+    },
+    {
+      "name": "Coccinia grandis",
+      "checked_at": "2026-11-05T02:10:56.557Z",
+      "status": "resolved",
+      "taxon_id": 160766,
+      "source": "https://www.inaturalist.org/taxa/160766",
+      "eligible_observations": 1035
+    },
+    {
+      "name": "Cocos nucifera",
+      "checked_at": "2026-11-05T02:10:59.630Z",
+      "status": "resolved",
+      "taxon_id": 48865,
+      "source": "https://www.inaturalist.org/taxa/48865",
+      "eligible_observations": 2313
+    },
+    {
+      "name": "Codiaeum variegatum",
+      "checked_at": "2026-11-05T02:11:03.518Z",
+      "status": "resolved",
+      "taxon_id": 127387,
+      "source": "https://www.inaturalist.org/taxa/127387",
+      "eligible_observations": 171
+    },
+    {
+      "name": "Coelogyne pandurata",
+      "checked_at": "2026-11-05T02:11:06.587Z",
+      "status": "resolved",
+      "taxon_id": 348520,
+      "source": "https://www.inaturalist.org/taxa/348520",
+      "eligible_observations": 3
+    },
+    {
+      "name": "Coleus amboinicus",
+      "checked_at": "2026-11-05T02:11:09.669Z",
+      "status": "resolved",
+      "taxon_id": 963468,
+      "source": "https://www.inaturalist.org/taxa/963468",
+      "eligible_observations": 61
+    },
+    {
+      "name": "Coleus monostachyus",
+      "checked_at": "2026-11-05T02:11:12.848Z",
+      "status": "resolved",
+      "taxon_id": 1278888,
+      "source": "https://www.inaturalist.org/taxa/1278888",
+      "eligible_observations": 50
+    },
+    {
+      "name": "Colocasia esculenta",
+      "checked_at": "2026-11-05T02:11:15.909Z",
+      "status": "resolved",
+      "taxon_id": 122835,
+      "source": "https://www.inaturalist.org/taxa/122835",
+      "eligible_observations": 1730
+    },
+    {
+      "name": "Combretum indicum",
+      "checked_at": "2026-11-05T02:11:19.175Z",
+      "status": "resolved",
+      "taxon_id": 284831,
+      "source": "https://www.inaturalist.org/taxa/284831",
+      "eligible_observations": 276
+    },
+    {
+      "name": "Cuphea hyssopifolia",
+      "checked_at": "2026-11-05T02:11:22.377Z",
+      "status": "resolved",
+      "taxon_id": 161257,
+      "source": "https://www.inaturalist.org/taxa/161257",
+      "eligible_observations": 245
+    },
+    {
+      "name": "Cyanthillium cinereum",
+      "checked_at": "2026-11-05T02:11:25.579Z",
+      "status": "resolved",
+      "taxon_id": 130374,
+      "source": "https://www.inaturalist.org/taxa/130374",
+      "eligible_observations": 1845
+    },
+    {
+      "name": "Cymbidium finlaysonianum",
+      "checked_at": "2026-11-05T02:11:28.633Z",
+      "status": "resolved",
+      "taxon_id": 362034,
+      "source": "https://www.inaturalist.org/taxa/362034",
+      "eligible_observations": 27
+    },
+    {
+      "name": "Cyperus aromaticus",
+      "checked_at": "2026-11-05T02:11:31.647Z",
+      "status": "resolved",
+      "taxon_id": 779116,
+      "source": "https://www.inaturalist.org/taxa/779116",
+      "eligible_observations": 127
+    },
+    {
+      "name": "Cyperus mindorensis",
+      "checked_at": "2026-11-05T02:11:34.637Z",
+      "status": "resolved",
+      "taxon_id": 507628,
+      "source": "https://www.inaturalist.org/taxa/507628",
+      "eligible_observations": 454
+    },
+    {
+      "name": "Delonix regia",
+      "checked_at": "2026-11-05T02:11:37.728Z",
+      "status": "resolved",
+      "taxon_id": 62839,
+      "source": "https://www.inaturalist.org/taxa/62839",
+      "eligible_observations": 741
+    },
+    {
+      "name": "Dendrobium crumenatum",
+      "checked_at": "2026-11-05T02:11:40.838Z",
+      "status": "resolved",
+      "taxon_id": 344994,
+      "source": "https://www.inaturalist.org/taxa/344994",
+      "eligible_observations": 72
+    },
+    {
+      "name": "Dendrocalamus asper",
+      "checked_at": "2026-11-05T02:11:43.845Z",
+      "status": "resolved",
+      "taxon_id": 348744,
+      "source": "https://www.inaturalist.org/taxa/348744",
+      "eligible_observations": 2
+    },
+    {
+      "name": "Dicranopteris linearis",
+      "checked_at": "2026-11-05T02:11:46.963Z",
+      "status": "resolved",
+      "taxon_id": 52492,
+      "source": "https://www.inaturalist.org/taxa/52492",
+      "eligible_observations": 1128
+    },
+    {
+      "name": "Didymoplexiella borneensis",
+      "checked_at": "2026-11-05T02:11:49.974Z",
+      "status": "resolved",
+      "taxon_id": 836557,
+      "source": "https://www.inaturalist.org/taxa/836557",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Dieffenbachia seguine",
+      "checked_at": "2026-11-05T02:11:52.943Z",
+      "status": "resolved",
+      "taxon_id": 206266,
+      "source": "https://www.inaturalist.org/taxa/206266",
+      "eligible_observations": 283
+    },
+    {
+      "name": "Dillenia excelsa",
+      "checked_at": "2026-11-05T02:11:55.918Z",
+      "status": "resolved",
+      "taxon_id": 425584,
+      "source": "https://www.inaturalist.org/taxa/425584",
+      "eligible_observations": 30
+    },
+    {
+      "name": "Dillenia suffruticosa",
+      "checked_at": "2026-11-05T02:11:59.121Z",
+      "status": "resolved",
+      "taxon_id": 346360,
+      "source": "https://www.inaturalist.org/taxa/346360",
+      "eligible_observations": 232
+    },
+    {
+      "name": "Dipteris conjugata",
+      "checked_at": "2026-11-05T02:12:02.259Z",
+      "status": "resolved",
+      "taxon_id": 130823,
+      "source": "https://www.inaturalist.org/taxa/130823",
+      "eligible_observations": 210
+    },
+    {
+      "name": "Dipterocarpus baudii",
+      "checked_at": "2026-11-05T02:12:05.588Z",
+      "status": "resolved",
+      "taxon_id": 157734,
+      "source": "https://www.inaturalist.org/taxa/157734",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Dipterocarpus costulatus",
+      "checked_at": "2026-11-05T02:12:08.721Z",
+      "status": "resolved",
+      "taxon_id": 191632,
+      "source": "https://www.inaturalist.org/taxa/191632",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Dipterocarpus grandiflorus",
+      "checked_at": "2026-11-05T02:12:11.710Z",
+      "status": "resolved",
+      "taxon_id": 191644,
+      "source": "https://www.inaturalist.org/taxa/191644",
+      "eligible_observations": 3
+    },
+    {
+      "name": "Dipterocarpus kerrii",
+      "checked_at": "2026-11-05T02:12:14.745Z",
+      "status": "resolved",
+      "taxon_id": 191650,
+      "source": "https://www.inaturalist.org/taxa/191650",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Dipterocarpus sarawakensis",
+      "checked_at": "2026-11-05T02:12:17.730Z",
+      "status": "resolved",
+      "taxon_id": 889898,
+      "source": "https://www.inaturalist.org/taxa/889898",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Dischidia nummularia",
+      "checked_at": "2026-11-05T02:12:20.675Z",
+      "status": "resolved",
+      "taxon_id": 372044,
+      "source": "https://www.inaturalist.org/taxa/372044",
+      "eligible_observations": 81
+    },
+    {
+      "name": "Dossinia marmorata",
+      "checked_at": "2026-11-05T02:12:25.191Z",
+      "status": "resolved",
+      "taxon_id": 852723,
+      "source": "https://www.inaturalist.org/taxa/852723",
+      "eligible_observations": 2
+    },
+    {
+      "name": "Dryobalanops aromatica",
+      "checked_at": "2026-11-05T02:12:29.240Z",
+      "status": "resolved",
+      "taxon_id": 191730,
+      "source": "https://www.inaturalist.org/taxa/191730",
+      "eligible_observations": 1
+    },
+    {
+      "name": "Dryobalanops beccarii",
+      "checked_at": "2026-11-05T02:12:33.659Z",
+      "status": "resolved",
+      "taxon_id": 191731,
+      "source": "https://www.inaturalist.org/taxa/191731",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Dryobalanops oblongifolia",
+      "checked_at": "2026-11-05T02:12:36.680Z",
+      "status": "resolved",
+      "taxon_id": 348593,
+      "source": "https://www.inaturalist.org/taxa/348593",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Duranta erecta",
+      "checked_at": "2026-11-05T02:12:39.687Z",
+      "status": "resolved",
+      "taxon_id": 162153,
+      "source": "https://www.inaturalist.org/taxa/162153",
+      "eligible_observations": 441
+    },
+    {
+      "name": "Durio zibethinus",
+      "checked_at": "2026-11-05T02:12:43.282Z",
+      "status": "resolved",
+      "taxon_id": 64443,
+      "source": "https://www.inaturalist.org/taxa/64443",
+      "eligible_observations": 41
+    },
+    {
+      "name": "Eclipta prostrata",
+      "checked_at": "2026-11-05T02:12:46.343Z",
+      "status": "resolved",
+      "taxon_id": 76765,
+      "source": "https://www.inaturalist.org/taxa/76765",
+      "eligible_observations": 2519
+    },
+    {
+      "name": "Eleusine indica",
+      "checked_at": "2026-11-05T02:12:49.569Z",
+      "status": "resolved",
+      "taxon_id": 76790,
+      "source": "https://www.inaturalist.org/taxa/76790",
+      "eligible_observations": 2078
+    },
+    {
+      "name": "Emilia sonchifolia",
+      "checked_at": "2026-11-05T02:12:52.725Z",
+      "status": "resolved",
+      "taxon_id": 121287,
+      "source": "https://www.inaturalist.org/taxa/121287",
+      "eligible_observations": 673
+    },
+    {
+      "name": "Epipremnum aureum",
+      "checked_at": "2026-11-05T02:12:56.292Z",
+      "status": "resolved",
+      "taxon_id": 69223,
+      "source": "https://www.inaturalist.org/taxa/69223",
+      "eligible_observations": 941
+    },
+    {
+      "name": "Epithema sarawakense",
+      "checked_at": "2026-11-05T02:12:59.319Z",
+      "status": "resolved",
+      "taxon_id": 927868,
+      "source": "https://www.inaturalist.org/taxa/927868",
+      "eligible_observations": 2
+    },
+    {
+      "name": "Etlingera elatior",
+      "checked_at": "2026-11-05T02:13:02.376Z",
+      "status": "resolved",
+      "taxon_id": 126577,
+      "source": "https://www.inaturalist.org/taxa/126577",
+      "eligible_observations": 313
+    },
+    {
+      "name": "Eugeissona utilis",
+      "checked_at": "2026-11-05T02:13:05.424Z",
+      "status": "resolved",
+      "taxon_id": 348514,
+      "source": "https://www.inaturalist.org/taxa/348514",
+      "eligible_observations": 1
+    },
+    {
+      "name": "Euphorbia hirta",
+      "checked_at": "2026-11-05T02:13:08.954Z",
+      "status": "resolved",
+      "taxon_id": 131560,
+      "source": "https://www.inaturalist.org/taxa/131560",
+      "eligible_observations": 2852
+    },
+    {
+      "name": "Ficus deltoidea",
+      "checked_at": "2026-11-05T02:13:12.128Z",
+      "status": "resolved",
+      "taxon_id": 344879,
+      "source": "https://www.inaturalist.org/taxa/344879",
+      "eligible_observations": 7
+    },
+    {
+      "name": "Ficus microcarpa",
+      "checked_at": "2026-11-05T02:13:15.209Z",
+      "status": "resolved",
+      "taxon_id": 54982,
+      "source": "https://www.inaturalist.org/taxa/54982",
+      "eligible_observations": 894
+    },
+    {
+      "name": "Ficus racemosa",
+      "checked_at": "2026-11-05T02:13:18.471Z",
+      "status": "resolved",
+      "taxon_id": 369433,
+      "source": "https://www.inaturalist.org/taxa/369433",
+      "eligible_observations": 252
+    },
+    {
+      "name": "Ficus religiosa",
+      "checked_at": "2026-11-05T02:13:21.505Z",
+      "status": "resolved",
+      "taxon_id": 127514,
+      "source": "https://www.inaturalist.org/taxa/127514",
+      "eligible_observations": 887
+    },
+    {
+      "name": "Ficus variegata",
+      "checked_at": "2026-11-05T02:13:24.515Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 2
+    },
+    {
+      "name": "Ficus villosa",
+      "checked_at": "2026-11-05T02:13:25.987Z",
+      "status": "resolved",
+      "taxon_id": 425631,
+      "source": "https://www.inaturalist.org/taxa/425631",
+      "eligible_observations": 37
+    },
+    {
+      "name": "Gigantochloa scortechinii",
+      "checked_at": "2026-11-05T02:13:29.042Z",
+      "status": "resolved",
+      "taxon_id": 897343,
+      "source": "https://www.inaturalist.org/taxa/897343",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Grammatophyllum speciosum",
+      "checked_at": "2026-11-05T02:13:32.123Z",
+      "status": "resolved",
+      "taxon_id": 344825,
+      "source": "https://www.inaturalist.org/taxa/344825",
+      "eligible_observations": 24
+    },
+    {
+      "name": "Heliconia psittacorum",
+      "checked_at": "2026-11-05T02:13:35.126Z",
+      "status": "resolved",
+      "taxon_id": 260753,
+      "source": "https://www.inaturalist.org/taxa/260753",
+      "eligible_observations": 441
+    },
+    {
+      "name": "Heliconia rostrata",
+      "checked_at": "2026-11-05T02:13:38.365Z",
+      "status": "resolved",
+      "taxon_id": 123960,
+      "source": "https://www.inaturalist.org/taxa/123960",
+      "eligible_observations": 405
+    },
+    {
+      "name": "Hellenia speciosa",
+      "checked_at": "2026-11-05T02:13:42.156Z",
+      "status": "resolved",
+      "taxon_id": 764909,
+      "source": "https://www.inaturalist.org/taxa/764909",
+      "eligible_observations": 542
+    },
+    {
+      "name": "Hibiscus tiliaceus",
+      "checked_at": "2026-11-05T02:13:45.297Z",
+      "status": "resolved",
+      "taxon_id": 62868,
+      "source": "https://www.inaturalist.org/taxa/62868",
+      "eligible_observations": 1852
+    },
+    {
+      "name": "Hippobroma longiflora",
+      "checked_at": "2026-11-05T02:13:48.370Z",
+      "status": "resolved",
+      "taxon_id": 154827,
+      "source": "https://www.inaturalist.org/taxa/154827",
+      "eligible_observations": 823
+    },
+    {
+      "name": "Hopea beccariana",
+      "checked_at": "2026-11-05T02:13:52.015Z",
+      "status": "resolved",
+      "taxon_id": 193408,
+      "source": "https://www.inaturalist.org/taxa/193408",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Hopea coriacea",
+      "checked_at": "2026-11-05T02:13:55.561Z",
+      "status": "resolved",
+      "taxon_id": 193419,
+      "source": "https://www.inaturalist.org/taxa/193419",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Hopea ferruginea",
+      "checked_at": "2026-11-05T02:13:58.644Z",
+      "status": "resolved",
+      "taxon_id": 193427,
+      "source": "https://www.inaturalist.org/taxa/193427",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Hopea nervosa",
+      "checked_at": "2026-11-05T02:14:01.802Z",
+      "status": "resolved",
+      "taxon_id": 193451,
+      "source": "https://www.inaturalist.org/taxa/193451",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Hopea odorata",
+      "checked_at": "2026-11-05T02:14:04.753Z",
+      "status": "resolved",
+      "taxon_id": 193455,
+      "source": "https://www.inaturalist.org/taxa/193455",
+      "eligible_observations": 3
+    },
+    {
+      "name": "Hornstedtia scyphifera",
+      "checked_at": "2026-11-05T02:14:07.788Z",
+      "status": "resolved",
+      "taxon_id": 426888,
+      "source": "https://www.inaturalist.org/taxa/426888",
+      "eligible_observations": 2
+    },
+    {
+      "name": "Hoya coronaria",
+      "checked_at": "2026-11-05T02:14:10.816Z",
+      "status": "resolved",
+      "taxon_id": 425660,
+      "source": "https://www.inaturalist.org/taxa/425660",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Hymenocallis littoralis",
+      "checked_at": "2026-11-05T02:14:13.802Z",
+      "status": "resolved",
+      "taxon_id": 210935,
+      "source": "https://www.inaturalist.org/taxa/210935",
+      "eligible_observations": 189
+    },
+    {
+      "name": "Impatiens kinabaluensis",
+      "checked_at": "2026-11-05T02:14:16.855Z",
+      "status": "resolved",
+      "taxon_id": 708638,
+      "source": "https://www.inaturalist.org/taxa/708638",
+      "eligible_observations": 26
+    },
+    {
+      "name": "Impatiens walleriana",
+      "checked_at": "2026-11-05T02:14:19.894Z",
+      "status": "resolved",
+      "taxon_id": 68185,
+      "source": "https://www.inaturalist.org/taxa/68185",
+      "eligible_observations": 621
+    },
+    {
+      "name": "Imperata cylindrica",
+      "checked_at": "2026-11-05T02:14:22.913Z",
+      "status": "resolved",
+      "taxon_id": 164056,
+      "source": "https://www.inaturalist.org/taxa/164056",
+      "eligible_observations": 1132
+    },
+    {
+      "name": "Ipomoea aquatica",
+      "checked_at": "2026-11-05T02:14:26.031Z",
+      "status": "resolved",
+      "taxon_id": 164077,
+      "source": "https://www.inaturalist.org/taxa/164077",
+      "eligible_observations": 448
+    },
+    {
+      "name": "Ipomoea cairica",
+      "checked_at": "2026-11-05T02:14:29.077Z",
+      "status": "resolved",
+      "taxon_id": 77494,
+      "source": "https://www.inaturalist.org/taxa/77494",
+      "eligible_observations": 2556
+    },
+    {
+      "name": "Ipomoea indica",
+      "checked_at": "2026-11-05T02:14:32.269Z",
+      "status": "resolved",
+      "taxon_id": 77496,
+      "source": "https://www.inaturalist.org/taxa/77496",
+      "eligible_observations": 3018
+    },
+    {
+      "name": "Ipomoea pes-caprae",
+      "checked_at": "2026-11-05T02:14:35.368Z",
+      "status": "resolved",
+      "taxon_id": 60879,
+      "source": "https://www.inaturalist.org/taxa/60879",
+      "eligible_observations": 3320
+    },
+    {
+      "name": "Ixora coccinea",
+      "checked_at": "2026-11-05T02:14:38.423Z",
+      "status": "resolved",
+      "taxon_id": 133309,
+      "source": "https://www.inaturalist.org/taxa/133309",
+      "eligible_observations": 177
+    },
+    {
+      "name": "Jatropha integerrima",
+      "checked_at": "2026-11-05T02:14:41.440Z",
+      "status": "resolved",
+      "taxon_id": 164240,
+      "source": "https://www.inaturalist.org/taxa/164240",
+      "eligible_observations": 177
+    },
+    {
+      "name": "Johannesteijsmannia altifrons",
+      "checked_at": "2026-11-05T02:14:44.426Z",
+      "status": "resolved",
+      "taxon_id": 344185,
+      "source": "https://www.inaturalist.org/taxa/344185",
+      "eligible_observations": 4
+    },
+    {
+      "name": "Johannesteijsmannia perakensis",
+      "checked_at": "2026-11-05T02:14:47.652Z",
+      "status": "resolved",
+      "taxon_id": 365438,
+      "source": "https://www.inaturalist.org/taxa/365438",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Lagerstroemia speciosa",
+      "checked_at": "2026-11-05T02:14:50.662Z",
+      "status": "resolved",
+      "taxon_id": 133607,
+      "source": "https://www.inaturalist.org/taxa/133607",
+      "eligible_observations": 157
+    },
+    {
+      "name": "Lantana camara",
+      "checked_at": "2026-11-05T02:14:53.705Z",
+      "status": "resolved",
+      "taxon_id": 50333,
+      "source": "https://www.inaturalist.org/taxa/50333",
+      "eligible_observations": 6513
+    },
+    {
+      "name": "Leucaena leucocephala",
+      "checked_at": "2026-11-05T02:14:57.160Z",
+      "status": "resolved",
+      "taxon_id": 47447,
+      "source": "https://www.inaturalist.org/taxa/47447",
+      "eligible_observations": 2951
+    },
+    {
+      "name": "Licuala spinosa",
+      "checked_at": "2026-11-05T02:15:00.256Z",
+      "status": "resolved",
+      "taxon_id": 345559,
+      "source": "https://www.inaturalist.org/taxa/345559",
+      "eligible_observations": 28
+    },
+    {
+      "name": "Livistona endauensis",
+      "checked_at": "2026-11-05T02:15:03.303Z",
+      "status": "resolved",
+      "taxon_id": 365635,
+      "source": "https://www.inaturalist.org/taxa/365635",
+      "eligible_observations": 1
+    },
+    {
+      "name": "Lumnitzera littorea",
+      "checked_at": "2026-11-05T02:15:06.303Z",
+      "status": "resolved",
+      "taxon_id": 196656,
+      "source": "https://www.inaturalist.org/taxa/196656",
+      "eligible_observations": 31
+    },
+    {
+      "name": "Macaranga gigantea",
+      "checked_at": "2026-11-05T02:15:09.295Z",
+      "status": "resolved",
+      "taxon_id": 358120,
+      "source": "https://www.inaturalist.org/taxa/358120",
+      "eligible_observations": 52
+    },
+    {
+      "name": "Macaranga tanarius",
+      "checked_at": "2026-11-05T02:15:12.354Z",
+      "status": "resolved",
+      "taxon_id": 165027,
+      "source": "https://www.inaturalist.org/taxa/165027",
+      "eligible_observations": 1745
+    },
+    {
+      "name": "Mallotus paniculatus",
+      "checked_at": "2026-11-05T02:15:15.364Z",
+      "status": "resolved",
+      "taxon_id": 343804,
+      "source": "https://www.inaturalist.org/taxa/343804",
+      "eligible_observations": 483
+    },
+    {
+      "name": "Mangifera indica",
+      "checked_at": "2026-11-05T02:15:18.354Z",
+      "status": "resolved",
+      "taxon_id": 48872,
+      "source": "https://www.inaturalist.org/taxa/48872",
+      "eligible_observations": 747
+    },
+    {
+      "name": "Manihot esculenta",
+      "checked_at": "2026-11-05T02:15:21.455Z",
+      "status": "resolved",
+      "taxon_id": 165138,
+      "source": "https://www.inaturalist.org/taxa/165138",
+      "eligible_observations": 394
+    },
+    {
+      "name": "Manilkara zapota",
+      "checked_at": "2026-11-05T02:15:24.481Z",
+      "status": "resolved",
+      "taxon_id": 165144,
+      "source": "https://www.inaturalist.org/taxa/165144",
+      "eligible_observations": 103
+    },
+    {
+      "name": "Medinilla speciosa",
+      "checked_at": "2026-11-05T02:15:27.495Z",
+      "status": "resolved",
+      "taxon_id": 431300,
+      "source": "https://www.inaturalist.org/taxa/431300",
+      "eligible_observations": 34
+    },
+    {
+      "name": "Melastoma malabathricum",
+      "checked_at": "2026-11-05T02:15:30.576Z",
+      "status": "resolved",
+      "taxon_id": 165230,
+      "source": "https://www.inaturalist.org/taxa/165230",
+      "eligible_observations": 517
+    },
+    {
+      "name": "Melothria pendula",
+      "checked_at": "2026-11-05T02:15:33.587Z",
+      "status": "resolved",
+      "taxon_id": 131557,
+      "source": "https://www.inaturalist.org/taxa/131557",
+      "eligible_observations": 1459
+    },
+    {
+      "name": "Metroxylon sagu",
+      "checked_at": "2026-11-05T02:15:36.619Z",
+      "status": "resolved",
+      "taxon_id": 83100,
+      "source": "https://www.inaturalist.org/taxa/83100",
+      "eligible_observations": 14
+    },
+    {
+      "name": "Miconia crenata",
+      "checked_at": "2026-11-05T02:15:39.798Z",
+      "status": "resolved",
+      "taxon_id": 1293231,
+      "source": "https://www.inaturalist.org/taxa/1293231",
+      "eligible_observations": 1402
+    },
+    {
+      "name": "Mikania micrantha",
+      "checked_at": "2026-11-05T02:15:42.842Z",
+      "status": "resolved",
+      "taxon_id": 165389,
+      "source": "https://www.inaturalist.org/taxa/165389",
+      "eligible_observations": 1289
+    },
+    {
+      "name": "Mimosa pudica",
+      "checked_at": "2026-11-05T02:15:45.862Z",
+      "status": "resolved",
+      "taxon_id": 51921,
+      "source": "https://www.inaturalist.org/taxa/51921",
+      "eligible_observations": 2474
+    },
+    {
+      "name": "Momordica charantia",
+      "checked_at": "2026-11-05T02:15:48.864Z",
+      "status": "resolved",
+      "taxon_id": 61369,
+      "source": "https://www.inaturalist.org/taxa/61369",
+      "eligible_observations": 2259
+    },
+    {
+      "name": "Morinda citrifolia",
+      "checked_at": "2026-11-05T02:15:51.850Z",
+      "status": "resolved",
+      "taxon_id": 121022,
+      "source": "https://www.inaturalist.org/taxa/121022",
+      "eligible_observations": 976
+    },
+    {
+      "name": "Muntingia calabura",
+      "checked_at": "2026-11-05T02:15:54.949Z",
+      "status": "resolved",
+      "taxon_id": 165586,
+      "source": "https://www.inaturalist.org/taxa/165586",
+      "eligible_observations": 840
+    },
+    {
+      "name": "Murraya paniculata",
+      "checked_at": "2026-11-05T02:15:57.978Z",
+      "status": "resolved",
+      "taxon_id": 287316,
+      "source": "https://www.inaturalist.org/taxa/287316",
+      "eligible_observations": 674
+    },
+    {
+      "name": "Musa acuminata",
+      "checked_at": "2026-11-05T02:16:01.021Z",
+      "status": "resolved",
+      "taxon_id": 140907,
+      "source": "https://www.inaturalist.org/taxa/140907",
+      "eligible_observations": 244
+    },
+    {
+      "name": "Nelumbo nucifera",
+      "checked_at": "2026-11-05T02:16:04.086Z",
+      "status": "resolved",
+      "taxon_id": 82814,
+      "source": "https://www.inaturalist.org/taxa/82814",
+      "eligible_observations": 596
+    },
+    {
+      "name": "Neobalanocarpus heimii",
+      "checked_at": "2026-11-05T02:16:07.191Z",
+      "status": "resolved",
+      "taxon_id": 185683,
+      "source": "https://www.inaturalist.org/taxa/185683",
+      "eligible_observations": 4
+    },
+    {
+      "name": "Nepenthes albomarginata",
+      "checked_at": "2026-11-05T02:16:10.208Z",
+      "status": "resolved",
+      "taxon_id": 348401,
+      "source": "https://www.inaturalist.org/taxa/348401",
+      "eligible_observations": 52
+    },
+    {
+      "name": "Nepenthes ampullaria",
+      "checked_at": "2026-11-05T02:16:13.249Z",
+      "status": "resolved",
+      "taxon_id": 346348,
+      "source": "https://www.inaturalist.org/taxa/346348",
+      "eligible_observations": 99
+    },
+    {
+      "name": "Nepenthes bicalcarata",
+      "checked_at": "2026-11-05T02:16:16.920Z",
+      "status": "resolved",
+      "taxon_id": 134148,
+      "source": "https://www.inaturalist.org/taxa/134148",
+      "eligible_observations": 7
+    },
+    {
+      "name": "Nepenthes burbidgeae",
+      "checked_at": "2026-11-05T02:16:19.924Z",
+      "status": "resolved",
+      "taxon_id": 441204,
+      "source": "https://www.inaturalist.org/taxa/441204",
+      "eligible_observations": 11
+    },
+    {
+      "name": "Nepenthes chaniana",
+      "checked_at": "2026-11-05T02:16:22.896Z",
+      "status": "resolved",
+      "taxon_id": 441206,
+      "source": "https://www.inaturalist.org/taxa/441206",
+      "eligible_observations": 16
+    },
+    {
+      "name": "Nepenthes edwardsiana",
+      "checked_at": "2026-11-05T02:16:25.886Z",
+      "status": "resolved",
+      "taxon_id": 337411,
+      "source": "https://www.inaturalist.org/taxa/337411",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Nepenthes gracilis",
+      "checked_at": "2026-11-05T02:16:28.862Z",
+      "status": "resolved",
+      "taxon_id": 346343,
+      "source": "https://www.inaturalist.org/taxa/346343",
+      "eligible_observations": 173
+    },
+    {
+      "name": "Nepenthes gracillima",
+      "checked_at": "2026-11-05T02:16:31.884Z",
+      "status": "resolved",
+      "taxon_id": 445504,
+      "source": "https://www.inaturalist.org/taxa/445504",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Nepenthes lowii",
+      "checked_at": "2026-11-05T02:16:34.831Z",
+      "status": "resolved",
+      "taxon_id": 441221,
+      "source": "https://www.inaturalist.org/taxa/441221",
+      "eligible_observations": 4
+    },
+    {
+      "name": "Nepenthes macfarlanei",
+      "checked_at": "2026-11-05T02:16:38.208Z",
+      "status": "resolved",
+      "taxon_id": 441222,
+      "source": "https://www.inaturalist.org/taxa/441222",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Nepenthes macrophylla",
+      "checked_at": "2026-11-05T02:16:41.227Z",
+      "status": "resolved",
+      "taxon_id": 441223,
+      "source": "https://www.inaturalist.org/taxa/441223",
+      "eligible_observations": 1
+    },
+    {
+      "name": "Nepenthes mirabilis",
+      "checked_at": "2026-11-05T02:16:44.221Z",
+      "status": "resolved",
+      "taxon_id": 348343,
+      "source": "https://www.inaturalist.org/taxa/348343",
+      "eligible_observations": 160
+    },
+    {
+      "name": "Nepenthes rafflesiana",
+      "checked_at": "2026-11-05T02:16:47.198Z",
+      "status": "resolved",
+      "taxon_id": 123555,
+      "source": "https://www.inaturalist.org/taxa/123555",
+      "eligible_observations": 78
+    },
+    {
+      "name": "Nepenthes rajah",
+      "checked_at": "2026-11-05T02:16:50.191Z",
+      "status": "resolved",
+      "taxon_id": 441244,
+      "source": "https://www.inaturalist.org/taxa/441244",
+      "eligible_observations": 3
+    },
+    {
+      "name": "Nepenthes ramispina",
+      "checked_at": "2026-11-05T02:16:53.232Z",
+      "status": "resolved",
+      "taxon_id": 122913,
+      "source": "https://www.inaturalist.org/taxa/122913",
+      "eligible_observations": 2
+    },
+    {
+      "name": "Nepenthes reinwardtiana",
+      "checked_at": "2026-11-05T02:16:56.213Z",
+      "status": "resolved",
+      "taxon_id": 348484,
+      "source": "https://www.inaturalist.org/taxa/348484",
+      "eligible_observations": 19
+    },
+    {
+      "name": "Nepenthes sanguinea",
+      "checked_at": "2026-11-05T02:16:59.209Z",
+      "status": "resolved",
+      "taxon_id": 123551,
+      "source": "https://www.inaturalist.org/taxa/123551",
+      "eligible_observations": 33
+    },
+    {
+      "name": "Nepenthes stenophylla",
+      "checked_at": "2026-11-05T02:17:02.270Z",
+      "status": "resolved",
+      "taxon_id": 441247,
+      "source": "https://www.inaturalist.org/taxa/441247",
+      "eligible_observations": 6
+    },
+    {
+      "name": "Nepenthes tentaculata",
+      "checked_at": "2026-11-05T02:17:05.229Z",
+      "status": "resolved",
+      "taxon_id": 337414,
+      "source": "https://www.inaturalist.org/taxa/337414",
+      "eligible_observations": 55
+    },
+    {
+      "name": "Nepenthes veitchii",
+      "checked_at": "2026-11-05T02:17:08.247Z",
+      "status": "resolved",
+      "taxon_id": 123552,
+      "source": "https://www.inaturalist.org/taxa/123552",
+      "eligible_observations": 3
+    },
+    {
+      "name": "Nepenthes villosa",
+      "checked_at": "2026-11-05T02:17:11.225Z",
+      "status": "resolved",
+      "taxon_id": 441253,
+      "source": "https://www.inaturalist.org/taxa/441253",
+      "eligible_observations": 21
+    },
+    {
+      "name": "Nepenthes zakriana",
+      "checked_at": "2026-11-05T02:17:14.183Z",
+      "status": "resolved",
+      "taxon_id": 1153947,
+      "source": "https://www.inaturalist.org/taxa/1153947",
+      "eligible_observations": 21
+    },
+    {
+      "name": "Nephelium lappaceum",
+      "checked_at": "2026-11-05T02:17:17.160Z",
+      "status": "resolved",
+      "taxon_id": 278605,
+      "source": "https://www.inaturalist.org/taxa/278605",
+      "eligible_observations": 66
+    },
+    {
+      "name": "Nypa fruticans",
+      "checked_at": "2026-11-05T02:17:20.136Z",
+      "status": "resolved",
+      "taxon_id": 83106,
+      "source": "https://www.inaturalist.org/taxa/83106",
+      "eligible_observations": 266
+    },
+    {
+      "name": "Oldenlandia corymbosa",
+      "checked_at": "2026-11-05T02:17:23.097Z",
+      "status": "resolved",
+      "taxon_id": 133304,
+      "source": "https://www.inaturalist.org/taxa/133304",
+      "eligible_observations": 914
+    },
+    {
+      "name": "Oncosperma tigillarium",
+      "checked_at": "2026-11-05T02:17:26.063Z",
+      "status": "resolved",
+      "taxon_id": 348713,
+      "source": "https://www.inaturalist.org/taxa/348713",
+      "eligible_observations": 14
+    },
+    {
+      "name": "Orthosiphon aristatus",
+      "checked_at": "2026-11-05T02:17:29.384Z",
+      "status": "resolved",
+      "taxon_id": 185264,
+      "source": "https://www.inaturalist.org/taxa/185264",
+      "eligible_observations": 81
+    },
+    {
+      "name": "Oxalis barrelieri",
+      "checked_at": "2026-11-05T02:17:32.394Z",
+      "status": "resolved",
+      "taxon_id": 327751,
+      "source": "https://www.inaturalist.org/taxa/327751",
+      "eligible_observations": 338
+    },
+    {
+      "name": "Oxalis corniculata",
+      "checked_at": "2026-11-05T02:17:35.423Z",
+      "status": "resolved",
+      "taxon_id": 53168,
+      "source": "https://www.inaturalist.org/taxa/53168",
+      "eligible_observations": 6691
+    },
+    {
+      "name": "Palhinhaea cernua",
+      "checked_at": "2026-11-05T02:17:38.634Z",
+      "status": "resolved",
+      "taxon_id": 82400,
+      "source": "https://www.inaturalist.org/taxa/82400",
+      "eligible_observations": 943
+    },
+    {
+      "name": "Paphiopedilum rothschildianum",
+      "checked_at": "2026-11-05T02:17:41.601Z",
+      "status": "resolved",
+      "taxon_id": 493348,
+      "source": "https://www.inaturalist.org/taxa/493348",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Paphiopedilum sanderianum",
+      "checked_at": "2026-11-05T02:17:44.602Z",
+      "status": "resolved",
+      "taxon_id": 493349,
+      "source": "https://www.inaturalist.org/taxa/493349",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Paraboea culminicola",
+      "checked_at": "2026-11-05T02:17:47.518Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 0
+    },
+    {
+      "name": "Parashorea tomentella",
+      "checked_at": "2026-11-05T02:17:48.988Z",
+      "status": "resolved",
+      "taxon_id": 333472,
+      "source": "https://www.inaturalist.org/taxa/333472",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Passiflora foetida",
+      "checked_at": "2026-11-05T02:17:51.961Z",
+      "status": "resolved",
+      "taxon_id": 51448,
+      "source": "https://www.inaturalist.org/taxa/51448",
+      "eligible_observations": 872
+    },
+    {
+      "name": "Passiflora suberosa",
+      "checked_at": "2026-11-05T02:17:55.007Z",
+      "status": "resolved",
+      "taxon_id": 129327,
+      "source": "https://www.inaturalist.org/taxa/129327",
+      "eligible_observations": 1141
+    },
+    {
+      "name": "Passiflora vesicaria",
+      "checked_at": "2026-11-05T02:17:58.178Z",
+      "status": "resolved",
+      "taxon_id": 1438095,
+      "source": "https://www.inaturalist.org/taxa/1438095",
+      "eligible_observations": 1130
+    },
+    {
+      "name": "Peperomia pellucida",
+      "checked_at": "2026-11-05T02:18:01.702Z",
+      "status": "resolved",
+      "taxon_id": 166494,
+      "source": "https://www.inaturalist.org/taxa/166494",
+      "eligible_observations": 476
+    },
+    {
+      "name": "Persicaria capitata",
+      "checked_at": "2026-11-05T02:18:05.119Z",
+      "status": "resolved",
+      "taxon_id": 78451,
+      "source": "https://www.inaturalist.org/taxa/78451",
+      "eligible_observations": 2040
+    },
+    {
+      "name": "Phalaenopsis bellina",
+      "checked_at": "2026-11-05T02:18:08.247Z",
+      "status": "resolved",
+      "taxon_id": 493651,
+      "source": "https://www.inaturalist.org/taxa/493651",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Phalaenopsis violacea",
+      "checked_at": "2026-11-05T02:18:11.194Z",
+      "status": "resolved",
+      "taxon_id": 140393,
+      "source": "https://www.inaturalist.org/taxa/140393",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Phanera kockiana",
+      "checked_at": "2026-11-05T02:18:14.194Z",
+      "status": "resolved",
+      "taxon_id": 1155314,
+      "source": "https://www.inaturalist.org/taxa/1155314",
+      "eligible_observations": 13
+    },
+    {
+      "name": "Phyllanthus urinaria",
+      "checked_at": "2026-11-05T02:18:17.184Z",
+      "status": "resolved",
+      "taxon_id": 166758,
+      "source": "https://www.inaturalist.org/taxa/166758",
+      "eligible_observations": 1096
+    },
+    {
+      "name": "Physalis angulata",
+      "checked_at": "2026-11-05T02:18:20.238Z",
+      "status": "resolved",
+      "taxon_id": 61374,
+      "source": "https://www.inaturalist.org/taxa/61374",
+      "eligible_observations": 983
+    },
+    {
+      "name": "Pilea microphylla",
+      "checked_at": "2026-11-05T02:18:23.263Z",
+      "status": "resolved",
+      "taxon_id": 69172,
+      "source": "https://www.inaturalist.org/taxa/69172",
+      "eligible_observations": 2361
+    },
+    {
+      "name": "Pinanga aristata",
+      "checked_at": "2026-11-05T02:18:26.515Z",
+      "status": "resolved",
+      "taxon_id": 365771,
+      "source": "https://www.inaturalist.org/taxa/365771",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Piper porphyrophyllum",
+      "checked_at": "2026-11-05T02:18:29.608Z",
+      "status": "resolved",
+      "taxon_id": 426429,
+      "source": "https://www.inaturalist.org/taxa/426429",
+      "eligible_observations": 5
+    },
+    {
+      "name": "Piper sarmentosum",
+      "checked_at": "2026-11-05T02:18:32.892Z",
+      "status": "resolved",
+      "taxon_id": 344960,
+      "source": "https://www.inaturalist.org/taxa/344960",
+      "eligible_observations": 91
+    },
+    {
+      "name": "Pistia stratiotes",
+      "checked_at": "2026-11-05T02:18:36.076Z",
+      "status": "resolved",
+      "taxon_id": 78589,
+      "source": "https://www.inaturalist.org/taxa/78589",
+      "eligible_observations": 1399
+    },
+    {
+      "name": "Platycerium coronarium",
+      "checked_at": "2026-11-05T02:18:39.226Z",
+      "status": "resolved",
+      "taxon_id": 425758,
+      "source": "https://www.inaturalist.org/taxa/425758",
+      "eligible_observations": 54
+    },
+    {
+      "name": "Pleocnemia irregularis",
+      "checked_at": "2026-11-05T02:18:42.413Z",
+      "status": "resolved",
+      "taxon_id": 425760,
+      "source": "https://www.inaturalist.org/taxa/425760",
+      "eligible_observations": 41
+    },
+    {
+      "name": "Pontederia crassipes",
+      "checked_at": "2026-11-05T02:18:45.628Z",
+      "status": "resolved",
+      "taxon_id": 962637,
+      "source": "https://www.inaturalist.org/taxa/962637",
+      "eligible_observations": 3293
+    },
+    {
+      "name": "Praxelis clematidea",
+      "checked_at": "2026-11-05T02:18:48.691Z",
+      "status": "resolved",
+      "taxon_id": 326106,
+      "source": "https://www.inaturalist.org/taxa/326106",
+      "eligible_observations": 692
+    },
+    {
+      "name": "Pteris vittata",
+      "checked_at": "2026-11-05T02:18:53.501Z",
+      "status": "resolved",
+      "taxon_id": 57636,
+      "source": "https://www.inaturalist.org/taxa/57636",
+      "eligible_observations": 1774
+    },
+    {
+      "name": "Pyrrosia piloselloides",
+      "checked_at": "2026-11-05T02:18:56.535Z",
+      "status": "resolved",
+      "taxon_id": 345927,
+      "source": "https://www.inaturalist.org/taxa/345927",
+      "eligible_observations": 144
+    },
+    {
+      "name": "Rafflesia azlanii",
+      "checked_at": "2026-11-05T02:18:59.824Z",
+      "status": "resolved",
+      "taxon_id": 1465292,
+      "source": "https://www.inaturalist.org/taxa/1465292",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Rafflesia cantleyi",
+      "checked_at": "2026-11-05T02:19:02.802Z",
+      "status": "resolved",
+      "taxon_id": 337579,
+      "source": "https://www.inaturalist.org/taxa/337579",
+      "eligible_observations": 4
+    },
+    {
+      "name": "Rafflesia hasseltii",
+      "checked_at": "2026-11-05T02:19:05.796Z",
+      "status": "resolved",
+      "taxon_id": 337581,
+      "source": "https://www.inaturalist.org/taxa/337581",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Rafflesia keithii",
+      "checked_at": "2026-11-05T02:19:08.766Z",
+      "status": "resolved",
+      "taxon_id": 337567,
+      "source": "https://www.inaturalist.org/taxa/337567",
+      "eligible_observations": 37
+    },
+    {
+      "name": "Rafflesia pricei",
+      "checked_at": "2026-11-05T02:19:11.893Z",
+      "status": "resolved",
+      "taxon_id": 337571,
+      "source": "https://www.inaturalist.org/taxa/337571",
+      "eligible_observations": 13
+    },
+    {
+      "name": "Rafflesia tengku-adlinii",
+      "checked_at": "2026-11-05T02:19:14.938Z",
+      "status": "resolved",
+      "taxon_id": 337589,
+      "source": "https://www.inaturalist.org/taxa/337589",
+      "eligible_observations": 1
+    },
+    {
+      "name": "Rafflesia tiomanensis",
+      "checked_at": "2026-11-05T02:19:17.950Z",
+      "status": "resolved",
+      "taxon_id": 1540983,
+      "source": "https://www.inaturalist.org/taxa/1540983",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Rafflesia tuan-mudae",
+      "checked_at": "2026-11-05T02:19:20.956Z",
+      "status": "resolved",
+      "taxon_id": 337570,
+      "source": "https://www.inaturalist.org/taxa/337570",
+      "eligible_observations": 3
+    },
+    {
+      "name": "Renanthera elongata",
+      "checked_at": "2026-11-05T02:19:23.962Z",
+      "status": "resolved",
+      "taxon_id": 426543,
+      "source": "https://www.inaturalist.org/taxa/426543",
+      "eligible_observations": 3
+    },
+    {
+      "name": "Rhapis excelsa",
+      "checked_at": "2026-11-05T02:19:26.991Z",
+      "status": "resolved",
+      "taxon_id": 283915,
+      "source": "https://www.inaturalist.org/taxa/283915",
+      "eligible_observations": 10
+    },
+    {
+      "name": "Rhizophora apiculata",
+      "checked_at": "2026-11-05T02:19:30.089Z",
+      "status": "resolved",
+      "taxon_id": 196660,
+      "source": "https://www.inaturalist.org/taxa/196660",
+      "eligible_observations": 88
+    },
+    {
+      "name": "Rhizophora mucronata",
+      "checked_at": "2026-11-05T02:19:33.133Z",
+      "status": "resolved",
+      "taxon_id": 196667,
+      "source": "https://www.inaturalist.org/taxa/196667",
+      "eligible_observations": 111
+    },
+    {
+      "name": "Rhododendron ericoides",
+      "checked_at": "2026-11-05T02:19:36.188Z",
+      "status": "resolved",
+      "taxon_id": 426047,
+      "source": "https://www.inaturalist.org/taxa/426047",
+      "eligible_observations": 17
+    },
+    {
+      "name": "Rhododendron lowii",
+      "checked_at": "2026-11-05T02:19:39.198Z",
+      "status": "resolved",
+      "taxon_id": 891996,
+      "source": "https://www.inaturalist.org/taxa/891996",
+      "eligible_observations": 1
+    },
+    {
+      "name": "Ricinus communis",
+      "checked_at": "2026-11-05T02:19:42.271Z",
+      "status": "resolved",
+      "taxon_id": 56739,
+      "source": "https://www.inaturalist.org/taxa/56739",
+      "eligible_observations": 6805
+    },
+    {
+      "name": "Ruellia repens",
+      "checked_at": "2026-11-05T02:19:45.446Z",
+      "status": "resolved",
+      "taxon_id": 343770,
+      "source": "https://www.inaturalist.org/taxa/343770",
+      "eligible_observations": 94
+    },
+    {
+      "name": "Ruellia simplex",
+      "checked_at": "2026-11-05T02:19:48.681Z",
+      "status": "resolved",
+      "taxon_id": 126633,
+      "source": "https://www.inaturalist.org/taxa/126633",
+      "eligible_observations": 1135
+    },
+    {
+      "name": "Ruellia tuberosa",
+      "checked_at": "2026-11-05T02:19:51.883Z",
+      "status": "resolved",
+      "taxon_id": 291119,
+      "source": "https://www.inaturalist.org/taxa/291119",
+      "eligible_observations": 319
+    },
+    {
+      "name": "Scaevola taccada",
+      "checked_at": "2026-11-05T02:19:55.062Z",
+      "status": "resolved",
+      "taxon_id": 363481,
+      "source": "https://www.inaturalist.org/taxa/363481",
+      "eligible_observations": 1796
+    },
+    {
+      "name": "Schizostachyum zollingeri",
+      "checked_at": "2026-11-05T02:19:58.322Z",
+      "status": "resolved",
+      "taxon_id": 897549,
+      "source": "https://www.inaturalist.org/taxa/897549",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Scindapsus pictus",
+      "checked_at": "2026-11-05T02:20:01.617Z",
+      "status": "resolved",
+      "taxon_id": 346616,
+      "source": "https://www.inaturalist.org/taxa/346616",
+      "eligible_observations": 44
+    },
+    {
+      "name": "Selaginella willdenowii",
+      "checked_at": "2026-11-05T02:20:04.999Z",
+      "status": "resolved",
+      "taxon_id": 168773,
+      "source": "https://www.inaturalist.org/taxa/168773",
+      "eligible_observations": 89
+    },
+    {
+      "name": "Senega paniculata",
+      "checked_at": "2026-11-05T02:20:08.143Z",
+      "status": "resolved",
+      "taxon_id": 1569127,
+      "source": "https://www.inaturalist.org/taxa/1569127",
+      "eligible_observations": 602
+    },
+    {
+      "name": "Senna alata",
+      "checked_at": "2026-11-05T02:20:11.140Z",
+      "status": "resolved",
+      "taxon_id": 81515,
+      "source": "https://www.inaturalist.org/taxa/81515",
+      "eligible_observations": 530
+    },
+    {
+      "name": "Shorea acuminata",
+      "checked_at": "2026-11-05T02:20:14.255Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 0
+    },
+    {
+      "name": "Shorea curtisii",
+      "checked_at": "2026-11-05T02:20:15.737Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 0
+    },
+    {
+      "name": "Shorea foxworthyi",
+      "checked_at": "2026-11-05T02:20:17.200Z",
+      "status": "resolved",
+      "taxon_id": 443579,
+      "source": "https://www.inaturalist.org/taxa/443579",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Shorea leprosula",
+      "checked_at": "2026-11-05T02:20:20.183Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 0
+    },
+    {
+      "name": "Shorea macrophylla",
+      "checked_at": "2026-11-05T02:20:21.681Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 0
+    },
+    {
+      "name": "Shorea macroptera",
+      "checked_at": "2026-11-05T02:20:23.244Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 0
+    },
+    {
+      "name": "Shorea maxwelliana",
+      "checked_at": "2026-11-05T02:20:24.724Z",
+      "status": "resolved",
+      "taxon_id": 443612,
+      "source": "https://www.inaturalist.org/taxa/443612",
+      "eligible_observations": 1
+    },
+    {
+      "name": "Shorea ovalis",
+      "checked_at": "2026-11-05T02:20:27.734Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 0
+    },
+    {
+      "name": "Shorea parvifolia",
+      "checked_at": "2026-11-05T02:20:29.451Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 0
+    },
+    {
+      "name": "Solanum torvum",
+      "checked_at": "2026-11-05T02:20:30.947Z",
+      "status": "resolved",
+      "taxon_id": 63694,
+      "source": "https://www.inaturalist.org/taxa/63694",
+      "eligible_observations": 974
+    },
+    {
+      "name": "Sonneratia alba",
+      "checked_at": "2026-11-05T02:20:34.151Z",
+      "status": "resolved",
+      "taxon_id": 196661,
+      "source": "https://www.inaturalist.org/taxa/196661",
+      "eligible_observations": 147
+    },
+    {
+      "name": "Spathodea campanulata",
+      "checked_at": "2026-11-05T02:20:37.132Z",
+      "status": "resolved",
+      "taxon_id": 126566,
+      "source": "https://www.inaturalist.org/taxa/126566",
+      "eligible_observations": 1319
+    },
+    {
+      "name": "Spathoglottis plicata",
+      "checked_at": "2026-11-05T02:20:40.275Z",
+      "status": "resolved",
+      "taxon_id": 132672,
+      "source": "https://www.inaturalist.org/taxa/132672",
+      "eligible_observations": 605
+    },
+    {
+      "name": "Spermacoce remota",
+      "checked_at": "2026-11-05T02:20:43.487Z",
+      "status": "resolved",
+      "taxon_id": 326037,
+      "source": "https://www.inaturalist.org/taxa/326037",
+      "eligible_observations": 809
+    },
+    {
+      "name": "Sphagneticola trilobata",
+      "checked_at": "2026-11-05T02:20:46.569Z",
+      "status": "resolved",
+      "taxon_id": 246102,
+      "source": "https://www.inaturalist.org/taxa/246102",
+      "eligible_observations": 3137
+    },
+    {
+      "name": "Stenochlaena palustris",
+      "checked_at": "2026-11-05T02:20:49.745Z",
+      "status": "resolved",
+      "taxon_id": 346621,
+      "source": "https://www.inaturalist.org/taxa/346621",
+      "eligible_observations": 105
+    },
+    {
+      "name": "Sticherus truncatus",
+      "checked_at": "2026-11-05T02:20:52.747Z",
+      "status": "resolved",
+      "taxon_id": 344966,
+      "source": "https://www.inaturalist.org/taxa/344966",
+      "eligible_observations": 59
+    },
+    {
+      "name": "Strobilanthes reptans",
+      "checked_at": "2026-11-05T02:20:55.773Z",
+      "status": "resolved",
+      "taxon_id": 908177,
+      "source": "https://www.inaturalist.org/taxa/908177",
+      "eligible_observations": 204
+    },
+    {
+      "name": "Terminalia catappa",
+      "checked_at": "2026-11-05T02:20:58.789Z",
+      "status": "resolved",
+      "taxon_id": 62821,
+      "source": "https://www.inaturalist.org/taxa/62821",
+      "eligible_observations": 1337
+    },
+    {
+      "name": "Tetracera indica",
+      "checked_at": "2026-11-05T02:21:02.045Z",
+      "status": "resolved",
+      "taxon_id": 343831,
+      "source": "https://www.inaturalist.org/taxa/343831",
+      "eligible_observations": 80
+    },
+    {
+      "name": "Thunbergia erecta",
+      "checked_at": "2026-11-05T02:21:05.332Z",
+      "status": "resolved",
+      "taxon_id": 169741,
+      "source": "https://www.inaturalist.org/taxa/169741",
+      "eligible_observations": 191
+    },
+    {
+      "name": "Torenia crustacea",
+      "checked_at": "2026-11-05T02:21:08.641Z",
+      "status": "resolved",
+      "taxon_id": 852222,
+      "source": "https://www.inaturalist.org/taxa/852222",
+      "eligible_observations": 1055
+    },
+    {
+      "name": "Torenia polygonoides",
+      "checked_at": "2026-11-05T02:21:11.835Z",
+      "status": "resolved",
+      "taxon_id": 426849,
+      "source": "https://www.inaturalist.org/taxa/426849",
+      "eligible_observations": 62
+    },
+    {
+      "name": "Trichosanthes scabra",
+      "checked_at": "2026-11-05T02:21:14.906Z",
+      "status": "resolved",
+      "taxon_id": 1119307,
+      "source": "https://www.inaturalist.org/taxa/1119307",
+      "eligible_observations": 86
+    },
+    {
+      "name": "Tridax procumbens",
+      "checked_at": "2026-11-05T02:21:17.997Z",
+      "status": "resolved",
+      "taxon_id": 169944,
+      "source": "https://www.inaturalist.org/taxa/169944",
+      "eligible_observations": 3721
+    },
+    {
+      "name": "Turnera subulata",
+      "checked_at": "2026-11-05T02:21:22.024Z",
+      "status": "resolved",
+      "taxon_id": 327909,
+      "source": "https://www.inaturalist.org/taxa/327909",
+      "eligible_observations": 470
+    },
+    {
+      "name": "Turnera ulmifolia",
+      "checked_at": "2026-11-05T02:21:25.107Z",
+      "status": "resolved",
+      "taxon_id": 170055,
+      "source": "https://www.inaturalist.org/taxa/170055",
+      "eligible_observations": 626
+    },
+    {
+      "name": "Urena lobata",
+      "checked_at": "2026-11-05T02:21:28.975Z",
+      "status": "resolved",
+      "taxon_id": 127638,
+      "source": "https://www.inaturalist.org/taxa/127638",
+      "eligible_observations": 1528
+    },
+    {
+      "name": "Vanda hookeriana",
+      "checked_at": "2026-11-05T02:21:31.987Z",
+      "status": "needs_taxonomy_review",
+      "candidate_count": 0
+    },
+    {
+      "name": "Vatica borneensis",
+      "checked_at": "2026-11-05T02:21:33.483Z",
+      "status": "resolved",
+      "taxon_id": 889966,
+      "source": "https://www.inaturalist.org/taxa/889966",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Vatica dulitensis",
+      "checked_at": "2026-11-05T02:21:36.579Z",
+      "status": "resolved",
+      "taxon_id": 889967,
+      "source": "https://www.inaturalist.org/taxa/889967",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Vatica micrantha",
+      "checked_at": "2026-11-05T02:21:39.744Z",
+      "status": "resolved",
+      "taxon_id": 889972,
+      "source": "https://www.inaturalist.org/taxa/889972",
+      "eligible_observations": 0
+    },
+    {
+      "name": "Xylocarpus granatum",
+      "checked_at": "2026-11-05T02:21:42.723Z",
+      "status": "resolved",
+      "taxon_id": 196657,
+      "source": "https://www.inaturalist.org/taxa/196657",
+      "eligible_observations": 66
+    },
+    {
+      "name": "Youngia japonica",
+      "checked_at": "2026-11-05T02:21:45.759Z",
+      "status": "resolved",
+      "taxon_id": 127066,
+      "source": "https://www.inaturalist.org/taxa/127066",
+      "eligible_observations": 2983
+    },
+    {
+      "name": "Zingiber spectabile",
+      "checked_at": "2026-11-05T02:21:48.962Z",
+      "status": "resolved",
+      "taxon_id": 372652,
+      "source": "https://www.inaturalist.org/taxa/372652",
+      "eligible_observations": 294
+    }
+  ]
+}

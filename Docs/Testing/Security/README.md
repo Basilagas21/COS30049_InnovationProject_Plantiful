@@ -16,6 +16,7 @@ The extracts support Section 8 of the [Sprint 2 report](../../Reports/Sprint2/Sp
 | EV-SEC-06 | Current static checks and automated tests pass, with recorded build and Expo dependency limitations | 6 November 2026 | [Check log](evidence/S2-CHECKS-2026-11-06.md) | Web build rerun was blocked by host memory. Expo Doctor reported five version mismatches |
 | EV-SEC-07 | Tracked code does not contain a client-side service-role secret, and no environment file is tracked | 6 November 2026 | [Bundle and secret check](evidence/S2-SEC-05-bundle-secret-2026-11-06.md) | Source review, not a full native binary inspection |
 | EV-SEC-08 | A stored private IP disclosure in test data was removed and the affected pages were rechecked | 10 October 2026 | [Private IP resolution](evidence/S2-SEC-03-private-ip-2026-10-10.md) | Field removal from the public query remains open as R-10 |
+| EV-SEC-09 | Integrated IoT changes pass 36 automated tests on `c49d33b` | 6 November 2026 | [IoT integration check](evidence/S2-IOT-2026-11-06.md) | Fake service and serial fixtures. Not physical-node, hosted-database or field evidence |
 
 ## What the evidence supports
 
@@ -55,6 +56,9 @@ npm run lint
 npm test
 npx expo-doctor
 npm audit --omit=dev --json
+
+# IoT
+python -m unittest discover -s iot -p "test_*.py" -v
 ```
 
 Live RLS and ZAP checks require the deployed schema and a controlled web deployment. Use the commands and scope in the [security plan](../../Security/01_Security_Plan.md) and [evidence guide](../../Security/04_Evidence_Guide.md). Record the actual release revision, date, target and result.

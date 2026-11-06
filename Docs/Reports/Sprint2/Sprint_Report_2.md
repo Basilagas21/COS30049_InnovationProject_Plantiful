@@ -24,9 +24,9 @@ Sprint 2 focuses on completing, integrating and evaluating the Plantiful prototy
 
 The strongest progress since Sprint 1 is the move from source-level checks to recorded device and live-database trials. An iPhone trial documents offline captures, persistence across an application restart, subsequent synchronisation, duplicate checks and officer approval returning to the phone. A Pixel trial documents capture, location, photo delivery, restart persistence and QR opening on Expo SDK 58. A separate conflict trial uses one physical phone and a scripted second client to demonstrate stale-edit rejection, preservation of the local copy and explicit merge resolution. These results support the tested workflows. They do not establish population-level reliability or a complete two-phone user experience.
 
-Security and review behaviour also improved. Dated verification records describe removal of legacy policies permitting botanist self-approval, extension of the species publication gate to inserts, and an 18-of-18 public write-block result. Officer observation management was clarified as review rather than editing the botanist's field data. Rejections now carry a reason, and correction takes place through botanist editing and resubmission. The latest dependency record reports zero mobile audit findings and zero web production findings at the tested revision.
+Security and review behaviour also improved. Dated verification records describe removal of legacy policies permitting botanist self-approval, extension of the species publication gate to inserts, and a public write-block result recorded as 19 PASS with 6 data-dependent SKIP. Officer observation management was clarified as review rather than editing the botanist's field data. Rejections now carry a reason, and correction takes place through botanist editing and resubmission. The latest dependency record reports zero mobile audit findings and zero web production findings at the tested revision.
 
-Four further changes are implemented on review branches but are not part of the reviewed `main` baseline. PRs #62 to #65 cover alert resolution, sensor-payload validation, severity escalation and interruption recovery. Their branch test reports are useful development evidence, but final integration and physical-node checks remain necessary. Closed issue status is not treated as proof of merged or deployed implementation.
+Sensor-payload validation, severity escalation and interruption recovery are now integrated on `main` as PRs #63 to #65. The combined IoT suite passes 36 tests, including database outage, USB reconnection and escalation cases. Alert resolution remains an open change in PR #62. Integrated tests are development evidence. Physical-node checks, the final alert-resolution decision and deployed-state verification remain necessary. Closed issue status is not treated as proof of deployed implementation.
 
 Final readiness is not yet demonstrated. Outstanding work includes measured QR and sync acceptance trials, five-user usability evaluation, hardware calibration and assembly evidence, credential-rotation confirmation, final security reassessment, broader coverage reporting and sign-off. The report therefore presents verified progress and a bounded completion plan rather than claiming that every requirement has been met.
 
@@ -67,9 +67,9 @@ The following status is an evidence classification. It does not derive a complet
 | S2-01 | Dependencies and SDK 58 | Web and mobile owners | #43 | Verification recorded at `9a4d99b`. Mobile audit zero, web production audit zero. Hosted deployment not verified |
 | S2-02 | Credentials and accounts | Authorised Supabase owner | #41 | Rotation and password-reset confirmation outstanding |
 | S2-03 | Publication and role policies | Backend and web owners | #44 | Live verification recorded on 29 and 31 October, with a subsequent issue-comment recheck |
-| S2-04 | IoT payload validation | IoT owner and PR author | #45, PR #63 | Branch implementation and regression results available. PR open |
-| S2-05 | IoT interruption recovery | IoT owner and PR author | #46, PR #65 | Branch implementation and simulated interruption results available. PR open |
-| S2-06 | Alert escalation | IoT and officer-workflow owners | #47, PR #64 | Severity-aware policy proposed and branch-tested. PR open |
+| S2-04 | IoT payload validation | IoT owner and PR author | #45, PR #63 | Integrated in `39e5150`. Validation and combined IoT tests pass. Physical-node verification outstanding |
+| S2-05 | IoT interruption recovery | IoT owner and PR author | #46, PR #65 | Integrated in `854cffb`. Simulated outage and USB reconnection tests pass. Physical-node verification outstanding |
+| S2-06 | Alert escalation | IoT and officer-workflow owners | #47, PR #64 | Integrated in `c49d33b`. Severity escalation through cooldown is tested. Operational cooldown acceptance outstanding |
 | S2-07 | Interval and calibration | Hardware holder | #48 | Physical measurements outstanding |
 | S2-08 | Wiring and assembly | Hardware holder | #49, #58 | D35 confirmed and D-02 draft available. Electrical and assembly confirmation incomplete |
 | S2-09 | Alert resolution | Web and backend owners | #31, PR #62 | Branch implementation available. Integration and database state need release confirmation |
@@ -91,7 +91,7 @@ The following status is an evidence classification. It does not derive a complet
 | 27 to 28 October | Baseline review, work-package planning and D-02 draft |
 | 29 to 31 October | Publication/review and species-feedback fixes. Offline iPhone trial and database verification |
 | 1 to 2 November | Pixel permission, conflict and dependency regression records. IoT and alert-resolution PRs opened |
-| Next integration gate | Review PRs #60 and #62 to #65, apply required database changes and record the combined release revision |
+| Next integration gate | PRs #63 to #65 are integrated. Review PR #62 and the documentation PR #60, apply required database changes and record the combined release revision |
 | Next evidence gate | Physical IoT trials, measured acceptance, usability, security reassessment and coverage analysis |
 | 5 November internal target | Reviewed report, accessible evidence package and completed rehearsal |
 | 6 November submission target | Inspect uploaded files and retain submission receipt |
@@ -122,7 +122,7 @@ Evidence identifiers are defined in Appendix A. A successful example establishes
 | Provide public information safely | Read policies and separate observation/species visibility rules | EV-04, SEC-01 | Tested role and lifecycle cases passed. Final combined-release retest required |
 | Search, map and export biodiversity information | Existing web catalogue, map and reports | WEB-01, EV-03 | Page rendering is recorded. Final search/map and actual CSV/PDF download checks must be attached |
 | Capture location with usable recovery | Manual Capture GPS action and Open settings recovery | EV-06 | Four Android scenarios recorded. Automatic GPS stamping is not claimed |
-| Monitor and respond to threats | Existing monitoring plus PRs #62 to #65 | EV-08, IOT-01 to IOT-03 | Branch evidence available. Integrated physical verification outstanding |
+| Monitor and respond to threats | Existing monitoring plus integrated PRs #63 to #65. PR #62 remains open | EV-08, IOT-01 to IOT-03 | Integrated IoT tests pass. Physical node and final alert-resolution verification outstanding |
 | Protect accounts and sensitive information | Auth, RLS, storage policies, transport controls and secret handling | EV-04, EV-07, SEC-01 to SEC-03 | Selected controls verified. Credential remediation and final reassessment remain open |
 | Support efficient field and officer tasks | Navigation, status feedback and recovery refinements | UX-01 | Developer/device observations exist. Independent user task results outstanding |
 
@@ -141,18 +141,18 @@ Evidence identifiers are defined in Appendix A. A successful example establishes
 | Dependencies | Vulnerable transitive mobile tooling remained after the SDK upgrade | Use compatible SDK 58 updates and patched dependency overrides instead of a forced downgrade | Recorded audits and six regression steps at `9a4d99b`. Overrides require continued maintenance |
 | Appearance and layout | Device review identified gesture-bar clearance and inconsistent spacing | Adjust insets, controls and typography. Provide Light, Dark and System appearance | Implementation and device-review history exist. Participant benefit and final contrast checks are not yet measured |
 
-### 3.2 Changes awaiting integration
+### 3.2 IoT integration and remaining change
 
-The following are descriptions of open PR implementations, not claims about the reviewed main branch.
+The validation, escalation and recovery changes are now integrated on `main`. The open resolver change remains a proposal.
 
-| PR | Proposed implementation | Why this approach | Limitation to verify |
+| PR | Implementation | Why this approach | Verification and limitation |
 |---|---|---|---|
-| #63 | Reject malformed, non-finite and out-of-range bridge readings before insertion | Rejecting a bad line preserves evidence of sensor failure instead of silently clamping it into a believable measurement | Bridge-only validation. Simulator/direct-write paths and database constraints are not hardened by this PR |
-| #64 | Allow higher severity to escalate through cooldown while suppressing equal/lower severity | Balances alert fatigue against the risk of hiding a worsening condition | Six-hour cooldown needs operational justification. Physical and live-table verification remain outstanding |
-| #65 | Buffer readings in memory, retry uploads with backoff and reconnect USB | A bounded buffer avoids immediate process termination and limits memory growth | Not durable storage. Buffer overflow, bridge shutdown and uncaptured USB-gap readings can cause loss |
-| #62 | Allow officers/admins to resolve alerts, with database-stamped resolver and time | Officers need a recorded response action rather than a read-only alert list | Final resolution cannot be reopened in the proposed design. Confirm workflow acceptance and deployed migration |
+| #63 | Reject malformed, non-finite and out-of-range bridge readings before insertion | Rejecting a bad line preserves evidence of sensor failure instead of silently clamping it into a believable measurement | Integrated in `39e5150`. Bridge validation tests pass. Simulator and direct-write paths are not hardened by this change |
+| #64 | Allow higher severity to escalate through cooldown while suppressing equal or lower severity | Balances alert fatigue against the risk of hiding a worsening condition | Integrated in `c49d33b`. Cooldown and escalation tests pass. The six-hour default still needs operational justification |
+| #65 | Buffer readings in memory, retry uploads with backoff and reconnect USB | A bounded buffer avoids immediate process termination and limits memory growth | Integrated in `854cffb`. Recovery tests pass. This is not durable storage, so buffer overflow, bridge shutdown and USB-gap readings can still cause loss |
+| #62 | Allow officers and admins to resolve alerts, with database-stamped resolver and time | Officers need a recorded response action rather than a read-only alert list | Not integrated. Final resolution cannot be reopened. Confirm workflow acceptance and apply the deployed migration before claiming completion |
 
-PR #65 reports a default capacity of 1,800 readings, approximately one hour at a two-second interval. This is a capacity calculation, not a measured one-hour endurance result. Its recovery policy does not justify claiming zero loss under every interruption. A timeout after a server commit but before acknowledgement also needs an explicit duplicate/retry test before claiming exactly-once IoT storage.
+The integrated recovery buffer holds 1,800 readings by default, approximately one hour at a two-second interval. This is a capacity calculation, not a measured one-hour endurance result. The recovery policy does not justify claiming zero loss under every interruption. A timeout after a server commit but before acknowledgement also needs an explicit duplicate and retry test before claiming exactly-once IoT storage.
 
 ### 3.3 Decision register
 
@@ -161,7 +161,7 @@ PR #65 reports a default capacity of 1,800 readings, approximately one hour at a
 | Officer review rather than observation edit/delete | Scope agreement recorded in #16 on 29 October | Protects authorship but requires a clear rejection/correction workflow |
 | Compare-and-swap rather than last-write-wins | Existing Sprint 1 design, with expanded Sprint 2 evidence and visibility | Prevents silent overwrites but requires user resolution of conflicts |
 | USB bridge rather than MQTT deployment | Existing delivered transport | Reduces prototype integration dependencies but requires a trusted host and cable |
-| Severity escalation and final alert resolution | Open PR policies as at 2 November | Reduce suppressed critical alerts and ambiguous resolution, but need owner confirmation and integrated tests |
+| Severity escalation and final alert resolution | Escalation integrated and tested. Final resolution remains an open change | Reduce suppressed critical alerts and ambiguous resolution, but final resolution still needs acceptance and deployed verification |
 | No application-level field encryption | Rationale recorded in the security assessment | RLS and platform controls are distinct from field encryption. Acceptance against the original objective still needs explicit confirmation |
 | Curved navigation and photo-led cards | Implemented in the working tree from user-supplied references. Not merged, captured or device-verified | Potential visual coherence must be weighed against readability, rendering cost and navigation stability |
 
@@ -389,7 +389,7 @@ These identifiers follow the existing [testing plan](Sprint_2_Management_Plan.md
 | #43, 1 to 2 November | Pixel 9 Pro XL, Expo SDK 58.0.22, `9a4d99b`, web Next.js 16.4.3 | Local application runs against live Supabase, not hosted-release verification |
 | #51, 1 November | Pixel 9 Pro XL, Android 17, Expo Go 58.0.5, `7c10326` | Android permission scenarios. iOS equivalents not exercised |
 | #44 and #16 policy records | Live database checks on 29 and 31 October, Linux/Node 22 recorded in comments | Preserve deployed policy definitions and raw output |
-| IoT PR regressions | PR #63 `58e0aa7`, PR #64 `3fe69ed`, PR #65 `ffe764a` | Fake service/serial fixtures and branch integration checks reported by PR authors |
+| IoT integrated regressions | PR #63 `39e5150`, PR #64 `c49d33b`, PR #65 `854cffb` | Fake service/serial fixtures. Combined suite of 36 tests passes on the integrated revision |
 
 Expo SDK/package version and Expo Go client version are different fields. Record both. Final trials also need browser version, host OS, firmware version, migration state and network conditions. Do not replace missing exact versions with a broad value such as Node 20+.
 
@@ -418,10 +418,7 @@ Do not rewrite this as both applications having zero vulnerabilities in every sc
 | Mobile sync helper | Four tests and 100% helper coverage reported in the execution backlog | Not overall mobile or full sync-screen coverage |
 | QR lookup helper | Six tests recorded on the current working tree, covering cached, remote, unresolved, storage-failure and timeout paths | Working-tree result. Not a merged-release result and not device coverage |
 | Measurement summariser | Historical two-test pass | Attach a release-revision rerun before quoting it as final |
-| IoT baseline | Seven-test suite recorded historically | Does not include new branch regression tests |
-| PR #63 | Fourteen tests reported, including seven validation additions | Branch result, not merged-release result |
-| PR #64 | Fifteen tests reported, or twenty-two combined with #63 | Branch result with explicit combination |
-| PR #65 | Twenty-one tests reported, or thirty-six combined with #63 and #64 | PR author reports all six merge orders checked. Final release rerun still required |
+| IoT integrated suite | 36 tests pass on `main` after PRs #63 to #65 | Unit tests with fake service and serial fixtures. Not physical-node or hardware-in-the-loop evidence |
 | Web | 6 November re-test recorded type check, lint and 42 passing tests. The production build was blocked by host memory after compile and type check | Build success is not runtime behaviour or coverage. No current build result is claimed |
 
 A repeat on the current working tree passed mobile type check, lint, ten helper tests, Expo Doctor 20/20 and an Android Metro export. The web type check and production build also passed, with one image-optimisation lint warning recorded. These are pre-integration working-tree checks.
@@ -438,7 +435,7 @@ Do not sum hypothetical future test counts into a current release total. Likewis
 | Permission recovery missing on discover/edit screens | Real UI recovery defect found by device testing | Added recovery actions in `7c10326`, with same-device verification recorded |
 | RLS probe referenced a nonexistent column | Test-fixture defect, not proof of a policy failure | Probe corrected in `1a289a5` and 18/18 reported. The retained 10 October SQL rerun records 19 PASS and 6 data-dependent SKIP |
 | Stale same-owner edits refused | Expected integrity behaviour | Local content retained, merge performed and subsequent revision checked |
-| IoT timeout terminated the bridge | Baseline reliability defect reproduced in PR work | Recovery branch reports passing interruption regressions. Integration remains pending |
+| IoT timeout terminated the bridge | Baseline reliability defect reproduced in PR work | Recovery integrated in `854cffb`. All 36 IoT tests pass, including database outage and USB reconnection. Physical-node retest remains outstanding |
 
 The report retains these observations rather than claiming every initial test passed. Final passing results must be linked to the correction and retest revision.
 
@@ -634,7 +631,7 @@ The security position is therefore partly verified and partly outstanding. It is
 
 | Gate | Required evidence | Status at cut-off |
 |---|---|---|
-| Integration | Reviewed PRs integrated, migration state recorded and combined regression executed | Outstanding for PRs #60 and #62 to #65 |
+| Integration | Reviewed PRs integrated, migration state recorded and combined regression executed | PRs #63 to #65 integrated. PR #62 and documentation PR #60 remain open. Migration state and combined release checks outstanding |
 | Functional acceptance | Core user workflows traced on the final revision, including failure recovery | Earlier trials available, final release verification outstanding |
 | Physical IoT | Wiring, calibration, correlated readings/alerts and interruption trial | Outstanding |
 | Measured evaluation | PERF-01, REL-01 and UX-01 outcomes with raw records | Outstanding |
@@ -763,7 +760,7 @@ Plantiful now has recorded evidence of offline record delivery, review feedback,
 | EV-05 | Species mutation feedback | [Issue #50](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/50) | Retain UI/probe captures for the four reported cases |
 | EV-06 | Android location recovery | [Issue #51](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/51), `7c10326` | Retain permission-state screenshots and device details |
 | EV-07 | Historical security assessment | [Security evidence guide](../../Security/04_Evidence_Guide.md), local `Docs/Security/Evidence/` | Separate October history from release reassessment. Include redacted files in the actual package |
-| EV-08 | Proposed alert and IoT fixes | [PR #62](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/pull/62), [PR #63](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/pull/63), [PR #64](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/pull/64), [PR #65](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/pull/65) | Branch-reported results. Add combined-release output and physical confirmation |
+| EV-08 | Alert and IoT fixes | [PR #62](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/pull/62), [PR #63](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/pull/63), [PR #64](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/pull/64), [PR #65](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/pull/65) | PRs #63 to #65 integrated with 36 passing tests. PR #62 remains open. Add physical confirmation |
 | EV-09 | Wiring design | [D-02 image](diagrams/exported/D-02_physical_build.png), [editable source](diagrams/source/D-02_physical_build.drawio) | Draft, not electrical verification. Add component values and assembly photo |
 | EV-10 | Acceptance measurements | [TBD] PERF-01 and REL-01 raw exports and summaries | Include protocol, dates, sample counts and all outcomes |
 | EV-11 | Usability | [TBD] UX-01 participant/task records | Anonymous IDs, role assignments, errors, timings and retest results |
@@ -780,7 +777,8 @@ Plantiful now has recorded evidence of offline record delivery, review feedback,
 
 The team's 36/40 target corresponds to 90% of these product marks. It is a target, not a predicted or guaranteed award. Writing quality cannot replace missing test or participant results.
 
-- [ ] Review and integrate PRs #60 and #62 to #65, or record explicit exclusions and reasons.
+- [x] Integrate PRs #63 to #65 and rerun the combined IoT suite.
+- [ ] Review and integrate or explicitly exclude PRs #60 and #62, with reasons.
 - [ ] Record the release commit, dependency lockfiles and database migration state.
 - [ ] Run combined-release checks and attach actual output rather than predicted test totals.
 - [ ] Confirm credential remediation and legitimate-service recovery.

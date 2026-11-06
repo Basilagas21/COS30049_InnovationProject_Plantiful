@@ -133,7 +133,7 @@ Evidence identifiers are defined in Appendix A. A successful example establishes
 | Area | Observed problem | Change and rationale | Verification and boundary |
 |---|---|---|---|
 | Publication gate | Published inserts were not covered by the update-only gate | Include inserts and updates so the entry path cannot bypass the approved-observation prerequisite | Live lifecycle probes reported in #44. Preserve exact deployed SQL and output |
-| Botanist permissions | Legacy permissive policies combined with hardened policies and allowed self-approval | Remove legacy policies rather than relying on UI restrictions | Direct backend denial checks and 18/18 script result recorded |
+| Botanist permissions | Legacy permissive policies combined with hardened policies and allowed self-approval | Remove legacy policies rather than relying on UI restrictions | Direct backend denial checks and 19 PASS with 6 data-dependent SKIP recorded |
 | Review correction | Review needed a clear explanation and resubmission path | Require a rejection reason and clear it on resubmission. Botanists retain responsibility for field content | Browser and database results recorded. Sprint 1 already described approve/reject, so the new claim is the reason and enforcement improvement |
 | Species mutations | A zero-row mutation could appear successful | Request the affected identity and return Species not found when nothing changed | Four live cases recorded in #50. Automated web regressions remain a gap |
 | GPS failure recovery | Some forms showed a dead-end error after denied permission | Offer Open settings and retain entered fields across recovery | Device trial found two missing call sites, fixed in `7c10326` and retested |

@@ -121,7 +121,7 @@ void setup() {
   Serial.println("Board: ESP32-WROOM-32");
   Serial.println("Sensors: DHT11 + PIR + Soil moisture + Rain");
   Serial.println("Output: External LED (PIR Indicator)");
-  Serial.println("Report interval: 4 seconds");
+  Serial.println("Report interval: 2 seconds");
   Serial.println("PIR warm-up: 60 seconds");
 
   printHeader();
@@ -153,7 +153,7 @@ void loop() {
   previousMotion = motion;
 
   // ========================================
-  // 2. REPORT EVERY 4 SECONDS
+  // 2. REPORT EVERY 2 SECONDS
   // ========================================
 
   if (now - lastReport >= REPORT_INTERVAL) {

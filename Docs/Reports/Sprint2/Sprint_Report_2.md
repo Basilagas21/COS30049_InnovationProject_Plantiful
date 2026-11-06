@@ -421,7 +421,7 @@ Do not rewrite this as both applications having zero vulnerabilities in every sc
 | IoT integrated suite | 36 tests pass on `main` after PRs #63 to #65 | Unit tests with fake service and serial fixtures. Not physical-node or hardware-in-the-loop evidence |
 | Web | 6 November re-test recorded type check, lint and 42 passing tests. The production build was blocked by host memory after compile and type check | Build success is not runtime behaviour or coverage. No current build result is claimed |
 
-A repeat on the current working tree passed mobile type check, lint, ten helper tests, Expo Doctor 20/20 and an Android Metro export. The web type check and production build also passed, with one image-optimisation lint warning recorded. These are pre-integration working-tree checks.
+An earlier pre-integration working-tree repeat passed mobile type check, lint, ten helper tests, Expo Doctor 20/20 and an Android Metro export. The 6 November check log supersedes that dependency result with 19 of 20 Expo Doctor checks and five version mismatches. The earlier web production build result also does not establish the current working tree because the 6 November build was blocked by host memory.
 
 The 6 November 2026 re-test passed mobile type check, lint and 21 tests. Expo Doctor passed 19 of 20 checks and reported five version mismatches. Web type check, lint and 42 tests passed. The web production build compiled and type checked, then a page-data worker ran out of memory on this host. The current evidence therefore supports the test results but not a completed web production build.
 

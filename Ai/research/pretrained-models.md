@@ -1,6 +1,6 @@
 # Pretrained offline model investigation
 
-Research date 5 November 2026. No model binaries or image archives downloaded. No inference benchmark performed.
+Research date 5 November 2026. No pretrained candidate binary or PlantNet image archive from this note was downloaded. The separate 20-species pilot downloaded iNaturalist candidate images and used torchvision ImageNet weights. See `Ai/a.ipynb` for that run.
 
 ## Candidate comparison
 
@@ -56,19 +56,23 @@ Read-only audit completed at `2026-11-05T01:50:37.896Z` against 263 distinct cat
 
 Reproduce with `node --env-file=web/.env.local Ai/research/audit-coverage.mjs inaturalist`. The default argument remains `plantnet`. Both modes report the downloaded metadata hash. Catalogue data can change. Synonyms, model tensor correspondence and iNaturalist weight redistribution terms remain unverified. No model binary was downloaded.
 
-### Recommended next implementation step
+### Pilot training result
 
-Neither screened small model provides adequate direct coverage for general identification across the current catalogue. This limited search does not establish that no suitable public model exists.
+The recommended transfer-learning experiment was run for the convenience pilot. The notebook `Ai/a.ipynb` downloaded 1,964 candidate photos, deduplicated them to 1,954, split by observation into 1,367 train, 294 validation and 293 test, and fine-tuned MobileNetV3-Small at 224 by 224 for 12 epochs. Validation top-1 was 76.9%. Test top-1 was 78.8%, top-3 was 91.8% and macro F1 was 78.8%.
 
-For a useful offline catalogue feature, the recommended next experiment is transfer learning on a small, explicitly supported local-species set using a lightweight pretrained backbone. This requires confirmed photographs of the target species. An ImageNet-pretrained backbone alone cannot identify our catalogue species, and changing labels cannot add recognition capability.
+This is a pilot result over 20 species. It does not establish full catalogue coverage, field accuracy, unsupported-species abstention or Android latency. Labels were automatically filtered iNaturalist research-grade names and were not manually verified. The test set shares the iNaturalist photo domain. Model artifacts are local and ignored under `Ai/models/pilot/`. ONNX export was not produced because the local `onnx` install could not import `onnx.defs`. A PyTorch checkpoint and TorchScript export exist.
 
-1. Select an initial supported-species set based on available confirmed photographs, with similar-looking species represented.
-2. Build an image manifest with source, licence, observation identity, confirmed label and validation/test split. Keep observations together across splits.
-3. Fine-tune a lightweight classifier and evaluate against unsupported plants and non-plant inputs before choosing an abstention threshold.
-4. Export and compare float and INT8 artifacts, then measure cold and warm inference on the actual target Android phone.
-5. Integrate only after useful held-out recognition and device performance are demonstrated. Hosted Field Assist remains the existing online path.
+### Next gates after the pilot
 
-This is a proposed training experiment, not an approved scope change or a claim that all 263 species can be supported. The immediate inputs needed are the target phone model and the availability of independently confirmed photographs. If training is outside scope, a narrowly labelled pretrained demonstration requires an explicit supported-species decision instead.
+Neither screened small pretrained model provides adequate direct coverage for general identification across the current catalogue. The pilot tests transfer learning on 20 species. It does not establish general catalogue support.
+
+1. Review `Ai/evaluation/pilot/review_grid.png` and correct or remove mislabelled images.
+2. Add unsupported plants and non-plant inputs, then calibrate an abstention threshold on validation data.
+3. Collect local field photographs from multiple Android phones and lighting conditions.
+4. Convert the pilot artifact to an Android runtime supported by an Expo development build, then measure cold start, warm latency, memory and model size.
+5. Integrate only after useful held-out field recognition and device performance are demonstrated. Hosted Field Assist remains the existing online path.
+
+The pilot remains a 20-species demonstration, not a claim that all 263 species can be supported.
 
 ## Sources
 

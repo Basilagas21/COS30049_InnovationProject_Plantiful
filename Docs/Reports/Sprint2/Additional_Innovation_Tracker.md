@@ -4,7 +4,7 @@ Status recorded on 4 November 2026. Update this file when deployment or new evid
 
 ## Current position
 
-Offline pretrained identification is now being investigated in the [AI research index](../../../Ai/README.md). No offline model has been selected or benchmarked. The research records candidate sizes, catalogue label gaps and dataset acquisition requirements separately from the existing hosted implementation.
+Offline identification now has a 20-species pilot model recorded in the [AI research index](../../../Ai/README.md) and [training notebook](../../../Ai/a.ipynb). The model scored 78.8% top-1 and 91.8% top-3 on 293 observation-disjoint test images from automatically filtered iNaturalist labels. It is not integrated and not benchmarked on a phone. The research records candidate sizes, catalogue label gaps and dataset acquisition requirements separately from the existing hosted implementation.
 
 The owner subsequently reported that the migration tables are visible in Supabase. This is owner-reported progress, not a completed deployed-policy or end-to-end test. Local configuration and the precise resume steps are recorded in the [handover note](Additional_Innovation_Handover.md).
 
@@ -38,8 +38,9 @@ All issues use the `(Additional_Innovation)` title prefix and are assigned to Ba
 | Mobile tests | 21 passed | Helper and regression behaviour |
 | Android Metro export | Passed | Bundle and asset generation |
 | Isolated database checks | 10 passed | Migration and access behaviour in the local fixture |
+| Offline pilot training | 12 epochs completed | 20-species pilot, 293 test images, 78.8% top-1 and 91.8% top-3, not phone tested |
 
-See the [verification record](../../Testing/Additional_Innovation/Verification.md) for failures, retests and reproduction details. These are not live provider accuracy results, physical-phone test results or participant outcomes.
+See the [verification record](../../Testing/Additional_Innovation/Verification.md) for failures, retests and reproduction details. These are not live provider accuracy results, physical-phone test results, field-photo results or participant outcomes.
 
 ## Activation and evaluation checklist
 
@@ -50,6 +51,8 @@ See the [verification record](../../Testing/Additional_Innovation/Verification.m
 - [ ] Set `AI_PROVIDER` and mobile `EXPO_PUBLIC_FIELD_ASSIST_URL`.
 - [ ] Confirm the target catalogue through authorised access.
 - [ ] Obtain independently confirmed plant photographs with provenance.
+- [ ] Review pilot labels and evaluate unsupported species and non-plant inputs.
+- [ ] Convert the pilot model and measure Android latency, memory and model size.
 - [ ] Run a live provider smoke test and retain actual results.
 - [ ] Compare providers and record the final provider decision.
 - [ ] Verify offline capture, retry, changed-photo detection and decision history on a phone.

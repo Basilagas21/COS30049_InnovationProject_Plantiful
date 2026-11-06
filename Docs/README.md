@@ -82,7 +82,7 @@ Security pack for Plantiful, Group 7, COS30049. It covers the cybersecurity and 
 | Secure access controls and encryption on all platforms | The same database policies cover web, mobile and the IoT ingest path. Transport is HTTPS | Report 3.3 and Appendix A | RLS output | Implemented |
 | SSDLC planning and execution | Security activities are assigned to phases, with gates, owners and deliverables | Plan 2 and 9 | Security plan | Executed in Sprint 1, refreshed for Sprint 2 |
 | Vulnerability assessment details, including tools and scope | The assessment strategy, toolset, environments and exit criteria are defined before execution | Plan 5 to 8 | Security plan | Defined |
-| Assessment results with verified vulnerabilities | Findings are recorded with reproduction, remediation and a dated re-test | Register 2, 5 and 6, Report 5 to 7 | Evidence folder | Verified to 10 October 2026, Sprint 2 re-test open |
+| Assessment results with verified vulnerabilities | Findings are recorded with reproduction, remediation and a dated re-test | Register 2, 5 and 6, Report 5 to 7 | Evidence folder and [submission-safe extracts](Testing/Security/README.md) | Verified to 10 October 2026. Current repository checks dated 6 November 2026 |
 | Recommendations and their implementation | Ten recommendations carry an owner, target and status | Register 4 | Register | Partly implemented, remainder scheduled or deferred |
 
 ### Security document map
@@ -94,10 +94,11 @@ Security pack for Plantiful, Group 7, COS30049. It covers the cybersecurity and 
 | [Findings register](Security/03_Findings_Register.md) | Single tracker for findings, recommendations, residual risk and re-tests | You need current status or ownership |
 | [Evidence guide](Security/04_Evidence_Guide.md) | Collection, naming, redaction, indexing and submission rules | You are capturing or packaging evidence |
 | [Evidence folder](Security/Evidence/) | Raw historical output retained locally | You are verifying a specific past result |
+| [Submission-safe extracts](Testing/Security/README.md) | Redacted summaries and current audit JSON for the report and submission package | You are assembling the security evidence appendix |
 
 ### Security status
 
-Status as at 27 October 2026.
+Status as at 6 November 2026.
 
 | Measure | Result |
 |---|---|
@@ -106,11 +107,11 @@ Status as at 27 October 2026.
 | Findings with mitigation defined | 1, F-06 mobile toolchain advisories |
 | Confirmed critical or high findings in application code | 0 at the 10 October 2026 close |
 | High ZAP alerts after remediation | 0 |
-| Web production dependency advisories | 0 after the Next.js 16.4.3 upgrade on 27 October 2026 |
-| Mobile production dependency advisories | 4, all in build and development tooling |
-| Open Sprint 2 security work | S2-01 mobile toolchain acceptance, S2-02 credential and account remediation, S2-14 recommendation close-out, SEC-01 to SEC-03 |
+| Web production dependency advisories | 0 on 6 November 2026 |
+| Mobile production dependency advisories | 0 on 6 November 2026 |
+| Open Sprint 2 security work | Credential and account remediation, final deployed RLS and ZAP re-test, recommendation close-out, web build rerun and recurring dependency monitoring |
 
-The 10 October 2026 dependency figures are historical. A re-audit on 27 October 2026 found one critical and three high advisories in the web tree and one critical and three high advisories in the mobile tree. The web tree was then remediated to 0 entries. The mobile tree remains at 4 toolchain entries with no compatible automatic fix. The details and the remediation path are in Register 5.
+The 10 October 2026 dependency figures are historical. A re-audit on 27 October 2026 found one critical and three high advisories in the web tree and one critical and three high advisories in the mobile tree. The web tree was then remediated to 0 entries. On 6 November 2026 both production trees reported 0 advisories. The mobile Expo Doctor check still reports five version mismatches. The details and the remediation path are in Register 5 and the [6 November check log](Testing/Security/evidence/S2-CHECKS-2026-11-06.md).
 
 ### Security evidence
 
@@ -121,6 +122,7 @@ Raw output is retained locally in `Security/Evidence/`. The folder is excluded f
 | `Security/Evidence/checks/` | SQL verdicts, header captures and request or response checks from the 10 October 2026 assessment |
 | `Security/Evidence/zap/` | OWASP ZAP HTML reports, alert JSON and the scan summary |
 | `Security/Evidence/sprint2/` | New captures for the Sprint 2 re-test |
+| `Testing/Security/evidence/` | Submission-safe summaries and 6 November 2026 audit JSON. No raw secrets |
 
 Evidence rules are cumulative. Never overwrite a historical file, add a dated file instead. Name files with the test identifier, the date and a short description. Keep originals unmodified and redact copies. Do not store passwords, cookies, tokens, keys or personal data. Add each file to the index below.
 
@@ -128,6 +130,8 @@ Evidence rules are cumulative. Never overwrite a historical file, add a dated fi
 |---|---|---|---|---|
 | S2-AUD-WEB-01 | Web production dependency audit after the Next.js 16.4.3 upgrade | 27 October 2026, npm audit | `Security/Evidence/sprint2/audit-web-2026-10-27.json` | None. Audit metadata only |
 | S2-AUD-MOB-01 | Mobile production dependency audit after the Expo SDK 58 upgrade | 27 October 2026, npm audit | `Security/Evidence/sprint2/audit-mobile-2026-10-27.json` | None. Audit metadata only |
+| S2-AUD-WEB-02 | Web production dependency audit on the current working tree | 6 November 2026, npm audit | `Testing/Security/evidence/S2-AUD-WEB-2026-11-06.json` | None. Audit metadata only |
+| S2-AUD-MOB-02 | Mobile production dependency audit on the current working tree | 6 November 2026, npm audit | `Testing/Security/evidence/S2-AUD-MOB-2026-11-06.json` | None. Audit metadata only |
 
 ### Security review rules
 

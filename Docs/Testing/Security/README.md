@@ -13,7 +13,7 @@ The extracts support Section 8 of the [Sprint 2 report](../../Reports/Sprint2/Sp
 | EV-SEC-03 | OWASP ZAP passive scans found no High alerts and verified the header and error-handling fixes | 10 October 2026 | [ZAP summary](evidence/S2-SEC-03-zap-2026-10-10.md), [header capture](evidence/S2-SEC-03-headers-2026-10-09.md) | Passive scan only. Last run before the final Sprint 2 code state |
 | EV-SEC-04 | Production dependency audits on 6 November 2026 reported zero advisories for web and mobile | 6 November 2026 | [Web audit](evidence/S2-AUD-WEB-2026-11-06.json), [mobile audit](evidence/S2-AUD-MOB-2026-11-06.json) | Audit output describes the lockfiles in the working tree. Recurring scanning is still open |
 | EV-SEC-05 | Anonymous probes did not demonstrate a usable public write path | 10 October 2026 | [Anonymous probe summary](evidence/S2-SEC-03-anon-probes-2026-10-10.md) | One ambiguous PATCH response is excluded from the pass claim. The SQL policy audit is authoritative |
-| EV-SEC-06 | Current static checks and automated tests pass, with recorded build and Expo dependency limitations | 6 November 2026 | [Check log](evidence/S2-CHECKS-2026-11-06.md) | Web build rerun was blocked by host memory. Expo Doctor reported five version mismatches |
+| EV-SEC-06 | Current static checks, automated tests and production build pass, with an Expo dependency limitation | 6 November 2026 | [Check log](evidence/S2-CHECKS-2026-11-06.md) | Build passed at `3866309` after earlier low-memory failures. Expo Doctor reported five version mismatches |
 | EV-SEC-07 | Tracked code does not contain a client-side service-role secret, and no environment file is tracked | 6 November 2026 | [Bundle and secret check](evidence/S2-SEC-05-bundle-secret-2026-11-06.md) | Source review, not a full native binary inspection |
 | EV-SEC-08 | A stored private IP disclosure in test data was removed and the affected pages were rechecked | 10 October 2026 | [Private IP resolution](evidence/S2-SEC-03-private-ip-2026-10-10.md) | Field removal from the public query remains open as R-10 |
 | EV-SEC-09 | Integrated IoT changes pass 36 automated tests on `c49d33b` | 6 November 2026 | [IoT integration check](evidence/S2-IOT-2026-11-06.md) | Fake service and serial fixtures. Not physical-node, hosted-database or field evidence |
@@ -33,7 +33,7 @@ The extracts support Section 8 of the [Sprint 2 report](../../Reports/Sprint2/Sp
 - It does not prove that the final deployed schema matches the tested schema.
 - It does not prove that the final deployment still has every expected RLS and storage policy.
 - It does not prove that the current deployment has been scanned with ZAP.
-- It does not prove that the web production build completes on this host. The rerun ran out of memory.
+- It does not prove that the web build runs correctly on the hosted deployment. The local production build passed at `3866309`.
 - It does not prove that mobile version mismatches are harmless.
 - It does not prove that local mobile storage is encrypted.
 - It does not prove that the exposed credential has been revoked or that the affected accounts have been reset.
@@ -78,5 +78,5 @@ The security section is suitable for submission as an honest Sprint 2 position. 
 1. Re-run the RLS and storage verification against the final deployed schema.
 2. Re-run ZAP against the final web deployment or record the scan as not completed.
 3. Confirm credential rotation and account recovery.
-4. Record the final release revision and the build limitation.
+4. Record the final release revision and the completed production build result.
 5. Confirm the dispositions for R-03 and R-06 to R-10.

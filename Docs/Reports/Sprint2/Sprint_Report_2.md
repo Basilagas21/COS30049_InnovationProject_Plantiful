@@ -419,11 +419,11 @@ Do not rewrite this as both applications having zero vulnerabilities in every sc
 | QR lookup helper | Six tests recorded on the current working tree, covering cached, remote, unresolved, storage-failure and timeout paths | Working-tree result. Not a merged-release result and not device coverage |
 | Measurement summariser | Historical two-test pass | Attach a release-revision rerun before quoting it as final |
 | IoT integrated suite | 36 tests pass on `main` after PRs #63 to #65 | Unit tests with fake service and serial fixtures. Not physical-node or hardware-in-the-loop evidence |
-| Web | 6 November re-test recorded type check, lint and 42 passing tests. The production build was blocked by host memory after compile and type check | Build success is not runtime behaviour or coverage. No current build result is claimed |
+| Web | 6 November re-test recorded type check, lint and 42 passing tests. A production build retry at `3866309` compiled, type checked and generated all 20 static pages | Build success is not runtime behaviour or coverage. Hosted deployment still needs a separate check |
 
-An earlier pre-integration working-tree repeat passed mobile type check, lint, ten helper tests, Expo Doctor 20/20 and an Android Metro export. The 6 November check log supersedes that dependency result with 19 of 20 Expo Doctor checks and five version mismatches. The earlier web production build result also does not establish the current working tree because the 6 November build was blocked by host memory.
+An earlier pre-integration working-tree repeat passed mobile type check, lint, ten helper tests, Expo Doctor 20/20 and an Android Metro export. The 6 November check log supersedes that dependency result with 19 of 20 Expo Doctor checks and five version mismatches. The current web production build passed separately at `3866309`.
 
-The 6 November 2026 re-test passed mobile type check, lint and 21 tests. Expo Doctor passed 19 of 20 checks and reported five version mismatches. Web type check, lint and 42 tests passed. The web production build compiled and type checked, then a page-data worker ran out of memory on this host. The current evidence therefore supports the test results but not a completed web production build.
+The 6 November 2026 re-test passed mobile type check, lint and 21 tests. Expo Doctor passed 19 of 20 checks and reported five version mismatches. Web type check, lint and 42 tests passed. A web production build retry at `3866309` compiled, type checked and generated all 20 static pages. The current evidence therefore supports the test results and the local production build. It does not establish hosted runtime behaviour.
 
 Do not sum hypothetical future test counts into a current release total. Likewise, route counts from different revisions or build-output conventions should not be treated as a quality metric.
 
@@ -552,7 +552,7 @@ The assessment used OWASP ASVS 4.0 Level 1 with selected Level 2 checks, OWASP T
 |---|---|---|---|
 | Static analysis | Strict TypeScript, ESLint and framework checks on web and mobile | Web type check passed. Web lint had 0 errors and 3 warnings. Mobile type check and lint passed | EV-SEC-06 |
 | Automated tests | Web API, library and component tests. Mobile helper and regression tests | Web 42 passed. Mobile 21 passed. No failures | EV-SEC-06 |
-| Build integrity | Next.js production build and Expo Doctor | Web compiled and type checked, then a page-data worker ran out of memory on this host. Expo Doctor passed 19 of 20 checks with five version mismatches | EV-SEC-06 |
+| Build integrity | Next.js production build and Expo Doctor | Web production build passed at `3866309` and generated all 20 static pages. Expo Doctor passed 19 of 20 checks with five version mismatches | EV-SEC-06 |
 | Software composition analysis | `npm audit --omit=dev` on both production trees | Web 0 advisories. Mobile 0 advisories on 6 November | EV-SEC-04 |
 | Database and storage policy | Live Supabase SQL verification under role impersonation | 19 PASS and 6 data-dependent SKIP. Both script verdicts returned PASS | EV-SEC-01 |
 | Secure code review | ASVS-referenced walkthrough of auth, sync, upload, routes and error paths | Twelve findings raised across the assessment. Eleven fixed and one mitigation defined | Report 6. EV-SEC-02 |
@@ -562,7 +562,7 @@ The assessment used OWASP ASVS 4.0 Level 1 with selected Level 2 checks, OWASP T
 
 The re-test sequence is important. The 10 October 2026 pass followed remediation of F-07 to F-12 and included a repeat ZAP authenticated scan. The 27 October 2026 re-audit found new web advisories after publication and closed them by moving Next.js to 16.4.3. The 6 November 2026 re-test repeated web and mobile static checks, tests and production audits. The current web audit and mobile audit both report zero entries.
 
-A zero-advisory audit is a point-in-time result. It does not close the recurring monitoring recommendation R-03. The mobile Expo Doctor mismatch is recorded rather than treated as a pass. The web build failure is also recorded rather than replaced with the earlier successful build.
+A zero-advisory audit is a point-in-time result. It does not close the recurring monitoring recommendation R-03. The mobile Expo Doctor mismatch is recorded rather than treated as a pass. The web production build is recorded at `3866309`, after earlier low-memory attempts.
 
 ### 8.3 Data protection boundaries
 
@@ -620,7 +620,7 @@ Until this record exists, credential exposure remains unresolved. A clean depend
 | [Anonymous probes](../../Testing/Security/evidence/S2-SEC-03-anon-probes-2026-10-10.md) | No usable anonymous write path was demonstrated in the probes | That every role and storage path was exercised |
 | [Private address resolution](../../Testing/Security/evidence/S2-SEC-03-private-ip-2026-10-10.md) | The disclosed test value was scrubbed and the pages were rechecked | That the field was removed from the public query |
 | [Web audit](../../Testing/Security/evidence/S2-AUD-WEB-2026-11-06.json) and [mobile audit](../../Testing/Security/evidence/S2-AUD-MOB-2026-11-06.json) | Both production trees had zero known advisories on 6 November 2026 | That future advisories cannot appear or that a recurring scan exists |
-| [Check log](../../Testing/Security/evidence/S2-CHECKS-2026-11-06.md) | Static checks and tests passed. The build and Expo limitations are recorded | That the web production build or full device release is complete |
+| [Check log](../../Testing/Security/evidence/S2-CHECKS-2026-11-06.md) | Static checks, tests, dependency audits and the production build passed. The Expo limitation is recorded | That the hosted deployment or full device release is complete |
 | [Secret handling check](../../Testing/Security/evidence/S2-SEC-05-bundle-secret-2026-11-06.md) | No tracked environment file or client-side service key was found | That a native binary or final bundle is clean |
 
 The security position is therefore partly verified and partly outstanding. It is not accurate to describe the system as fully penetration tested, certified compliant or free of risk. It is accurate to describe the core access controls as implemented, the historical application findings as remediated and the remaining release checks as listed above.

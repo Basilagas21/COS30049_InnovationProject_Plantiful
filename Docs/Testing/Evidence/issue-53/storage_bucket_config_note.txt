@@ -19,3 +19,29 @@
 # Remaining for R-07 closure: owner confirmation of the values and a re-run
 #   of any legitimate officer species-photo workflow to confirm no false
 #   rejection of intended uploads (HEIC/TIFF picks now fail fast by design).
+#
+# Officer species-photo workflow re-run and delete-path fix (R-07 closure)
+# date: 2026-11-13 (UTC)
+# revision: 33f2b03 (code state; the policy fix is a live schema change, the
+#   reference SQL under backend/ is gitignored and untracked)
+# Re-run of the legitimate officer species-photo workflow, the item left open
+#   above: a JPEG upload to species-photos is accepted (200) and an SVG upload
+#   is rejected (415 invalid_mime_type). No false rejection of intended uploads.
+# New finding on the delete path: officer and admin DELETE on species-photos
+#   were denied (403, and the batch delete returned 200 with an empty array)
+#   even though officer_delete_species_photos exists and matches the reference.
+#   Root cause: the bucket granted SELECT on storage.objects only to anon, so
+#   the officer could not see the object row that the storage delete path reads
+#   first. Confirmed via pg_policies and by the officer bucket list returning 0
+#   rows while record-photos and reports returned rows. A gap in the reference
+#   SQL itself, not live drift.
+# Fix: added officer_read_species_photos (SELECT for authenticated, bucket plus
+#   current_role in conservation_officer/admin) to the reference SQL and applied
+#   it to live via Dashboard SQL on 13 November, wrapped in begin/commit.
+# Live verification: the officer list now returns the objects; the officer
+#   delete of the probe returned 200 Successfully deleted; the probe re-read
+#   returned 400 and it is absent from the final list (zero residue); anon
+#   public read of a real photo still returns 200, so the public bucket is
+#   unchanged.
+# Remaining for R-07 closure: owner confirmation of the cap values. The officer
+#   workflow re-run is now complete.

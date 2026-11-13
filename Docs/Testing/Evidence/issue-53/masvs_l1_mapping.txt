@@ -135,8 +135,8 @@ PRIVACY-4  user control over their data
   local copy and merge is explicit per field, officer corrections arrive as
   reject with reason
 
-# Summary for the owner: of 24 controls, 15 CHECKED with in-repo evidence,
-# 4 N/A by construction, 2 DEFERRED and named, 0 GAP (the former AsyncStorage
+# Summary for the owner: of 24 controls, 12 CHECKED with in-repo evidence,
+# 7 N/A by construction, 2 DEFERRED and named, 0 GAP (the former AsyncStorage
 # session gap is closed by the landed secure-store migration), 3 recorded as
 # partial. Nothing on this line requires new code to complete the map; the
 # pinning deferral and acceptance of the landed storage fix are Basill's

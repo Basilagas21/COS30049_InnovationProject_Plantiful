@@ -67,8 +67,9 @@ yarn-error.log*
 # Vercel
 .vercel
 
-# Backend (local only, never tracked)
-backend/
+# Backend (local only, except the pgTAP battery used by the security evidence)
+backend/*
+!backend/tests/
 
 # Playwright run artefacts
 test-results/

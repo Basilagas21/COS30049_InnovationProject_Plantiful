@@ -83,7 +83,8 @@ venv/
 # AI model downloads and datasets (Ai/)
 Ai/datasets/raw/
 Ai/datasets/cache/
-Ai/models/downloads/
+Ai/models/
+Ai/**/*.pt
 Ai/**/*.onnx
 Ai/**/*.pth
 Ai/**/*.tflite

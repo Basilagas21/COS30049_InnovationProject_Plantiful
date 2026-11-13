@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { File } from 'expo-file-system';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Pressable } from '@/lib/interactionLog';
 import { useThemeStyles } from '@/lib/theme';
 import type { ThemeColors, ThemeSurfaces } from '@/theme';
@@ -38,6 +38,7 @@ import {
 } from '@/db';
 
 type SyncState = 'idle' | 'syncing' | 'done' | 'error';
+const SYNCED_PAGE_SIZE = 5;
 
 // Must match the Supabase Storage bucket created for record photos.
 const PHOTO_BUCKET = process.env.EXPO_PUBLIC_SUPABASE_PHOTO_BUCKET || 'record-photos';
@@ -154,6 +155,7 @@ export default function SyncScreen() {
   const [failedList, setFailedList] = useState<LocalRecord[]>([]);
   const [conflictList, setConflictList] = useState<LocalRecord[]>([]);
   const [syncedList, setSyncedList] = useState<LocalRecord[]>([]);
+  const [syncedPage, setSyncedPage] = useState(1);
   const [measurements, setMeasurements] = useState<AcceptanceMeasurement[]>([]);
   const [lastSyncLabel, setLastSyncLabel] = useState<string | null>(null);
   const [unownedCount, setUnownedCount] = useState(0);
@@ -172,6 +174,7 @@ export default function SyncScreen() {
     setFailedList(failedRows);
     setConflictList(conflictRows);
     setSyncedList(syncedRows);
+    setSyncedPage((page) => Math.min(page, Math.max(1, Math.ceil(syncedRows.length / SYNCED_PAGE_SIZE))));
     setPending(pendingRows.length);
     setFailed(failedRows.length);
     setSynced(syncedRows.length);
@@ -460,6 +463,8 @@ export default function SyncScreen() {
   }, [loadCounts]);
 
   const connected = isSupabaseConfigured && supabase !== null;
+  const syncedPageCount = Math.max(1, Math.ceil(syncedList.length / SYNCED_PAGE_SIZE));
+  const syncedStart = (syncedPage - 1) * SYNCED_PAGE_SIZE;
   const attempts = measurements.filter((m) => m.operation === 'sync_record');
   const localLookups = measurements.filter((m) => m.operation === 'qr_lookup' && m.outcome === 'local_found');
   const successfulAttempts = attempts.filter((m) => m.outcome === 'synced').length;
@@ -471,7 +476,7 @@ export default function SyncScreen() {
     : null;
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.card}>
         <Ionicons
           name={state === 'error' && needsAuth ? 'lock-closed-outline' : 'cloud-done-outline'}
@@ -566,18 +571,49 @@ export default function SyncScreen() {
         ) : null}
 
         {syncedList.length > 0 ? (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Recent synced ({syncedList.length})</Text>
-            {syncedList.slice(0, 10).map((r) => (
-              <Text key={r.record_id} style={styles.listItem}>
-                • {r.provisional_name || r.species_id || 'Unknown'} — {new Date(r.capture_ts).toLocaleString()}
-              </Text>
-            ))}
-            {syncedList.length > 10 ? (
-              <Pressable onPress={() => router.navigate('/records')} accessibilityRole="link">
-                <Text style={styles.seeAll}>View all synced in My records</Text>
+          <View style={styles.syncedSection}>
+            <Text style={styles.sectionTitle}>Recently synced ({syncedList.length})</Text>
+            <Text style={styles.recordMeta}>
+              Showing {syncedStart + 1}–{Math.min(syncedStart + SYNCED_PAGE_SIZE, syncedList.length)} of {syncedList.length} records · {SYNCED_PAGE_SIZE} per page
+            </Text>
+            {syncedList.slice(syncedStart, syncedStart + SYNCED_PAGE_SIZE).map((r) => (
+              <Pressable
+                key={r.record_id}
+                style={styles.recordCard}
+                accessibilityRole="button"
+                accessibilityLabel={`Open synced record ${r.provisional_name || r.qr_code || 'Plant observation'}`}
+                onPress={() => router.push(`/record/${r.record_id}`)}
+              >
+                <Text style={styles.recordTitle}>{r.provisional_name || r.qr_code || 'Plant observation'}</Text>
+                <Text style={styles.recordMeta}>Captured {new Date(r.capture_ts).toLocaleString()}</Text>
+                {r.qr_code ? <Text style={styles.recordMeta}>Tag: {r.qr_code}</Text> : null}
+                <Text style={styles.recordMeta}>Saved to server · Officer approval is separate</Text>
+                <Text style={styles.seeAll}>Open record →</Text>
               </Pressable>
-            ) : null}
+            ))}
+            <Text style={styles.recordMeta} accessibilityLiveRegion="polite">Page {syncedPage} of {syncedPageCount}</Text>
+            <View style={styles.pagination}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Previous synced records page"
+                accessibilityState={{ disabled: syncedPage === 1 }}
+                disabled={syncedPage === 1}
+                style={[styles.pageButton, syncedPage === 1 && styles.buttonBusy]}
+                onPress={() => setSyncedPage((page) => Math.max(1, page - 1))}
+              >
+                <Text style={styles.ghostButtonText}>Previous</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Next synced records page"
+                accessibilityState={{ disabled: syncedPage === syncedPageCount }}
+                disabled={syncedPage === syncedPageCount}
+                style={[styles.pageButton, syncedPage === syncedPageCount && styles.buttonBusy]}
+                onPress={() => setSyncedPage((page) => Math.min(syncedPageCount, page + 1))}
+              >
+                <Text style={styles.ghostButtonText}>Next</Text>
+              </Pressable>
+            </View>
           </View>
         ) : null}
 
@@ -617,7 +653,7 @@ export default function SyncScreen() {
           <Text style={styles.lastSync}>Supabase not configured — add env vars to mobile/.env</Text>
         ) : null}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -625,7 +661,44 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   container: {
     flex: 1,
     backgroundColor: colors.cream,
+  },
+  content: {
     padding: 16,
+    paddingBottom: 48,
+  },
+  syncedSection: {
+    alignSelf: 'stretch',
+    marginTop: 12,
+    gap: 12,
+  },
+  recordCard: {
+    ...surfaces.card,
+    padding: 16,
+    gap: 8,
+  },
+  recordTitle: {
+    color: colors.pine,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  recordMeta: {
+    color: colors.muted,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  pagination: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  pageButton: {
+    flexGrow: 1,
+    minHeight: 48,
+    padding: 12,
+    borderRadius: 16,
+    backgroundColor: colors.sand,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   card: {
     ...surfaces.card,

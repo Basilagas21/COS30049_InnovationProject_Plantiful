@@ -1,0 +1,63 @@
+{
+  "model": "mobilenet_v3_small",
+  "pretraining": "ImageNet IMAGENET1K_V1",
+  "input": {
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "colour_order": "RGB"
+  },
+  "preprocessing": "Resize shorter side to 256, centre crop 224 for evaluation. Random resized crop and augmentation for training.",
+  "classes": [
+    "Acacia auriculiformis",
+    "Acacia mangium",
+    "Antigonon leptopus",
+    "Arundina graminifolia",
+    "Casuarina equisetifolia",
+    "Chromolaena odorata",
+    "Clitoria ternatea",
+    "Dicranopteris linearis",
+    "Etlingera elatior",
+    "Hibiscus tiliaceus",
+    "Lantana camara",
+    "Melastoma malabathricum",
+    "Mimosa pudica",
+    "Morinda citrifolia",
+    "Peperomia pellucida",
+    "Pteris vittata",
+    "Scaevola taccada",
+    "Senna alata",
+    "Sphagneticola trilobata",
+    "Terminalia catappa"
+  ],
+  "training_scope": "20 candidate pilot species, not the full catalogue",
+  "dataset": "iNaturalist research-grade candidate photos with CC0, CC BY or CC BY-SA licences. Automatic filters only. Labels not manually verified.",
+  "seed": 42,
+  "epochs_planned": 12,
+  "epochs_completed": 12,
+  "batch_size": 64,
+  "learning_rate": 0.0002,
+  "best_epoch": 12,
+  "validation_top1": 0.7687074801548809,
+  "test_top1": 0.78839590443686,
+  "test_top3": 0.9180887372013652,
+  "onnx_status": "skipped: ModuleNotFoundError: No module named 'onnx.defs'",
+  "artifacts": {
+    "checkpoint": "C:\\Users\\basil\\Documents\\001_Year4_Sem7(Extended)\\COS30049 COMPUTING TECHNOLOGY INNOVATION PROJECT\\Project\\COS30049_InnovationProject_Plantiful\\Ai\\models\\pilot\\best.pt",
+    "torchscript": "C:\\Users\\basil\\Documents\\001_Year4_Sem7(Extended)\\COS30049 COMPUTING TECHNOLOGY INNOVATION PROJECT\\Project\\COS30049_InnovationProject_Plantiful\\Ai\\models\\pilot\\mobilenetv3_small_traced.pt"
+  },
+  "limitations": "Pilot only. No unknown-class calibration. No field-photo domain-shift result. Not a production accuracy claim."
+}

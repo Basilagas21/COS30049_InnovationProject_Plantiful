@@ -137,7 +137,7 @@ export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoin
 
   const { data, error } = await query;
 
-  if (error || !data) return mockPoints;
+  if (error || !data) return [];
 
   const points = data
     .map(toPoint)

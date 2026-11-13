@@ -1,0 +1,109 @@
+{
+  "generated_at": "2026-11-05T02:25:00.878Z",
+  "species": 20,
+  "candidate_photos": 1964,
+  "sampling": "First 100 eligible observations ordered by ID per species. At most one photo per observation. This is a convenience sample, not a random or geographically balanced training dataset.",
+  "status": "Metadata only. Images not downloaded, labels not independently reviewed, splits not assigned.",
+  "rows": [
+    {
+      "name": "Acacia auriculiformis",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Acacia mangium",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Antigonon leptopus",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Arundina graminifolia",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Casuarina equisetifolia",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Chromolaena odorata",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Clitoria ternatea",
+      "fetched_observations": 100,
+      "candidate_photos": 96
+    },
+    {
+      "name": "Dicranopteris linearis",
+      "fetched_observations": 100,
+      "candidate_photos": 99
+    },
+    {
+      "name": "Etlingera elatior",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Hibiscus tiliaceus",
+      "fetched_observations": 100,
+      "candidate_photos": 88
+    },
+    {
+      "name": "Lantana camara",
+      "fetched_observations": 100,
+      "candidate_photos": 97
+    },
+    {
+      "name": "Melastoma malabathricum",
+      "fetched_observations": 100,
+      "candidate_photos": 87
+    },
+    {
+      "name": "Mimosa pudica",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Morinda citrifolia",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Peperomia pellucida",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Pteris vittata",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Scaevola taccada",
+      "fetched_observations": 100,
+      "candidate_photos": 97
+    },
+    {
+      "name": "Senna alata",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Sphagneticola trilobata",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    },
+    {
+      "name": "Terminalia catappa",
+      "fetched_observations": 100,
+      "candidate_photos": 100
+    }
+  ]
+}

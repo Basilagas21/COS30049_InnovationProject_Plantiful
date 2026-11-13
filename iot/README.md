@@ -24,8 +24,10 @@ iot/
 ├── publisher.py         ← simulated sensor registration + reading feed
 ├── evaluate.py          ← threat-rule evaluator, writes rows to alerts
 ├── bridge.py            ← USB-serial → Supabase bridge for the real node
+├── recovery.py          ← bridge outage handling: upload buffer/retry, serial reconnect
 ├── requirements.txt     ← pyserial (only external dependency, used by the bridge)
 ├── test_pipeline.py     ← offline contract tests (no hardware or Supabase)
+├── test_recovery.py     ← outage, reconnect and data-loss policy tests
 └── sketch_oct9a/
     └── sketch_oct9a.ino ← ESP32 firmware (DHT11 + PIR + soil + rain + LED)
 ```
@@ -103,6 +105,26 @@ DATA {"sensor_id":"b7e2c4a1-8d3f-4c6b-9a2e-5f1d8c3e7b90","temperature":28.4,"hum
 boolean taken from the rain board's `AO` threshold. The node has no clock, so it
 sends device uptime and the bridge stamps `recorded_at` with the host's UTC time
 when the line arrives.
+
+### Validation (#45, S2-04)
+
+`validate_payload` in `bridge.py` checks every line **before** anything is
+inserted or evaluated. One bad field rejects the whole line (logged as
+`Rejected node line: …`), and the bridge keeps listening for the next one.
+Values are never clamped or corrected.
+
+| Field | Accepted | Rejected examples |
+|---|---|---|
+| `temperature` | finite number from -40 to 80 °C, or `null` | `80.1`, `NaN`, `Infinity`, `"28"`, `true` |
+| `humidity` | finite number from 0 to 100 %, or `null` | `150`, `-1` |
+| `soil_moisture` | finite number from 0 to 100 %, or `null` | `-10`, `101` |
+| `movement`, `rain` | `true`, `false` or `null` | `2`, `1`, `0`, `"true"` |
+
+An absent field is treated as `null` (sensor not read). A line in which **all**
+five fields are null or absent is rejected because it carries no measurement.
+The temperature range is the widest common DHT-family datasheet range, so a
+genuine heat reading is never dropped; the DHT11 itself reports 0–50 °C.
+Regression tests: `PayloadValidationTests` in `test_pipeline.py`.
 
 ## How it maps to the database
 
@@ -199,6 +221,22 @@ running it. The node has no GPS or clock; the bridge uses host UTC time and
 registers the sensor's fixed location. Pass `--gps-lat` and `--gps-lng` for its
 actual installation location rather than using the demonstration defaults.
 
+### Outages and recovery (#46, S2-05)
+
+The bridge keeps running through interruptions instead of exiting. Every
+recovery step is logged to the terminal.
+
+| Interruption | What the bridge does | Data loss |
+|---|---|---|
+| Supabase unreachable (network down, timeout, 5xx, auth error) | Keeps reading the node and stamping each reading with its arrival time, holds readings in memory, and retries oldest-first after 2 s, doubling to at most 60 s. On recovery the backlog is stored in order and alert rules run on each reading. | None, up to `--buffer-size` readings (default 1800, about 1 hour at the 2 s interval). After that the **oldest** are dropped, and the count is logged when Supabase returns. |
+| Supabase rejects one reading (HTTP 400/409/422) | Logs it, skips that reading, and carries on with the rest. | That reading only. |
+| Supabase unreachable at startup | Retries the sensor registration with the same backoff until it succeeds. | None (nothing read yet). |
+| USB cable unplugged or port error | Closes the port and reopens it every 2 s, doubling to at most 30 s, while still retrying buffered uploads. | **Readings during the gap are not captured**: the node has no storage. `/alerts` shows the sensor as stale, and `evaluate.py` raises `sensor_silent` after 30 minutes. |
+| Bridge stopped (Ctrl-C, crash, PC sleeps) | Prints how many buffered readings were not yet stored. | Everything still buffered: the buffer is in memory only. |
+
+If the port cannot be opened at all when the bridge starts, it exits with an
+error, because that is a wrong `--port` rather than an outage.
+
 Run the local contract checks without hardware or Supabase:
 
 ```
@@ -217,10 +255,21 @@ applies:
 | `unusual_movement` | `movement` flag set on a reading | `medium` |
 | `sensor_silent` | no reading for `--silent-after-minutes` (default 30) | `high` |
 
-Dedupe: before inserting, the evaluator loads alerts raised in the last
-`--cooldown-hours` (default 6) and skips any sensor/rule pair already alerted
-inside that window, so a persistently hot afternoon produces one alert per
-cooldown period rather than one per reading.
+Dedupe and escalation (#47, S2-06, decided 2 November 2026): before inserting,
+the bridge and the evaluator both load alerts raised in the last
+`--cooldown-hours` (default 6).
+
+- **Same or lower severity is suppressed.** A sensor/rule pair already alerted
+  at that severity or higher inside the window is skipped, so a persistently hot
+  afternoon produces one alert per cooldown period rather than one per reading.
+- **A worse condition escalates immediately.** If the severity rises above every
+  same-type alert in the window (heat `high` → `critical`, drought `medium` →
+  `high`), a new alert is raised straight away, once, not on every reading.
+- **Resolved alerts still count.** Marking an alert resolved on `/alerts` does
+  not reset the cooldown, so a condition that is still present does not
+  re-alert on the next reading. It repeats after the window as before.
+
+Regression tests: `iot/test_escalation.py`.
 
 The rules read temperature, humidity and movement only. The soil-moisture and
 rain columns now carry data from the hardware node, so rules for them (e.g.

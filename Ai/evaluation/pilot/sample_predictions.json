@@ -1,0 +1,92 @@
+[
+  {
+    "true": "Chromolaena odorata",
+    "image": "C:\\Users\\basil\\Documents\\001_Year4_Sem7(Extended)\\COS30049 COMPUTING TECHNOLOGY INNOVATION PROJECT\\Project\\COS30049_InnovationProject_Plantiful\\Ai\\datasets\\raw\\pilot\\chromolaena_odorata\\30804684.jpg",
+    "top3": [
+      {
+        "label": "Hibiscus tiliaceus",
+        "score": 0.24322471022605896
+      },
+      {
+        "label": "Antigonon leptopus",
+        "score": 0.22253654897212982
+      },
+      {
+        "label": "Terminalia catappa",
+        "score": 0.1760725975036621
+      }
+    ]
+  },
+  {
+    "true": "Senna alata",
+    "image": "C:\\Users\\basil\\Documents\\001_Year4_Sem7(Extended)\\COS30049 COMPUTING TECHNOLOGY INNOVATION PROJECT\\Project\\COS30049_InnovationProject_Plantiful\\Ai\\datasets\\raw\\pilot\\senna_alata\\114129492.jpg",
+    "top3": [
+      {
+        "label": "Senna alata",
+        "score": 0.9474957585334778
+      },
+      {
+        "label": "Hibiscus tiliaceus",
+        "score": 0.011995918117463589
+      },
+      {
+        "label": "Lantana camara",
+        "score": 0.0086991460993886
+      }
+    ]
+  },
+  {
+    "true": "Arundina graminifolia",
+    "image": "C:\\Users\\basil\\Documents\\001_Year4_Sem7(Extended)\\COS30049 COMPUTING TECHNOLOGY INNOVATION PROJECT\\Project\\COS30049_InnovationProject_Plantiful\\Ai\\datasets\\raw\\pilot\\arundina_graminifolia\\1447768.jpg",
+    "top3": [
+      {
+        "label": "Arundina graminifolia",
+        "score": 0.7526331543922424
+      },
+      {
+        "label": "Melastoma malabathricum",
+        "score": 0.1608252078294754
+      },
+      {
+        "label": "Mimosa pudica",
+        "score": 0.019522439688444138
+      }
+    ]
+  },
+  {
+    "true": "Mimosa pudica",
+    "image": "C:\\Users\\basil\\Documents\\001_Year4_Sem7(Extended)\\COS30049 COMPUTING TECHNOLOGY INNOVATION PROJECT\\Project\\COS30049_InnovationProject_Plantiful\\Ai\\datasets\\raw\\pilot\\mimosa_pudica\\5725925.jpg",
+    "top3": [
+      {
+        "label": "Mimosa pudica",
+        "score": 0.8116245269775391
+      },
+      {
+        "label": "Chromolaena odorata",
+        "score": 0.15052707493305206
+      },
+      {
+        "label": "Dicranopteris linearis",
+        "score": 0.007788634393364191
+      }
+    ]
+  },
+  {
+    "true": "Hibiscus tiliaceus",
+    "image": "C:\\Users\\basil\\Documents\\001_Year4_Sem7(Extended)\\COS30049 COMPUTING TECHNOLOGY INNOVATION PROJECT\\Project\\COS30049_InnovationProject_Plantiful\\Ai\\datasets\\raw\\pilot\\hibiscus_tiliaceus\\36099795.jpg",
+    "top3": [
+      {
+        "label": "Hibiscus tiliaceus",
+        "score": 0.5159322023391724
+      },
+      {
+        "label": "Peperomia pellucida",
+        "score": 0.35018646717071533
+      },
+      {
+        "label": "Terminalia catappa",
+        "score": 0.0357048362493515
+      }
+    ]
+  }
+]

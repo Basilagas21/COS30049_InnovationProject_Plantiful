@@ -1,5 +1,5 @@
 # MASVS mapping for register line R-02, draft evidence for the recorded owner
-# Environment: repository main @ 4179fed, reviewed 4 November 2026
+# Environment: repository main @ 9ae0c8b, re-reviewed 13 November 2026
 # Standard note: the register line cites "MASVS L1" from the 2024 structure
 # (categories V1 to V12 with verification levels). The cited URL now serves the
 # restructured MAS standard: eight categories, 24 controls, levels dropped.
@@ -30,7 +30,9 @@ STORAGE-2  prevents leakage of sensitive data
   coordinates (privacy review, docs test convention), qr_code removed from all
   public payload selects (R-10, see qr_public_exposure_note.txt), the interaction
   log records routes and targets only, no credential fields, bucket MIME allow
-  lists block arbitrary stored content (R-07)
+  lists block arbitrary stored content (R-07), and the web species-photo upload
+  content-sniffs the file header and stores the sniffed type rather than the
+  browser-declared one (13 November hardening, web/src/lib/photo-mime.ts)
 
 CRYPTO-1   current strong cryptography
   verdict: CHECKED

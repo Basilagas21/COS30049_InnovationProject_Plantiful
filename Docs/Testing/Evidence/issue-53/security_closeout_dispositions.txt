@@ -1,0 +1,115 @@
+# Security recommendation close-out dispositions (issue #53, backlog S2-14)
+# date: 2026-11-13 (UTC)
+# revision: f0c5585
+# environment: live Supabase project plus local web and mobile development.
+#   No final release candidate exists (still developing), so the release
+#   retests are awaited rather than run against a frozen build.
+# tested roles: anon, botanist, conservation_officer, admin
+# purpose: records the verified work and the current status of each
+#   recommendation, with evidence, for the recorded owners to review. This note
+#   does not close the issue and records no one's decisions.
+#
+# Status key: VERIFIED (implemented and checked), OPEN (not yet done). Evidence
+#   is referenced by the sibling notes and commit hashes.
+
+R-01  Repeat ZAP anonymous and authenticated scans
+  recorded owner: Badrul
+  status: OPEN (re-run awaited)
+  position: no release candidate yet, so a re-scan is awaited. The historical
+    10 October scan was passive with no High alerts after remediation.
+  evidence: S2-SEC-03-zap-2026-10-10.md
+
+R-02  MASVS development-build checks
+  recorded owner: Basill
+  status: VERIFIED
+  position: the map pins each of the 24 controls to a repo-verifiable check and
+    states the transition from the retired 2024 L1 numbering to the live
+    eight-category standard.
+  evidence: masvs_l1_mapping.txt, re-reviewed 13 November, 12 CHECKED, 7 N/A,
+    2 DEFERRED, 0 GAP and 3 partial.
+
+R-03  Recurring dependency scanning
+  recorded owner: Nathan
+  status: OPEN (not established)
+  position: recurring monitoring is not established. The 6 November
+    zero-advisory audits are a point-in-time result and do not by themselves
+    close the monitoring recommendation.
+  evidence: web_audit.json, mobile_audit.json
+
+R-04  Signed Android release and distribution archive
+  recorded owner: Basill
+  status: OPEN (release build)
+  position: the development build (Expo Go) is in use; no release build is
+    configured. Signing is a credential matter.
+  evidence: Expo build config and Expo Go trials
+
+R-05  RLS rerun after migrations
+  recorded owner: Maqeel
+  status: OPEN (full battery); regression checks done per change
+  position: the full battery re-run awaits the migration state settling.
+    RLS regression checks were run as changes were made (R-07 delete path,
+    R-06 anonymous mutations, public-read acceptance).
+  evidence: pgtap_battery.txt (41 assertions) and the sibling notes
+
+R-06  Automated anonymous mutation regression
+  recorded owner: Badrul
+  status: VERIFIED
+  position: the write-side regression is a repeatable automated suite,
+    complementing the read-side public-read suite.
+  evidence: commit b92ff15, verified 5/5 against the live project: INSERT
+    denied, UPDATE and DELETE zero rows on plant_records and species, zero
+    residue. Gated so the default offline run skips it.
+
+R-07  Bucket MIME and size restrictions
+  recorded owner: Maqeel
+  status: VERIFIED
+  position: caps implemented and verified, then hardened with content-sniff
+    upload validation and GIF removal; the delete path was fixed.
+  evidence: storage_bucket_config_note.txt. Caps applied live 3 November;
+    content-sniff and GIF removal 13 November (commit 80da6b4). Live
+    verification: GIF rejected 415, JPEG accepted 200, zero residue. Owner
+    confirmation of the cap values remains.
+
+R-08  Session expiry and reauthentication for role changes
+  recorded owner: Nathan
+  status: OPEN (not implemented)
+  position: not implemented; no current enforcement is implied. Current
+    session handling is cookie-based on web and auto-refresh on mobile.
+  evidence: none implemented
+
+R-09  Nonce-based CSP
+  recorded owner: Badrul
+  status: OPEN (inline allowances remain)
+  position: the residual risk is assessed as theoretical. The only inline
+    script is one hardcoded theme snippet with no user input, and the
+    framework escapes all user content, so there is no injection path. A nonce
+    CSP would force dynamic rendering and disable static optimisation, ISR and
+    CDN caching.
+  evidence: injection-surface review; current CSP in the web config
+
+R-10  Remove public qr_code selection
+  recorded owner: Badrul
+  status: VERIFIED (unit); live re-check awaited
+  position: the public list query omits qr_code; the detail query keeps it for
+    the QR deep-link. Minimisation recorded.
+  evidence: qr_public_exposure_note.txt; the list/detail unit test and the
+    gated R-10 live check in the public-read suite
+
+# Links required by the acceptance criteria
+# credential remediation: issue #41 (rotation and account recovery are the
+#   Supabase owner's action, unconfirmed)
+# dependency work: backlog S2-01 (6 November zero-advisory audits; recurring
+#   monitoring is R-03)
+
+# Residual risk
+# Residual risk is to be reduced rather than accepted. R-09's is assessed as
+# theoretical (no injection path). The other named deferrals (certificate
+# pinning NETWORK-2, update enforcement CODE-2) are recorded in the MASVS map.
+
+# What remains for the owners
+# - final disposition confirmation by each recorded owner
+# - credential rotation and account recovery (#41)
+# - residual-risk handling
+# - the release retests (R-01 ZAP, R-05 full RLS) once development settles
+# This note puts the verified work and current status on file for owner review;
+# it is not a closure and records no one's decisions.

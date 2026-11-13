@@ -45,3 +45,26 @@
 #   unchanged.
 # Remaining for R-07 closure: owner confirmation of the cap values. The officer
 #   workflow re-run is now complete.
+#
+# Species-photo upload content-sniff hardening and GIF removal (R-07)
+# date: 2026-11-13 (UTC)
+# revision: 6ce42a6 (web); the bucket allowlist change is a live schema change,
+#   the reference SQL under backend/ is gitignored and untracked
+# Finding: the web species-photo upload stored the browser-declared file.type
+#   without checking the file content, unlike the mobile sync which sniffs the
+#   magic bytes. The bucket allowlist also still permitted GIF.
+# Fix (web): the upload now reads the file header and accepts only JPEG, PNG or
+#   WebP magic bytes, rejects everything else (GIF, SVG, HEIC, TIFF, HTML)
+#   regardless of the declared type, and stores the file under the sniffed type.
+#   The picker is tightened to image/jpeg, image/png, image/webp. Covered by the
+#   photo-mime unit tests.
+# Fix (bucket): GIF removed from the species-photos allowed_mime_types in the
+#   reference SQL and applied to live via Dashboard SQL on 13 November, wrapped
+#   in begin/commit. The allowlist is now jpeg, png, webp; the 10 MB size cap is
+#   unchanged.
+# Unit verification: 3 new sniffing tests pass; web suite 46 pass, 0 fail, 5
+#   skipped (the live public-read suite is gated behind PUBLIC_READ_LIVE=1);
+#   lint clean; production build passed.
+# Live verification (13 November): a GIF upload is rejected with 415
+#   invalid_mime_type and creates no object; a JPEG upload is accepted (200) and
+#   was deleted again through the officer delete policy, zero residue.

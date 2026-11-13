@@ -16,7 +16,7 @@ const repoRoot = resolve(here, '../../..');
 function loadTarget() {
   let url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.EXPO_PUBLIC_SUPABASE_URL || null;
   let key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || null;
-  const files = ['web/.env.local', 'mobile/.env'];
+  const files = ['web/.env', 'web/.env.local', 'mobile/.env'];
   for (const rel of files) {
     if (url && key) break;
     let txt;

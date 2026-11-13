@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { sniffPhotoMime } from "@/lib/photo-mime";
 import type { SpeciesPhoto } from "@/lib/species";
 
 const PHOTO_BUCKET = "species-photos";
@@ -37,11 +38,19 @@ export function PhotoGallery({ speciesId, photos, officer }: Props) {
       return;
     }
 
+    const header = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+    const mime = sniffPhotoMime(header);
+    if (!mime) {
+      setError("That file is not a supported photo. Upload a JPEG, PNG or WebP image.");
+      setUploading(false);
+      return;
+    }
+
     const path = `${speciesId}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
     const { data, error: uploadError } = await supabase.storage
       .from(PHOTO_BUCKET)
       .upload(path, file, {
-        contentType: file.type || "image/jpeg",
+        contentType: mime,
         upsert: false,
       });
 
@@ -83,7 +92,7 @@ export function PhotoGallery({ speciesId, photos, officer }: Props) {
             <input
               ref={inputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp"
               onChange={handleUpload}
               disabled={uploading}
               className="hidden"

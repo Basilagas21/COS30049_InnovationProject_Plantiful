@@ -1,11 +1,11 @@
 # pgTAP RLS battery (R-05, SEC-01 evidence)
 # command: cd backend/tests/local && ./run.sh
-# revision: 0960f40
-# date: 2026-11-03 (UTC)
+# revision: 89513bc
+# date: 2026-11-13 (UTC)
 BEGIN
  plan  
 -------
- 1..38
+ 1..41
 (1 row)
 
 SET
@@ -285,6 +285,21 @@ SET
                              throws_ok                             
 -------------------------------------------------------------------
  ok 38 - republish blocked after the approving record was rejected
+(1 row)
+
+                 is                  
+-------------------------------------
+ ok 39 - record-photos has 10 MB cap
+(1 row)
+
+                        is                         
+---------------------------------------------------
+ ok 40 - record-photos allows exactly jpeg and png
+(1 row)
+
+                         is                         
+----------------------------------------------------
+ ok 41 - reports allows csv and pdf only, never svg
 (1 row)
 
  finish 

@@ -267,6 +267,7 @@ body:has(.home-canopy) .brand img { filter: brightness(1.7) saturate(1.3); }
 
 /* ===== Full-height footer ===== */
 .site-footer--full { background: var(--footer); color: var(--footer-text); padding: 0; border-radius: 2.5rem 2.5rem 0 0; overflow: hidden; }
+body:has(.home-close) .site-footer--full { border-radius: 0; }
 .footer-top { padding: clamp(3rem, 6vw, 5rem) 0 2.5rem; }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 2.5rem; }
 .footer-brand p:first-child { font-family: var(--font-bricolage), var(--font-public), sans-serif; }

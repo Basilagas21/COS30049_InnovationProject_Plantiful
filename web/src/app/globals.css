@@ -171,7 +171,7 @@ body {
 body:has(.home-canopy) .site-header-inner { background: #0c342ce6; border-color: #6fd6b040; box-shadow: 0 10px 40px #00000066, inset 0 1px 0 #ffffff2e; }
 body:has(.home-canopy) .site-nav-link { color: #fffdeecc; }
 body:has(.home-canopy) .site-nav-link:hover { background: #6fd6b022; color: #fffdee; }
-body:has(.home-canopy) .site-nav-link[aria-current="page"] { background: #e3ef2626; color: #e3ef26; box-shadow: inset 0 0 0 1px #e3ef2655; }
+body:has(.home-canopy) .site-nav-link[aria-current="page"] { background: #e3ef261a; color: #e3ef26; box-shadow: inset 0 0 0 1.5px #e3ef26aa; }
 body:has(.home-canopy) .brand { color: #fffdee; }
 body:has(.home-canopy) .brand img { filter: brightness(1.7) saturate(1.3); }
 

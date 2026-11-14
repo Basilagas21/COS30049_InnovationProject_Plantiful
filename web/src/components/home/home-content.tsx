@@ -127,7 +127,7 @@ export function HomeContent({
             <>
               <p className="live-chip-row"><span className="live-chip-pulse" />Live verification</p>
               <p className="live-chip-name"><em>{featured.scientificName}</em></p>
-              <p className="live-chip-meta">{formatFix(featured)} · captured {featured.createdAt.slice(0, 10)}</p>
+              <p className="live-chip-meta">{formatFix(featured)}<span className="live-chip-meta-date"> · captured {featured.createdAt.slice(0, 10)}</span></p>
               <span className="live-chip-ok">✓ Officer approved{featured.isPublished ? " · published" : ""}</span>
             </>
           ) : (

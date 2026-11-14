@@ -222,6 +222,7 @@ body:has(.home-canopy) .brand img { filter: brightness(1.7) saturate(1.3); }
 .live-chip-pulse { width: 8px; height: 8px; border-radius: 50%; background: #e3ef26; box-shadow: 0 0 10px #e3ef26; animation: pulse 2s ease-in-out infinite; }
 .live-chip-name { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: 1.25rem; font-weight: 640; margin-top: 9px; color: #fffdee; }
 .live-chip-meta { font-family: var(--font-martian), monospace; font-size: .66rem; color: #fffdee99; margin-top: 6px; line-height: 1.6; }
+.live-chip-meta-date { white-space: nowrap; }
 .live-chip-ok { margin-top: 11px; display: inline-flex; align-items: center; gap: 7px; background: #e3ef26; color: #0c342c; font-weight: 700; font-size: .72rem; padding: 6px 12px; border-radius: 999px; }
 
 .home-proof { margin: 0 auto; max-width: 96rem; padding: 2.5rem 1.5rem 0; text-align: center; }

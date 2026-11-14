@@ -273,10 +273,10 @@ body:has(.home-close) .site-footer--full { border-radius: 0; }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 2.5rem; }
 .footer-brand p:first-child { font-family: var(--font-bricolage), var(--font-public), sans-serif; }
 .footer-brand p + p { margin-top: .75rem; font-size: .9rem; line-height: 1.7; color: color-mix(in srgb, var(--footer-text) 72%, transparent); max-width: 34ch; }
-.footer-col h3 { font-family: var(--font-martian), monospace; font-size: .7rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--footer-text) 60%, transparent); margin-bottom: 1rem; }
+.footer-col h3 { font-family: var(--font-martian), monospace; font-size: .7rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--footer-text) 72%, transparent); margin-bottom: 1rem; }
 .footer-col a, .footer-col span { display: block; padding: .3rem 0; font-size: .92rem; color: color-mix(in srgb, var(--footer-text) 88%, transparent); transition: color .2s, transform .2s; }
 .footer-col a:hover { color: #e3ef26; transform: translateX(3px); }
-.footer-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid color-mix(in srgb, var(--footer-text) 16%, transparent); font-family: var(--font-martian), monospace; font-size: .72rem; letter-spacing: .06em; color: color-mix(in srgb, var(--footer-text) 62%, transparent); }
+.footer-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid color-mix(in srgb, var(--footer-text) 16%, transparent); font-family: var(--font-martian), monospace; font-size: .72rem; letter-spacing: .06em; color: color-mix(in srgb, var(--footer-text) 76%, transparent); }
 .footer-nature-wrap { position: relative; height: 46vh; min-height: 300px; }
 
 /* Night-forest nature scene. */

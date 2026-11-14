@@ -15,7 +15,7 @@ const scriptSrc = isDev ? "'self' 'unsafe-inline' 'unsafe-eval'" : "'self' 'unsa
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  allowedDevOrigins: ["169.254.83.107", "*.app.github.dev"],
+  allowedDevOrigins: ["127.0.0.1", "localhost", "169.254.*.*", "192.168.*.*", "*.app.github.dev"],
   experimental: {
     // GitHub Codespaces forwards requests through *.app.github.dev,
     // which trips the Server Actions origin check.

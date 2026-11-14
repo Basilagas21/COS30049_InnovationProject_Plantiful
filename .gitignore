@@ -114,4 +114,6 @@ Docs/Security/
 Thumbs.db
 # Local-only working notes and credentials (never commit)
 dld/
-.aider*
+web/.impeccable/
+web/PRODUCT.md
+web/DESIGN.md

@@ -112,7 +112,8 @@ Docs/Security/
 # OS / editor cruft
 .DS_Store
 Thumbs.db
-# Local-only working notes and credentials (never commit)
+
+# dld
 dld/
 web/.impeccable/
 web/PRODUCT.md

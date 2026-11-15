@@ -171,7 +171,7 @@ body {
 body:has(.home-canopy) { --nav-gap: clamp(.45rem, 1.2vw, .7rem); }
 body:has(.home-canopy) .site-header { padding: 0; }
 body:has(.home-canopy) .site-header-inner { max-width: none; width: 100%; margin: 0; border-radius: 0; padding: var(--nav-gap) 1.5rem; border: none; border-bottom: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent); }
-body:has(.home-canopy) .brand { gap: 0; }
+body:has(.home-canopy) .brand { gap: 0; position: relative; }
 body:has(.home-canopy) .site-nav { flex-wrap: nowrap; justify-content: center; gap: var(--nav-gap); }
 body:has(.home-canopy) .site-nav-link { flex: 0 0 auto; min-width: 0; }
 body:has(.home-canopy) .site-nav-link::after { content: none; }
@@ -179,6 +179,23 @@ body:has(.home-canopy) .header-account a[href="/signin"] { position: relative; o
 body:has(.home-canopy) .header-account a[href="/signin"]:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--emerald) 86%, #ffffff); box-shadow: 0 10px 26px color-mix(in srgb, var(--emerald) 45%, transparent); }
 body:has(.home-canopy) .header-account a[href="/signin"]::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 32%, #ffffff66 50%, transparent 68%); transform: translateX(-130%); transition: transform .55s ease; pointer-events: none; }
 body:has(.home-canopy) .header-account a[href="/signin"]:hover::after { transform: translateX(130%); }
+
+/* Branding easter egg: on hover the sprout springs to life and releases a puff of spores. */
+body:has(.home-canopy) .brand img { transform-origin: 50% 88%; }
+body:has(.home-canopy) .brand:hover img { animation: sprout-boing .75s cubic-bezier(.34,1.56,.64,1); }
+body:has(.home-canopy) .brand:hover .brand-word span { animation: dot-glow .9s ease-in-out; }
+body:has(.home-canopy) .brand-spores { position: absolute; left: 20px; top: 50%; width: 0; height: 0; pointer-events: none; }
+body:has(.home-canopy) .brand-spores i { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 12px color-mix(in srgb, var(--chartreuse) 85%, transparent); opacity: 0; }
+body:has(.home-canopy) .brand:hover .brand-spores i { animation: spore-pop .95s ease-out var(--sd, 0s) forwards; }
+body:has(.home-canopy) .brand-spores i:nth-child(1) { --sx: -16px; --sd: 0s; }
+body:has(.home-canopy) .brand-spores i:nth-child(2) { --sx: -6px; --sd: .08s; }
+body:has(.home-canopy) .brand-spores i:nth-child(3) { --sx: 5px; --sd: .04s; }
+body:has(.home-canopy) .brand-spores i:nth-child(4) { --sx: 14px; --sd: .12s; }
+body:has(.home-canopy) .brand-spores i:nth-child(5) { --sx: 22px; --sd: .02s; }
+
+@keyframes sprout-boing { 0% { transform: scale(1) rotate(0deg); } 30% { transform: scale(1.25) rotate(-10deg); } 55% { transform: scale(.92) rotate(5deg); } 75% { transform: scale(1.08) rotate(-2deg); } 100% { transform: scale(1) rotate(0deg); } }
+@keyframes dot-glow { 0%, 100% { text-shadow: 0 0 0 transparent; } 45% { text-shadow: 0 0 14px currentColor; } }
+@keyframes spore-pop { 0% { opacity: 0; transform: translate(0, 0) scale(.3); } 18% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--sx, 8px), -20px) scale(1); } }
 
 /* Shared workspace surfaces intentionally take precedence over existing utilities. */
 .site-content h1:not(.home-title) { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; }

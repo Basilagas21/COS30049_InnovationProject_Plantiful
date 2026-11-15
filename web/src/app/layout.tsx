@@ -85,6 +85,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   className="h-9 w-auto object-contain"
                   priority
                 />
+                <span className="brand-spores" aria-hidden="true"><i /><i /><i /><i /><i /></span>
                 <span className="brand-word text-xl tracking-tight">plantiful<span className="text-emerald">.</span></span>
               </Link>
               <SiteNav links={navLinks} />

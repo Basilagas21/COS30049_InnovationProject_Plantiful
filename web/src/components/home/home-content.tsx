@@ -59,7 +59,7 @@ function Arrow() {
 
 function formatFix(record: RecordListItem): string {
   if (record.gpsLat === null || record.gpsLng === null) return "GPS fix not recorded";
-  const acc = record.gpsAccuracyM !== null ? ` · ±${Math.round(record.gpsAccuracyM)} m` : "";
+  const acc = record.gpsAccuracyM !== null ? ` · ±${Math.round(record.gpsAccuracyM)}\u00A0m` : "";
   return `${record.gpsLat.toFixed(2)}° N, ${record.gpsLng.toFixed(2)}° E${acc}`;
 }
 

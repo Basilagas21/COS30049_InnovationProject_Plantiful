@@ -59,8 +59,10 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const vineGrow = root.querySelector<SVGPathElement>(".home-chain-vine-grow");
     const chainToken = root.querySelector<SVGCircleElement>(".home-chain-token");
     const chainNodes = Array.from(root.querySelectorAll<SVGCircleElement>(".home-chain-node"));
-    const chainSteps = Array.from(root.querySelectorAll<HTMLElement>(".home-chain-step"));
-    const chainProgressFill = root.querySelector<HTMLElement>(".home-chain-progress-fill");
+    const chainSteps = Array.from(root.querySelectorAll<HTMLElement>(".home-chain-step:not(.home-chain-intro)"));
+    const chainScenes = Array.from(root.querySelectorAll<SVGElement>(".chain-scene"));
+    const seedScene = root.querySelector<SVGElement>(".chain-seed");
+    const introStep = root.querySelector<HTMLElement>(".home-chain-intro");
     let vineLen = 0;
 
     const layoutChain = () => {
@@ -71,7 +73,7 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
         vineGrow.style.strokeDashoffset = `${vineLen}`;
       }
       chainNodes.forEach((node, i) => {
-        const pt = vinePath.getPointAtLength(((i + 1) / chainSteps.length) * vineLen);
+        const pt = vinePath.getPointAtLength(((i + 1) / (chainSteps.length + 1)) * vineLen);
         node.setAttribute("cx", `${pt.x.toFixed(1)}`);
         node.setAttribute("cy", `${pt.y.toFixed(1)}`);
       });
@@ -89,10 +91,12 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
         const pt = vinePath.getPointAtLength(p * vineLen);
         chainToken.setAttribute("transform", `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`);
       }
-      const active = Math.min(chainSteps.length - 1, Math.floor(p * chainSteps.length));
+      const active = Math.max(-1, Math.min(chainSteps.length - 1, Math.floor(p * (chainSteps.length + 1)) - 1));
       chainSteps.forEach((step, i) => step.classList.toggle("is-active", i === active));
-      chainNodes.forEach((node, i) => node.classList.toggle("is-lit", i < active));
-      if (chainProgressFill) chainProgressFill.style.transform = `scaleX(${p.toFixed(4)})`;
+      chainNodes.forEach((node, i) => node.classList.toggle("is-lit", p >= (i + 1) / (chainSteps.length + 1)));
+      chainScenes.forEach((scene, i) => scene.classList.toggle("is-active", i === active));
+      if (seedScene) seedScene.classList.toggle("is-active", active === -1);
+      if (introStep) introStep.classList.toggle("is-active", active === -1);
       if (chainStage) chainStage.classList.toggle("is-peak", active === chainSteps.length - 1);
     };
 

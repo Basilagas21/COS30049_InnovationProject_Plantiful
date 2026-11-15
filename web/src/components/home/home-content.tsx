@@ -103,6 +103,229 @@ function ChainIcon({ stage }: { stage: number }) {
   );
 }
 
+function ChainBackdrop() {
+  return (
+    <g>
+      <path d="M120 0 L180 0 L60 520 L20 520 Z" fill="#e2fbce" opacity=".03" />
+      <path d="M300 0 L340 0 L260 520 L230 520 Z" fill="#e2fbce" opacity=".025" />
+      <g fill="#0e2c1d">
+        <path d="M0 0 C40 10 70 40 78 84 C40 76 10 46 0 12 Z" />
+        <path d="M0 40 C36 44 62 66 70 102 C36 96 8 74 0 48 Z" opacity=".8" />
+        <path d="M30 0 C52 18 64 44 62 74 C40 58 28 30 30 0 Z" opacity=".7" />
+        <path d="M440 0 C400 10 370 40 362 84 C400 76 430 46 440 12 Z" />
+        <path d="M440 40 C404 44 378 66 370 102 C404 96 432 74 440 48 Z" opacity=".8" />
+        <path d="M410 0 C388 18 376 44 378 74 C400 58 412 30 410 0 Z" opacity=".7" />
+      </g>
+      <g fill="#071c14">
+        <path d="M0 520 C10 480 8 452 16 428 C24 452 22 484 30 520 Z" />
+        <path d="M40 520 C48 488 46 462 54 440 C62 462 60 492 68 520 Z" />
+        <path d="M380 520 C388 486 386 460 394 438 C402 460 400 490 408 520 Z" />
+        <path d="M412 520 C420 484 418 456 426 432 C434 456 432 488 440 520 Z" />
+      </g>
+      <g>
+        <circle className="sc-spore" style={{ "--sp": 0 } as CSSProperties} cx="70" cy="180" r="3" fill="#e3ef26" />
+        <circle className="sc-spore" style={{ "--sp": 1 } as CSSProperties} cx="380" cy="150" r="2.5" fill="#6fd6b0" />
+        <circle className="sc-spore" style={{ "--sp": 2 } as CSSProperties} cx="350" cy="400" r="3" fill="#e3ef26" />
+        <circle className="sc-spore" style={{ "--sp": 3 } as CSSProperties} cx="90" cy="380" r="2.5" fill="#6fd6b0" />
+      </g>
+    </g>
+  );
+}
+
+function SceneSeed() {
+  return (
+    <svg className="chain-seed" viewBox="0 0 440 520" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="scs-leaf" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#e2fbce" /><stop offset=".5" stopColor="#479e65" /><stop offset="1" stopColor="#076653" /></linearGradient>
+        <radialGradient id="scs-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".16" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".06" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
+      </defs>
+      <ChainBackdrop />
+      <ellipse className="sc-glow" cx="220" cy="300" rx="190" ry="220" fill="url(#scs-glow)" />
+      <path d="M120 452 C160 430 280 430 320 452 L320 470 L120 470 Z" fill="#0e2c1d" />
+      <path d="M120 452 C160 430 280 430 320 452" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
+      <path d="M220 448 C218 420 222 392 220 364 C218 340 222 320 220 300" stroke="#a0bd77" strokeWidth="6" strokeLinecap="round" />
+      <path d="M220 360 C190 356 166 336 162 306 C192 312 214 334 220 360 Z" fill="url(#scs-leaf)" stroke="#0c342c" strokeWidth="2" />
+      <path d="M220 360 L162 306" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 330 C250 324 274 304 278 274 C248 280 226 302 220 330 Z" fill="url(#scs-leaf)" stroke="#0c342c" strokeWidth="2" />
+      <path d="M220 330 L278 274" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
+      <ellipse cx="220" cy="446" rx="14" ry="9" fill="#a0bd77" stroke="#0c342c" strokeWidth="2" />
+      <path className="sc-bud" d="M220 300 C214 290 214 280 220 272 C226 280 226 290 220 300 Z" fill="#e3ef26" stroke="#0c342c" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function SceneTag() {
+  return (
+    <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="sc0-leaf" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#e2fbce" /><stop offset=".5" stopColor="#479e65" /><stop offset="1" stopColor="#076653" /></linearGradient>
+        <radialGradient id="sc0-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".14" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
+      </defs>
+      <ChainBackdrop />
+      <ellipse cx="220" cy="290" rx="200" ry="235" fill="url(#sc0-glow)" />
+      <path d="M150 478 C185 468 255 468 290 478" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
+      <g stroke="#3a7d5c" strokeWidth="2.5" strokeLinecap="round"><path d="M178 476 C174 460 170 448 164 438" /><path d="M262 476 C266 460 270 448 276 438" /></g>
+      <path d="M220 474 C217 424 223 372 220 322 C217 276 223 244 220 210" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
+      <path d="M220 420 C168 416 128 384 118 336 C170 344 210 378 220 420 Z" fill="url(#sc0-leaf)" stroke="#0c342c" strokeWidth="2" />
+      <path d="M220 420 L118 336 M170 380 L142 372 M170 380 L156 350" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 364 C272 356 312 322 320 274 C270 282 230 318 220 364 Z" fill="url(#sc0-leaf)" stroke="#0c342c" strokeWidth="2" />
+      <path d="M220 364 L320 274 M268 322 L296 314 M268 322 L282 292" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 300 C176 292 142 262 136 220 C180 228 212 260 220 300 Z" fill="url(#sc0-leaf)" stroke="#0c342c" strokeWidth="2" />
+      <path d="M220 300 L136 220 M178 262 L152 254 M178 262 L166 234" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 252 C262 244 296 216 302 176 C260 184 228 214 220 252 Z" fill="url(#sc0-leaf)" stroke="#0c342c" strokeWidth="2" />
+      <path d="M220 252 L302 176 M260 216 L284 208 M260 216 L272 188" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 150 L220 350" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="3 7" opacity=".35" />
+      <rect x="150" y="62" width="140" height="78" rx="12" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
+      <circle cx="186" cy="98" r="16" stroke="#6fd6b0" strokeWidth="2" opacity=".7" />
+      <circle cx="186" cy="98" r="5" fill="#6fd6b0" opacity=".7" />
+      <path d="M216 90 h52 M216 104 h36" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".6" />
+      <circle cx="276" cy="76" r="4.5" fill="#e3ef26" />
+      <rect x="185" y="134" width="70" height="8" rx="4" fill="#6fd6b0" opacity=".55" />
+      <g className="sc-tag">
+        <rect x="185" y="150" width="70" height="88" rx="9" fill="#fffdee" stroke="#0c342c" strokeWidth="2" />
+        <circle cx="220" cy="160" r="3.5" fill="none" stroke="#0c342c" strokeWidth="2" />
+        <g fill="#0c342c">
+          <path d="M196 172 h15 v15 h-15 z" /><path d="M199.5 175.5 h8 v8 h-8 z" fill="#fffdee" /><path d="M202 178 h3 v3 h-3 z" />
+          <path d="M229 172 h15 v15 h-15 z" /><path d="M232.5 175.5 h8 v8 h-8 z" fill="#fffdee" /><path d="M235 178 h3 v3 h-3 z" />
+          <path d="M196 201 h15 v15 h-15 z" /><path d="M199.5 204.5 h8 v8 h-8 z" fill="#fffdee" /><path d="M202 207 h3 v3 h-3 z" />
+          <rect x="231" y="203" width="6" height="6" /><rect x="240" y="211" width="5" height="5" /><rect x="231" y="219" width="5" height="5" />
+        </g>
+      </g>
+    </svg>
+  );
+}
+
+function SceneRecord() {
+  return (
+    <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
+      <defs><radialGradient id="sc1-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
+      <ChainBackdrop />
+      <ellipse cx="230" cy="290" rx="200" ry="235" fill="url(#sc1-glow)" />
+      <path d="M110 478 C180 468 300 468 370 478" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="150" cy="148" r="28" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
+      <path d="M124 124 C126 98 174 98 176 124 Z" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M114 126 L186 126" stroke="#6fd6b0" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M122 200 C122 176 178 176 178 200 L190 462 L110 462 Z" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M126 214 C152 232 182 250 214 266" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M176 214 C198 230 216 248 232 264" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="216" cy="270" r="8" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
+      <circle cx="234" cy="268" r="8" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
+      <rect x="224" y="232" width="132" height="206" rx="15" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
+      <rect x="236" y="246" width="108" height="112" rx="6" fill="#071c14" stroke="#6fd6b0" strokeWidth="1.5" />
+      <g stroke="#6fd6b0" strokeWidth="3.5" strokeLinecap="round">
+        <path className="sc-field" style={{ "--fi": 0 } as CSSProperties} d="M246 268 h64" />
+        <path className="sc-field" style={{ "--fi": 1 } as CSSProperties} d="M246 292 h86" />
+        <path className="sc-field" style={{ "--fi": 2 } as CSSProperties} d="M246 316 h52" />
+        <path className="sc-field" style={{ "--fi": 3 } as CSSProperties} d="M246 340 h74" />
+      </g>
+      <path d="M322 330 c0 -8 12 -8 12 0 c0 6 -6 11 -6 11 c0 0 -6 -5 -6 -11z" fill="#e3ef26" />
+      <g fill="#6fd6b0" opacity=".75">
+        {Array.from({ length: 15 }).map((_, k) => {
+          const r = Math.floor(k / 5), c = k % 5;
+          return <rect key={k} x={244 + c * 21} y={370 + r * 20} width="15" height="12" rx="3" />;
+        })}
+      </g>
+      <g className="sc-typing" fill="#e3ef26"><circle cx="254" cy="428" r="3" /><circle cx="266" cy="428" r="3" /><circle cx="278" cy="428" r="3" /></g>
+    </svg>
+  );
+}
+
+function SceneSync() {
+  return (
+    <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
+      <defs><radialGradient id="sc2-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
+      <ChainBackdrop />
+      <ellipse cx="220" cy="270" rx="205" ry="235" fill="url(#sc2-glow)" />
+      <rect x="40" y="160" width="100" height="200" rx="16" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
+      <rect x="54" y="178" width="72" height="140" rx="5" fill="#071c14" stroke="#6fd6b0" strokeWidth="1.5" />
+      <path d="M66 206 h48 M66 230 h34 M66 254 h40" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".7" />
+      <circle cx="90" cy="340" r="6" stroke="#6fd6b0" strokeWidth="2" />
+      <rect x="300" y="150" width="100" height="62" rx="9" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
+      <rect x="300" y="224" width="100" height="62" rx="9" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
+      <rect x="300" y="298" width="100" height="62" rx="9" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
+      <circle cx="318" cy="181" r="4.5" fill="#6fd6b0" /><circle cx="318" cy="255" r="4.5" fill="#6fd6b0" /><circle cx="318" cy="329" r="4.5" fill="#e3ef26" />
+      <path d="M354 181 h32 M354 255 h32 M354 329 h32" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".6" />
+      <path d="M140 330 L300 330" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="4 7" opacity=".5" />
+      <circle className="sc-packet" style={{ "--pk": 0 } as CSSProperties} cx="140" cy="330" r="6" fill="#e3ef26" />
+      <circle className="sc-packet" style={{ "--pk": 1 } as CSSProperties} cx="140" cy="330" r="6" fill="#e3ef26" />
+      <circle className="sc-packet" style={{ "--pk": 2 } as CSSProperties} cx="140" cy="330" r="6" fill="#e3ef26" />
+      <g className="sc-sync" stroke="#e3ef26" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M244 206 A26 26 0 0 0 198 204" /><path d="M198 204 l2 -11 M198 204 l11 -2" />
+        <path d="M196 236 A26 26 0 0 0 242 238" /><path d="M242 238 l-2 11 M242 238 l-11 2" />
+      </g>
+    </svg>
+  );
+}
+
+function SceneReview() {
+  return (
+    <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
+      <defs><radialGradient id="sc3-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
+      <ChainBackdrop />
+      <ellipse cx="220" cy="280" rx="200" ry="235" fill="url(#sc3-glow)" />
+      <rect x="120" y="128" width="200" height="270" rx="14" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
+      <rect x="142" y="152" width="70" height="70" rx="7" fill="#071c14" stroke="#6fd6b0" strokeWidth="1.5" />
+      <g fill="#6fd6b0" opacity=".8"><rect x="151" y="161" width="14" height="14" /><rect x="174" y="161" width="14" height="14" /><rect x="151" y="184" width="14" height="14" /><rect x="177" y="187" width="9" height="9" /></g>
+      <path d="M226 166 h72 M226 188 h54 M226 210 h62" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".7" />
+      <path d="M142 250 h156 M142 276 h132 M142 302 h146 M142 328 h108" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
+      <g className="sc-mag">
+        <circle cx="186" cy="248" r="40" fill="#6fd6b014" stroke="#e3ef26" strokeWidth="3.5" />
+        <path d="M216 278 L246 308" stroke="#e3ef26" strokeWidth="6" strokeLinecap="round" />
+      </g>
+      <g className="sc-check">
+        <circle cx="292" cy="368" r="26" fill="#e3ef26" />
+        <path d="M280 368 l9 9 l17 -19" stroke="#0c342c" strokeWidth="4.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+    </svg>
+  );
+}
+
+function SceneCanopy() {
+  return (
+    <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="sc4-leaf" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#e2fbce" /><stop offset=".5" stopColor="#479e65" /><stop offset="1" stopColor="#076653" /></linearGradient>
+        <linearGradient id="sc4-flower" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#f4fbb0" /><stop offset=".6" stopColor="#e3ef26" /><stop offset="1" stopColor="#b8cc1a" /></linearGradient>
+        <radialGradient id="sc4-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".18" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".07" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
+      </defs>
+      <ChainBackdrop />
+      <ellipse className="sc-glow" cx="220" cy="280" rx="200" ry="235" fill="url(#sc4-glow)" />
+      <path d="M160 478 C190 468 250 468 280 478" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
+      <path d="M220 474 C217 424 223 372 220 322 C217 276 223 244 220 214" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
+      <path d="M220 420 C168 416 128 384 118 336 C170 344 210 378 220 420 Z" fill="url(#sc4-leaf)" stroke="#0c342c" strokeWidth="2" />
+      <path d="M220 420 L118 336 M170 380 L142 372 M170 380 L156 350" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 364 C272 356 312 322 320 274 C270 282 230 318 220 364 Z" fill="url(#sc4-leaf)" stroke="#0c342c" strokeWidth="2" />
+      <path d="M220 364 L320 274 M268 322 L296 314 M268 322 L282 292" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 300 C176 292 142 262 136 220 C180 228 212 260 220 300 Z" fill="url(#sc4-leaf)" stroke="#0c342c" strokeWidth="2" />
+      <path d="M220 300 L136 220 M178 262 L152 254 M178 262 L166 234" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 252 C262 244 296 216 302 176 C260 184 228 214 220 252 Z" fill="url(#sc4-leaf)" stroke="#0c342c" strokeWidth="2" />
+      <path d="M220 252 L302 176 M260 216 L284 208 M260 216 L272 188" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
+      <g className="sc-bloom">
+        {[30, 90, 150, 210, 270, 330].map((a) => (
+          <path key={a} d="M220 190 C209 168 208 142 220 118 C232 142 231 168 220 190 Z" fill="url(#sc4-flower)" stroke="#0c342c" strokeOpacity=".35" strokeWidth="1.5" transform={`rotate(${a} 220 190)`} />
+        ))}
+        <circle cx="220" cy="190" r="12" fill="#f4fbb0" /><circle cx="220" cy="190" r="5.5" fill="#e3ef26" />
+      </g>
+      <g className="sc-pub">
+        <circle cx="348" cy="150" r="24" fill="#e3ef26" />
+        <path d="M337 150 l8 8 l15 -17" stroke="#0c342c" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+    </svg>
+  );
+}
+
+const CHAIN_SCENES = [SceneTag, SceneRecord, SceneSync, SceneReview, SceneCanopy];
+
+function ChainScenes() {
+  return (
+    <>
+      {CHAIN_SCENES.map((Scene, i) => (
+        <Scene key={i} />
+      ))}
+    </>
+  );
+}
+
 function formatFix(record: RecordListItem): string {
   if (record.gpsLat === null || record.gpsLng === null) return "GPS fix not recorded";
   const acc = record.gpsAccuracyM !== null ? ` · ±${Math.round(record.gpsAccuracyM)}\u00A0m` : "";
@@ -208,7 +431,7 @@ export function HomeContent({
                   <path className="home-chain-vine-path" d="M70 600 C50 540 90 480 70 420 C50 360 90 300 70 240 C50 180 82 120 70 20" />
                   <path className="home-chain-vine-grow" d="M70 600 C50 540 90 480 70 420 C50 360 90 300 70 240 C50 180 82 120 70 20" />
                   <g>
-                    {CHAIN.slice(0, -1).map((_, i) => (
+                    {CHAIN.map((_, i) => (
                       <circle key={i} className="home-chain-node" r="6" cx="70" cy="600" />
                     ))}
                   </g>
@@ -216,17 +439,27 @@ export function HomeContent({
                 </svg>
               </div>
               <div className="home-chain-steps">
+                <article className="home-chain-step home-chain-intro">
+                  <svg className="chain-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                    <path pathLength={1} d="M32 54 V32" />
+                    <path pathLength={1} d="M32 36 C32 26 24 20 14 20 c1 10 8 16 18 16z" />
+                    <path pathLength={1} d="M32 36 c0-8 6-14 16-14 -1 9-7 14-16 14z" />
+                  </svg>
+                  <h3>The journey begins.</h3>
+                  <p>Scroll to follow a record from the forest floor to the public canopy.</p>
+                </article>
                 {CHAIN.map((step, i) => (
-                  <article key={step.title} className={`home-chain-step${i === 0 ? " is-active" : ""}`}>
+                  <article key={step.title} className="home-chain-step">
                     <ChainIcon stage={i} />
                     <h3>{step.title}</h3>
                     <p>{step.body}</p>
                   </article>
                 ))}
               </div>
-            </div>
-            <div className="home-chain-progress" aria-hidden="true">
-              <span className="home-chain-progress-fill" />
+              <div className="home-chain-art" aria-hidden="true">
+                <SceneSeed />
+                <ChainScenes />
+              </div>
             </div>
           </div>
         </div>

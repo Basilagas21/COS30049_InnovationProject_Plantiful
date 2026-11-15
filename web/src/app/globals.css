@@ -175,10 +175,8 @@ body:has(.home-canopy) .brand { gap: 0; position: relative; }
 body:has(.home-canopy) .site-nav { flex-wrap: nowrap; justify-content: center; gap: var(--nav-gap); }
 body:has(.home-canopy) .site-nav-link { flex: 0 0 auto; min-width: 0; }
 body:has(.home-canopy) .site-nav-link::after { content: none; }
-body:has(.home-canopy) .header-account a[href="/signin"] { position: relative; overflow: hidden; padding-left: 1.9rem; padding-right: 1.9rem; transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, background .25s ease; }
+body:has(.home-canopy) .header-account a[href="/signin"] { padding-left: 1.9rem; padding-right: 1.9rem; transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, background .25s ease; }
 body:has(.home-canopy) .header-account a[href="/signin"]:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--emerald) 86%, #ffffff); box-shadow: 0 10px 26px color-mix(in srgb, var(--emerald) 45%, transparent); }
-body:has(.home-canopy) .header-account a[href="/signin"]::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 32%, #ffffff66 50%, transparent 68%); transform: translateX(-130%); transition: transform .55s ease; pointer-events: none; }
-body:has(.home-canopy) .header-account a[href="/signin"]:hover::after { transform: translateX(130%); }
 
 /* Branding easter egg: hover gently wakes the lockup with a tame bounce and a soft wave through the wordmark. */
 body:has(.home-canopy) .brand img { transform-origin: 50% 88%; }
@@ -218,7 +216,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .canopy-floor--front { height: 220px; z-index: -1; opacity: .95; }
 .home-spores { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
 .home-spore { position: absolute; bottom: -8px; border-radius: 50%; background: #e3ef26; box-shadow: 0 0 10px #e3ef26; opacity: 0; animation: spore-rise linear infinite; }
-.home-frond-wrap { position: absolute; left: 75%; top: calc(50% + 14px); translate: -50% -50%; width: clamp(340px, 38vw, 560px); z-index: -1; will-change: transform; }
+.home-frond-wrap { position: absolute; left: 75%; top: calc(50% + 27px); translate: -50% -50%; width: clamp(340px, 38vw, 560px); z-index: -1; will-change: transform; }
 .home-frond { width: 100%; aspect-ratio: 752 / 885; background: url('/botanical.svg') center / contain no-repeat; filter: drop-shadow(0 0 60px #6fd6b088) drop-shadow(0 0 26px #e3ef2666) drop-shadow(0 16px 40px #00000066); transform-origin: bottom center; animation: frond-in 1.2s ease-out both, frond-sway 12s ease-in-out 1.2s infinite; }
 .home-hero-copy { position: relative; z-index: 2; max-width: 46rem; }
 .home-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(3rem, 7vw, 6rem); font-weight: 680; line-height: 1.0; letter-spacing: -0.035em; }

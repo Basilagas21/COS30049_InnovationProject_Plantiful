@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Public_Sans, Martian_Mono } from "next/font/google";
 import Image from "next/image";
@@ -85,8 +86,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   className="h-9 w-auto object-contain"
                   priority
                 />
-                <span className="brand-spores" aria-hidden="true"><i /><i /><i /><i /><i /></span>
-                <span className="brand-word text-xl tracking-tight">plantiful<span className="text-emerald">.</span></span>
+                <span className="brand-word text-xl tracking-tight" aria-hidden="true">
+                  {"plantiful".split("").map((ch, i) => (
+                    <span key={i} className="bl" style={{ "--li": i } as CSSProperties}>{ch}</span>
+                  ))}
+                  <span className="brand-dot text-emerald">.</span>
+                </span>
               </Link>
               <SiteNav links={navLinks} />
               <div className="header-account flex shrink-0 items-center justify-end">

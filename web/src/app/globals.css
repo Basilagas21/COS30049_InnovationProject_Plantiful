@@ -180,22 +180,17 @@ body:has(.home-canopy) .header-account a[href="/signin"]:hover { transform: tran
 body:has(.home-canopy) .header-account a[href="/signin"]::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 32%, #ffffff66 50%, transparent 68%); transform: translateX(-130%); transition: transform .55s ease; pointer-events: none; }
 body:has(.home-canopy) .header-account a[href="/signin"]:hover::after { transform: translateX(130%); }
 
-/* Branding easter egg: on hover the sprout springs to life and releases a puff of spores. */
+/* Branding easter egg: hover gently wakes the lockup with a tame bounce and a soft wave through the wordmark. */
 body:has(.home-canopy) .brand img { transform-origin: 50% 88%; }
-body:has(.home-canopy) .brand:hover img { animation: sprout-boing .75s cubic-bezier(.34,1.56,.64,1); }
-body:has(.home-canopy) .brand:hover .brand-word span { animation: dot-glow .9s ease-in-out; }
-body:has(.home-canopy) .brand-spores { position: absolute; left: 20px; top: 50%; width: 0; height: 0; pointer-events: none; }
-body:has(.home-canopy) .brand-spores i { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 12px color-mix(in srgb, var(--chartreuse) 85%, transparent); opacity: 0; }
-body:has(.home-canopy) .brand:hover .brand-spores i { animation: spore-pop .95s ease-out var(--sd, 0s) forwards; }
-body:has(.home-canopy) .brand-spores i:nth-child(1) { --sx: -16px; --sd: 0s; }
-body:has(.home-canopy) .brand-spores i:nth-child(2) { --sx: -6px; --sd: .08s; }
-body:has(.home-canopy) .brand-spores i:nth-child(3) { --sx: 5px; --sd: .04s; }
-body:has(.home-canopy) .brand-spores i:nth-child(4) { --sx: 14px; --sd: .12s; }
-body:has(.home-canopy) .brand-spores i:nth-child(5) { --sx: 22px; --sd: .02s; }
+body:has(.home-canopy) .brand:hover img { animation: sprout-boing .8s cubic-bezier(.34,1.56,.64,1); }
+body:has(.home-canopy) .brand-word .bl { display: inline-block; }
+body:has(.home-canopy) .brand:hover .bl { animation: letter-wave .7s cubic-bezier(.34,1.56,.64,1) calc(var(--li, 0) * 40ms) both; }
+body:has(.home-canopy) .brand-dot { display: inline-block; }
+body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in-out .38s both; }
 
-@keyframes sprout-boing { 0% { transform: scale(1) rotate(0deg); } 30% { transform: scale(1.25) rotate(-10deg); } 55% { transform: scale(.92) rotate(5deg); } 75% { transform: scale(1.08) rotate(-2deg); } 100% { transform: scale(1) rotate(0deg); } }
-@keyframes dot-glow { 0%, 100% { text-shadow: 0 0 0 transparent; } 45% { text-shadow: 0 0 14px currentColor; } }
-@keyframes spore-pop { 0% { opacity: 0; transform: translate(0, 0) scale(.3); } 18% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--sx, 8px), -20px) scale(1); } }
+@keyframes sprout-boing { 0% { transform: scale(1) rotate(0deg); } 30% { transform: scale(1.08) rotate(-3deg); } 55% { transform: scale(.98) rotate(1.5deg); } 75% { transform: scale(1.02) rotate(-.5deg); } 100% { transform: scale(1) rotate(0deg); } }
+@keyframes letter-wave { 0% { transform: translateY(0); color: var(--pine); text-shadow: 0 0 0 transparent; } 30% { transform: translateY(-3px); color: var(--emerald); text-shadow: 0 0 10px color-mix(in srgb, var(--chartreuse) 60%, transparent); } 60% { transform: translateY(1px); color: var(--pine); } 100% { transform: translateY(0); color: var(--pine); text-shadow: 0 0 0 transparent; } }
+@keyframes dot-glow { 0%, 100% { transform: translateY(0) scale(1); text-shadow: 0 0 0 transparent; } 40% { transform: translateY(-4px) scale(1.25); text-shadow: 0 0 14px currentColor; } }
 
 /* Shared workspace surfaces intentionally take precedence over existing utilities. */
 .site-content h1:not(.home-title) { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; }

@@ -49,6 +49,29 @@ const JOURNEY = [
   },
 ];
 
+const CHAIN = [
+  {
+    title: "A plant is tagged.",
+    body: "Each tagged plant carries a unique QR identity, so an observation in the field can be tied back to a real individual.",
+  },
+  {
+    title: "A botanist records it.",
+    body: "Offline in the forest, a botanist captures the species, a GPS fix, photos and field notes, stored safely on the device.",
+  },
+  {
+    title: "The record syncs.",
+    body: "When connectivity returns, the observation travels from the field device to the knowledge system, intact and unchanged.",
+  },
+  {
+    title: "An officer reviews it.",
+    body: "A conservation officer checks the record against its evidence and approves, returns or rejects it. Nothing is published unchecked.",
+  },
+  {
+    title: "It joins the canopy.",
+    body: "Only then does the record enter the public catalogue, carrying its tag, its fix and its reviewer for anyone to see.",
+  },
+];
+
 function Arrow() {
   return (
     <svg aria-hidden="true" viewBox="0 0 16 16" className="home-arrow" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -72,7 +95,7 @@ export function HomeContent({
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   useHomeMotion(rootRef);
-  const featured = records.find((r) => r.isPublished) ?? records[0] ?? null;
+  const featured = records.find((r) => r.isPublished) ?? records.find((r) => r.approvalStatus === "approved") ?? null;
 
   return (
     <div ref={rootRef} className="home-root">
@@ -125,14 +148,14 @@ export function HomeContent({
         <div className="live-chip home-reveal" style={{ "--reveal-i": 2 } as CSSProperties}>
           {featured ? (
             <>
-              <p className="live-chip-row"><span className="live-chip-pulse" />Live verification</p>
+              <p className="live-chip-row"><span className="live-chip-pulse" />Latest verification</p>
               <p className="live-chip-name"><em>{featured.scientificName}</em></p>
               <p className="live-chip-meta">{formatFix(featured)}<span className="live-chip-meta-date"> · captured {featured.createdAt.slice(0, 10)}</span></p>
-              <span className="live-chip-ok">✓ Officer approved{featured.isPublished ? " · published" : ""}</span>
+              <span className="live-chip-ok">{featured.isPublished ? "Published to the catalogue" : "Awaiting publication"}</span>
             </>
           ) : (
             <>
-              <p className="live-chip-row"><span className="live-chip-pulse" />Live verification</p>
+              <p className="live-chip-row"><span className="live-chip-pulse" />Latest verification</p>
               <p className="live-chip-name"><em>Awaiting the first record</em></p>
               <p className="live-chip-meta">Records appear here once an officer approves them.</p>
             </>
@@ -160,6 +183,47 @@ export function HomeContent({
             The catalogue is being prepared. Records appear here the moment a conservation officer approves them.
           </p>
         )}
+      </section>
+
+      <section className="home-chain" aria-label="How a record joins the catalogue">
+        <div className="home-chain-track">
+          <div className="home-chain-stage">
+            <div className="home-chain-head">
+              <h2 className="home-chain-title">From forest floor<br />to public record.</h2>
+              <p className="home-chain-lede">Every entry in the canopy travels the same path, and nothing is published unchecked.</p>
+            </div>
+            <div className="home-chain-body">
+              <div className="home-chain-spine" aria-hidden="true">
+                <svg className="home-chain-vine" viewBox="0 0 140 620" fill="none">
+                  <defs>
+                    <radialGradient id="chain-bloom">
+                      <stop offset="0" stopColor="#e3ef26" stopOpacity=".4" />
+                      <stop offset=".45" stopColor="#6fd6b0" stopOpacity=".18" />
+                      <stop offset="1" stopColor="#6fd6b0" stopOpacity="0" />
+                    </radialGradient>
+                  </defs>
+                  <circle className="home-chain-bloom" cx="70" cy="20" r="64" fill="url(#chain-bloom)" />
+                  <path className="home-chain-vine-path" d="M70 600 C50 540 90 480 70 420 C50 360 90 300 70 240 C50 180 82 120 70 20" />
+                  <path className="home-chain-vine-grow" d="M70 600 C50 540 90 480 70 420 C50 360 90 300 70 240 C50 180 82 120 70 20" />
+                  <g>
+                    {CHAIN.map((_, i) => (
+                      <circle key={i} className="home-chain-node" r="6" cx="70" cy="600" />
+                    ))}
+                  </g>
+                  <circle className="home-chain-token" r="8" cx="0" cy="0" transform="translate(70 600)" />
+                </svg>
+              </div>
+              <div className="home-chain-steps">
+                {CHAIN.map((step, i) => (
+                  <article key={step.title} className={`home-chain-step${i === 0 ? " is-active" : ""}`}>
+                    <h3>{step.title}</h3>
+                    <p>{step.body}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="home-journey" aria-label="A connected conservation journey">

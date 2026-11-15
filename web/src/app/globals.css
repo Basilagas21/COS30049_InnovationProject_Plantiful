@@ -168,7 +168,7 @@ body {
 }
 
 /* Attached nav on the homepage, keeping the original theme-aware glass. */
-body:has(.home-canopy) { --nav-gap: clamp(.5rem, 1.5vw, .9rem); }
+body:has(.home-canopy) { --nav-gap: clamp(.45rem, 1.2vw, .7rem); }
 body:has(.home-canopy) .site-header { padding: 0; }
 body:has(.home-canopy) .site-header-inner { max-width: none; width: 100%; margin: 0; border-radius: 0; padding: var(--nav-gap) 1.5rem; border: none; border-bottom: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent); }
 body:has(.home-canopy) .brand { gap: 0; }

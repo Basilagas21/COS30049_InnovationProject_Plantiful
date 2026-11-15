@@ -3,7 +3,7 @@
     <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e2fbce"/><stop offset=".5" stop-color="#479e65"/><stop offset="1" stop-color="#076653"/></linearGradient>
     <linearGradient id="shade"><stop stop-color="#076653"/><stop offset="1" stop-color="#0c342c"/></linearGradient>
   </defs>
-  <path d="M386 900Q467 660 405 340Q380 170 480 15" stroke="#a0bd77" stroke-width="9"/>
+  <path d="M386 900 C389 872 391 850 393 831 C402 770 416 724 424 675 C430 612 418 545 412 490 C407 437 406 385 408 335" stroke="#a0bd77" stroke-width="9" stroke-linecap="round"/>
   <g fill="url(#leaf)" stroke="#0c342c" stroke-width="2">
     <path d="M412 490C205 504 53 335 83 126C291 147 427 261 412 490Z"/>
     <path d="M412 490C406 276 561 157 757 186C716 379 583 493 412 490Z"/>
@@ -13,8 +13,8 @@
     <path d="M393 831C228 865 92 768 48 634C218 585 365 696 393 831Z"/>
     <path d="M393 831C455 694 590 655 720 698C639 829 512 873 393 831Z"/>
   </g>
-  <g stroke="#e2fbce" stroke-opacity=".45" stroke-width="2">
+  <g stroke="#e2fbce" stroke-opacity=".45" stroke-width="2" stroke-linecap="round">
     <path d="M412 490L83 126M412 490L757 186M424 675L37 382M424 675L789 450M408 335L480 15M393 831L48 634M393 831L720 698"/>
-    <path d="M300 364L151 335M300 364L279 214M520 396L540 250M520 396L666 364M275 563L130 565M275 563L225 436M566 588L587 480M566 588L708 571"/>
+    <path d="M300 364L114.6 327.9M300 364L275 185.3M520 396L543.8 221.9M520 396L680.3 360.9M275 563L125.5 565.1M275 563L212.7 404.6M566 588L591.3 458M566 588L723.3 569.2"/>
   </g>
 </svg>

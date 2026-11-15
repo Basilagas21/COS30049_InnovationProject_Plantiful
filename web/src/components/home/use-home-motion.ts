@@ -71,14 +71,16 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const current = { x: 0, y: 0 };
     let parallaxRaf = 0;
     const tick = () => {
-      current.x += (target.x - current.x) * 0.1;
-      current.y += (target.y - current.y) * 0.1;
-      if (frond) frond.style.transform = `translate(${current.x.toFixed(2)}px, ${current.y.toFixed(2)}px)`;
+      current.x += (target.x - current.x) * 0.08;
+      current.y += (target.y - current.y) * 0.08;
       if (Math.abs(target.x - current.x) > 0.05 || Math.abs(target.y - current.y) > 0.05) {
         parallaxRaf = requestAnimationFrame(tick);
       } else {
+        current.x = target.x;
+        current.y = target.y;
         parallaxRaf = 0;
       }
+      if (frond) frond.style.transform = `translate(${current.x.toFixed(2)}px, ${current.y.toFixed(2)}px)`;
     };
     const startParallax = () => {
       if (!parallaxRaf) parallaxRaf = requestAnimationFrame(tick);
@@ -96,26 +98,9 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       startParallax();
     };
 
-    const magnetic: Array<{ el: HTMLElement; move: (e: PointerEvent) => void; leave: () => void }> = [];
     if (!reduce.matches) {
       banner?.addEventListener("pointermove", onBannerMove);
       banner?.addEventListener("pointerleave", onBannerLeave);
-      const buttons = Array.from(root.querySelectorAll<HTMLElement>(".home-btn"));
-      for (const el of buttons) {
-        const move = (e: PointerEvent) => {
-          if (e.pointerType !== "mouse") return;
-          const r = el.getBoundingClientRect();
-          const x = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
-          const y = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
-          el.style.transform = `translate(${(x * 6).toFixed(1)}px, ${(y * 6).toFixed(1)}px)`;
-        };
-        const leave = () => {
-          el.style.transform = "";
-        };
-        el.addEventListener("pointermove", move);
-        el.addEventListener("pointerleave", leave);
-        magnetic.push({ el, move, leave });
-      }
     }
 
     return () => {
@@ -126,11 +111,7 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       banner?.removeEventListener("pointermove", onBannerMove);
       banner?.removeEventListener("pointerleave", onBannerLeave);
       if (parallaxRaf) cancelAnimationFrame(parallaxRaf);
-      for (const { el, move, leave } of magnetic) {
-        el.removeEventListener("pointermove", move);
-        el.removeEventListener("pointerleave", leave);
-        el.style.transform = "";
-      }
+      if (frond) frond.style.transform = "";
       doc.style.removeProperty("--home-p");
     };
   }, [rootRef]);

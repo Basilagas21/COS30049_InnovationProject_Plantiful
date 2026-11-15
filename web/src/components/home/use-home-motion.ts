@@ -60,6 +60,7 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const chainToken = root.querySelector<SVGCircleElement>(".home-chain-token");
     const chainNodes = Array.from(root.querySelectorAll<SVGCircleElement>(".home-chain-node"));
     const chainSteps = Array.from(root.querySelectorAll<HTMLElement>(".home-chain-step"));
+    const chainProgressFill = root.querySelector<HTMLElement>(".home-chain-progress-fill");
     let vineLen = 0;
 
     const layoutChain = () => {
@@ -70,7 +71,7 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
         vineGrow.style.strokeDashoffset = `${vineLen}`;
       }
       chainNodes.forEach((node, i) => {
-        const pt = vinePath.getPointAtLength(((i + 0.5) / chainNodes.length) * vineLen);
+        const pt = vinePath.getPointAtLength(((i + 1) / chainSteps.length) * vineLen);
         node.setAttribute("cx", `${pt.x.toFixed(1)}`);
         node.setAttribute("cy", `${pt.y.toFixed(1)}`);
       });
@@ -88,7 +89,8 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       }
       const active = Math.min(chainSteps.length - 1, Math.floor(p * chainSteps.length));
       chainSteps.forEach((step, i) => step.classList.toggle("is-active", i === active));
-      chainNodes.forEach((node, i) => node.classList.toggle("is-lit", i <= active));
+      chainNodes.forEach((node, i) => node.classList.toggle("is-lit", i < active));
+      if (chainProgressFill) chainProgressFill.style.transform = `scaleX(${p.toFixed(4)})`;
       if (chainStage) chainStage.classList.toggle("is-peak", active === chainSteps.length - 1);
     };
 
@@ -155,8 +157,8 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const onBannerMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse" || !banner) return;
       const rect = banner.getBoundingClientRect();
-      target.x = ((event.clientX - rect.left) / rect.width - 0.5) * 18;
-      target.y = ((event.clientY - rect.top) / rect.height - 0.5) * 14;
+      target.x = ((event.clientX - rect.left) / rect.width - 0.5) * 24;
+      target.y = ((event.clientY - rect.top) / rect.height - 0.5) * 18;
       startParallax();
     };
     const onBannerLeave = () => {

@@ -80,8 +80,10 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const updateChain = () => {
       if (!chainTrack || reduce.matches || !vineLen || window.innerWidth <= 640) return;
       const rect = chainTrack.getBoundingClientRect();
-      const total = rect.height - window.innerHeight;
-      const p = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
+      const headerH = document.querySelector<HTMLElement>(".site-header")?.offsetHeight ?? 0;
+      const stageH = chainStage?.offsetHeight ?? window.innerHeight;
+      const total = rect.height - stageH;
+      const p = total > 0 ? Math.min(1, Math.max(0, (headerH - rect.top) / total)) : 0;
       if (vineGrow) vineGrow.style.strokeDashoffset = `${(vineLen * (1 - p)).toFixed(1)}`;
       if (chainToken && vinePath) {
         const pt = vinePath.getPointAtLength(p * vineLen);

@@ -124,45 +124,48 @@ function ChainBackdrop() {
     <g>
       <defs>
         <linearGradient id="cb-canopy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0a2418" stopOpacity="0" /><stop offset=".55" stopColor="#0a2418" stopOpacity=".8" /><stop offset="1" stopColor="#0a2418" stopOpacity=".8" /></linearGradient>
-        <linearGradient id="cb-shaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#e2fbce" stopOpacity="0" /><stop offset=".22" stopColor="#e2fbce" stopOpacity=".09" /><stop offset=".65" stopColor="#e2fbce" stopOpacity=".05" /><stop offset="1" stopColor="#e2fbce" stopOpacity="0" /></linearGradient>
+        <linearGradient id="cb-shaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#e2fbce" stopOpacity="0" /><stop offset=".22" stopColor="#e2fbce" stopOpacity=".05" /><stop offset=".65" stopColor="#e2fbce" stopOpacity=".028" /><stop offset="1" stopColor="#e2fbce" stopOpacity="0" /></linearGradient>
         <filter id="cb-soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3" /></filter>
         <filter id="cb-frond" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.5" /></filter>
         <filter id="cb-mote" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="2" /></filter>
-        <filter id="cb-canopy" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" /></filter>
+        <filter id="cb-canopyblur" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" /></filter>
       </defs>
-      <path d="M-20 -8 H460 V26 C410 44 360 36 316 52 C276 66 246 60 220 70 C194 60 164 66 124 52 C80 36 30 44 -20 26 Z" fill="url(#cb-canopy)" />
-      <g filter="url(#cb-canopy)" opacity=".85">
-        <Frond x={66} y={-4} angle={150} s={1.35} tone="#123a28" />
-        <Frond x={212} y={-8} angle={176} s={1.15} tone="#123a28" />
-        <Frond x={378} y={-4} angle={208} s={1.35} tone="#123a28" />
+      <path d="M-20 -8 H1260 V30 C1180 52 1100 42 1010 60 C920 76 850 66 760 78 C660 66 560 76 460 60 C360 42 240 52 -20 30 Z" fill="url(#cb-canopy)" />
+      <g filter="url(#cb-canopyblur)" opacity=".85">
+        <Frond x={120} y={-4} angle={150} s={1.5} tone="#123a28" />
+        <Frond x={430} y={-8} angle={172} s={1.25} tone="#123a28" />
+        <Frond x={780} y={-6} angle={185} s={1.4} tone="#123a28" />
+        <Frond x={1100} y={-4} angle={208} s={1.5} tone="#123a28" />
       </g>
       <g filter="url(#cb-soft)">
-        <path d="M176 0 L206 0 L110 520 L34 520 Z" fill="url(#cb-shaft)" />
-        <path d="M232 0 L254 0 L246 520 L180 520 Z" fill="url(#cb-shaft)" opacity=".7" />
-        <path d="M282 0 L316 0 L416 520 L320 520 Z" fill="url(#cb-shaft)" opacity=".55" />
+        <path d="M850 0 L884 0 L760 740 L670 740 Z" fill="url(#cb-shaft)" />
+        <path d="M900 0 L926 0 L905 740 L830 740 Z" fill="url(#cb-shaft)" opacity=".75" />
+        <path d="M945 0 L985 0 L1120 740 L1010 740 Z" fill="url(#cb-shaft)" opacity=".6" />
       </g>
-      <g opacity=".75">
-        <Frond x={-8} y={212} angle={-28} s={1.05} tone="#1d5244" />
-        <Frond x={448} y={202} angle={28} s={1.05} flip tone="#1d5244" />
-        <Frond x={-6} y={332} angle={-16} s={0.8} tone="#16402c" />
-        <Frond x={446} y={338} angle={16} s={0.8} flip tone="#16402c" />
+      <g opacity=".7">
+        <Frond x={-8} y={230} angle={-28} s={1.2} tone="#16402c" />
+        <Frond x={-6} y={380} angle={-16} s={0.95} tone="#0e2c1d" />
+        <Frond x={1248} y={220} angle={28} s={1.2} flip tone="#16402c" />
+        <Frond x={1246} y={375} angle={16} s={0.95} flip tone="#0e2c1d" />
       </g>
-      <ellipse cx="220" cy="488" rx="212" ry="34" fill="#6fd6b0" opacity=".06" filter="url(#cb-soft)" />
+      <ellipse cx="900" cy="705" rx="380" ry="46" fill="#6fd6b0" opacity=".04" filter="url(#cb-soft)" />
       <g filter="url(#cb-frond)">
-        <Frond x={-8} y={530} angle={-24} s={1.7} />
-        <Frond x={448} y={530} angle={24} s={1.7} flip />
-        <Frond x={-6} y={-8} angle={152} s={1.5} />
-        <Frond x={446} y={-8} angle={208} s={1.5} flip />
+        <Frond x={-10} y={745} angle={-24} s={2.2} />
+        <Frond x={70} y={752} angle={-55} s={1.7} />
+        <Frond x={1250} y={745} angle={24} s={2.2} flip />
+        <Frond x={1170} y={752} angle={55} s={1.7} flip />
       </g>
       <g>
-        <circle className="sc-spore" style={{ "--sp": 0 } as CSSProperties} cx="150" cy="180" r="3" fill="#e3ef26" />
-        <circle className="sc-spore" style={{ "--sp": 1 } as CSSProperties} cx="252" cy="140" r="2.2" fill="#6fd6b0" />
-        <circle className="sc-spore" style={{ "--sp": 2 } as CSSProperties} cx="322" cy="300" r="3.4" fill="#e3ef26" />
-        <circle className="sc-spore" style={{ "--sp": 3 } as CSSProperties} cx="118" cy="360" r="2.4" fill="#6fd6b0" />
-        <circle className="sc-spore" style={{ "--sp": 4 } as CSSProperties} cx="212" cy="252" r="4" fill="#e3ef26" filter="url(#cb-mote)" />
-        <circle className="sc-spore" style={{ "--sp": 5 } as CSSProperties} cx="300" cy="200" r="3.6" fill="#6fd6b0" filter="url(#cb-mote)" />
-        <circle className="sc-spore" style={{ "--sp": 6 } as CSSProperties} cx="182" cy="420" r="2" fill="#e3ef26" />
-        <circle className="sc-spore" style={{ "--sp": 7 } as CSSProperties} cx="342" cy="400" r="2.6" fill="#6fd6b0" filter="url(#cb-mote)" />
+        <circle className="sc-spore" style={{ "--sp": 0 } as CSSProperties} cx="820" cy="200" r="3" fill="#e3ef26" />
+        <circle className="sc-spore" style={{ "--sp": 1 } as CSSProperties} cx="930" cy="150" r="2.2" fill="#6fd6b0" />
+        <circle className="sc-spore" style={{ "--sp": 2 } as CSSProperties} cx="1010" cy="330" r="3.4" fill="#e3ef26" />
+        <circle className="sc-spore" style={{ "--sp": 3 } as CSSProperties} cx="760" cy="400" r="2.4" fill="#6fd6b0" />
+        <circle className="sc-spore" style={{ "--sp": 4 } as CSSProperties} cx="900" cy="280" r="4" fill="#e3ef26" filter="url(#cb-mote)" />
+        <circle className="sc-spore" style={{ "--sp": 5 } as CSSProperties} cx="990" cy="230" r="3.6" fill="#6fd6b0" filter="url(#cb-mote)" />
+        <circle className="sc-spore" style={{ "--sp": 6 } as CSSProperties} cx="850" cy="470" r="2" fill="#e3ef26" />
+        <circle className="sc-spore" style={{ "--sp": 7 } as CSSProperties} cx="1040" cy="440" r="2.6" fill="#6fd6b0" filter="url(#cb-mote)" />
+        <circle className="sc-spore" style={{ "--sp": 8 } as CSSProperties} cx="300" cy="300" r="2.4" fill="#6fd6b0" />
+        <circle className="sc-spore" style={{ "--sp": 9 } as CSSProperties} cx="180" cy="480" r="2" fill="#e3ef26" />
       </g>
     </g>
   );
@@ -170,7 +173,7 @@ function ChainBackdrop() {
 
 function ChainBackdropLayer() {
   return (
-    <svg className="chain-backdrop" viewBox="0 0 440 520" fill="none" aria-hidden="true">
+    <svg className="chain-backdrop" viewBox="0 0 1240 740" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true">
       <ChainBackdrop />
     </svg>
   );
@@ -315,7 +318,7 @@ function SceneSeed() {
       <defs>
         <radialGradient id="scs-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
-      <ellipse className="sc-glow" cx="220" cy="400" rx="160" ry="160" fill="url(#scs-glow)" />
+      <ellipse className="sc-glow" cx="220" cy="400" rx="160" ry="160" fill="url(#scs-glow)" opacity=".55" />
       <Soil cx={220} cy={450} rx={72} />
       <path d="M220 450 C219 428 221 404 220 380 C220 376 220 374 220 372" stroke="#a0bd77" strokeWidth="6" strokeLinecap="round" />
       <Leaf x={220} y={412} s={0.8} flip round veins="none" />
@@ -334,7 +337,7 @@ function SceneTag() {
       <defs>
         <radialGradient id="sc0-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".14" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
-      <ellipse cx="220" cy="300" rx="200" ry="235" fill="url(#sc0-glow)" />
+      <ellipse cx="220" cy="300" rx="200" ry="235" fill="url(#sc0-glow)" opacity=".55" />
       <Printer x={150} y={60} />
       <Soil cx={220} cy={472} rx={90} />
       <path d="M220 472 C217 428 223 380 220 330 C218 280 222 240 220 204" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
@@ -356,7 +359,7 @@ function SceneRecord() {
         <radialGradient id="sc1-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
         <linearGradient id="sc1-scan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#e3ef26" stopOpacity=".3" /><stop offset="1" stopColor="#e3ef26" stopOpacity="0" /></linearGradient>
       </defs>
-      <ellipse cx="220" cy="290" rx="205" ry="235" fill="url(#sc1-glow)" />
+      <ellipse cx="220" cy="290" rx="205" ry="235" fill="url(#sc1-glow)" opacity=".55" />
       <path d="M190 250 L310 330" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="3 8" strokeLinecap="round" opacity=".5" />
       <DeviceBody x={70} y={170} />
       <rect x="90" y="196" width="80" height="42" rx="5" fill="#0e2c1d" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1.5" />
@@ -405,7 +408,7 @@ function SceneSync() {
       <defs>
         <radialGradient id="sc2-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
-      <ellipse cx="220" cy="280" rx="205" ry="235" fill="url(#sc2-glow)" />
+      <ellipse cx="220" cy="280" rx="205" ry="235" fill="url(#sc2-glow)" opacity=".55" />
       <DeviceBody x={40} y={180} />
       <rect x="60" y="206" width="56" height="66" rx="6" fill="#0e2c1d" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1.5" />
       <QrGlyph x={68} y={214} s={40} ink="#6fd6b0" paper="#0e2c1d" />
@@ -440,7 +443,7 @@ function SceneReview() {
   return (
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs><radialGradient id="sc3-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
-      <ellipse cx="220" cy="280" rx="200" ry="235" fill="url(#sc3-glow)" />
+      <ellipse cx="220" cy="280" rx="200" ry="235" fill="url(#sc3-glow)" opacity=".55" />
       <Ground cx={224} cy={478} rx={110} />
       <rect x="128" y="128" width="200" height="280" rx="14" fill="#0e2c1d" />
       <rect x="120" y="120" width="200" height="280" rx="14" fill="#fffdee" />
@@ -486,7 +489,7 @@ function SceneCanopy() {
         <radialGradient id="sc4-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".18" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".07" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
         <linearGradient id="sc4-canopy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0e2c1d" stopOpacity="0" /><stop offset=".55" stopColor="#0e2c1d" stopOpacity=".85" /><stop offset="1" stopColor="#0e2c1d" stopOpacity=".85" /></linearGradient>
       </defs>
-      <ellipse className="sc-glow" cx="220" cy="280" rx="200" ry="235" fill="url(#sc4-glow)" />
+      <ellipse className="sc-glow" cx="220" cy="280" rx="200" ry="235" fill="url(#sc4-glow)" opacity=".55" />
       <path d="M0 0 H440 V40 C400 66 360 58 320 78 C280 100 250 140 220 150 C190 140 160 100 120 78 C80 58 40 66 0 40 Z" fill="url(#sc4-canopy)" />
       <g fill="#123a28" opacity=".85">
         <path d="M70 62 C82 88 80 116 64 134 C52 110 56 82 70 62 Z" />
@@ -615,6 +618,7 @@ export function HomeContent({
       <section className="home-chain" aria-label="How a record joins the catalogue">
         <div className="home-chain-track">
           <div className="home-chain-stage">
+            <ChainBackdropLayer />
             <div className="home-chain-head">
               <h2 className="home-chain-title">From forest floor<br />to public record.</h2>
               <p className="home-chain-lede">Every entry in the canopy travels the same path, and nothing is published unchecked.</p>
@@ -660,7 +664,6 @@ export function HomeContent({
               </div>
             </div>
             <div className="home-chain-art" aria-hidden="true">
-              <ChainBackdropLayer />
               <SceneSeed />
               <ChainScenes />
             </div>

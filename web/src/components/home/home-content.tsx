@@ -103,43 +103,66 @@ function ChainIcon({ stage }: { stage: number }) {
   );
 }
 
+function Frond({ x, y, angle = 0, s = 1, flip = false, tone = "#071c14" }: { x: number; y: number; angle?: number; s?: number; flip?: boolean; tone?: string }) {
+  const leaf = "M0 0 C6 -28 30 -52 60 -54 C38 -26 14 -2 0 0 Z";
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${angle}) scale(${flip ? -s : s} ${s})`} fill={tone}>
+      <path d="M0 0 C20 -30 44 -62 78 -92" stroke={tone} strokeWidth="5" strokeLinecap="round" fill="none" />
+      <path d={leaf} transform="translate(12 -18) rotate(-38) scale(0.7)" />
+      <path d={leaf} transform="translate(26 -38) rotate(-44) scale(0.62)" />
+      <path d={leaf} transform="translate(42 -58) rotate(-50) scale(0.54)" />
+      <path d={leaf} transform="translate(58 -76) rotate(-56) scale(0.46)" />
+      <path d={leaf} transform="translate(16 -22) rotate(150) scale(0.6)" />
+      <path d={leaf} transform="translate(32 -44) rotate(156) scale(0.52)" />
+      <path d={leaf} transform="translate(48 -64) rotate(162) scale(0.44)" />
+    </g>
+  );
+}
+
 function ChainBackdrop() {
   return (
     <g>
-      <path d="M120 0 L180 0 L60 520 L20 520 Z" fill="url(#sc-shaft)" />
-      <path d="M300 0 L340 0 L260 520 L230 520 Z" fill="url(#sc-shaft)" />
-      <path d="M212 0 L240 0 L182 520 L162 520 Z" fill="url(#sc-shaft)" />
-      <g fill="#123a28">
-        <path d="M0 0 C40 10 70 40 78 84 C40 76 10 46 0 12 Z" />
-        <path d="M0 40 C36 44 62 66 70 102 C36 96 8 74 0 48 Z" opacity=".85" />
-        <path d="M30 0 C52 18 64 44 62 74 C40 58 28 30 30 0 Z" opacity=".7" />
-        <path d="M0 96 C30 104 52 128 56 162 C28 154 6 130 0 104 Z" opacity=".6" />
-        <path d="M440 0 C400 10 370 40 362 84 C400 76 430 46 440 12 Z" />
-        <path d="M440 40 C404 44 378 66 370 102 C404 96 432 74 440 48 Z" opacity=".85" />
-        <path d="M410 0 C388 18 376 44 378 74 C400 58 412 30 410 0 Z" opacity=".7" />
-        <path d="M440 96 C410 104 388 128 384 162 C412 154 434 130 440 104 Z" opacity=".6" />
+      <defs>
+        <linearGradient id="cb-canopy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0a2418" stopOpacity="0" /><stop offset=".55" stopColor="#0a2418" stopOpacity=".8" /><stop offset="1" stopColor="#0a2418" stopOpacity=".8" /></linearGradient>
+        <linearGradient id="cb-shaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#e2fbce" stopOpacity="0" /><stop offset=".22" stopColor="#e2fbce" stopOpacity=".09" /><stop offset=".65" stopColor="#e2fbce" stopOpacity=".05" /><stop offset="1" stopColor="#e2fbce" stopOpacity="0" /></linearGradient>
+        <filter id="cb-soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3" /></filter>
+        <filter id="cb-frond" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.5" /></filter>
+        <filter id="cb-mote" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="2" /></filter>
+        <filter id="cb-canopy" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" /></filter>
+      </defs>
+      <path d="M-20 -8 H460 V26 C410 44 360 36 316 52 C276 66 246 60 220 70 C194 60 164 66 124 52 C80 36 30 44 -20 26 Z" fill="url(#cb-canopy)" />
+      <g filter="url(#cb-canopy)" opacity=".85">
+        <Frond x={66} y={-4} angle={150} s={1.35} tone="#123a28" />
+        <Frond x={212} y={-8} angle={176} s={1.15} tone="#123a28" />
+        <Frond x={378} y={-4} angle={208} s={1.35} tone="#123a28" />
       </g>
-      <g fill="#0e2c1d">
-        <path d="M0 250 C26 244 48 258 54 284 C30 286 8 272 0 258 Z" opacity=".75" />
-        <path d="M440 240 C414 234 392 248 386 274 C410 276 432 262 440 248 Z" opacity=".75" />
-        <path d="M0 330 C22 326 40 338 44 360 C24 362 6 350 0 338 Z" opacity=".6" />
-        <path d="M440 320 C418 316 400 328 396 350 C416 352 434 340 440 328 Z" opacity=".6" />
+      <g filter="url(#cb-soft)">
+        <path d="M176 0 L206 0 L110 520 L34 520 Z" fill="url(#cb-shaft)" />
+        <path d="M232 0 L254 0 L246 520 L180 520 Z" fill="url(#cb-shaft)" opacity=".7" />
+        <path d="M282 0 L316 0 L416 520 L320 520 Z" fill="url(#cb-shaft)" opacity=".55" />
       </g>
-      <g fill="#0e2c1d">
-        <path d="M0 520 C10 480 8 452 16 428 C24 452 22 484 30 520 Z" />
-        <path d="M40 520 C48 488 46 462 54 440 C62 462 60 492 68 520 Z" />
-        <path d="M90 520 C96 494 94 474 100 456 C106 474 104 498 110 520 Z" opacity=".7" />
-        <path d="M330 520 C336 494 334 474 340 456 C346 474 344 498 350 520 Z" opacity=".7" />
-        <path d="M380 520 C388 486 386 460 394 438 C402 460 400 490 408 520 Z" />
-        <path d="M412 520 C420 484 418 456 426 432 C434 456 432 488 440 520 Z" />
+      <g opacity=".75">
+        <Frond x={-8} y={212} angle={-28} s={1.05} tone="#1d5244" />
+        <Frond x={448} y={202} angle={28} s={1.05} flip tone="#1d5244" />
+        <Frond x={-6} y={332} angle={-16} s={0.8} tone="#16402c" />
+        <Frond x={446} y={338} angle={16} s={0.8} flip tone="#16402c" />
+      </g>
+      <ellipse cx="220" cy="488" rx="212" ry="34" fill="#6fd6b0" opacity=".06" filter="url(#cb-soft)" />
+      <g filter="url(#cb-frond)">
+        <Frond x={-8} y={530} angle={-24} s={1.7} />
+        <Frond x={448} y={530} angle={24} s={1.7} flip />
+        <Frond x={-6} y={-8} angle={152} s={1.5} />
+        <Frond x={446} y={-8} angle={208} s={1.5} flip />
       </g>
       <g>
-        <circle className="sc-spore" style={{ "--sp": 0 } as CSSProperties} cx="70" cy="150" r="3" fill="#e3ef26" />
-        <circle className="sc-spore" style={{ "--sp": 1 } as CSSProperties} cx="380" cy="120" r="2.5" fill="#6fd6b0" />
-        <circle className="sc-spore" style={{ "--sp": 2 } as CSSProperties} cx="350" cy="400" r="3" fill="#e3ef26" />
-        <circle className="sc-spore" style={{ "--sp": 3 } as CSSProperties} cx="90" cy="420" r="2.5" fill="#6fd6b0" />
-        <circle className="sc-spore" style={{ "--sp": 4 } as CSSProperties} cx="58" cy="280" r="2" fill="#6fd6b0" />
-        <circle className="sc-spore" style={{ "--sp": 5 } as CSSProperties} cx="392" cy="300" r="2" fill="#e3ef26" />
+        <circle className="sc-spore" style={{ "--sp": 0 } as CSSProperties} cx="150" cy="180" r="3" fill="#e3ef26" />
+        <circle className="sc-spore" style={{ "--sp": 1 } as CSSProperties} cx="252" cy="140" r="2.2" fill="#6fd6b0" />
+        <circle className="sc-spore" style={{ "--sp": 2 } as CSSProperties} cx="322" cy="300" r="3.4" fill="#e3ef26" />
+        <circle className="sc-spore" style={{ "--sp": 3 } as CSSProperties} cx="118" cy="360" r="2.4" fill="#6fd6b0" />
+        <circle className="sc-spore" style={{ "--sp": 4 } as CSSProperties} cx="212" cy="252" r="4" fill="#e3ef26" filter="url(#cb-mote)" />
+        <circle className="sc-spore" style={{ "--sp": 5 } as CSSProperties} cx="300" cy="200" r="3.6" fill="#6fd6b0" filter="url(#cb-mote)" />
+        <circle className="sc-spore" style={{ "--sp": 6 } as CSSProperties} cx="182" cy="420" r="2" fill="#e3ef26" />
+        <circle className="sc-spore" style={{ "--sp": 7 } as CSSProperties} cx="342" cy="400" r="2.6" fill="#6fd6b0" filter="url(#cb-mote)" />
       </g>
     </g>
   );
@@ -148,14 +171,6 @@ function ChainBackdrop() {
 function ChainBackdropLayer() {
   return (
     <svg className="chain-backdrop" viewBox="0 0 440 520" fill="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="sc-shaft" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#e2fbce" stopOpacity="0" />
-          <stop offset=".3" stopColor="#e2fbce" stopOpacity=".07" />
-          <stop offset=".7" stopColor="#e2fbce" stopOpacity=".06" />
-          <stop offset="1" stopColor="#e2fbce" stopOpacity="0" />
-        </linearGradient>
-      </defs>
       <ChainBackdrop />
     </svg>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type CSSProperties } from "react";
+import { useId, useRef, type CSSProperties } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { RecordListItem } from "@/lib/records";
@@ -153,23 +153,110 @@ function ChainBackdropLayer() {
   );
 }
 
+function QrGlyph({ x, y, s = 40, ink = "#0c342c", paper = "#fffdee" }: { x: number; y: number; s?: number; ink?: string; paper?: string }) {
+  const u = s / 8;
+  const finder = (fx: number, fy: number) => (
+    <g key={`${fx}-${fy}`}>
+      <rect x={fx} y={fy} width={u * 2.6} height={u * 2.6} fill={ink} />
+      <rect x={fx + u * 0.55} y={fy + u * 0.55} width={u * 1.5} height={u * 1.5} fill={paper} />
+      <rect x={fx + u * 0.95} y={fy + u * 0.95} width={u * 0.7} height={u * 0.7} fill={ink} />
+    </g>
+  );
+  return (
+    <g>
+      {finder(x, y)}
+      {finder(x + s - u * 2.6, y)}
+      {finder(x, y + s - u * 2.6)}
+      <g fill={ink}>
+        <rect x={x + u * 3.4} y={y + u * 3.4} width={u} height={u} />
+        <rect x={x + u * 4.8} y={y + u * 3.8} width={u * 0.8} height={u * 0.8} />
+        <rect x={x + u * 3.8} y={y + u * 5} width={u * 0.8} height={u * 0.8} />
+        <rect x={x + u * 5.2} y={y + u * 5.2} width={u} height={u} />
+        <rect x={x + u * 6.2} y={y + u * 4.2} width={u * 0.7} height={u * 0.7} />
+        <rect x={x + u * 4.6} y={y + u * 6.4} width={u * 0.7} height={u * 0.7} />
+      </g>
+    </g>
+  );
+}
+
+function Ground({ cx, cy, rx }: { cx: number; cy: number; rx: number }) {
+  return <ellipse cx={cx} cy={cy} rx={rx} ry={rx * 0.16} fill="#010806" opacity=".45" />;
+}
+
+function Badge({ cx, cy, r = 24 }: { cx: number; cy: number; r?: number }) {
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={r + 4} fill="#e3ef26" opacity=".18" />
+      <circle cx={cx} cy={cy} r={r} fill="#e3ef26" />
+      <path d={`M${cx - r * 0.42} ${cy + r * 0.02} l${r * 0.3} ${r * 0.32} l${r * 0.56} ${-r * 0.62}`} stroke="#0c342c" strokeWidth={r * 0.18} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    </g>
+  );
+}
+
+function DeviceBody({ x, y }: { x: number; y: number }) {
+  return (
+    <g>
+      <ellipse cx={x + 60} cy={y + 205} rx={62} ry={10} fill="#010806" opacity=".45" />
+      <rect x={x + 117} y={y + 8} width={4} height={186} rx={2} fill="#082018" />
+      <rect x={x} y={y} width={120} height={200} rx={20} fill="#0c342c" />
+      <path d={`M${x + 22} ${y + 3} H${x + 98}`} stroke="#6fd6b0" strokeOpacity=".5" strokeWidth={2} strokeLinecap="round" />
+      <rect x={x + 10} y={y + 16} width={100} height={158} rx={10} fill="#071c14" />
+      <rect x={x + 10} y={y + 16} width={100} height={158} rx={10} fill="none" stroke="#6fd6b0" strokeOpacity=".3" strokeWidth={1.5} />
+      <circle cx={x + 60} cy={y + 8} r={2.5} fill="#071c14" stroke="#6fd6b0" strokeWidth={1} />
+      <rect x={x + 44} y={y + 184} width={32} height={4} rx={2} fill="#6fd6b0" opacity=".5" />
+    </g>
+  );
+}
+
+function Soil({ cx, cy, rx }: { cx: number; cy: number; rx: number }) {
+  const gid = useId();
+  const h = rx * 0.42;
+  const topRy = rx * 0.22;
+  return (
+    <g>
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#1d5244" />
+          <stop offset="1" stopColor="#082018" />
+        </linearGradient>
+      </defs>
+      <ellipse cx={cx} cy={cy + h + topRy * 0.3} rx={rx * 1.12} ry={rx * 0.18} fill="#010806" opacity=".5" />
+      <path d={`M${cx - rx} ${cy} C${cx - rx * 0.9} ${cy + h * 0.7} ${cx - rx * 0.5} ${cy + h} ${cx} ${cy + h} C${cx + rx * 0.5} ${cy + h} ${cx + rx * 0.9} ${cy + h * 0.7} ${cx + rx} ${cy} Z`} fill={`url(#${gid})`} />
+      <ellipse cx={cx} cy={cy} rx={rx} ry={topRy} fill="#3a7d5c" />
+      <ellipse cx={cx - rx * 0.15} cy={cy - topRy * 0.15} rx={rx * 0.55} ry={topRy * 0.5} fill="#4a9468" opacity=".55" />
+      <ellipse cx={cx} cy={cy} rx={rx} ry={topRy} fill="none" stroke="#4a9468" strokeWidth={2} />
+      <ellipse cx={cx} cy={cy} rx={rx * 0.2} ry={topRy * 0.42} fill="#0a2418" />
+      <ellipse cx={cx} cy={cy - topRy * 0.08} rx={rx * 0.2} ry={topRy * 0.34} fill="none" stroke="#2f6b4f" strokeWidth={2} />
+      <circle cx={cx - rx * 0.5} cy={cy + topRy * 0.2} r={2.6} fill="#2f6b4f" />
+      <circle cx={cx + rx * 0.48} cy={cy + topRy * 0.3} r={2.2} fill="#2f6b4f" />
+      <circle cx={cx + rx * 0.22} cy={cy - topRy * 0.32} r={1.8} fill="#16402c" />
+      <circle cx={cx - rx * 0.3} cy={cy - topRy * 0.35} r={1.5} fill="#16402c" />
+      <path d={`M${cx - rx * 0.7} ${cy} q2 -10 5 -13 M${cx - rx * 0.66} ${cy} q-1 -9 -4 -11 M${cx - rx * 0.62} ${cy + 2} q3 -7 6 -9`} stroke="#6fd6b0" strokeWidth={1.8} strokeLinecap="round" fill="none" opacity=".8" />
+      <path d={`M${cx + rx * 0.68} ${cy + 2} q1 -9 4 -12 M${cx + rx * 0.72} ${cy + 2} q2 -7 5 -9`} stroke="#6fd6b0" strokeWidth={1.8} strokeLinecap="round" fill="none" opacity=".7" />
+    </g>
+  );
+}
+
 function SceneSeed() {
   return (
     <svg className="chain-seed" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs>
-        <linearGradient id="scs-leaf" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#e2fbce" /><stop offset=".5" stopColor="#479e65" /><stop offset="1" stopColor="#076653" /></linearGradient>
         <radialGradient id="scs-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".16" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".06" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
+        <radialGradient id="scs-bud"><stop offset="0" stopColor="#e3ef26" stopOpacity=".5" /><stop offset=".6" stopColor="#e3ef26" stopOpacity=".15" /><stop offset="1" stopColor="#e3ef26" stopOpacity="0" /></radialGradient>
       </defs>
-      <ellipse className="sc-glow" cx="220" cy="300" rx="190" ry="220" fill="url(#scs-glow)" />
-      <path d="M120 452 C160 430 280 430 320 452 L320 470 L120 470 Z" fill="#0e2c1d" />
-      <path d="M120 452 C160 430 280 430 320 452" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
-      <path d="M220 448 C218 420 222 392 220 364 C218 340 222 320 220 300" stroke="#a0bd77" strokeWidth="6" strokeLinecap="round" />
-      <path d="M220 360 C190 356 166 336 162 306 C192 312 214 334 220 360 Z" fill="url(#scs-leaf)" stroke="#0c342c" strokeWidth="2" />
-      <path d="M220 360 L162 306" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
-      <path d="M220 330 C250 324 274 304 278 274 C248 280 226 302 220 330 Z" fill="url(#scs-leaf)" stroke="#0c342c" strokeWidth="2" />
-      <path d="M220 330 L278 274" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
-      <ellipse cx="220" cy="446" rx="14" ry="9" fill="#a0bd77" stroke="#0c342c" strokeWidth="2" />
-      <path className="sc-bud" d="M220 300 C214 290 214 280 220 272 C226 280 226 290 220 300 Z" fill="#e3ef26" stroke="#0c342c" strokeWidth="1.5" />
+      <ellipse className="sc-glow" cx="220" cy="330" rx="180" ry="205" fill="url(#scs-glow)" />
+      <Soil cx={220} cy={460} rx={80} />
+      <path d="M220 460 C218 432 222 406 220 378 C219 356 221 340 220 322" stroke="#a0bd77" strokeWidth="6" strokeLinecap="round" />
+      <path d="M223 395 C195 391 171 371 167 343 C195 349 217 369 223 395 Z" fill="#076653" />
+      <path d="M220 392 C192 388 168 368 164 340 C192 346 214 366 220 392 Z" fill="#479e65" />
+      <path d="M220 392 L164 340 M192 372 C184 366 178 358 176 350" stroke="#e2fbce" strokeOpacity=".6" strokeWidth="2" strokeLinecap="round" />
+      <path d="M223 363 C251 357 275 337 279 309 C251 315 229 335 223 363 Z" fill="#076653" />
+      <path d="M220 360 C248 354 272 334 276 306 C248 312 226 332 220 360 Z" fill="#479e65" />
+      <path d="M220 360 L276 306 M248 340 C256 334 262 326 264 318" stroke="#e2fbce" strokeOpacity=".6" strokeWidth="2" strokeLinecap="round" />
+      <circle className="sc-glow" cx="220" cy="300" r="46" fill="url(#scs-bud)" />
+      <path d="M220 322 C214 318 210 311 211 303 C216 308 219 314 220 322 Z" fill="#479e65" />
+      <path d="M220 322 C226 318 230 311 229 303 C224 308 221 314 220 322 Z" fill="#479e65" />
+      <path className="sc-bud" d="M220 320 C212 308 212 294 220 284 C228 294 228 308 220 320 Z" fill="#e3ef26" />
     </svg>
   );
 }
@@ -178,37 +265,35 @@ function SceneTag() {
   return (
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs>
-        <linearGradient id="sc0-leaf" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#e2fbce" /><stop offset=".5" stopColor="#479e65" /><stop offset="1" stopColor="#076653" /></linearGradient>
         <radialGradient id="sc0-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".14" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
-      <ellipse cx="220" cy="290" rx="200" ry="235" fill="url(#sc0-glow)" />
-      <path d="M150 478 C185 468 255 468 290 478" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
-      <g stroke="#3a7d5c" strokeWidth="2.5" strokeLinecap="round"><path d="M178 476 C174 460 170 448 164 438" /><path d="M262 476 C266 460 270 448 276 438" /></g>
-      <path d="M220 474 C217 424 223 372 220 322 C217 276 223 244 220 210" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
-      <path d="M220 420 C168 416 128 384 118 336 C170 344 210 378 220 420 Z" fill="url(#sc0-leaf)" stroke="#0c342c" strokeWidth="2" />
-      <path d="M220 420 L118 336 M170 380 L142 372 M170 380 L156 350" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
-      <path d="M220 364 C272 356 312 322 320 274 C270 282 230 318 220 364 Z" fill="url(#sc0-leaf)" stroke="#0c342c" strokeWidth="2" />
-      <path d="M220 364 L320 274 M268 322 L296 314 M268 322 L282 292" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
-      <path d="M220 300 C176 292 142 262 136 220 C180 228 212 260 220 300 Z" fill="url(#sc0-leaf)" stroke="#0c342c" strokeWidth="2" />
-      <path d="M220 300 L136 220 M178 262 L152 254 M178 262 L166 234" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
-      <path d="M220 252 C262 244 296 216 302 176 C260 184 228 214 220 252 Z" fill="url(#sc0-leaf)" stroke="#0c342c" strokeWidth="2" />
-      <path d="M220 252 L302 176 M260 216 L284 208 M260 216 L272 188" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
-      <path d="M220 150 L220 350" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="3 7" opacity=".35" />
-      <rect x="150" y="62" width="140" height="78" rx="12" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
-      <circle cx="186" cy="98" r="16" stroke="#6fd6b0" strokeWidth="2" opacity=".7" />
-      <circle cx="186" cy="98" r="5" fill="#6fd6b0" opacity=".7" />
-      <path d="M216 90 h52 M216 104 h36" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".6" />
-      <circle cx="276" cy="76" r="4.5" fill="#e3ef26" />
-      <rect x="185" y="134" width="70" height="8" rx="4" fill="#6fd6b0" opacity=".55" />
+      <ellipse cx="220" cy="300" rx="200" ry="235" fill="url(#sc0-glow)" />
+      <Soil cx={220} cy={472} rx={90} />
+      <path d="M220 472 C217 428 223 380 220 330 C218 280 222 245 220 210" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
+      <path d="M220 252 C176 246 142 216 136 174 C180 182 212 214 220 252 Z" fill="#076653" transform="translate(0 3)" />
+      <path d="M220 252 C176 246 142 216 136 174 C180 182 212 214 220 252 Z" fill="#479e65" />
+      <path d="M220 252 L136 174 M178 214 C168 208 160 200 156 192" stroke="#e2fbce" strokeOpacity=".55" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 292 C264 286 298 256 304 214 C260 222 228 254 220 292 Z" fill="#076653" transform="translate(0 3)" />
+      <path d="M220 292 C264 286 298 256 304 214 C260 222 228 254 220 292 Z" fill="#479e65" />
+      <path d="M220 292 L304 214 M262 254 C272 248 280 240 284 232" stroke="#e2fbce" strokeOpacity=".55" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 224 C190 218 166 196 162 166 C192 172 214 194 220 224 Z" fill="#479e65" />
+      <path d="M220 224 L162 166" stroke="#e2fbce" strokeOpacity=".55" strokeWidth="2" strokeLinecap="round" />
+      <path d="M290 60 l10 -6 h-140 l-10 6 Z" fill="#1d5244" />
+      <path d="M290 60 l10 -6 v70 l-10 6 Z" fill="#082018" />
+      <rect x="150" y="60" width="140" height="76" rx="12" fill="#0c342c" />
+      <path d="M166 63.5 H274" stroke="#6fd6b0" strokeOpacity=".5" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="186" cy="96" r="16" fill="#071c14" stroke="#6fd6b0" strokeWidth="2" />
+      <circle cx="186" cy="96" r="5" fill="#6fd6b0" />
+      <path d="M216 88 h52 M216 102 h36" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".6" />
+      <circle cx="276" cy="74" r="4.5" fill="#e3ef26" />
+      <rect x="185" y="130" width="70" height="8" rx="4" fill="#071c14" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1" />
       <g className="sc-tag">
-        <rect x="185" y="150" width="70" height="88" rx="9" fill="#fffdee" stroke="#0c342c" strokeWidth="2" />
-        <circle cx="220" cy="160" r="3.5" fill="none" stroke="#0c342c" strokeWidth="2" />
-        <g fill="#0c342c">
-          <path d="M196 172 h15 v15 h-15 z" /><path d="M199.5 175.5 h8 v8 h-8 z" fill="#fffdee" /><path d="M202 178 h3 v3 h-3 z" />
-          <path d="M229 172 h15 v15 h-15 z" /><path d="M232.5 175.5 h8 v8 h-8 z" fill="#fffdee" /><path d="M235 178 h3 v3 h-3 z" />
-          <path d="M196 201 h15 v15 h-15 z" /><path d="M199.5 204.5 h8 v8 h-8 z" fill="#fffdee" /><path d="M202 207 h3 v3 h-3 z" />
-          <rect x="231" y="203" width="6" height="6" /><rect x="240" y="211" width="5" height="5" /><rect x="231" y="219" width="5" height="5" />
-        </g>
+        <path d="M220 150 C208 158 208 170 220 174 C232 170 232 158 220 150 Z" fill="none" stroke="#a0bd77" strokeWidth="2.5" strokeLinecap="round" />
+        <rect x="185" y="138" width="70" height="88" rx="9" fill="#fffdee" />
+        <rect x="185" y="138" width="70" height="88" rx="9" fill="none" stroke="#0c342c" strokeOpacity=".2" strokeWidth="1.5" />
+        <circle cx="220" cy="150" r="3.5" fill="#0e2c1d" />
+        <QrGlyph x={196} y={162} s={48} ink="#0c342c" paper="#fffdee" />
+        <path d="M196 216 h48" stroke="#0c342c" strokeOpacity=".35" strokeWidth="2" strokeLinecap="round" />
       </g>
     </svg>
   );
@@ -218,32 +303,42 @@ function SceneRecord() {
   return (
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs><radialGradient id="sc1-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
-      <ellipse cx="230" cy="290" rx="200" ry="235" fill="url(#sc1-glow)" />
-      <path d="M110 478 C180 468 300 468 370 478" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="150" cy="148" r="28" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
-      <path d="M124 124 C126 98 174 98 176 124 Z" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" strokeLinejoin="round" />
-      <path d="M114 126 L186 126" stroke="#6fd6b0" strokeWidth="3.5" strokeLinecap="round" />
-      <path d="M122 200 C122 176 178 176 178 200 L190 462 L110 462 Z" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" strokeLinejoin="round" />
-      <path d="M126 214 C152 232 182 250 214 266" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M176 214 C198 230 216 248 232 264" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" />
-      <circle cx="216" cy="270" r="8" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
-      <circle cx="234" cy="268" r="8" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
-      <rect x="224" y="232" width="132" height="206" rx="15" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
-      <rect x="236" y="246" width="108" height="112" rx="6" fill="#071c14" stroke="#6fd6b0" strokeWidth="1.5" />
-      <g stroke="#6fd6b0" strokeWidth="3.5" strokeLinecap="round">
-        <path className="sc-field" style={{ "--fi": 0 } as CSSProperties} d="M246 268 h64" />
-        <path className="sc-field" style={{ "--fi": 1 } as CSSProperties} d="M246 292 h86" />
-        <path className="sc-field" style={{ "--fi": 2 } as CSSProperties} d="M246 316 h52" />
-        <path className="sc-field" style={{ "--fi": 3 } as CSSProperties} d="M246 340 h74" />
+      <ellipse cx="220" cy="290" rx="205" ry="235" fill="url(#sc1-glow)" />
+      <path d="M190 258 L312 330" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="3 8" strokeLinecap="round" opacity=".45" />
+      <DeviceBody x={70} y={170} />
+      <rect x="90" y="196" width="80" height="42" rx="5" fill="#0e2c1d" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1.5" />
+      <path d="M130 232 C129 222 131 214 130 206" stroke="#a0bd77" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M130 220 C122 218 116 212 115 205 C122 207 128 212 130 220 Z" fill="#479e65" />
+      <path d="M130 214 C138 212 144 206 145 199 C138 201 132 206 130 214 Z" fill="#479e65" />
+      <circle cx="130" cy="203" r="2.5" fill="#e3ef26" />
+      <g stroke="#6fd6b0" strokeWidth="3" strokeLinecap="round">
+        <path className="sc-field" style={{ "--fi": 0 } as CSSProperties} d="M92 250 h60" />
+        <path className="sc-field" style={{ "--fi": 1 } as CSSProperties} d="M92 264 h72" />
+        <path className="sc-field" style={{ "--fi": 2 } as CSSProperties} d="M92 278 h48" />
       </g>
-      <path d="M322 330 c0 -8 12 -8 12 0 c0 6 -6 11 -6 11 c0 0 -6 -5 -6 -11z" fill="#e3ef26" />
-      <g fill="#6fd6b0" opacity=".75">
-        {Array.from({ length: 15 }).map((_, k) => {
-          const r = Math.floor(k / 5), c = k % 5;
-          return <rect key={k} x={244 + c * 21} y={370 + r * 20} width="15" height="12" rx="3" />;
+      <path d="M94 292 c0 -6 9 -6 9 0 c0 4.5 -4.5 8 -4.5 8 c0 0 -4.5 -3.5 -4.5 -8 z" fill="#e3ef26" />
+      <path d="M108 294 h56" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".6" />
+      <g fill="#6fd6b0" opacity=".5">
+        {Array.from({ length: 8 }).map((_, k) => {
+          const r = Math.floor(k / 4), c = k % 4;
+          return <rect key={k} x={92 + c * 18} y={308 + r * 13} width="13" height="8" rx="2" />;
         })}
       </g>
-      <g className="sc-typing" fill="#e3ef26"><circle cx="254" cy="428" r="3" /><circle cx="266" cy="428" r="3" /><circle cx="278" cy="428" r="3" /></g>
+      <rect x="146" y="321" width="13" height="8" rx="2" fill="#e3ef26" opacity=".85" />
+      <g className="sc-typing" fill="#e3ef26"><circle cx="120" cy="334" r="2.2" /><circle cx="130" cy="334" r="2.2" /><circle cx="140" cy="334" r="2.2" /></g>
+      <Soil cx={362} cy={468} rx={60} />
+      <path d="M362 468 C360 436 364 410 362 378 C361 356 363 340 362 322" stroke="#a0bd77" strokeWidth="5" strokeLinecap="round" />
+      <path d="M362 420 C338 416 318 398 314 372 C338 378 358 396 362 420 Z" fill="#479e65" />
+      <path d="M362 420 L314 372" stroke="#e2fbce" strokeOpacity=".55" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M362 388 C386 384 406 366 410 340 C386 346 366 364 362 388 Z" fill="#479e65" />
+      <path d="M362 388 L410 340" stroke="#e2fbce" strokeOpacity=".55" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M362 352 C350 348 340 338 339 326 C351 330 360 340 362 352 Z" fill="#479e65" />
+      <circle cx="362" cy="320" r="4" fill="#e3ef26" />
+      <rect x="345" y="430" width="34" height="40" rx="5" fill="#fffdee" />
+      <QrGlyph x={350} y={435} s={24} ink="#0c342c" paper="#fffdee" />
+      <g stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".9">
+        <path d="M312 300 v-16 h16" /><path d="M404 284 h16 v16" /><path d="M420 462 v16 h-16" /><path d="M328 478 h-16 v-16" />
+      </g>
     </svg>
   );
 }
@@ -251,24 +346,46 @@ function SceneRecord() {
 function SceneSync() {
   return (
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
-      <defs><radialGradient id="sc2-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
-      <ellipse cx="220" cy="270" rx="205" ry="235" fill="url(#sc2-glow)" />
-      <rect x="40" y="160" width="100" height="200" rx="16" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
-      <rect x="54" y="178" width="72" height="140" rx="5" fill="#071c14" stroke="#6fd6b0" strokeWidth="1.5" />
-      <path d="M66 206 h48 M66 230 h34 M66 254 h40" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".7" />
-      <circle cx="90" cy="340" r="6" stroke="#6fd6b0" strokeWidth="2" />
-      <rect x="300" y="150" width="100" height="62" rx="9" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
-      <rect x="300" y="224" width="100" height="62" rx="9" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
-      <rect x="300" y="298" width="100" height="62" rx="9" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
-      <circle cx="318" cy="181" r="4.5" fill="#6fd6b0" /><circle cx="318" cy="255" r="4.5" fill="#6fd6b0" /><circle cx="318" cy="329" r="4.5" fill="#e3ef26" />
-      <path d="M354 181 h32 M354 255 h32 M354 329 h32" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".6" />
-      <path d="M140 330 L300 330" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="4 7" opacity=".5" />
-      <circle className="sc-packet" style={{ "--pk": 0 } as CSSProperties} cx="140" cy="330" r="6" fill="#e3ef26" />
-      <circle className="sc-packet" style={{ "--pk": 1 } as CSSProperties} cx="140" cy="330" r="6" fill="#e3ef26" />
-      <circle className="sc-packet" style={{ "--pk": 2 } as CSSProperties} cx="140" cy="330" r="6" fill="#e3ef26" />
-      <g className="sc-sync" stroke="#e3ef26" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M244 206 A26 26 0 0 0 198 204" /><path d="M198 204 l2 -11 M198 204 l11 -2" />
-        <path d="M196 236 A26 26 0 0 0 242 238" /><path d="M242 238 l-2 11 M242 238 l-11 2" />
+      <defs>
+        <radialGradient id="sc2-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
+        <linearGradient id="sc2-beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".06" /><stop offset="1" stopColor="#e3ef26" stopOpacity=".3" /></linearGradient>
+      </defs>
+      <ellipse cx="220" cy="280" rx="205" ry="235" fill="url(#sc2-glow)" />
+      <DeviceBody x={40} y={180} />
+      <rect x="60" y="206" width="56" height="66" rx="6" fill="#0e2c1d" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1.5" />
+      <QrGlyph x={68} y={214} s={40} ink="#6fd6b0" paper="#0e2c1d" />
+      <circle cx="132" cy="222" r="6" fill="#e3ef26" />
+      <path d="M62 292 h72" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
+      <path d="M62 306 h52" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
+      <path d="M118 330 l14 -14 M132 316 v10 M132 316 h-10" stroke="#e3ef26" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="155" y="273" width="9" height="14" rx="3" fill="#071c14" stroke="#6fd6b0" strokeWidth="1.5" />
+      <rect x="164" y="276" width="136" height="8" fill="url(#sc2-beam)" />
+      <path d="M164 280 L300 280" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="4 8" strokeLinecap="round" opacity=".5" />
+      <circle className="sc-packet" style={{ "--pk": 0 } as CSSProperties} cx="160" cy="280" r="6" fill="#e3ef26" />
+      <circle className="sc-packet" style={{ "--pk": 1 } as CSSProperties} cx="160" cy="280" r="6" fill="#e3ef26" />
+      <circle className="sc-packet" style={{ "--pk": 2 } as CSSProperties} cx="160" cy="280" r="6" fill="#e3ef26" />
+      <Ground cx={355} cy={476} rx={70} />
+      <g>
+        <path d="M300 160 l10 -6 h110 l-10 6 Z" fill="#6fd6b0" />
+        <path d="M410 160 l10 -6 v60 l-10 6 Z" fill="#0c342c" />
+        <rect x="300" y="160" width="110" height="60" fill="#076653" />
+        <path d="M304 163.5 H406" stroke="#e2fbce" strokeOpacity=".4" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="318" cy="190" r="4.5" fill="#6fd6b0" /><path d="M334 190 h56" stroke="#e2fbce" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
+      </g>
+      <g>
+        <path d="M300 232 l10 -6 h110 l-10 6 Z" fill="#6fd6b0" />
+        <path d="M410 232 l10 -6 v60 l-10 6 Z" fill="#0c342c" />
+        <rect x="300" y="232" width="110" height="60" fill="#076653" />
+        <path d="M304 235.5 H406" stroke="#e2fbce" strokeOpacity=".4" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="318" cy="262" r="4.5" fill="#e3ef26" /><path d="M334 262 h56" stroke="#e2fbce" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
+        <rect x="300" y="272" width="6" height="16" fill="#e3ef26" opacity=".7" />
+      </g>
+      <g>
+        <path d="M300 304 l10 -6 h110 l-10 6 Z" fill="#6fd6b0" />
+        <path d="M410 304 l10 -6 v60 l-10 6 Z" fill="#0c342c" />
+        <rect x="300" y="304" width="110" height="60" fill="#076653" />
+        <path d="M304 307.5 H406" stroke="#e2fbce" strokeOpacity=".4" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="318" cy="334" r="4.5" fill="#6fd6b0" /><path d="M334 334 h56" stroke="#e2fbce" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
       </g>
     </svg>
   );
@@ -279,18 +396,31 @@ function SceneReview() {
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs><radialGradient id="sc3-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
       <ellipse cx="220" cy="280" rx="200" ry="235" fill="url(#sc3-glow)" />
-      <rect x="120" y="128" width="200" height="270" rx="14" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
-      <rect x="142" y="152" width="70" height="70" rx="7" fill="#071c14" stroke="#6fd6b0" strokeWidth="1.5" />
-      <g fill="#6fd6b0" opacity=".8"><rect x="151" y="161" width="14" height="14" /><rect x="174" y="161" width="14" height="14" /><rect x="151" y="184" width="14" height="14" /><rect x="177" y="187" width="9" height="9" /></g>
-      <path d="M226 166 h72 M226 188 h54 M226 210 h62" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".7" />
-      <path d="M142 250 h156 M142 276 h132 M142 302 h146 M142 328 h108" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
+      <Ground cx={224} cy={478} rx={110} />
+      <rect x="128" y="128" width="200" height="280" rx="14" fill="#0e2c1d" />
+      <rect x="120" y="120" width="200" height="280" rx="14" fill="#fffdee" />
+      <rect x="142" y="142" width="70" height="70" rx="7" fill="#f3f0e3" stroke="#0c342c" strokeOpacity=".2" strokeWidth="1.5" />
+      <QrGlyph x={150} y={150} s={54} ink="#0c342c" paper="#f3f0e3" />
+      <path d="M226 156 h72 M226 178 h54 M226 200 h62" stroke="#0c342c" strokeWidth="3" strokeLinecap="round" opacity=".7" />
+      <path d="M142 232 h156" stroke="#0c342c" strokeOpacity=".2" strokeWidth="2" strokeLinecap="round" />
+      <path d="M142 254 h156 M142 278 h132 M142 302 h146 M142 326 h108" stroke="#0c342c" strokeWidth="2.5" strokeLinecap="round" opacity=".45" />
+      <rect x="142" y="344" width="70" height="40" rx="8" fill="#e2fbce" />
+      <path d="M160 372 C160 362 168 356 176 356 C176 366 168 372 160 372 Z" fill="#479e65" />
+      <path d="M160 372 L176 356" stroke="#076653" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M186 364 h18" stroke="#0c342c" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
+      <rect x="222" y="344" width="70" height="40" rx="8" fill="#e2fbce" />
+      <path d="M238 360 c0 -6 9 -6 9 0 c0 4.5 -4.5 8 -4.5 8 c0 0 -4.5 -3.5 -4.5 -8 z" fill="#076653" />
+      <path d="M254 364 h30" stroke="#0c342c" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
       <g className="sc-mag">
-        <circle cx="186" cy="248" r="40" fill="#6fd6b014" stroke="#e3ef26" strokeWidth="3.5" />
-        <path d="M216 278 L246 308" stroke="#e3ef26" strokeWidth="6" strokeLinecap="round" />
+        <circle cx="186" cy="262" r="40" fill="#6fd6b0" fillOpacity=".1" stroke="#0c342c" strokeWidth="4" />
+        <circle cx="186" cy="262" r="40" fill="none" stroke="#e3ef26" strokeWidth="2" />
+        <path d="M166 252 h40 M166 268 h32 M166 284 h36" stroke="#0c342c" strokeWidth="5" strokeLinecap="round" opacity=".8" />
+        <path d="M170 246 A28 28 0 0 1 194 238" stroke="#fffdee" strokeOpacity=".7" strokeWidth="3" strokeLinecap="round" />
+        <path d="M214 290 L246 322" stroke="#0c342c" strokeWidth="8" strokeLinecap="round" />
+        <path d="M214 290 L246 322" stroke="#e3ef26" strokeWidth="4" strokeLinecap="round" />
       </g>
       <g className="sc-check">
-        <circle cx="292" cy="368" r="26" fill="#e3ef26" />
-        <path d="M280 368 l9 9 l17 -19" stroke="#0c342c" strokeWidth="4.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <Badge cx={296} cy={372} r={26} />
       </g>
     </svg>
   );
@@ -300,30 +430,49 @@ function SceneCanopy() {
   return (
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs>
-        <linearGradient id="sc4-leaf" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#e2fbce" /><stop offset=".5" stopColor="#479e65" /><stop offset="1" stopColor="#076653" /></linearGradient>
-        <linearGradient id="sc4-flower" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#f4fbb0" /><stop offset=".6" stopColor="#e3ef26" /><stop offset="1" stopColor="#b8cc1a" /></linearGradient>
         <radialGradient id="sc4-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".18" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".07" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
       <ellipse className="sc-glow" cx="220" cy="280" rx="200" ry="235" fill="url(#sc4-glow)" />
-      <path d="M160 478 C190 468 250 468 280 478" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
-      <path d="M220 474 C217 424 223 372 220 322 C217 276 223 244 220 214" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
-      <path d="M220 420 C168 416 128 384 118 336 C170 344 210 378 220 420 Z" fill="url(#sc4-leaf)" stroke="#0c342c" strokeWidth="2" />
-      <path d="M220 420 L118 336 M170 380 L142 372 M170 380 L156 350" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
-      <path d="M220 364 C272 356 312 322 320 274 C270 282 230 318 220 364 Z" fill="url(#sc4-leaf)" stroke="#0c342c" strokeWidth="2" />
-      <path d="M220 364 L320 274 M268 322 L296 314 M268 322 L282 292" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
-      <path d="M220 300 C176 292 142 262 136 220 C180 228 212 260 220 300 Z" fill="url(#sc4-leaf)" stroke="#0c342c" strokeWidth="2" />
-      <path d="M220 300 L136 220 M178 262 L152 254 M178 262 L166 234" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
-      <path d="M220 252 C262 244 296 216 302 176 C260 184 228 214 220 252 Z" fill="url(#sc4-leaf)" stroke="#0c342c" strokeWidth="2" />
-      <path d="M220 252 L302 176 M260 216 L284 208 M260 216 L272 188" stroke="#e2fbce" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round" />
-      <g className="sc-bloom">
-        {[30, 90, 150, 210, 270, 330].map((a) => (
-          <path key={a} d="M220 190 C209 168 208 142 220 118 C232 142 231 168 220 190 Z" fill="url(#sc4-flower)" stroke="#0c342c" strokeOpacity=".35" strokeWidth="1.5" transform={`rotate(${a} 220 190)`} />
-        ))}
-        <circle cx="220" cy="190" r="12" fill="#f4fbb0" /><circle cx="220" cy="190" r="5.5" fill="#e3ef26" />
+      <g opacity=".38">
+        <path d="M92 472 C90 432 94 400 92 360" stroke="#a0bd77" strokeWidth="4" strokeLinecap="round" />
+        <path d="M92 402 C72 398 57 382 54 362 C74 366 89 382 92 402 Z" fill="#479e65" />
+        <path d="M92 372 C112 368 127 352 130 332 C110 336 95 352 92 372 Z" fill="#479e65" />
+        <g transform="translate(92 346) scale(.5)">
+          {[0, 60, 120, 180, 240, 300].map((a) => (<path key={a} d="M0 0 C-7 -14 -7 -30 0 -44 C7 -30 7 -14 0 0 Z" fill="#e3ef26" transform={`rotate(${a})`} />))}
+          <circle r="7" fill="#fffdee" />
+        </g>
       </g>
-      <g className="sc-pub">
-        <circle cx="348" cy="150" r="24" fill="#e3ef26" />
-        <path d="M337 150 l8 8 l15 -17" stroke="#0c342c" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <g opacity=".32">
+        <path d="M352 472 C350 426 354 390 352 344" stroke="#a0bd77" strokeWidth="4" strokeLinecap="round" />
+        <path d="M352 392 C332 388 317 372 314 352 C334 356 349 372 352 392 Z" fill="#479e65" />
+        <path d="M352 360 C372 356 387 340 390 320 C370 324 355 340 352 360 Z" fill="#479e65" />
+        <g transform="translate(352 328) scale(.45)">
+          {[0, 60, 120, 180, 240, 300].map((a) => (<path key={a} d="M0 0 C-7 -14 -7 -30 0 -44 C7 -30 7 -14 0 0 Z" fill="#e3ef26" transform={`rotate(${a})`} />))}
+          <circle r="7" fill="#fffdee" />
+        </g>
+      </g>
+      <Soil cx={220} cy={472} rx={90} />
+      <path d="M220 472 C217 426 223 376 220 326 C217 280 223 248 220 214" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
+      <path d="M220 420 C168 416 128 384 118 336 C170 344 210 378 220 420 Z" fill="#076653" transform="translate(0 3)" />
+      <path d="M220 420 C168 416 128 384 118 336 C170 344 210 378 220 420 Z" fill="#479e65" />
+      <path d="M220 420 L118 336 M170 380 C160 374 152 366 148 358" stroke="#e2fbce" strokeOpacity=".55" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 364 C272 356 312 322 320 274 C270 282 230 318 220 364 Z" fill="#076653" transform="translate(0 3)" />
+      <path d="M220 364 C272 356 312 322 320 274 C270 282 230 318 220 364 Z" fill="#479e65" />
+      <path d="M220 364 L320 274 M268 322 C278 316 286 308 290 300" stroke="#e2fbce" strokeOpacity=".55" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 303 C176 295 142 265 136 223 C180 231 212 263 220 303 Z" fill="#479e65" />
+      <path d="M220 303 L136 223 M178 265 C170 259 164 251 162 243" stroke="#e2fbce" strokeOpacity=".55" strokeWidth="2" strokeLinecap="round" />
+      <path d="M220 255 C262 247 296 219 302 179 C260 187 228 217 220 255 Z" fill="#479e65" />
+      <path d="M220 255 L302 179 M260 219 C268 213 274 205 276 197" stroke="#e2fbce" strokeOpacity=".55" strokeWidth="2" strokeLinecap="round" />
+      <g className="sc-bloom">
+        {[0, 60, 120, 180, 240, 300].map((a) => (
+          <path key={a} d="M220 190 C208 166 207 138 220 112 C233 138 232 166 220 190 Z" fill="#e3ef26" transform={`rotate(${a} 220 190)`} />
+        ))}
+        {[30, 90, 150, 210, 270, 330].map((a) => (
+          <path key={a} d="M220 190 C212 172 211 152 220 134 C229 152 228 172 220 190 Z" fill="#f4fbb0" transform={`rotate(${a} 220 190)`} />
+        ))}
+        <circle cx="220" cy="190" r="13" fill="#fffdee" />
+        <circle cx="220" cy="190" r="6" fill="#e3ef26" />
+        <g fill="#b8cc1a"><circle cx="214" cy="186" r="1.8" /><circle cx="226" cy="188" r="1.8" /><circle cx="220" cy="196" r="1.8" /></g>
       </g>
     </svg>
   );

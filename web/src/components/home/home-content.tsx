@@ -245,17 +245,21 @@ function Soil({ cx, cy, rx }: { cx: number; cy: number; rx: number }) {
   );
 }
 
-function Leaf({ x, y, s = 1, flip = false, angle = 0 }: { x: number; y: number; s?: number; flip?: boolean; angle?: number }) {
+function Leaf({ x, y, s = 1, flip = false, angle = 0, veins = "full", round = false }: { x: number; y: number; s?: number; flip?: boolean; angle?: number; veins?: "full" | "soft" | "none"; round?: boolean }) {
   const cid = useId();
-  const blade = "M0 0 C6 -28 30 -52 60 -54 C38 -26 14 -2 0 0 Z";
+  const blade = round ? "M0 0 C12 -4 28 -14 38 -30 C26 -28 10 -18 0 0 Z" : "M0 0 C6 -28 30 -52 60 -54 C38 -26 14 -2 0 0 Z";
+  const midrib = round ? "M0 0 L38 -30" : "M0 0 L60 -54";
+  const veinPath = veins === "full"
+    ? "M10 -9 C2 -14 2 -24 8 -32 M24 -22 C16 -27 16 -37 22 -45 M38 -34 C32 -38 32 -46 37 -52 M10 -9 C18 -5 26 -3 34 -3 M24 -22 C32 -18 40 -16 48 -16"
+    : "M14 -12 C8 -17 7 -25 11 -33 M30 -27 C24 -32 23 -39 27 -46 M14 -12 C20 -8 27 -6 34 -5";
   return (
     <g transform={`translate(${x} ${y}) rotate(${angle}) scale(${flip ? -s : s} ${s})`}>
       <defs><clipPath id={cid}><path d={blade} /></clipPath></defs>
       <path d={blade} fill="#076653" transform="translate(1.5 3)" />
       <path d={blade} fill="#479e65" />
       <g clipPath={`url(#${cid})`}>
-        <path d="M0 0 L60 -54" stroke="#e2fbce" strokeOpacity=".65" strokeWidth="2" strokeLinecap="round" />
-        <path d="M10 -9 C2 -14 2 -24 8 -32 M24 -22 C16 -27 16 -37 22 -45 M38 -34 C32 -38 32 -46 37 -52 M10 -9 C18 -5 26 -3 34 -3 M24 -22 C32 -18 40 -16 48 -16" stroke="#e2fbce" strokeOpacity=".5" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        <path d={midrib} stroke="#e2fbce" strokeOpacity={round ? ".35" : ".6"} strokeWidth={round ? 1.5 : 2} strokeLinecap="round" />
+        {veins !== "none" && <path d={veinPath} stroke="#e2fbce" strokeOpacity={veins === "full" ? ".5" : ".3"} strokeWidth={veins === "full" ? 1.5 : 1.2} strokeLinecap="round" fill="none" />}
       </g>
     </g>
   );
@@ -299,10 +303,10 @@ function SceneSeed() {
       <ellipse className="sc-glow" cx="220" cy="400" rx="160" ry="160" fill="url(#scs-glow)" />
       <Soil cx={220} cy={450} rx={72} />
       <path d="M220 450 C219 428 221 404 220 380 C220 376 220 374 220 372" stroke="#a0bd77" strokeWidth="6" strokeLinecap="round" />
-      <Leaf x={220} y={412} s={0.62} flip />
-      <Leaf x={220} y={412} s={0.62} />
-      <Leaf x={220} y={388} s={0.48} flip angle={-6} />
-      <Leaf x={220} y={388} s={0.48} angle={6} />
+      <Leaf x={220} y={412} s={0.8} flip round veins="none" />
+      <Leaf x={220} y={412} s={0.8} round veins="none" />
+      <Leaf x={220} y={388} s={0.5} flip angle={-6} veins="soft" />
+      <Leaf x={220} y={388} s={0.5} angle={6} veins="soft" />
       <path d="M220 372 C220 362 225 355 232 355 C239 355 242 362 237 367 C233 371 228 368 229 363 C230 360 233 359 235 361" stroke="#479e65" strokeWidth="4.5" strokeLinecap="round" fill="none" />
       <circle cx="235" cy="361" r="2.5" fill="#e3ef26" />
     </svg>

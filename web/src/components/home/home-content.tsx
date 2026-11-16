@@ -106,27 +106,40 @@ function ChainIcon({ stage }: { stage: number }) {
 function ChainBackdrop() {
   return (
     <g>
-      <path d="M120 0 L180 0 L60 520 L20 520 Z" fill="#e2fbce" opacity=".03" />
-      <path d="M300 0 L340 0 L260 520 L230 520 Z" fill="#e2fbce" opacity=".025" />
-      <g fill="#0e2c1d">
+      <path d="M120 0 L180 0 L60 520 L20 520 Z" fill="#e2fbce" opacity=".06" />
+      <path d="M300 0 L340 0 L260 520 L230 520 Z" fill="#e2fbce" opacity=".05" />
+      <path d="M212 0 L240 0 L182 520 L162 520 Z" fill="#6fd6b0" opacity=".035" />
+      <g fill="#123a28">
         <path d="M0 0 C40 10 70 40 78 84 C40 76 10 46 0 12 Z" />
-        <path d="M0 40 C36 44 62 66 70 102 C36 96 8 74 0 48 Z" opacity=".8" />
+        <path d="M0 40 C36 44 62 66 70 102 C36 96 8 74 0 48 Z" opacity=".85" />
         <path d="M30 0 C52 18 64 44 62 74 C40 58 28 30 30 0 Z" opacity=".7" />
+        <path d="M0 96 C30 104 52 128 56 162 C28 154 6 130 0 104 Z" opacity=".6" />
         <path d="M440 0 C400 10 370 40 362 84 C400 76 430 46 440 12 Z" />
-        <path d="M440 40 C404 44 378 66 370 102 C404 96 432 74 440 48 Z" opacity=".8" />
+        <path d="M440 40 C404 44 378 66 370 102 C404 96 432 74 440 48 Z" opacity=".85" />
         <path d="M410 0 C388 18 376 44 378 74 C400 58 412 30 410 0 Z" opacity=".7" />
+        <path d="M440 96 C410 104 388 128 384 162 C412 154 434 130 440 104 Z" opacity=".6" />
       </g>
-      <g fill="#071c14">
+      <g fill="#0e2c1d">
+        <path d="M0 250 C26 244 48 258 54 284 C30 286 8 272 0 258 Z" opacity=".75" />
+        <path d="M440 240 C414 234 392 248 386 274 C410 276 432 262 440 248 Z" opacity=".75" />
+        <path d="M0 330 C22 326 40 338 44 360 C24 362 6 350 0 338 Z" opacity=".6" />
+        <path d="M440 320 C418 316 400 328 396 350 C416 352 434 340 440 328 Z" opacity=".6" />
+      </g>
+      <g fill="#0e2c1d">
         <path d="M0 520 C10 480 8 452 16 428 C24 452 22 484 30 520 Z" />
         <path d="M40 520 C48 488 46 462 54 440 C62 462 60 492 68 520 Z" />
+        <path d="M90 520 C96 494 94 474 100 456 C106 474 104 498 110 520 Z" opacity=".7" />
+        <path d="M330 520 C336 494 334 474 340 456 C346 474 344 498 350 520 Z" opacity=".7" />
         <path d="M380 520 C388 486 386 460 394 438 C402 460 400 490 408 520 Z" />
         <path d="M412 520 C420 484 418 456 426 432 C434 456 432 488 440 520 Z" />
       </g>
       <g>
-        <circle className="sc-spore" style={{ "--sp": 0 } as CSSProperties} cx="70" cy="180" r="3" fill="#e3ef26" />
-        <circle className="sc-spore" style={{ "--sp": 1 } as CSSProperties} cx="380" cy="150" r="2.5" fill="#6fd6b0" />
+        <circle className="sc-spore" style={{ "--sp": 0 } as CSSProperties} cx="70" cy="150" r="3" fill="#e3ef26" />
+        <circle className="sc-spore" style={{ "--sp": 1 } as CSSProperties} cx="380" cy="120" r="2.5" fill="#6fd6b0" />
         <circle className="sc-spore" style={{ "--sp": 2 } as CSSProperties} cx="350" cy="400" r="3" fill="#e3ef26" />
-        <circle className="sc-spore" style={{ "--sp": 3 } as CSSProperties} cx="90" cy="380" r="2.5" fill="#6fd6b0" />
+        <circle className="sc-spore" style={{ "--sp": 3 } as CSSProperties} cx="90" cy="420" r="2.5" fill="#6fd6b0" />
+        <circle className="sc-spore" style={{ "--sp": 4 } as CSSProperties} cx="58" cy="280" r="2" fill="#6fd6b0" />
+        <circle className="sc-spore" style={{ "--sp": 5 } as CSSProperties} cx="392" cy="300" r="2" fill="#e3ef26" />
       </g>
     </g>
   );
@@ -456,10 +469,10 @@ export function HomeContent({
                   </article>
                 ))}
               </div>
-              <div className="home-chain-art" aria-hidden="true">
-                <SceneSeed />
-                <ChainScenes />
-              </div>
+            </div>
+            <div className="home-chain-art" aria-hidden="true">
+              <SceneSeed />
+              <ChainScenes />
             </div>
           </div>
         </div>

@@ -145,6 +145,14 @@ function ChainBackdrop() {
   );
 }
 
+function ChainBackdropLayer() {
+  return (
+    <svg className="chain-backdrop" viewBox="0 0 440 520" fill="none" aria-hidden="true">
+      <ChainBackdrop />
+    </svg>
+  );
+}
+
 function SceneSeed() {
   return (
     <svg className="chain-seed" viewBox="0 0 440 520" fill="none" aria-hidden="true">
@@ -152,7 +160,6 @@ function SceneSeed() {
         <linearGradient id="scs-leaf" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#e2fbce" /><stop offset=".5" stopColor="#479e65" /><stop offset="1" stopColor="#076653" /></linearGradient>
         <radialGradient id="scs-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".16" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".06" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
-      <ChainBackdrop />
       <ellipse className="sc-glow" cx="220" cy="300" rx="190" ry="220" fill="url(#scs-glow)" />
       <path d="M120 452 C160 430 280 430 320 452 L320 470 L120 470 Z" fill="#0e2c1d" />
       <path d="M120 452 C160 430 280 430 320 452" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
@@ -174,7 +181,6 @@ function SceneTag() {
         <linearGradient id="sc0-leaf" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#e2fbce" /><stop offset=".5" stopColor="#479e65" /><stop offset="1" stopColor="#076653" /></linearGradient>
         <radialGradient id="sc0-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".14" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
-      <ChainBackdrop />
       <ellipse cx="220" cy="290" rx="200" ry="235" fill="url(#sc0-glow)" />
       <path d="M150 478 C185 468 255 468 290 478" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
       <g stroke="#3a7d5c" strokeWidth="2.5" strokeLinecap="round"><path d="M178 476 C174 460 170 448 164 438" /><path d="M262 476 C266 460 270 448 276 438" /></g>
@@ -212,7 +218,6 @@ function SceneRecord() {
   return (
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs><radialGradient id="sc1-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
-      <ChainBackdrop />
       <ellipse cx="230" cy="290" rx="200" ry="235" fill="url(#sc1-glow)" />
       <path d="M110 478 C180 468 300 468 370 478" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
       <circle cx="150" cy="148" r="28" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
@@ -247,7 +252,6 @@ function SceneSync() {
   return (
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs><radialGradient id="sc2-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
-      <ChainBackdrop />
       <ellipse cx="220" cy="270" rx="205" ry="235" fill="url(#sc2-glow)" />
       <rect x="40" y="160" width="100" height="200" rx="16" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
       <rect x="54" y="178" width="72" height="140" rx="5" fill="#071c14" stroke="#6fd6b0" strokeWidth="1.5" />
@@ -274,7 +278,6 @@ function SceneReview() {
   return (
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs><radialGradient id="sc3-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
-      <ChainBackdrop />
       <ellipse cx="220" cy="280" rx="200" ry="235" fill="url(#sc3-glow)" />
       <rect x="120" y="128" width="200" height="270" rx="14" fill="#0c342c" stroke="#6fd6b0" strokeWidth="2.5" />
       <rect x="142" y="152" width="70" height="70" rx="7" fill="#071c14" stroke="#6fd6b0" strokeWidth="1.5" />
@@ -301,7 +304,6 @@ function SceneCanopy() {
         <linearGradient id="sc4-flower" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#f4fbb0" /><stop offset=".6" stopColor="#e3ef26" /><stop offset="1" stopColor="#b8cc1a" /></linearGradient>
         <radialGradient id="sc4-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".18" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".07" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
-      <ChainBackdrop />
       <ellipse className="sc-glow" cx="220" cy="280" rx="200" ry="235" fill="url(#sc4-glow)" />
       <path d="M160 478 C190 468 250 468 280 478" stroke="#3a7d5c" strokeWidth="3" strokeLinecap="round" />
       <path d="M220 474 C217 424 223 372 220 322 C217 276 223 244 220 214" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
@@ -471,6 +473,7 @@ export function HomeContent({
               </div>
             </div>
             <div className="home-chain-art" aria-hidden="true">
+              <ChainBackdropLayer />
               <SceneSeed />
               <ChainScenes />
             </div>

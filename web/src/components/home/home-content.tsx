@@ -318,11 +318,11 @@ function SceneSeed() {
       </defs>
       <ellipse className="sc-glow" cx="220" cy="395" rx="160" ry="165" fill="url(#scs-glow)" opacity=".55" />
       <Soil cx={220} cy={450} rx={72} />
-      <path d="M220 450 C219 424 221 396 220 368 C220 360 220 354 220 350" stroke="#a0bd77" strokeWidth="6" strokeLinecap="round" />
-      <Leaf x={220} y={416} s={0.75} flip round veins="none" />
-      <Leaf x={220} y={416} s={0.75} round veins="none" />
-      <Leaf x={220} y={392} s={0.45} flip angle={-6} veins="soft" />
-      <Leaf x={220} y={392} s={0.45} angle={6} veins="soft" />
+      <path d="M220 450 C217 424 224 398 220 370 C218 362 221 355 220 350" stroke="#a0bd77" strokeWidth="6" strokeLinecap="round" />
+      <Leaf x={220} y={419} s={0.7} flip angle={-12} round veins="none" />
+      <Leaf x={220} y={413} s={0.8} angle={5} round veins="none" />
+      <Leaf x={220} y={390} s={0.42} flip angle={-18} veins="soft" />
+      <Leaf x={220} y={399} s={0.5} angle={11} veins="soft" />
       <path d="M220 350 C220 340 225 333 232 333 C239 333 242 340 237 345 C233 349 228 346 229 341 C230 338 233 337 235 339" stroke="#479e65" strokeWidth="4.5" strokeLinecap="round" fill="none" />
       <circle cx="235" cy="339" r="2.5" fill="#e3ef26" />
     </svg>

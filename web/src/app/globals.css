@@ -311,19 +311,26 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .chain-scene, .chain-seed { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .js-home .chain-scene, .js-home .chain-seed { opacity: 0; transition: opacity .55s ease; }
 .js-home .chain-scene.is-active, .js-home .chain-seed.is-active { opacity: 1; }
-.sc-bud { transform-box: fill-box; transform-origin: center; animation: bud-pulse 3s ease-in-out infinite; }
+.sc-bud { transform-box: fill-box; transform-origin: center; }
 @keyframes bud-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
-.sc-tag { transform-box: fill-box; transform-origin: 50% 0%; animation: tag-journey 5.5s ease-in-out infinite; }
-.sc-field { stroke-dasharray: 100; stroke-dashoffset: 100; animation: field-fill 4.2s ease-in-out infinite; animation-delay: calc(var(--fi) * .5s); }
-.sc-typing { animation: typing-blink 1.2s ease-in-out infinite; }
-.sc-packet { animation: packet-move 2.4s linear infinite; animation-delay: calc(var(--pk) * .8s); }
-.sc-scan { animation: scan-sweep 3.6s ease-in-out infinite; }
-.sc-sync { transform-box: fill-box; transform-origin: center; animation: spin 3.2s linear infinite; }
-.sc-mag { animation: mag-scan 4.5s ease-in-out infinite; }
-.sc-check { transform-box: fill-box; transform-origin: center; animation: check-pulse 2.6s ease-in-out infinite; }
-.sc-bloom { transform-box: fill-box; transform-origin: center; animation: bloom-pulse 4s ease-in-out infinite; }
-.sc-glow { animation: glow-pulse 4s ease-in-out infinite; }
-.sc-pub { transform-box: fill-box; transform-origin: center; animation: pub-pulse 2.6s ease-in-out infinite; }
+.sc-tag { transform-box: fill-box; transform-origin: 50% 0%; }
+.sc-field { stroke-dasharray: 100; stroke-dashoffset: 100; }
+.sc-sync { transform-box: fill-box; transform-origin: center; }
+.sc-check { transform-box: fill-box; transform-origin: center; }
+.sc-bloom { transform-box: fill-box; transform-origin: center; }
+.sc-pub { transform-box: fill-box; transform-origin: center; }
+.chain-scene.is-active .sc-bud, .chain-seed.is-active .sc-bud { animation: bud-pulse 3s ease-in-out infinite; }
+.chain-scene.is-active .sc-tag, .chain-seed.is-active .sc-tag { animation: tag-journey 5.5s ease-in-out infinite; }
+.chain-scene.is-active .sc-field, .chain-seed.is-active .sc-field { animation: field-fill 4.2s ease-in-out infinite; animation-delay: calc(var(--fi) * .5s); }
+.chain-scene.is-active .sc-typing, .chain-seed.is-active .sc-typing { animation: typing-blink 1.2s ease-in-out infinite; }
+.chain-scene.is-active .sc-packet, .chain-seed.is-active .sc-packet { animation: packet-move 2.4s linear infinite; animation-delay: calc(var(--pk) * .8s); }
+.chain-scene.is-active .sc-scan, .chain-seed.is-active .sc-scan { animation: scan-sweep 3.6s ease-in-out infinite; }
+.chain-scene.is-active .sc-sync, .chain-seed.is-active .sc-sync { animation: spin 3.2s linear infinite; }
+.chain-scene.is-active .sc-mag, .chain-seed.is-active .sc-mag { animation: mag-scan 4.5s ease-in-out infinite; }
+.chain-scene.is-active .sc-check, .chain-seed.is-active .sc-check { animation: check-pulse 2.6s ease-in-out infinite; }
+.chain-scene.is-active .sc-bloom, .chain-seed.is-active .sc-bloom { animation: bloom-pulse 4s ease-in-out infinite; }
+.chain-scene.is-active .sc-glow, .chain-seed.is-active .sc-glow { animation: glow-pulse 4s ease-in-out infinite; }
+.chain-scene.is-active .sc-pub, .chain-seed.is-active .sc-pub { animation: pub-pulse 2.6s ease-in-out infinite; }
 .sc-spore { animation: spore-drift 6s ease-in-out infinite; animation-delay: calc(var(--sp) * 1.5s); }
 @keyframes spore-drift { 0%, 100% { transform: translateY(0); opacity: .35; } 50% { transform: translateY(-14px); opacity: .9; } }
 @keyframes tag-journey { 0% { transform: translate(0,0); opacity: 0; } 8% { transform: translate(0,12px); opacity: 1; } 40% { transform: translate(0,170px); opacity: 1; } 50% { transform: translate(0,170px) rotate(6deg); } 62% { transform: translate(0,170px) rotate(-5deg); } 74% { transform: translate(0,170px) rotate(3deg); } 86% { transform: translate(0,170px) rotate(0deg); opacity: 1; } 100% { transform: translate(0,170px); opacity: 0; } }

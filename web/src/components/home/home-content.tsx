@@ -432,7 +432,7 @@ export function HomeContent({
             </div>
             <div className="home-chain-body">
               <div className="home-chain-spine" aria-hidden="true">
-                <svg className="home-chain-vine" viewBox="0 20 140 580" preserveAspectRatio="xMidYMid slice" fill="none">
+                <svg className="home-chain-vine" viewBox="0 20 140 580" preserveAspectRatio="xMidYMax meet" fill="none">
                   <defs>
                     <radialGradient id="chain-bloom">
                       <stop offset="0" stopColor="#e3ef26" stopOpacity=".4" />

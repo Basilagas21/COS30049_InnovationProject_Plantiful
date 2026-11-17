@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchSpeciesById } from "@/lib/species";
 import { isOfficer } from "@/lib/auth";
+import { plantQuestionsForSpecies } from "@/lib/plant-learning";
 import { PhotoGallery } from "@/components/species-photos";
 import { SpeciesDeleteButton } from "@/components/species-delete-button";
 
@@ -13,6 +14,8 @@ export default async function SpeciesDetailPage({
   const { id } = await params;
   const [entry, officer] = await Promise.all([fetchSpeciesById(id), isOfficer()]);
   if (!entry) notFound();
+
+  const questions = plantQuestionsForSpecies(entry.scientificName);
 
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
@@ -127,6 +130,42 @@ export default async function SpeciesDetailPage({
           )}
         </div>
       </div>
+
+      {questions.length > 0 && (
+        <section className="mt-12">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="eyebrow text-emerald">Visitor Q&amp;A</p>
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
+                Learn more about this species
+              </h2>
+            </div>
+            <Link
+              href="/learn"
+              className="text-sm font-semibold text-emerald hover:underline"
+            >
+              More plant questions →
+            </Link>
+          </div>
+
+          <div className="mt-5 grid gap-3 lg:grid-cols-2">
+            {questions.map((item) => (
+              <details
+                key={item.question}
+                className="rounded-2xl border border-pine/10 bg-white p-5 open:bg-sprout/30"
+              >
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold text-pine [&::-webkit-details-marker]:hidden">
+                  {item.question}
+                  <span aria-hidden="true" className="text-lg text-emerald">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 text-sm leading-7 text-moss">{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="mt-12">
         <PhotoGallery speciesId={entry.id} photos={entry.photos} officer={officer} />

@@ -45,7 +45,7 @@ See the [verification record](../../Testing/Additional_Innovation/Verification.m
 ## Activation and evaluation checklist
 
 - [ ] Record the reviewed commit or release revision containing this implementation.
-- [ ] Apply `backend/migrations/013_field_assist.sql` to the intended Supabase deployment.
+- [ ] Apply `backend/supabase/migrations/013_field_assist.sql` to the intended Supabase deployment.
 - [ ] Verify deployed access policies and the private evidence archive.
 - [ ] Configure server-only provider and Supabase service credentials.
 - [ ] Set `AI_PROVIDER` and mobile `EXPO_PUBLIC_FIELD_ASSIST_URL`.

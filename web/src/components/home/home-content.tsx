@@ -316,15 +316,17 @@ function SceneSeed() {
       <defs>
         <radialGradient id="scs-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
-      <ellipse className="sc-glow" cx="220" cy="395" rx="160" ry="165" fill="url(#scs-glow)" opacity=".55" />
-      <Soil cx={220} cy={450} rx={72} />
-      <path d="M220 450 C217 424 224 398 220 370 C218 362 221 355 220 350" stroke="#a0bd77" strokeWidth="6" strokeLinecap="round" />
-      <Leaf x={220} y={419} s={0.7} flip angle={-12} round veins="none" />
-      <Leaf x={220} y={413} s={0.8} angle={5} round veins="none" />
-      <Leaf x={220} y={390} s={0.42} flip angle={-18} veins="soft" />
-      <Leaf x={220} y={399} s={0.5} angle={11} veins="soft" />
-      <path d="M220 350 C220 340 225 333 232 333 C239 333 242 340 237 345 C233 349 228 346 229 341 C230 338 233 337 235 339" stroke="#479e65" strokeWidth="4.5" strokeLinecap="round" fill="none" />
-      <circle cx="235" cy="339" r="2.5" fill="#e3ef26" />
+      <ellipse className="sc-glow" cx="220" cy="252" rx="160" ry="165" fill="url(#scs-glow)" opacity=".55" />
+      <g transform="translate(220 255) scale(1.2) translate(-220 -400)">
+        <Soil cx={220} cy={450} rx={82} />
+        <path d="M220 450 C217 424 224 398 220 370 C218 362 221 355 220 350" stroke="#a0bd77" strokeWidth="6" strokeLinecap="round" />
+        <Leaf x={220} y={419} s={0.85} flip angle={-14} round veins="none" />
+        <Leaf x={220} y={413} s={0.95} angle={7} round veins="none" />
+        <Leaf x={220} y={390} s={0.55} flip angle={-20} veins="soft" />
+        <Leaf x={220} y={399} s={0.62} angle={13} veins="soft" />
+        <path d="M220 350 C220 340 225 333 232 333 C239 333 242 340 237 345 C233 349 228 346 229 341 C230 338 233 337 235 339" stroke="#479e65" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+        <circle cx="235" cy="339" r="2.5" fill="#e3ef26" />
+      </g>
     </svg>
   );
 }
@@ -336,16 +338,18 @@ function SceneTag() {
         <radialGradient id="sc0-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".14" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
       <ellipse cx="220" cy="300" rx="200" ry="235" fill="url(#sc0-glow)" opacity=".55" />
+      <g transform="translate(220 260) scale(1.12) translate(-220 -280)">
       <Printer x={150} y={60} />
-      <Soil cx={220} cy={472} rx={90} />
+      <Soil cx={220} cy={472} rx={118} />
       <path d="M220 472 C217 428 223 380 220 330 C218 280 222 240 220 204" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
-      <Leaf x={220} y={292} s={1} />
-      <Leaf x={220} y={252} s={1} flip />
-      <Leaf x={220} y={226} s={0.7} flip angle={-6} />
+      <Leaf x={220} y={292} s={1.25} angle={-7} />
+      <Leaf x={220} y={252} s={1.25} flip angle={7} />
+      <Leaf x={220} y={226} s={0.85} flip angle={-10} />
       <path d="M220 206 C214 200 211 192 213 184 C218 190 220 198 220 206 Z" fill="#479e65" />
       <path d="M220 206 C226 200 229 192 227 184 C222 190 220 198 220 206 Z" fill="#479e65" />
       <path className="sc-bud" d="M220 204 C213 194 213 182 220 173 C227 182 227 194 220 204 Z" fill="#e3ef26" />
       <g className="sc-tag"><PlantTag x={185} y={138} s={70} /></g>
+      </g>
     </svg>
   );
 }
@@ -358,7 +362,8 @@ function SceneRecord() {
         <linearGradient id="sc1-scan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#e3ef26" stopOpacity=".3" /><stop offset="1" stopColor="#e3ef26" stopOpacity="0" /></linearGradient>
       </defs>
       <ellipse cx="220" cy="290" rx="205" ry="235" fill="url(#sc1-glow)" opacity=".55" />
-      <path d="M190 250 L310 330" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="3 8" strokeLinecap="round" opacity=".5" />
+      <g transform="translate(220 260) scale(1.2) translate(-246 -318)">
+      <path d="M190 250 L310 295" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="3 8" strokeLinecap="round" opacity=".5" />
       <DeviceBody x={70} y={170} />
       <rect x="90" y="196" width="80" height="42" rx="5" fill="#0e2c1d" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1.5" />
       <path d="M130 232 C129 222 131 214 130 206" stroke="#a0bd77" strokeWidth="2.5" strokeLinecap="round" />
@@ -380,6 +385,7 @@ function SceneRecord() {
       </g>
       <rect x="146" y="321" width="13" height="8" rx="2" fill="#e3ef26" opacity=".85" />
       <g className="sc-typing" fill="#e3ef26"><circle cx="120" cy="334" r="2.2" /><circle cx="130" cy="334" r="2.2" /><circle cx="140" cy="334" r="2.2" /></g>
+      <g transform="translate(0 -35)">
       <Soil cx={362} cy={468} rx={60} />
       <path d="M362 468 C360 436 364 410 362 378 C361 356 363 340 362 322" stroke="#a0bd77" strokeWidth="5" strokeLinecap="round" />
       <Leaf x={362} y={410} s={0.7} flip />
@@ -396,6 +402,8 @@ function SceneRecord() {
         <rect x="312" y="288" width="108" height="12" fill="url(#sc1-scan)" />
         <rect x="312" y="288" width="108" height="3" rx="1.5" fill="#e3ef26" />
       </g>
+      </g>
+      </g>
     </svg>
   );
 }
@@ -407,6 +415,7 @@ function SceneSync() {
         <radialGradient id="sc2-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
       <ellipse cx="220" cy="280" rx="205" ry="235" fill="url(#sc2-glow)" opacity=".55" />
+      <g transform="translate(220 260) scale(1.12) translate(-225 -262)">
       <DeviceBody x={40} y={180} />
       <rect x="60" y="206" width="56" height="66" rx="6" fill="#0e2c1d" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1.5" />
       <QrGlyph x={68} y={214} s={40} ink="#6fd6b0" paper="#0e2c1d" />
@@ -423,7 +432,7 @@ function SceneSync() {
       <circle className="sc-packet" style={{ "--pk": 0 } as CSSProperties} cx="190" cy="255" r="6" fill="#e3ef26" />
       <circle className="sc-packet" style={{ "--pk": 1 } as CSSProperties} cx="190" cy="255" r="6" fill="#e3ef26" />
       <circle className="sc-packet" style={{ "--pk": 2 } as CSSProperties} cx="190" cy="255" r="6" fill="#e3ef26" />
-      <ellipse cx="355" cy="476" rx="80" ry="11" fill="#010806" opacity=".45" />
+      <ellipse cx="355" cy="384" rx="80" ry="11" fill="#010806" opacity=".45" />
       {[0, 1, 2].map((i) => (
         <g key={i}>
           <rect x="300" y={160 + i * 72} width="110" height="60" rx="10" fill="#076653" />
@@ -433,6 +442,7 @@ function SceneSync() {
           <path d={`M334 ${190 + i * 72} h56`} stroke="#e2fbce" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
         </g>
       ))}
+      </g>
     </svg>
   );
 }
@@ -442,6 +452,7 @@ function SceneReview() {
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs><radialGradient id="sc3-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
       <ellipse cx="220" cy="280" rx="200" ry="235" fill="url(#sc3-glow)" opacity=".55" />
+      <g transform="translate(220 260) scale(1.15) translate(-224 -305)">
       <Ground cx={224} cy={478} rx={110} />
       <rect x="128" y="128" width="200" height="280" rx="14" fill="#0e2c1d" />
       <rect x="120" y="120" width="200" height="280" rx="14" fill="#fffdee" />
@@ -476,6 +487,7 @@ function SceneReview() {
       <g className="sc-check">
         <Badge cx={296} cy={372} r={26} />
       </g>
+      </g>
     </svg>
   );
 }
@@ -487,19 +499,20 @@ function SceneCanopy() {
         <radialGradient id="sc4-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".18" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".07" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
       <ellipse className="sc-glow" cx="220" cy="280" rx="200" ry="235" fill="url(#sc4-glow)" opacity=".55" />
+      <g transform="translate(220 260) scale(1.1) translate(-220 -279)">
       <g fill="#2f6f52" opacity=".6">
-        <path d="M70 60 C84 92 82 128 64 150 C50 122 54 86 70 60 Z" />
-        <path d="M150 66 C166 100 164 140 146 166 C132 134 136 96 150 66 Z" />
-        <path d="M220 68 C238 104 238 148 220 178 C202 148 202 104 220 68 Z" />
-        <path d="M290 66 C306 100 304 140 286 166 C272 134 276 96 290 66 Z" />
-        <path d="M370 60 C384 92 382 128 364 150 C350 122 354 86 370 60 Z" />
+        <path d="M70 58 C86 92 84 132 64 162 C48 128 52 88 70 58 Z" />
+        <path d="M150 62 C168 100 166 146 146 180 C130 142 134 96 150 62 Z" />
+        <path d="M220 64 C240 104 240 156 220 200 C200 156 200 104 220 64 Z" />
+        <path d="M290 62 C308 100 306 146 286 180 C270 142 274 96 290 62 Z" />
+        <path d="M370 58 C386 92 384 132 364 162 C348 128 352 88 370 58 Z" />
       </g>
-      <Soil cx={220} cy={472} rx={90} />
+      <Soil cx={220} cy={472} rx={118} />
       <path d="M220 472 C217 426 223 376 220 326 C217 280 223 248 220 214" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
-      <Leaf x={220} y={420} s={1} flip />
-      <Leaf x={220} y={364} s={1} />
-      <Leaf x={220} y={303} s={0.8} flip angle={-5} />
-      <Leaf x={220} y={255} s={0.8} angle={5} />
+      <Leaf x={220} y={420} s={1.2} flip angle={-6} />
+      <Leaf x={220} y={364} s={1.2} angle={6} />
+      <Leaf x={220} y={303} s={0.95} flip angle={-9} />
+      <Leaf x={220} y={255} s={0.8} angle={12} />
       <g className="sc-bloom">
         {[0, 60, 120, 180, 240, 300].map((a) => (
           <path key={a} d="M220 190 C208 166 207 138 220 112 C233 138 232 166 220 190 Z" fill="#e3ef26" transform={`rotate(${a} 220 190)`} />
@@ -510,6 +523,7 @@ function SceneCanopy() {
         <circle cx="220" cy="190" r="13" fill="#fffdee" />
         <circle cx="220" cy="190" r="6" fill="#e3ef26" />
         <g fill="#b8cc1a"><circle cx="214" cy="186" r="1.8" /><circle cx="226" cy="188" r="1.8" /><circle cx="220" cy="196" r="1.8" /></g>
+      </g>
       </g>
     </svg>
   );
@@ -663,6 +677,20 @@ export function HomeContent({
               <div className="home-chain-art-inner">
                 <SceneSeed />
                 <ChainScenes />
+              </div>
+              <div className="chain-art-spores">
+                {[
+                  { l: "16%", t: "24%", s: 4, c: "#e3ef26" },
+                  { l: "74%", t: "16%", s: 3, c: "#6fd6b0" },
+                  { l: "86%", t: "42%", s: 5, c: "#e3ef26" },
+                  { l: "28%", t: "60%", s: 3, c: "#6fd6b0" },
+                  { l: "66%", t: "72%", s: 4, c: "#e3ef26" },
+                  { l: "10%", t: "46%", s: 3, c: "#6fd6b0" },
+                  { l: "46%", t: "30%", s: 5, c: "#e3ef26" },
+                  { l: "90%", t: "64%", s: 3, c: "#6fd6b0" },
+                ].map((p, i) => (
+                  <span key={i} className="chain-art-spore" style={{ left: p.l, top: p.t, width: p.s, height: p.s, background: p.c, boxShadow: `0 0 8px ${p.c}`, "--as": i } as CSSProperties} />
+                ))}
               </div>
             </div>
           </div>

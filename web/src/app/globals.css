@@ -313,7 +313,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .chain-art-spore { position: absolute; border-radius: 50%; opacity: 0; animation: art-spore-drift 7s ease-in-out infinite; animation-delay: calc(var(--as) * -1.05s); }
 @keyframes art-spore-drift { 0%, 100% { opacity: .25; transform: translate(0, 0); } 50% { opacity: .85; transform: translate(7px, -18px); } }
 @media (prefers-reduced-motion: reduce) { .chain-art-spore { animation: none; opacity: .5; } }
-.chain-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.chain-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 90px); mask-image: linear-gradient(to bottom, transparent, #000 90px); }
 .chain-scene, .chain-seed { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .js-home .chain-scene, .js-home .chain-seed { opacity: 0; transition: opacity .55s ease; }
 .js-home .chain-scene.is-active, .js-home .chain-seed.is-active { opacity: 1; }

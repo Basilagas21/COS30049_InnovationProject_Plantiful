@@ -196,10 +196,10 @@ function Ground({ cx, cy, rx }: { cx: number; cy: number; rx: number }) {
   return <ellipse cx={cx} cy={cy} rx={rx} ry={rx * 0.16} fill="#010806" opacity=".45" />;
 }
 
-function Badge({ cx, cy, r = 24 }: { cx: number; cy: number; r?: number }) {
+function Badge({ cx, cy, r = 24, haloOpacity = 0.18 }: { cx: number; cy: number; r?: number; haloOpacity?: number }) {
   return (
     <g>
-      <circle cx={cx} cy={cy} r={r + 4} fill="#e3ef26" opacity=".18" />
+      <circle cx={cx} cy={cy} r={r + 4} fill="#e3ef26" opacity={haloOpacity} />
       <circle cx={cx} cy={cy} r={r} fill="#e3ef26" />
       <path d={`M${cx - r * 0.42} ${cy + r * 0.02} l${r * 0.3} ${r * 0.32} l${r * 0.56} ${-r * 0.62}`} stroke="#0c342c" strokeWidth={r * 0.18} fill="none" strokeLinecap="round" strokeLinejoin="round" />
     </g>
@@ -512,7 +512,7 @@ function SceneCanopy() {
         <g fill="#b8cc1a"><circle cx="214" cy="186" r="1.8" /><circle cx="226" cy="188" r="1.8" /><circle cx="220" cy="196" r="1.8" /></g>
       </g>
       <g className="sc-check">
-        <Badge cx={326} cy={232} r={24} />
+        <Badge cx={326} cy={232} r={24} haloOpacity={0.1} />
       </g>
       </g>
     </svg>

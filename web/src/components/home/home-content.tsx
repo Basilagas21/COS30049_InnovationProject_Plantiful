@@ -413,16 +413,15 @@ function SceneSync() {
       <path d="M70 264 h60" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
       <path d="M78 278 h44" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
       <path d="M126 324 L138 312 M130 312 H138 V320" stroke="#e3ef26" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      <circle cx="162" cy="260" r="3" fill="#6fd6b0" />
+      <circle cx="168" cy="260" r="3" fill="#6fd6b0" />
       <g stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" fill="none">
-        <path d="M170 251 A12 12 0 0 1 170 269" opacity=".85" />
-        <path d="M176 246 A20 20 0 0 1 176 274" opacity=".55" />
-        <path d="M182 240 A28 28 0 0 1 182 280" opacity=".3" />
+        <path d="M176 251 A12 12 0 0 1 176 269" opacity=".85" />
+        <path d="M182 246 A20 20 0 0 1 182 274" opacity=".55" />
+        <path d="M188 240 A28 28 0 0 1 188 280" opacity=".3" />
       </g>
-      <path d="M212 260 H300" stroke="#6fd6b0" strokeWidth="1.5" strokeDasharray="2 9" strokeLinecap="round" opacity=".3" />
+      <path d="M212 260 H284" stroke="#6fd6b0" strokeWidth="1.5" strokeDasharray="2 9" strokeLinecap="round" opacity=".3" />
       <circle className="sc-packet" style={{ "--pk": 0 } as CSSProperties} cx="212" cy="260" r="6" fill="#e3ef26" />
       <circle className="sc-packet" style={{ "--pk": 1 } as CSSProperties} cx="212" cy="260" r="6" fill="#e3ef26" />
-      <circle className="sc-packet" style={{ "--pk": 2 } as CSSProperties} cx="212" cy="260" r="6" fill="#e3ef26" />
       <ellipse cx="359" cy="340" rx="82" ry="11" fill="#010806" opacity=".45" />
       <path d="M300 186 L318 175 L418 175 L400 186 Z" fill="#0a8a6e" />
       <path d="M400 186 L418 175 L418 323 L400 334 Z" fill="#054a3c" />

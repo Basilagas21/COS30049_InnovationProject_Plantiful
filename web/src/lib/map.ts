@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { isAuthenticated } from "@/lib/auth";
+import { isSupabaseConfigured, useSampleData } from "@/lib/supabase/env";
 
 export type MapApprovalStatus = "pending" | "approved" | "rejected";
 
@@ -114,7 +115,8 @@ function toPoint(row: {
 }
 
 export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoint[]> {
-  if (!isSupabaseConfigured) return mockPoints;
+  if (useSampleData) return mockPoints;
+  if (!isSupabaseConfigured) return [];
 
   const supabase = await createClient();
 
@@ -163,11 +165,19 @@ export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoin
     }
   }
 
+  const authenticated = await isAuthenticated();
+  const visiblePoints = authenticated
+    ? points
+    : points.filter(
+        (point) => point.speciesId !== null && speciesById.has(point.speciesId),
+      );
+  if (visiblePoints.length === 0) return [];
+
   const photoByRecord = new Map<string, string>();
   const { data: photoRows, error: photoError } = await supabase
     .from("plant_record_photos")
     .select("record_id, photo_url")
-    .in("record_id", points.map((p) => p.id))
+    .in("record_id", visiblePoints.map((p) => p.id))
     .order("taken_at", { ascending: true });
 
   if (!photoError && photoRows) {
@@ -178,7 +188,7 @@ export async function fetchMapPoints(speciesId?: string | null): Promise<MapPoin
     }
   }
 
-  return points.map((point) => {
+  return visiblePoints.map((point) => {
     const species = point.speciesId ? speciesById.get(point.speciesId) : undefined;
     return {
       id: point.id,

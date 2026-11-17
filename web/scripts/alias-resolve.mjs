@@ -9,7 +9,7 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const root = import.meta.dirname;
+const root = path.resolve(import.meta.dirname, '..');
 const require = createRequire(import.meta.url);
 
 const NEXT_SUBPATHS = {

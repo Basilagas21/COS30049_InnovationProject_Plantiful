@@ -3,31 +3,57 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { SpeciesListItem } from "@/lib/species";
+import {
+  familyFromTaxonomy,
+  isThreatenedStatus,
+} from "@/lib/species-taxonomy";
 
 type Props = {
   species: SpeciesListItem[];
   officer: boolean;
+  visitor?: boolean;
 };
 
-export function SpeciesBrowser({ species, officer }: Props) {
+export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
   const [query, setQuery] = useState("");
   const [threatenedOnly, setThreatenedOnly] = useState(false);
+  const [family, setFamily] = useState("all");
+
+  const families = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const entry of species) {
+      const name = familyFromTaxonomy(entry.taxonomy) ?? "Unclassified";
+      counts.set(name, (counts.get(name) ?? 0) + 1);
+    }
+    return [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  }, [species]);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return species.filter((entry) => {
-      if (threatenedOnly && !entry.conservationStatus) return false;
+      if (threatenedOnly && !isThreatenedStatus(entry.conservationStatus)) {
+        return false;
+      }
+      if (
+        family !== "all" &&
+        (familyFromTaxonomy(entry.taxonomy) ?? "Unclassified") !== family
+      ) {
+        return false;
+      }
       if (!q) return true;
       const haystack =
         `${entry.scientificName} ${entry.commonName ?? ""} ${entry.taxonomy ?? ""}`.toLowerCase();
       return haystack.includes(q);
     });
-  }, [species, query, threatenedOnly]);
+  }, [species, query, threatenedOnly, family]);
 
   const threatenedCount = useMemo(
-    () => species.filter((s) => s.conservationStatus).length,
+    () => species.filter((s) => isThreatenedStatus(s.conservationStatus)).length,
     [species],
   );
+
+  const filtersActive =
+    Boolean(query.trim()) || threatenedOnly || family !== "all";
 
   return (
     <>
@@ -49,17 +75,64 @@ export function SpeciesBrowser({ species, officer }: Props) {
           }`}
         >
           {threatenedOnly ? "All statuses" : "Threatened only"}
-          <span className="text-xs">
-            {threatenedCount}
-          </span>
+          <span className="text-xs">{threatenedCount}</span>
         </button>
+
+        <label htmlFor="species-family" className="sr-only">
+          Plant family
+        </label>
+        <select
+          id="species-family"
+          value={family}
+          onChange={(event) => setFamily(event.target.value)}
+          className="h-10 rounded-full border border-pine/15 bg-white px-4 text-sm text-pine outline-none transition-colors focus:border-emerald"
+        >
+          <option value="all">All families</option>
+          {families.map(([name, count]) => (
+            <option key={name} value={name}>
+              {name} ({count})
+            </option>
+          ))}
+        </select>
+
+        {filtersActive && (
+          <button
+            type="button"
+            onClick={() => {
+              setQuery("");
+              setThreatenedOnly(false);
+              setFamily("all");
+            }}
+            className="inline-flex h-10 items-center rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse"
+          >
+            Clear filters
+          </button>
+        )}
         <span className="ml-auto text-sm text-moss">
-          {visible.length} {visible.length === 1 ? "species" : "species"}
-          {query || threatenedOnly ? " filtered" : ""}
+          {visible.length} species
+          {filtersActive ? " filtered" : ""}
         </span>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {visible.length === 0 && (
+          <div className="col-span-full rounded-2xl border border-pine/10 bg-white px-5 py-10 text-center text-sm text-moss">
+            <p className="font-semibold text-pine">
+              {species.length === 0 && visitor
+                ? "No published species yet."
+                : species.length === 0
+                  ? "No species in the catalogue yet."
+                  : "No species match the current filters."}
+            </p>
+            <p className="mt-2">
+              {species.length === 0 && visitor
+                ? "Published species will appear here once a conservation officer approves a linked observation."
+                : species.length === 0
+                  ? "Officers can add the first species from the catalogue page."
+                  : "Try a different search term or clear the filters."}
+            </p>
+          </div>
+        )}
         {visible.map((entry) => (
           <div
             key={entry.id}

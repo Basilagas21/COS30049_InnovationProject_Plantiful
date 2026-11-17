@@ -74,7 +74,7 @@ async function signIn(page: import("@playwright/test").Page, email: string) {
 
 test("visitor explore page lists approved species without sign-in", async ({ page }) => {
   await page.goto("/explore");
-  await expect(page.getByRole("heading", { name: /plant guide|explore/i })).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole("heading", { level: 1, name: /explore/i })).toBeVisible({ timeout: 10_000 });
   await expect(page.getByText(/sign in/i).first()).toBeVisible();
 });
 

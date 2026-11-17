@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import QRCode from "qrcode";
 import { fetchRecordById, fetchConflictReports } from "@/lib/records";
-import { isOfficer } from "@/lib/auth";
+import { isAuthenticated, isOfficer } from "@/lib/auth";
 import { ApproveRejectButtons } from "@/components/approve-reject";
 import { PhotoImg } from "@/components/photo-img";
 import { FieldAssistReview } from "@/components/field-assist-review";
@@ -27,11 +27,11 @@ export default async function RecordDetailPage({
   const record = await fetchRecordById(id);
   if (!record) notFound();
 
-  const officer = await isOfficer();
+  const [officer, authenticated] = await Promise.all([isOfficer(), isAuthenticated()]);
   const conflicts = officer ? await fetchConflictReports(id) : [];
 
   let qrDataUrl: string | null = null;
-  const qrValue = record.qrCode ?? null;
+  const qrValue = authenticated ? record.qrCode ?? null : null;
   if (qrValue) {
     try {
       qrDataUrl = await QRCode.toDataURL(qrValue);
@@ -69,31 +69,35 @@ export default async function RecordDetailPage({
                     : "bg-chartreuse/70 text-pine"
               }`}
             >
-              {record.provisionalName
-                ? "New discovery · unconfirmed species"
-                : record.isPublished
-                  ? "Published"
-                  : record.approvalStatus === "pending"
-                    ? "Pending review"
+              {!authenticated
+                ? "Published"
+                : record.provisionalName
+                  ? "New discovery · unconfirmed species"
+                  : record.isPublished
+                    ? "Published"
+                    : record.approvalStatus === "pending"
+                      ? "Pending review"
+                      : record.approvalStatus === "approved"
+                        ? "Approved"
+                        : "Rejected"}
+            </span>
+            {authenticated && (
+              <span
+                className={`ml-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold ${
+                  record.approvalStatus === "rejected"
+                    ? "bg-danger text-white"
                     : record.approvalStatus === "approved"
-                      ? "Approved"
-                      : "Rejected"}
-            </span>
-            <span
-              className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${
-                record.approvalStatus === "rejected"
-                  ? "bg-danger text-white"
+                      ? "bg-sprout text-emerald"
+                      : "bg-chartreuse/70 text-pine"
+                }`}
+              >
+                {record.approvalStatus === "pending"
+                  ? "Pending review"
                   : record.approvalStatus === "approved"
-                    ? "bg-sprout text-emerald"
-                    : "bg-chartreuse/70 text-pine"
-              }`}
-            >
-              {record.approvalStatus === "pending"
-                ? "Pending review"
-                : record.approvalStatus === "approved"
-                  ? "Approved"
-                  : "Rejected"}
-            </span>
+                    ? "Approved"
+                    : "Rejected"}
+              </span>
+            )}
             <h1 className="mt-3 text-4xl font-bold tracking-tight text-pine">
               {record.scientificName}
             </h1>
@@ -107,31 +111,33 @@ export default async function RecordDetailPage({
 
           <div className="grid grid-cols-2 gap-3">
             {[
-              {
-                label: "QR code",
-                value: (
-                  <div className="mt-2 flex flex-col items-start gap-2">
-                    {qrDataUrl ? (
-                      <>
-                        {/* Locally generated base64 data URL, not a network
-                            image, next/image optimisation does not apply. */}
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={qrDataUrl}
-                          alt={`QR for ${record.qrCode}`}
-                          className="h-24 w-24 rounded-lg border border-pine/10 bg-white p-1"
-                          style={{ backgroundColor: "#ffffff" }}
-                        />
-                        <p className="text-xs text-moss">Scan to view tag ID</p>
-                      </>
-                    ) : (
-                      <span className="text-sm font-semibold text-pine">
-                        {record.qrCode ?? "—"}
-                      </span>
-                    )}
-                  </div>
-                ),
-              },
+              ...(authenticated
+                ? [{
+                    label: "QR code",
+                    value: (
+                      <div className="mt-2 flex flex-col items-start gap-2">
+                        {qrDataUrl ? (
+                          <>
+                            {/* Locally generated base64 data URL, not a network
+                                image, next/image optimisation does not apply. */}
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={qrDataUrl}
+                              alt={`QR for ${record.qrCode}`}
+                              className="h-24 w-24 rounded-lg border border-pine/10 bg-white p-1"
+                              style={{ backgroundColor: "#ffffff" }}
+                            />
+                            <p className="text-xs text-moss">Scan to view tag ID</p>
+                          </>
+                        ) : (
+                          <span className="text-sm font-semibold text-pine">
+                            {record.qrCode ?? "—"}
+                          </span>
+                        )}
+                      </div>
+                    ),
+                  }]
+                : []),
               {
                 label: "Coordinates",
                 value: record.gpsLat != null && record.gpsLng != null
@@ -145,7 +151,7 @@ export default async function RecordDetailPage({
                 value: record.heightCm != null ? `${record.heightCm.toFixed(1)} cm` : "—",
               },
               {
-                label: "Captured",
+                label: authenticated ? "Captured" : "Observed",
                 value: new Date(record.createdAt).toLocaleString(),
               },
             ].map((metric) => (
@@ -237,7 +243,7 @@ export default async function RecordDetailPage({
             </div>
           )}
 
-          {record.reviewedAt && (
+          {authenticated && record.reviewedAt && (
             <div className="flex items-center justify-between rounded-2xl bg-sprout px-5 py-4 text-sm">
               <span className="text-moss">
                 {record.approvalStatus === "approved" ? "Approved" : "Reviewed"} ·{" "}
@@ -253,16 +259,18 @@ export default async function RecordDetailPage({
             </p>
           )}
 
-          <div className="flex items-center justify-between rounded-2xl bg-sand px-5 py-4 text-sm">
-            <span className="text-moss">
-              {record.syncedAt
-                ? `Synced · ${new Date(record.syncedAt).toLocaleString()}`
-                : "Synced from field device"}
-            </span>
-            {!record.reviewedAt && (
-              <span className="font-semibold text-emerald">ID {record.id}</span>
-            )}
-          </div>
+          {authenticated && (
+            <div className="flex items-center justify-between rounded-2xl bg-sand px-5 py-4 text-sm">
+              <span className="text-moss">
+                {record.syncedAt
+                  ? `Synced · ${new Date(record.syncedAt).toLocaleString()}`
+                  : "Synced from field device"}
+              </span>
+              {!record.reviewedAt && (
+                <span className="font-semibold text-emerald">ID {record.id}</span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -9,10 +9,10 @@
 | Project context | Plant species documentation and biodiversity knowledge for Niah National Park, Sarawak |
 | Reporting period | Sprint 2, Weeks 10 to 12 |
 | Submission target | 6 November 2026 |
-| Evidence cut-off | Repository and GitHub review on 2 November 2026 |
-| Repository baseline | `main` at `874e992` |
+| Evidence cut-off | Repository and GitHub review on 13 November 2026. Local checks re-ran on 16 November 2026 |
+| Repository baseline | `main` at `d468ffa` |
 | Status | Evidence-backed working draft. Not a final readiness declaration |
-| Prepared from | Sprint 2 planning documents, verification records, dated issue comments and pull requests |
+| Prepared from | Sprint 2 planning documents, verification records, dated issue comments, pull requests and the 16 November 2026 local re-run |
 
 This report follows the [Sprint 2 management plan](Sprint_2_Management_Plan.md) and the [product marking rubric](../../Marking_Rubric.md). It distinguishes work present on the reviewed baseline from work awaiting integration. Device results were recorded by the team. Preparing this report did not rerun those trials.
 
@@ -24,7 +24,7 @@ Sprint 2 focuses on completing, integrating and evaluating the Plantiful prototy
 
 The strongest progress since Sprint 1 is the move from source-level checks to recorded device and live-database trials. An iPhone trial documents offline captures, persistence across an application restart, subsequent synchronisation, duplicate checks and officer approval returning to the phone. A Pixel trial documents capture, location, photo delivery, restart persistence and QR opening on Expo SDK 58. A separate conflict trial uses one physical phone and a scripted second client to demonstrate stale-edit rejection, preservation of the local copy and explicit merge resolution. These results support the tested workflows. They do not establish population-level reliability or a complete two-phone user experience.
 
-Security and review behaviour also improved. Dated verification records describe removal of legacy policies permitting botanist self-approval, extension of the species publication gate to inserts, and a public write-block result recorded as 19 PASS with 6 data-dependent SKIP. Officer observation management was clarified as review rather than editing the botanist's field data. Rejections now carry a reason, and correction takes place through botanist editing and resubmission. The latest dependency record reports zero mobile audit findings and zero web production findings at the tested revision.
+Security and review behaviour also improved. Dated verification records describe removal of legacy policies permitting botanist self-approval, extension of the species publication gate to inserts, and a public write-block result recorded as 19 PASS with 6 data-dependent SKIP. Officer observation management was clarified as review rather than editing the botanist's field data. Rejections now carry a reason, and correction takes place through botanist editing and resubmission. The 6 November dependency record reported zero mobile audit findings and zero web production findings at that revision. A 16 November mobile audit found one moderate transitive `node-forge` advisory through Expo CLI, with no high or critical entry. The web production audit remains zero.
 
 Sensor-payload validation, severity escalation and interruption recovery are now integrated on `main` as PRs #63 to #65. The combined IoT suite passes 36 tests, including database outage, USB reconnection and escalation cases. Alert resolution remains an open change in PR #62. Integrated tests are development evidence. Physical-node checks, the final alert-resolution decision and deployed-state verification remain necessary. Closed issue status is not treated as proof of deployed implementation.
 
@@ -77,7 +77,7 @@ The following status is an evidence classification. It does not derive a complet
 | S2-11 | Species mutation feedback | Web owner | #50 | Live happy-path, missing-row, concurrent-delete and denied-role results recorded |
 | S2-12 | Location recovery | Mobile owner | #51 | Four Android permission/service scenarios recorded, including defect correction |
 | S2-13 | Alert-flow diagram | IoT and documentation owners | #52 | Update required to match the eventual integrated policy |
-| S2-14 | Security close-out | Security and component owners | #53 | Final reassessment and recommendation dispositions outstanding |
+| S2-14 | Security close-out | Security and component owners | #53 | R-01 to R-10 dispositions recorded at `aa3bc70`. R-02, R-06, R-07 and the R-10 unit check are verified. Final ZAP and full RLS retests and owner decisions remain outstanding |
 | S2-15 | Acceptance and usability | Testing coordinator and team | #39, #40 | Conflict evidence recorded. QR, reliability and participant measurements outstanding |
 | S2-16 | Whole-scope coverage | Component owners | #54 | Helper coverage recorded. Wider denominator and coverage gaps unresolved |
 | S2-17 | Diagrams and evidence | Documentation owner | #55 | Existing captures and D-02 draft available. Final packaging incomplete |
@@ -91,7 +91,7 @@ The following status is an evidence classification. It does not derive a complet
 | 27 to 28 October | Baseline review, work-package planning and D-02 draft |
 | 29 to 31 October | Publication/review and species-feedback fixes. Offline iPhone trial and database verification |
 | 1 to 2 November | Pixel permission, conflict and dependency regression records. IoT and alert-resolution PRs opened |
-| Next integration gate | PRs #63 to #65 are integrated. Review PR #62 and the documentation PR #60, apply required database changes and record the combined release revision |
+| Next integration gate | PRs #63 to #65 are integrated. Review PR #62, PR #75 and the documentation PR #60, apply required database changes and record the combined release revision |
 | Next evidence gate | Physical IoT trials, measured acceptance, usability, security reassessment and coverage analysis |
 | 5 November internal target | Reviewed report, accessible evidence package and completed rehearsal |
 | 6 November submission target | Inspect uploaded files and retain submission receipt |
@@ -415,15 +415,14 @@ Do not rewrite this as both applications having zero vulnerabilities in every sc
 
 | Suite or branch | Recorded result | Reporting constraint |
 |---|---|---|
-| Mobile sync helper | Four tests and 100% helper coverage reported in the execution backlog | Not overall mobile or full sync-screen coverage |
-| QR lookup helper | Six tests recorded on the current working tree, covering cached, remote, unresolved, storage-failure and timeout paths | Working-tree result. Not a merged-release result and not device coverage |
+| Mobile | 30 tests pass on 16 November, covering sync ownership, field evidence, QR lookup, session chunking and conflict handling. Type check and lint pass | Unit tests. Not device or full workflow coverage |
 | Measurement summariser | Historical two-test pass | Attach a release-revision rerun before quoting it as final |
 | IoT integrated suite | 36 tests pass on `main` after PRs #63 to #65 | Unit tests with fake service and serial fixtures. Not physical-node or hardware-in-the-loop evidence |
-| Web | 6 November re-test recorded type check, lint and 42 passing tests. A production build retry at `3866309` compiled, type checked and generated all 20 static pages | Build success is not runtime behaviour or coverage. Hosted deployment still needs a separate check |
+| Web | 16 November re-run recorded 56 tests, 46 passed and 10 gated live checks skipped, with type check and lint passing. A production build at `d468ffa` compiled, type checked and generated all 20 static pages | The skipped checks require the deployed project. Build success is not runtime behaviour or coverage. Hosted deployment still needs a separate check |
 
-An earlier pre-integration working-tree repeat passed mobile type check, lint, ten helper tests, Expo Doctor 20/20 and an Android Metro export. The 6 November check log supersedes that dependency result with 19 of 20 Expo Doctor checks and five version mismatches. The current web production build passed separately at `3866309`.
+The 16 November 2026 re-run passed mobile type check, lint and 30 tests. Expo Doctor passed 19 of 20 checks and reported 11 version mismatches. Web type check and lint passed. Web tests reported 46 passed and 10 gated live checks skipped. A web production build at `d468ffa` compiled, type checked and generated all 20 static pages. The current evidence therefore supports the local test results and the local production build. It does not establish hosted runtime behaviour.
 
-The 6 November 2026 re-test passed mobile type check, lint and 21 tests. Expo Doctor passed 19 of 20 checks and reported five version mismatches. Web type check, lint and 42 tests passed. A web production build retry at `3866309` compiled, type checked and generated all 20 static pages. The current evidence therefore supports the test results and the local production build. It does not establish hosted runtime behaviour.
+The 16 November mobile production audit reports one moderate transitive `node-forge` advisory through Expo CLI. The web production audit reports zero entries. This is a new data point after the 6 November zero-advisory result and supports the need for recurring monitoring under R-03. The check does not establish that the advisory is reachable in the application runtime.
 
 Do not sum hypothetical future test counts into a current release total. Likewise, route counts from different revisions or build-output conventions should not be treated as a quality metric.
 
@@ -447,7 +446,7 @@ The report retains these observations rather than claiming every initial test pa
 | Mean scan-to-record below five seconds | Not measured | PERF-01 full-task measurements plus separately labelled lookup timings |
 | Greater than 90% unassisted completion | Not measured | UX-01 task-level participant outcomes |
 | Greater than 80% target-scope coverage | Not demonstrated | Explicit denominator, measured coverage and exclusions |
-| Security release criteria | Partly verified | Credential completion record, current scan/role/storage results and residual decisions |
+| Security release criteria | Partly verified. R-02, R-06, R-07 and the R-10 unit check are recorded | Credential completion record, final ZAP and full RLS retest, and residual-risk decisions |
 
 The #23 panel's 4/8 attempt result includes deliberately failed offline attempts. It is evidence of that session, not a successful reliability benchmark. Both raw outcomes and scenario grouping must remain available.
 
@@ -539,8 +538,8 @@ The scope wording refers to admins, trainers and guides. In Plantiful these map 
 | Simple authentication without unauthorized access | Email and password sign-in, email confirmation, password reset and sign-out are provided by Supabase Auth. Role lookup comes from the user profile, not from client-supplied identity | Report 3.2, 5.4. EV-SEC-07 | No MFA, device binding or reauthentication for role changes |
 | SSDLC planning and execution | Security activities are assigned to requirements, design, implementation, verification, release and operations. Each phase has a deliverable, owner and gate | [Security plan](../../Security/01_Security_Plan.md) Sections 2 and 9. EV-SEC-02 | The plan is not proof of execution. Final release sign-off is not recorded |
 | Vulnerability assessment details, tools and scope | Scope covers mobile, web, Supabase data and storage, and the IoT database surface. Tools are strict TypeScript, ESLint, production builds, `npm audit`, SQL policy scripts, secure code review, OWASP ZAP and a MASVS L1 code and bundle review | [Security plan](../../Security/01_Security_Plan.md) Sections 3, 5, 6 and 8. EV-SEC-02 | ZAP was passive. No rooted device, active scan, native binary test or infrastructure denial-of-service test |
-| Assessment results and verification | Twelve findings were raised. Eleven were fixed and F-06 has a defined mitigation. No confirmed critical or high issue remained in application code at the 10 October close. The tested live schema passed the executable RLS checks. ZAP reported no High alert after remediation. The 6 November production audits reported zero advisories for web and mobile | Report 5 to 7. EV-SEC-01, EV-SEC-03, EV-SEC-04, EV-SEC-06, EV-SEC-08 | Live RLS and ZAP were last run on 10 October. The 6 November checks cover the repository, tests and dependency trees, not the deployed system |
-| Recommendations and reassessment | R-01 to R-10 have owners and dispositions. The header and error findings were re-scanned. Web dependencies were re-audited on 27 October. Web and mobile audits were repeated on 6 November | Report 8.4. EV-SEC-03, EV-SEC-04, EV-SEC-06 | R-03 and R-06 to R-10 remain open or deferred. The final deployed RLS and ZAP re-test is outstanding |
+| Assessment results and verification | Twelve findings were raised. Eleven were fixed and F-06 has a defined mitigation. No confirmed critical or high issue remained in application code at the 10 October close. The tested live schema passed the executable RLS checks. ZAP reported no High alert after remediation. The 6 November production audits reported zero advisories for web and mobile. A 16 November mobile audit found one moderate transitive advisory through Expo CLI | Report 5 to 7. EV-SEC-01, EV-SEC-03, EV-SEC-04, EV-SEC-06, EV-SEC-08, EV-SEC-10 | Live RLS and ZAP were last run on 10 October. The 6 and 16 November checks cover the repository, tests and dependency trees, not the deployed system |
+| Recommendations and reassessment | R-01 to R-10 have recorded dispositions and owners in the 13 November close-out note. R-02, R-06, R-07 and the R-10 unit check are verified. The header and error findings were re-scanned. Web dependencies were re-audited on 27 October. Web and mobile audits were repeated on 6 November and the local checks were re-run on 16 November | Report 8.4. EV-SEC-03, EV-SEC-04, EV-SEC-06, EV-SEC-10 | R-01, R-03, R-04, R-05, R-08 and R-09 remain open or deferred. The final deployed RLS and ZAP retest is outstanding |
 
 The key distinction is between implemented controls, tested controls and deployed controls. The database policies and authenticated routes are implemented. The 10 October assessment tested the then-current deployed schema and web build. The 6 November evidence repeats repository checks and dependency audits. It does not silently upgrade those older deployed results to the final release.
 
@@ -550,19 +549,19 @@ The assessment used OWASP ASVS 4.0 Level 1 with selected Level 2 checks, OWASP T
 
 | Layer | Tool and scope | Recorded result | Evidence |
 |---|---|---|---|
-| Static analysis | Strict TypeScript, ESLint and framework checks on web and mobile | Web type check passed. Web lint had 0 errors and 3 warnings. Mobile type check and lint passed | EV-SEC-06 |
-| Automated tests | Web API, library and component tests. Mobile helper and regression tests | Web 42 passed. Mobile 21 passed. No failures | EV-SEC-06 |
-| Build integrity | Next.js production build and Expo Doctor | Web production build passed at `3866309` and generated all 20 static pages. Expo Doctor passed 19 of 20 checks with five version mismatches | EV-SEC-06 |
-| Software composition analysis | `npm audit --omit=dev` on both production trees | Web 0 advisories. Mobile 0 advisories on 6 November | EV-SEC-04 |
+| Static analysis | Strict TypeScript, ESLint and framework checks on web and mobile | Web type check passed. Web lint passed with no reported errors or warnings. Mobile type check and lint passed | EV-SEC-10 |
+| Automated tests | Web API, library and component tests. Mobile helper and regression tests. IoT unit tests | Web 56 tests, 46 passed and 10 gated live checks skipped. Mobile 30 passed. IoT 36 passed. No failures | EV-SEC-06, EV-SEC-10 |
+| Build integrity | Next.js production build and Expo Doctor | Web production build passed at `d468ffa` and generated all 20 static pages. Expo Doctor passed 19 of 20 checks with 11 version mismatches | EV-SEC-10 |
+| Software composition analysis | `npm audit --omit=dev` on both production trees | Web 0 advisories. Mobile 1 moderate transitive `node-forge` advisory through Expo CLI on 16 November, with no high or critical entry. The 6 November mobile audit was zero | EV-SEC-04, EV-SEC-10 |
 | Database and storage policy | Live Supabase SQL verification under role impersonation | 19 PASS and 6 data-dependent SKIP. Both script verdicts returned PASS | EV-SEC-01 |
 | Secure code review | ASVS-referenced walkthrough of auth, sync, upload, routes and error paths | Twelve findings raised across the assessment. Eleven fixed and one mitigation defined | Report 6. EV-SEC-02 |
-| Dynamic analysis | OWASP ZAP 2.17.0 spider and passive scan, anonymous and officer sessions | No High alert. Header and malformed-identifier findings fixed and re-scanned | EV-SEC-03 |
+| Dynamic analysis | OWASP ZAP 2.17.0 spider and passive scan, anonymous and officer sessions | Historical passive scan found no High alert. A reproducible final scan procedure was added in `d50e573`. The final re-scan has not run | EV-SEC-03 |
 | Mobile review | MASVS L1 code and production-bundle review | No bundled service key found. Session storage matched the design. No rooted-device runtime test | EV-SEC-07. Report Appendix D |
 | Secret handling | Tracked source and environment-file review | No tracked environment file. Client code uses the publishable key only. Service-role references are server or trusted-host code | EV-SEC-07 |
 
-The re-test sequence is important. The 10 October 2026 pass followed remediation of F-07 to F-12 and included a repeat ZAP authenticated scan. The 27 October 2026 re-audit found new web advisories after publication and closed them by moving Next.js to 16.4.3. The 6 November 2026 re-test repeated web and mobile static checks, tests and production audits. The current web audit and mobile audit both report zero entries.
+The re-test sequence is important. The 10 October 2026 pass followed remediation of F-07 to F-12 and included a repeat ZAP authenticated scan. The 27 October 2026 re-audit found new web advisories after publication and closed them by moving Next.js to 16.4.3. The 6 November 2026 re-test repeated web and mobile static checks, tests and production audits. The 16 November 2026 re-run repeated the checks and added the IoT suite and the current production build. The web production audit reports zero entries. The mobile audit reports one moderate transitive advisory.
 
-A zero-advisory audit is a point-in-time result. It does not close the recurring monitoring recommendation R-03. The mobile Expo Doctor mismatch is recorded rather than treated as a pass. The web production build is recorded at `3866309`, after earlier low-memory attempts.
+A zero-advisory audit is a point-in-time result. It does not close the recurring monitoring recommendation R-03. The 16 November mobile finding demonstrates why that recommendation remains open. The mobile Expo Doctor mismatch is recorded rather than treated as a pass. The web production build is recorded at `d468ffa`, after earlier low-memory attempts.
 
 ### 8.3 Data protection boundaries
 
@@ -585,16 +584,16 @@ The following table carries forward the R-01 to R-10 register entries. Final dis
 
 | ID | Recommendation | Evidence position | Proposed release action | Recorded owner |
 |---|---|---|---|---|
-| R-01 | Repeat ZAP anonymous and authenticated scans | Historical scan available. Final retest absent | Execute SEC-03 and retain remaining findings | Badrul |
-| R-02 | MASVS L1 development-build checks | Historical code and bundle review. New functional phone trials exist | Map actual checks to MASVS. Functional trials alone do not complete it | Basill |
-| R-03 | Recurring dependency scanning | 6 November audits report zero entries on both production trees. No recurring scan is established | Confirm repository configuration or explicitly defer with owner and date | Nathan |
-| R-04 | Signed Android release and distribution archive | Expo Go evidence is available | Decide whether a development or release build is required for offline launch and handover. Record any deferral | Basill |
-| R-05 | RLS rerun after migrations | Dated 10 October run has 19 PASS and 6 SKIP | Rerun on final migration state and preserve full output | Maqeel |
-| R-06 | Automated anonymous mutation regression | Manual and scripted permission evidence exists | Identify what is repeatable and what remains manual. Decide automation scope | Badrul |
-| R-07 | Bucket MIME and size restrictions | Open in the register | Implement and verify, or record accepted limits and residual exposure | Maqeel |
-| R-08 | Session expiry and reauthentication for role changes | Open in the register | Review or document explicit deferral. Do not imply current enforcement | Nathan |
-| R-09 | Nonce-based CSP | Inline script and style allowances remain | Test a compatible policy or retain a justified prototype limitation | Badrul |
-| R-10 | Remove public `qr_code` selection | Data scrubbed. Field removal remains open | Verify actual public response and record a minimisation decision | Badrul |
+| R-01 | Repeat ZAP anonymous and authenticated scans | Historical passive scan available. A reproducible procedure was added in `d50e573`. Final retest not run | Execute the procedure against the final web deployment and retain the report | Badrul |
+| R-02 | MASVS L1 development-build checks | 24 controls mapped at `f0c5585`. 12 CHECKED, 7 N/A, 2 DEFERRED, 0 GAP and 3 partial. Secure-store session handling is reflected | Obtain owner confirmation and retain the map | Basill |
+| R-03 | Recurring dependency scanning | No recurring scan is established. The 16 November mobile audit found one new moderate advisory | Configure recurring scanning or record an owned deferral | Nathan |
+| R-04 | Signed Android release and distribution archive | Expo Go is in use. No release build is configured | Decide whether a release build is required and record any deferral | Basill |
+| R-05 | RLS rerun after migrations | Full battery deferred. The tracked pgTAP battery has 41 assertions and per-change regression checks were run | Rerun on the final migration state and preserve the output | Maqeel |
+| R-06 | Automated anonymous mutation regression | Repeatable live suite added in `b92ff15`. Five checks passed against the live project with zero residue | Keep the suite gated from the default offline run and re-run it on the release candidate | Badrul |
+| R-07 | Bucket MIME and size restrictions | Caps applied live on 3 November. Content-sniff validation and GIF removal added in `80da6b4`. GIF rejected 415, JPEG accepted 200, delete path fixed | Confirm the cap values with the owner | Maqeel |
+| R-08 | Session expiry and reauthentication for role changes | Not implemented. Cookie and auto-refresh session handling only | Implement or document an explicit deferral. Do not imply enforcement | Nathan |
+| R-09 | Nonce-based CSP | Inline script and style allowances remain. Residual risk assessed as theoretical with no user-controlled inline script | Retain the justified prototype limitation or test a compatible policy | Badrul |
+| R-10 | Remove public `qr_code` selection | Public list omits `qr_code`, detail query retains it for QR deep links. Unit test recorded. Live re-check awaited | Re-run the gated live public-read check | Badrul |
 
 F-06's dependency component has a newer zero-advisory record. Recurring scanning remains a separate R-03 concern. Updating a package does not by itself close the monitoring recommendation.
 
@@ -619,8 +618,10 @@ Until this record exists, credential exposure remains unresolved. A clean depend
 | [Header capture](../../Testing/Security/evidence/S2-SEC-03-headers-2026-10-09.md) | The tested build emitted the expected security headers | That the demonstrated release emits the same headers |
 | [Anonymous probes](../../Testing/Security/evidence/S2-SEC-03-anon-probes-2026-10-10.md) | No usable anonymous write path was demonstrated in the probes | That every role and storage path was exercised |
 | [Private address resolution](../../Testing/Security/evidence/S2-SEC-03-private-ip-2026-10-10.md) | The disclosed test value was scrubbed and the pages were rechecked | That the field was removed from the public query |
-| [Web audit](../../Testing/Security/evidence/S2-AUD-WEB-2026-11-06.json) and [mobile audit](../../Testing/Security/evidence/S2-AUD-MOB-2026-11-06.json) | Both production trees had zero known advisories on 6 November 2026 | That future advisories cannot appear or that a recurring scan exists |
+| [Web audit](../../Testing/Security/evidence/S2-AUD-WEB-2026-11-06.json) and [mobile audit](../../Testing/Security/evidence/S2-AUD-MOB-2026-11-06.json) | Both production trees had zero known advisories on 6 November 2026 | That future advisories cannot appear or that a recurring scan exists. A 16 November mobile audit found one moderate transitive advisory |
 | [Check log](../../Testing/Security/evidence/S2-CHECKS-2026-11-06.md) | Static checks, tests, dependency audits and the production build passed. The Expo limitation is recorded | That the hosted deployment or full device release is complete |
+| [16 November check log](../../Testing/Security/evidence/S2-CHECKS-2026-11-16.md) | Local type checks, lint, 56 web tests, 30 mobile tests, 36 IoT tests, the web build, the current audits and Expo Doctor were re-run at `d468ffa` | That hosted runtime, physical devices or a final release candidate were tested |
+| [Security close-out dispositions](../../Testing/Evidence/issue-53/security_closeout_dispositions.txt) | R-01 to R-10 have recorded statuses, evidence and remaining owner actions | That every recommendation is closed or its residual risk accepted. R-01 and R-05 retests remain open |
 | [Secret handling check](../../Testing/Security/evidence/S2-SEC-05-bundle-secret-2026-11-06.md) | No tracked environment file or client-side service key was found | That a native binary or final bundle is clean |
 
 The security position is therefore partly verified and partly outstanding. It is not accurate to describe the system as fully penetration tested, certified compliant or free of risk. It is accurate to describe the core access controls as implemented, the historical application findings as remediated and the remaining release checks as listed above.
@@ -631,7 +632,7 @@ The security position is therefore partly verified and partly outstanding. It is
 
 | Gate | Required evidence | Status at cut-off |
 |---|---|---|
-| Integration | Reviewed PRs integrated, migration state recorded and combined regression executed | PRs #63 to #65 integrated. PR #62 and documentation PR #60 remain open. Migration state and combined release checks outstanding |
+| Integration | Reviewed PRs integrated, migration state recorded and combined regression executed | PRs #63 to #65 integrated. PRs #62, #75 and documentation PR #60 remain open or undecided. Migration state and combined release checks outstanding |
 | Functional acceptance | Core user workflows traced on the final revision, including failure recovery | Earlier trials available, final release verification outstanding |
 | Physical IoT | Wiring, calibration, correlated readings/alerts and interruption trial | Outstanding |
 | Measured evaluation | PERF-01, REL-01 and UX-01 outcomes with raw records | Outstanding |
@@ -756,7 +757,7 @@ Plantiful now has recorded evidence of offline record delivery, review feedback,
 | EV-01 | Offline persistence, sync, duplicate checks and approval return | [Verification record](../../Testing/Prototype_Verification.md), [11 screenshots](../../Testing/Evidence/issue-23/) | Supply labelled copies and the record IDs. Preserve three-offline-record and Expo Go restart qualifications |
 | EV-02 | Conflict, merge and officer banner | [Verification record](../../Testing/Prototype_Verification.md), [banner capture](../../Testing/Evidence/issue-39/01_officer_conflict_banner.png) | Retain server-query/probe outputs referenced by the narrative. State phone plus scripted client |
 | EV-03 | Dependency changes and SDK regression | Verification record, `9a4d99b`, [issue #43](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/43) | Attach November raw audit/build outputs. October audit files are historical |
-| EV-04 | Review, publication and RLS restrictions | [Issue #44](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/44), [issue #16](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/16), [verification script](../../../backend/scripts/verify_public_write_block.sql) | Save the executed output and deployed SQL state. Script source alone is not a result |
+| EV-04 | Review, publication and RLS restrictions | [Issue #44](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/44), [issue #16](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/16), [verification script](../../../backend/supabase/verification/verify_public_write_block.sql) | Save the executed output and deployed SQL state. Script source alone is not a result |
 | EV-05 | Species mutation feedback | [Issue #50](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/50) | Retain UI/probe captures for the four reported cases |
 | EV-06 | Android location recovery | [Issue #51](https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful/issues/51), `7c10326` | Retain permission-state screenshots and device details |
 | EV-07 | Historical security assessment | [Security evidence guide](../../Security/04_Evidence_Guide.md), local `Docs/Security/Evidence/` | Separate October history from release reassessment. Include redacted files in the actual package |
@@ -778,14 +779,14 @@ Plantiful now has recorded evidence of offline record delivery, review feedback,
 The team's 36/40 target corresponds to 90% of these product marks. It is a target, not a predicted or guaranteed award. Writing quality cannot replace missing test or participant results.
 
 - [x] Integrate PRs #63 to #65 and rerun the combined IoT suite.
-- [ ] Review and integrate or explicitly exclude PRs #60 and #62, with reasons.
+- [ ] Review and integrate or explicitly exclude PRs #60, #62 and #75, with reasons.
 - [ ] Record the release commit, dependency lockfiles and database migration state.
 - [ ] Run combined-release checks and attach actual output rather than predicted test totals.
 - [ ] Confirm credential remediation and legitimate-service recovery.
 - [ ] Complete physical wiring, calibration, alert and interruption evidence.
 - [ ] Complete PERF-01, REL-01 and UX-01 with pre-agreed methods.
 - [ ] Verify interrupted photo upload, final rejection/resubmission and actual report exports.
-- [ ] Complete SEC-01 to SEC-03 and decide every recommendation disposition.
+- [ ] Run the final SEC-01 to SEC-03 retests and obtain owner sign-off on the R-01 to R-10 dispositions.
 - [ ] Measure the agreed coverage scope and report any missed target honestly.
 - [ ] Render D-01 to D-07 and inspect labels, captions and page-scale readability.
 - [ ] Include user instructions and reviewed SQL sufficient to reproduce the demo.

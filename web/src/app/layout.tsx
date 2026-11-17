@@ -42,6 +42,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/explore", label: "Explore" },
+    { href: "/learn", label: "Learn" },
     { href: "/species", label: "Species" },
     { href: "/map", label: "Map" },
     { href: "/records", label: "Records" },
@@ -49,10 +50,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       ? [
           { href: "/approvals", label: "Approvals" },
           { href: "/reports", label: "Reports" },
-          { href: "/alerts", label: "Alerts" },
+          { href: "/alerts", label: "Monitoring" },
         ]
       : []),
-    ...(admin ? [{ href: "/users", label: "Users" }] : []),
+    ...(admin
+      ? [
+          { href: "/users", label: "Users" },
+          { href: "/admin/settings", label: "Admin settings" },
+        ]
+      : []),
   ];
 
   return (
@@ -111,6 +117,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   <nav className="footer-col" aria-label="Browse">
                     <h3>Browse</h3>
                     <Link href="/explore">Plant guide</Link>
+                    <Link href="/learn">Learning guide</Link>
                     <Link href="/map">Species map</Link>
                     <Link href="/records">Field records</Link>
                   </nav>

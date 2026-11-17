@@ -8,6 +8,7 @@ This is the single documentation index for Plantiful. It replaces the separate R
 |---|---|---|
 | Sprint 2 | Active audit, backlog, testing plan, diagrams and sign-off preparation for 6 November 2026 | [Sprint 2](#sprint-2) |
 | Sprint 1 | Revised Sprint 1 markdown and draft figure sources. Not the submitted PDF | [Sprint 1](#sprint-1) |
+| Archive | Historical notes, design references and superseded submission material | [Archive](#archive) |
 | Security | Local-only plan, assessment report, findings register and evidence guide | [Security](#security-and-data-protection) |
 | Diagrams | D-02 physical IoT wiring image and editable source | [D-02 physical build](#d-02-physical-build) |
 | Testing | Historical prototype verification and pending integrated trials | [Testing, design and guides](#testing-design-and-guides) |
@@ -60,9 +61,13 @@ Update the work package register in section 3 when work starts, is blocked, or h
 | [Sprint 1 revised report](Reports/Sprint1/Sprint_Report_1.md) | Revised markdown with figure placeholders. Not the exact submitted PDF |
 | [Figure sources](Reports/Sprint1/diagrams/FIGURES.md) | Draft Mermaid material and illustration guidance for the revised report |
 
-The submitted PDF remains at `Basilagas21/Docs and templates/sprint1.pdf`. Sprint 1 sign-off was completed according to the team.
+The submitted PDF remains at `Archive/Basilagas21/Docs and templates/sprint1.pdf`. Sprint 1 sign-off was completed according to the team.
 
 These files retain the Sprint 1 content. Their claims and figure logic need checking before reuse in Sprint 2. In particular, the draft timeline uses indicative dates and the alert diagram needs to show independent rule checks.
+
+## Archive
+
+`Archive/Basilagas21/` holds historical working notes, app design references, the original planning documents and the submitted Sprint 1 PDF. Treat it as reference material, not current delivery evidence.
 
 ## Security and data protection
 
@@ -238,6 +243,7 @@ The verification document is not proof that later builds behave the same way. Re
 | `Assets/UML_Sequence_Botanist.png` | Existing botanist sequence illustration |
 | `Assets/UML_Sequence_ConservationOfficer.png` | Existing officer sequence illustration |
 | `Assets/UML_Sequence_Admin.png` | Existing administrator sequence illustration |
+| `Assets/QR-tag-samples/` | Sample QR label PNGs for SFC-0001 to SFC-0004 |
 
 These images are existing design assets, not newly verified Sprint 2 diagrams. Compare them with the current implementation before using them in the final report. Keep new Sprint 2 figure sources and exports with the Sprint 2 workspace.
 
@@ -288,3 +294,12 @@ The following paths were reorganised on 27 October 2026. The per-folder README f
 | `Templates/README.md` | `README.md`, Templates |
 
 Existing GitHub issue text and past submissions may still cite the old paths. Use this table to locate them. Repository navigation links have been updated. The shared proposal keeps its location. The security material now lives in the local-only security pack.
+
+The following paths were reorganised on 17 November 2026.
+
+| Previous path | Current path |
+|---|---|
+| `Basilagas21/` | `Docs/Archive/Basilagas21/` |
+| `QR tag samples/` | `Docs/Assets/QR-tag-samples/` |
+| `web/alias-register.mjs` | `web/scripts/alias-register.mjs` |
+| `web/alias-resolve.mjs` | `web/scripts/alias-resolve.mjs` |

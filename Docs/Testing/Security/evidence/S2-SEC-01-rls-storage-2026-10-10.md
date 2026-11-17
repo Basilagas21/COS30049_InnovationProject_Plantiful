@@ -2,7 +2,7 @@
 
 Date: 10 October 2026
 
-Source: Supabase SQL Editor re-run of `backend/scripts/verify_public_write_block.sql` and `backend/scripts/verify_record_photo_write.sql`. Raw output is retained locally in `Docs/Security/Evidence/checks/sql-verification-output.txt`.
+Source: Supabase SQL Editor re-run of `backend/supabase/verification/verify_public_write_block.sql` and `backend/supabase/verification/verify_record_photo_write.sql`. Raw output is retained locally in `Docs/Security/Evidence/checks/sql-verification-output.txt`.
 
 Result: both script verdicts returned PASS. The captured output contained 19 PASS lines and 6 SKIP lines across the two scripts.
 

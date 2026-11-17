@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { isSupabaseConfigured, useSampleData } from "@/lib/supabase/env";
 
 export type SpeciesListItem = {
   id: string;
@@ -186,11 +186,12 @@ function toDetail(row: {
 export async function fetchSpecies(options?: {
   publishedOnly?: boolean;
 }): Promise<SpeciesListItem[]> {
-  if (!isSupabaseConfigured) {
+  if (useSampleData) {
     return options?.publishedOnly
       ? mockSpecies.filter((s) => s.isPublished)
       : mockSpecies;
   }
+  if (!isSupabaseConfigured) return [];
 
   const supabase = await createClient();
 
@@ -213,10 +214,11 @@ export async function fetchSpecies(options?: {
 }
 
 export async function fetchSpeciesById(id: string): Promise<SpeciesDetail | null> {
-  if (!isSupabaseConfigured) {
+  if (useSampleData) {
     const base = mockSpecies.find((s) => s.id === id);
     return base ? { ...base, photos: [] } : null;
   }
+  if (!isSupabaseConfigured) return null;
 
   const supabase = await createClient();
 

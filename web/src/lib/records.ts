@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { isAuthenticated } from "@/lib/auth";
+import { isSupabaseConfigured, useSampleData } from "@/lib/supabase/env";
 
 export type RecordListItem = {
   id: string;
@@ -280,8 +281,15 @@ export type RecordsResult = {
 };
 
 export async function fetchRecords(): Promise<RecordsResult> {
-  if (!isSupabaseConfigured) {
+  if (useSampleData) {
     return { records: mockRecords, error: null, usingSampleData: true };
+  }
+  if (!isSupabaseConfigured) {
+    return {
+      records: [],
+      error: "Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.",
+      usingSampleData: false,
+    };
   }
 
   const supabase = await createClient();
@@ -304,13 +312,21 @@ export async function fetchRecords(): Promise<RecordsResult> {
       usingSampleData: false,
     };
   }
-  return { records: data.map(toListItem), error: null, usingSampleData: false };
+
+  const mapped = data.map(toListItem);
+  const authenticated = await isAuthenticated();
+  return {
+    records: authenticated ? mapped : mapped.filter((record) => record.isPublished),
+    error: null,
+    usingSampleData: false,
+  };
 }
 
 export async function fetchRecordById(id: string): Promise<RecordDetail | null> {
-  if (!isSupabaseConfigured) {
+  if (useSampleData) {
     return mockRecords.find((r) => r.id === id) ?? null;
   }
+  if (!isSupabaseConfigured) return null;
 
   const supabase = await createClient();
 
@@ -329,7 +345,11 @@ export async function fetchRecordById(id: string): Promise<RecordDetail | null> 
   if (error) {
     throw new Error(`Could not load record: ${error.message || "could not reach Supabase"}`);
   }
-  return data ? toListItem(data) : null;
+  if (!data) return null;
+
+  const record = toListItem(data);
+  if (!(await isAuthenticated()) && !record.isPublished) return null;
+  return record;
 }
 
 export type ConflictReport = {

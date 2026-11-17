@@ -829,7 +829,7 @@ This section lists what the team produced during the sprint.
 ### 9.2 Documentation
 
 - Security Assessment Report (`Docs/Security/02_Assessment_Report.md`, v1.2). A full SSDLC-aligned assessment covering static analysis, dependency scanning, row-level security verification, a manual secure-code review, and two OWASP ZAP dynamic passes. It closes out with a twelve-item findings register. Current status is tracked in `Docs/Security/03_Findings_Register.md`.
-- RLS verification script (`backend/scripts/verify_public_write_block.sql`). A repeatable, idempotent SQL test proving the public write-block guarantee. All 10 checks PASS.
+- RLS verification script (`backend/supabase/verification/verify_public_write_block.sql`). A repeatable, idempotent SQL test proving the public write-block guarantee. All 10 checks PASS.
 - System Proposal Report (v1.6). The project's full design and planning document. It covers the problem statement, solution analysis, architecture, risk register, and the Sprint #1/#2 backlog this report is measured against.
 - Component READMEs for the web app, mobile app, backend, and IoT service. Each covers setup and key decisions.
 

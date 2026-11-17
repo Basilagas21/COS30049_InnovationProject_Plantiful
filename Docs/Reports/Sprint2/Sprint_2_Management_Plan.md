@@ -48,7 +48,7 @@ The plan supports four purposes.
 
 The working tree was clean at the start of the audit. The latest commit was `64e69b4`, dated 27 October, for document organisation and SQL updates. The preceding monitoring commits are dated 16 October. Their existence alone does not establish that they are Sprint 2 work.
 
-Keep three artefacts distinct. The submitted `Basilagas21/Docs and templates/sprint1.pdf` is the historical submission. `Docs/Reports/Sprint1/Sprint_Report_1.md` is a revised document. The current repository is the implementation baseline. Confirm the team's Sprint 1 cutoff before attributing changes to Sprint 2.
+Keep three artefacts distinct. The submitted `Docs/Archive/Basilagas21/Docs and templates/sprint1.pdf` is the historical submission. `Docs/Reports/Sprint1/Sprint_Report_1.md` is a revised document. The current repository is the implementation baseline. Confirm the team's Sprint 1 cutoff before attributing changes to Sprint 2.
 
 The earlier chat estimate of 55/100 is not an awarded mark. PDF text extraction does not establish the absence or visual quality of embedded images. This plan uses the four product criteria rather than penalising the sprint report for proposal sections.
 

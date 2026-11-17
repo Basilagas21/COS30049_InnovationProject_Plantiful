@@ -3,6 +3,7 @@ import { fetchRecords } from "@/lib/records";
 import { fetchMapPoints } from "@/lib/map";
 import { SpeciesMap } from "@/components/species-map";
 import { fetchSpeciesById } from "@/lib/species";
+import { isAuthenticated } from "@/lib/auth";
 
 export default async function MapPage({
   searchParams,
@@ -15,6 +16,7 @@ export default async function MapPage({
 
   const { records, error, usingSampleData } = await fetchRecords();
   const points = await fetchMapPoints(speciesId);
+  const authenticated = await isAuthenticated();
   const located = records.filter((r) => r.gpsLat != null && r.gpsLng != null);
   const speciesCount = new Set(records.map((r) => r.scientificName)).size;
   const pendingCount = records.filter((r) => r.approvalStatus === "pending").length;
@@ -57,7 +59,11 @@ export default async function MapPage({
             Located observations
           </div>
           {located.length === 0 ? (
-            <p className="px-5 py-6 text-sm text-moss">No observations with GPS yet.</p>
+            <p className="px-5 py-6 text-sm text-moss">
+              {authenticated
+                ? "No observations with GPS yet."
+                : "No published observations with GPS yet."}
+            </p>
           ) : (
             <ul className="divide-y divide-pine/10">
               {located.map((r) => (
@@ -94,10 +100,12 @@ export default async function MapPage({
                 <dt className="text-moss">With GPS</dt>
                 <dd className="font-semibold text-pine">{located.length}</dd>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-moss">Awaiting review</dt>
-                <dd className="font-semibold text-pine">{pendingCount}</dd>
-              </div>
+              {authenticated && (
+                <div className="flex justify-between">
+                  <dt className="text-moss">Awaiting review</dt>
+                  <dd className="font-semibold text-pine">{pendingCount}</dd>
+                </div>
+              )}
             </dl>
           </div>
         </aside>

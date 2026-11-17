@@ -21,6 +21,17 @@ export async function getCurrentRole(): Promise<UserRole | null> {
   return (data?.role as UserRole | undefined) ?? null;
 }
 
+export async function isAuthenticated(): Promise<boolean> {
+  if (!isSupabaseConfigured) return false;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return Boolean(user);
+}
+
 export async function isOfficer(): Promise<boolean> {
   const role = await getCurrentRole();
   return role === "conservation_officer" || role === "admin";

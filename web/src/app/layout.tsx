@@ -38,7 +38,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           { href: "/alerts", label: "Monitoring" },
         ]
       : []),
-    ...(admin ? [{ href: "/users", label: "Users" }] : []),
+    ...(admin
+      ? [
+          { href: "/users", label: "Users" },
+          { href: "/admin/settings", label: "Admin settings" },
+        ]
+      : []),
   ];
 
   return (

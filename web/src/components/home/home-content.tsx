@@ -485,16 +485,14 @@ function SceneCanopy() {
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
       <defs>
         <radialGradient id="sc4-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".18" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".07" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
-        <linearGradient id="sc4-canopy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0e2c1d" stopOpacity="0" /><stop offset=".55" stopColor="#0e2c1d" stopOpacity=".85" /><stop offset="1" stopColor="#0e2c1d" stopOpacity=".85" /></linearGradient>
       </defs>
       <ellipse className="sc-glow" cx="220" cy="280" rx="200" ry="235" fill="url(#sc4-glow)" opacity=".55" />
-      <path d="M0 0 H440 V40 C400 66 360 58 320 78 C280 100 250 140 220 150 C190 140 160 100 120 78 C80 58 40 66 0 40 Z" fill="url(#sc4-canopy)" />
-      <g fill="#123a28" opacity=".85">
-        <path d="M70 62 C82 88 80 116 64 134 C52 110 56 82 70 62 Z" />
-        <path d="M150 70 C164 96 162 124 146 142 C134 118 138 92 150 70 Z" />
-        <path d="M220 72 C236 100 236 132 220 156 C204 132 204 100 220 72 Z" />
-        <path d="M290 70 C304 96 302 124 286 142 C274 118 278 92 290 70 Z" />
-        <path d="M370 62 C382 88 380 116 364 134 C352 110 356 82 370 62 Z" />
+      <g fill="#2f6f52" opacity=".6">
+        <path d="M70 60 C84 92 82 128 64 150 C50 122 54 86 70 60 Z" />
+        <path d="M150 66 C166 100 164 140 146 166 C132 134 136 96 150 66 Z" />
+        <path d="M220 68 C238 104 238 148 220 178 C202 148 202 104 220 68 Z" />
+        <path d="M290 66 C306 100 304 140 286 166 C272 134 276 96 290 66 Z" />
+        <path d="M370 60 C384 92 382 128 364 150 C350 122 354 86 370 60 Z" />
       </g>
       <Soil cx={220} cy={472} rx={90} />
       <path d="M220 472 C217 426 223 376 220 326 C217 280 223 248 220 214" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
@@ -662,8 +660,10 @@ export function HomeContent({
               </div>
             </div>
             <div className="home-chain-art" aria-hidden="true">
-              <SceneSeed />
-              <ChainScenes />
+              <div className="home-chain-art-inner">
+                <SceneSeed />
+                <ChainScenes />
+              </div>
             </div>
           </div>
         </div>

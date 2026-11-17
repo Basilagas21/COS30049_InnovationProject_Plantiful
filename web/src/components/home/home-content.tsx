@@ -406,33 +406,38 @@ function SceneSync() {
         <radialGradient id="sc2-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
       <ellipse cx="220" cy="260" rx="205" ry="235" fill="url(#sc2-glow)" opacity=".55" />
-      <g transform="translate(220 260) scale(1.12) translate(-225 -270)">
-      <DeviceBody x={40} y={180} />
-      <rect x="60" y="206" width="56" height="66" rx="6" fill="#0e2c1d" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1.5" />
-      <QrGlyph x={68} y={214} s={40} ink="#6fd6b0" paper="#0e2c1d" />
-      <circle cx="132" cy="222" r="6" fill="#e3ef26" />
-      <path d="M62 292 h72" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
-      <path d="M62 306 h52" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
-      <path d="M118 330 l14 -14 M132 316 v10 M132 316 h-10" stroke="#e3ef26" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <g transform="translate(220 260) scale(1.12) translate(-229 -260)">
+      <DeviceBody x={40} y={160} />
+      <circle cx="136" cy="190" r="4" fill="#e3ef26" />
+      <rect x="72" y="194" width="56" height="56" rx="6" fill="#0e2c1d" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1.5" />
+      <QrGlyph x={83} y={205} s={34} ink="#6fd6b0" paper="#0e2c1d" />
+      <path d="M70 264 h60" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
+      <path d="M78 278 h44" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
+      <path d="M126 324 L138 312 M130 312 H138 V320" stroke="#e3ef26" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
       <g stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" fill="none">
-        <path d="M168 245 A12 12 0 0 1 168 265" opacity=".85" />
-        <path d="M176 238 A22 22 0 0 1 176 272" opacity=".55" />
-        <path d="M184 231 A32 32 0 0 1 184 279" opacity=".3" />
+        <path d="M166 250 A10 10 0 0 1 166 270" opacity=".85" />
+        <path d="M170 242 A18 18 0 0 1 170 278" opacity=".55" />
+        <path d="M174 234 A26 26 0 0 1 174 286" opacity=".3" />
       </g>
-      <path d="M190 255 H300" stroke="#6fd6b0" strokeWidth="1.5" strokeDasharray="2 9" strokeLinecap="round" opacity=".3" />
-      <circle className="sc-packet" style={{ "--pk": 0 } as CSSProperties} cx="190" cy="255" r="6" fill="#e3ef26" />
-      <circle className="sc-packet" style={{ "--pk": 1 } as CSSProperties} cx="190" cy="255" r="6" fill="#e3ef26" />
-      <circle className="sc-packet" style={{ "--pk": 2 } as CSSProperties} cx="190" cy="255" r="6" fill="#e3ef26" />
-      <ellipse cx="355" cy="384" rx="80" ry="11" fill="#010806" opacity=".45" />
-      {[0, 1, 2].map((i) => (
-        <g key={i}>
-          <rect x="300" y={160 + i * 72} width="110" height="60" rx="10" fill="#076653" />
-          <rect x="300" y={160 + i * 72} width="110" height="60" rx="10" fill="none" stroke="#6fd6b0" strokeOpacity=".3" strokeWidth="1.5" />
-          <path d={`M308 ${164 + i * 72} H402`} stroke="#e2fbce" strokeOpacity=".4" strokeWidth="1.5" strokeLinecap="round" />
-          <circle cx="318" cy={190 + i * 72} r="4.5" fill={i === 1 ? "#e3ef26" : "#6fd6b0"} />
-          <path d={`M334 ${190 + i * 72} h56`} stroke="#e2fbce" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
-        </g>
-      ))}
+      <path d="M212 260 H300" stroke="#6fd6b0" strokeWidth="1.5" strokeDasharray="2 9" strokeLinecap="round" opacity=".3" />
+      <circle className="sc-packet" style={{ "--pk": 0 } as CSSProperties} cx="212" cy="260" r="6" fill="#e3ef26" />
+      <circle className="sc-packet" style={{ "--pk": 1 } as CSSProperties} cx="212" cy="260" r="6" fill="#e3ef26" />
+      <circle className="sc-packet" style={{ "--pk": 2 } as CSSProperties} cx="212" cy="260" r="6" fill="#e3ef26" />
+      <ellipse cx="359" cy="342" rx="82" ry="11" fill="#010806" opacity=".45" />
+      {[0, 1, 2].map((i) => {
+        const y = 186 + i * 52;
+        return (
+          <g key={i}>
+            <path d={`M300 ${y} L318 ${y - 11} L418 ${y - 11} L400 ${y} Z`} fill="#0a8a6e" />
+            <path d={`M400 ${y} L418 ${y - 11} L418 ${y + 33} L400 ${y + 44} Z`} fill="#054a3c" />
+            <rect x="300" y={y} width="100" height="44" rx="4" fill="#076653" />
+            <rect x="300" y={y} width="100" height="44" rx="4" fill="none" stroke="#6fd6b0" strokeOpacity=".3" strokeWidth="1.5" />
+            <path d={`M308 ${y + 4} H392`} stroke="#e2fbce" strokeOpacity=".4" strokeWidth="1.5" strokeLinecap="round" />
+            <circle cx="316" cy={y + 22} r="4.5" fill={i === 1 ? "#e3ef26" : "#6fd6b0"} />
+            <path d={`M332 ${y + 22} h56`} stroke="#e2fbce" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
+          </g>
+        );
+      })}
       </g>
     </svg>
   );

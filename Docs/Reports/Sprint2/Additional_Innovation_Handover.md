@@ -53,5 +53,5 @@ No live provider accuracy, participant improvement or scalability result has bee
 - [Implementation and setup](../../Guides/AI_Field_Assist.md)
 - [Evaluation protocol](../../Testing/Additional_Innovation/README.md)
 - [Development verification](../../Testing/Additional_Innovation/Verification.md)
-- Migration `backend/migrations/013_field_assist.sql`
+- Migration `backend/supabase/migrations/013_field_assist.sql`
 - Main GitHub tracking issue #84

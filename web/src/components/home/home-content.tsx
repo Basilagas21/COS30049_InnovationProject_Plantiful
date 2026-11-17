@@ -285,7 +285,7 @@ function Printer({ x, y }: { x: number; y: number }) {
   return (
     <g>
       <ellipse cx={x + 70} cy={y + 84} rx={74} ry={9} fill="#010806" opacity=".4" />
-      <rect x={x + 136} y={y + 8} width={4} height={62} rx={2} fill="#082018" />
+      <rect x={x + 136} y={y + 18} width={4} height={40} rx={2} fill="#082018" />
       <rect x={x} y={y} width={140} height={76} rx={14} fill="#0c342c" />
       <path d={`M${x + 18} ${y + 3.5} H${x + 122}`} stroke="#6fd6b0" strokeOpacity=".5" strokeWidth={2} strokeLinecap="round" />
       <circle cx={x + 36} cy={y + 36} r={16} fill="#071c14" stroke="#6fd6b0" strokeWidth={2} />
@@ -325,16 +325,20 @@ function SceneTag() {
         <radialGradient id="sc0-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".14" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
       <ellipse cx="220" cy="260" rx="200" ry="235" fill="url(#sc0-glow)" opacity=".55" />
-      <g transform="translate(220 260) scale(1) translate(-220 -291)">
+      <g transform="translate(220 260) scale(0.92) translate(-220 -291)">
       <Printer x={150} y={60} />
       <Soil cx={220} cy={472} rx={118} />
       <path d="M220 472 C217 428 223 380 220 330 C218 280 222 240 220 204" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
-      <Leaf x={220} y={292} s={1.25} angle={-7} />
-      <Leaf x={220} y={252} s={1.25} flip angle={7} />
-      <Leaf x={220} y={226} s={0.85} flip angle={-10} />
-      <path d="M220 206 C214 200 211 192 213 184 C218 190 220 198 220 206 Z" fill="#479e65" />
-      <path d="M220 206 C226 200 229 192 227 184 C222 190 220 198 220 206 Z" fill="#479e65" />
-      <path className="sc-bud" d="M220 204 C213 194 213 182 220 173 C227 182 227 194 220 204 Z" fill="#e3ef26" />
+      <path d="M220 322 q11 -3 17 -9" stroke="#a0bd77" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <Leaf x={237} y={313} s={1.1} angle={6} />
+      <path d="M220 280 q-11 -3 -17 -9" stroke="#a0bd77" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <Leaf x={203} y={271} s={1.1} flip angle={-6} />
+      <path d="M220 242 q10 -3 15 -8" stroke="#a0bd77" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      <Leaf x={235} y={234} s={0.82} angle={9} />
+      <path d="M220 208 C210 202 203 192 205 181 C214 184 219 194 220 203 Z" fill="#479e65" />
+      <path d="M220 208 C230 203 236 195 234 186 C226 188 221 196 220 204 Z" fill="#3f8f5a" />
+      <path className="sc-bud" d="M220 210 C212 204 210 193 215 184 C217 180 223 180 225 184 C230 193 228 204 220 210 Z" fill="#5aa870" />
+      <circle cx="220" cy="183" r="2.2" fill="#e3ef26" />
       <g className="sc-tag"><PlantTag x={185} y={138} s={70} /></g>
       </g>
     </svg>

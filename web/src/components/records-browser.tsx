@@ -9,6 +9,7 @@ import type { RecordListItem } from "@/lib/records";
 type Props = {
   records: RecordListItem[];
   officer: boolean;
+  visitor?: boolean;
 };
 
 type SortKey = "newest" | "oldest";
@@ -37,7 +38,7 @@ function rangeCutoff(range: RangeKey): number | null {
   return null;
 }
 
-export function RecordsBrowser({ records, officer }: Props) {
+export function RecordsBrowser({ records, officer, visitor = false }: Props) {
   const [query, setQuery] = useState("");
   // Scientific name of the picked species; the input shows the longer label.
   const [selected, setSelected] = useState<string | null>(null);
@@ -312,7 +313,16 @@ export function RecordsBrowser({ records, officer }: Props) {
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {visibleRecords.length === 0 && (
           <div className="col-span-full rounded-2xl border border-pine/10 bg-white px-5 py-10 text-center text-sm text-moss">
-            No records match the current filters.
+            <p className="font-semibold text-pine">
+              {records.length === 0 && visitor
+                ? "No published observations yet."
+                : "No records match the current filters."}
+            </p>
+            {records.length === 0 && visitor && (
+              <p className="mt-2">
+                Approved observations linked to a published species will appear here.
+              </p>
+            )}
           </div>
         )}
         {visibleRecords.map((record) => (

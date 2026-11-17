@@ -7,16 +7,27 @@ import type { SpeciesListItem } from "@/lib/species";
 type Props = {
   species: SpeciesListItem[];
   officer: boolean;
+  visitor?: boolean;
 };
 
-export function SpeciesBrowser({ species, officer }: Props) {
+const THREATENED_STATUSES = new Set([
+  "vulnerable",
+  "endangered",
+  "critically endangered",
+]);
+
+function isThreatened(status: string | null): boolean {
+  return status ? THREATENED_STATUSES.has(status.trim().toLowerCase()) : false;
+}
+
+export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
   const [query, setQuery] = useState("");
   const [threatenedOnly, setThreatenedOnly] = useState(false);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return species.filter((entry) => {
-      if (threatenedOnly && !entry.conservationStatus) return false;
+      if (threatenedOnly && !isThreatened(entry.conservationStatus)) return false;
       if (!q) return true;
       const haystack =
         `${entry.scientificName} ${entry.commonName ?? ""} ${entry.taxonomy ?? ""}`.toLowerCase();
@@ -25,9 +36,11 @@ export function SpeciesBrowser({ species, officer }: Props) {
   }, [species, query, threatenedOnly]);
 
   const threatenedCount = useMemo(
-    () => species.filter((s) => s.conservationStatus).length,
+    () => species.filter((s) => isThreatened(s.conservationStatus)).length,
     [species],
   );
+
+  const filtersActive = Boolean(query.trim()) || threatenedOnly;
 
   return (
     <>
@@ -53,13 +66,43 @@ export function SpeciesBrowser({ species, officer }: Props) {
             {threatenedCount}
           </span>
         </button>
+        {filtersActive && (
+          <button
+            type="button"
+            onClick={() => {
+              setQuery("");
+              setThreatenedOnly(false);
+            }}
+            className="inline-flex h-10 items-center rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse"
+          >
+            Clear filters
+          </button>
+        )}
         <span className="ml-auto text-sm text-moss">
           {visible.length} {visible.length === 1 ? "species" : "species"}
-          {query || threatenedOnly ? " filtered" : ""}
+          {filtersActive ? " filtered" : ""}
         </span>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {visible.length === 0 && (
+          <div className="col-span-full rounded-2xl border border-pine/10 bg-white px-5 py-10 text-center text-sm text-moss">
+            <p className="font-semibold text-pine">
+              {species.length === 0 && visitor
+                ? "No published species yet."
+                : species.length === 0
+                  ? "No species in the catalogue yet."
+                  : "No species match the current filters."}
+            </p>
+            <p className="mt-2">
+              {species.length === 0 && visitor
+                ? "Published species will appear here once a conservation officer approves a linked observation."
+                : species.length === 0
+                  ? "Officers can add the first species from the catalogue page."
+                  : "Try a different search term or clear the filters."}
+            </p>
+          </div>
+        )}
         {visible.map((entry) => (
           <div
             key={entry.id}

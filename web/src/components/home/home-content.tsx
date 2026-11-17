@@ -426,7 +426,6 @@ function SceneSync() {
       <path d="M300 186 L318 175 L418 175 L400 186 Z" fill="#0a8a6e" />
       <path d="M400 186 L418 175 L418 323 L400 334 Z" fill="#054a3c" />
       <rect x="300" y="186" width="100" height="148" fill="#076653" />
-      <rect x="300" y="186" width="100" height="148" fill="none" stroke="#6fd6b0" strokeOpacity=".3" strokeWidth="1.5" />
       <path d="M300 235 H400 M300 284 H400" stroke="#054a3c" strokeWidth="1.5" />
       <path d="M308 190 H392" stroke="#e2fbce" strokeOpacity=".4" strokeWidth="1.5" strokeLinecap="round" />
       <circle cx="316" cy="210" r="4.5" fill="#6fd6b0" />

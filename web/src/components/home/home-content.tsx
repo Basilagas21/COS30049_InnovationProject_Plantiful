@@ -408,36 +408,32 @@ function SceneSync() {
       <ellipse cx="220" cy="260" rx="205" ry="235" fill="url(#sc2-glow)" opacity=".55" />
       <g transform="translate(220 260) scale(1.12) translate(-229 -260)">
       <DeviceBody x={40} y={160} />
-      <circle cx="136" cy="190" r="4" fill="#e3ef26" />
       <rect x="72" y="194" width="56" height="56" rx="6" fill="#0e2c1d" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1.5" />
       <QrGlyph x={83} y={205} s={34} ink="#6fd6b0" paper="#0e2c1d" />
       <path d="M70 264 h60" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
       <path d="M78 278 h44" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
       <path d="M126 324 L138 312 M130 312 H138 V320" stroke="#e3ef26" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <circle cx="162" cy="260" r="3" fill="#6fd6b0" />
       <g stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" fill="none">
-        <path d="M166 250 A10 10 0 0 1 166 270" opacity=".85" />
-        <path d="M170 242 A18 18 0 0 1 170 278" opacity=".55" />
-        <path d="M174 234 A26 26 0 0 1 174 286" opacity=".3" />
+        <path d="M170 251 A12 12 0 0 1 170 269" opacity=".85" />
+        <path d="M176 246 A20 20 0 0 1 176 274" opacity=".55" />
+        <path d="M182 240 A28 28 0 0 1 182 280" opacity=".3" />
       </g>
       <path d="M212 260 H300" stroke="#6fd6b0" strokeWidth="1.5" strokeDasharray="2 9" strokeLinecap="round" opacity=".3" />
       <circle className="sc-packet" style={{ "--pk": 0 } as CSSProperties} cx="212" cy="260" r="6" fill="#e3ef26" />
       <circle className="sc-packet" style={{ "--pk": 1 } as CSSProperties} cx="212" cy="260" r="6" fill="#e3ef26" />
       <circle className="sc-packet" style={{ "--pk": 2 } as CSSProperties} cx="212" cy="260" r="6" fill="#e3ef26" />
-      <ellipse cx="359" cy="342" rx="82" ry="11" fill="#010806" opacity=".45" />
-      {[0, 1, 2].map((i) => {
-        const y = 186 + i * 52;
-        return (
-          <g key={i}>
-            <path d={`M300 ${y} L318 ${y - 11} L418 ${y - 11} L400 ${y} Z`} fill="#0a8a6e" />
-            <path d={`M400 ${y} L418 ${y - 11} L418 ${y + 33} L400 ${y + 44} Z`} fill="#054a3c" />
-            <rect x="300" y={y} width="100" height="44" rx="4" fill="#076653" />
-            <rect x="300" y={y} width="100" height="44" rx="4" fill="none" stroke="#6fd6b0" strokeOpacity=".3" strokeWidth="1.5" />
-            <path d={`M308 ${y + 4} H392`} stroke="#e2fbce" strokeOpacity=".4" strokeWidth="1.5" strokeLinecap="round" />
-            <circle cx="316" cy={y + 22} r="4.5" fill={i === 1 ? "#e3ef26" : "#6fd6b0"} />
-            <path d={`M332 ${y + 22} h56`} stroke="#e2fbce" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
-          </g>
-        );
-      })}
+      <ellipse cx="359" cy="340" rx="82" ry="11" fill="#010806" opacity=".45" />
+      <path d="M300 186 L318 175 L418 175 L400 186 Z" fill="#0a8a6e" />
+      <path d="M400 186 L418 175 L418 323 L400 334 Z" fill="#054a3c" />
+      <rect x="300" y="186" width="100" height="148" fill="#076653" />
+      <rect x="300" y="186" width="100" height="148" fill="none" stroke="#6fd6b0" strokeOpacity=".3" strokeWidth="1.5" />
+      <path d="M300 235 H400 M300 284 H400" stroke="#054a3c" strokeWidth="1.5" />
+      <path d="M308 190 H392" stroke="#e2fbce" strokeOpacity=".4" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="316" cy="210" r="4.5" fill="#6fd6b0" />
+      <circle cx="316" cy="259" r="4.5" fill="#e3ef26" />
+      <circle cx="316" cy="309" r="4.5" fill="#6fd6b0" />
+      <path d="M332 210 h56 M332 259 h56 M332 309 h56" stroke="#e2fbce" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
       </g>
     </svg>
   );

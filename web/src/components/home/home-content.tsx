@@ -361,20 +361,20 @@ function SceneRecord() {
       <path d="M130 212 C125 210 121 206 120 202 C124 204 128 208 130 212 Z" fill="#479e65" />
       <circle cx="130" cy="203" r="2.5" fill="#e3ef26" />
       <g stroke="#6fd6b0" strokeWidth="3" strokeLinecap="round">
-        <path className="sc-field" style={{ "--fi": 0 } as CSSProperties} d="M100 247 h60" />
-        <path className="sc-field" style={{ "--fi": 1 } as CSSProperties} d="M94 256 h72" />
-        <path className="sc-field" style={{ "--fi": 2 } as CSSProperties} d="M106 265 h48" />
+        <path className="sc-field" style={{ "--fi": 0 } as CSSProperties} d="M100 252 h60" />
+        <path className="sc-field" style={{ "--fi": 1 } as CSSProperties} d="M94 266 h72" />
+        <path className="sc-field" style={{ "--fi": 2 } as CSSProperties} d="M106 280 h48" />
       </g>
-      <path d="M95 280 c0 -6 9 -6 9 0 c0 4.5 -4.5 8 -4.5 8 c0 0 -4.5 -3.5 -4.5 -8 z" fill="#e3ef26" />
-      <path d="M109 280 h56" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".6" />
+      <path d="M95 293 c0 -6 9 -6 9 0 c0 4.5 -4.5 8 -4.5 8 c0 0 -4.5 -3.5 -4.5 -8 z" fill="#e3ef26" />
+      <path d="M109 294 h56" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".6" />
       <g fill="#6fd6b0" opacity=".5">
         {Array.from({ length: 8 }).map((_, k) => {
           const r = Math.floor(k / 4), c = k % 4;
-          return <rect key={k} x={97 + c * 18} y={297 + r * 17} width="13" height="8" rx="2" />;
+          return <rect key={k} x={97 + c * 18} y={308 + r * 12} width="13" height="8" rx="2" />;
         })}
       </g>
-      <rect x="151" y="314" width="13" height="8" rx="2" fill="#e3ef26" opacity=".85" />
-      <g className="sc-typing" fill="#e3ef26"><circle cx="120" cy="333" r="2.2" /><circle cx="130" cy="333" r="2.2" /><circle cx="140" cy="333" r="2.2" /></g>
+      <rect x="151" y="320" width="13" height="8" rx="2" fill="#e3ef26" opacity=".85" />
+      <g className="sc-typing" fill="#e3ef26"><circle cx="120" cy="336" r="2.2" /><circle cx="130" cy="336" r="2.2" /><circle cx="140" cy="336" r="2.2" /></g>
       <g transform="translate(0 -35)">
       <Soil cx={362} cy={468} rx={60} />
       <path d="M362 468 C360 436 364 410 362 378 C361 356 363 340 362 322" stroke="#a0bd77" strokeWidth="5" strokeLinecap="round" />

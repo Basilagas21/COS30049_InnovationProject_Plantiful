@@ -81,9 +81,9 @@ node --env-file=.env.local --import tsx scripts/field-assist-catalogue.ts
 
 ### Database
 
-Apply `backend/migrations/013_field_assist.sql` after the existing project schema. It creates the attempt, decision, guidance and alias tables, read policies, service-only mutation functions and private archive bucket. It does not replace existing observation approval or species-publication policies.
+Apply `backend/supabase/migrations/013_field_assist.sql` after the existing project schema. It creates the attempt, decision, guidance and alias tables, read policies, service-only mutation functions and private archive bucket. It does not replace existing observation approval or species-publication policies.
 
-The new migration directory is explicitly included in `.gitignore`. Existing ignored backend configuration and secrets remain ignored. Only the intended migration and tests are added to the deliverable.
+The backend SQL working tree remains local-only under the root `.gitignore`. Existing ignored backend configuration and secrets remain ignored.
 
 ### Web backend
 

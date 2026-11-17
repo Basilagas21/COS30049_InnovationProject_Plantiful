@@ -28,6 +28,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/explore", label: "Explore" },
+    { href: "/learn", label: "Learn" },
     { href: "/species", label: "Species" },
     { href: "/map", label: "Map" },
     { href: "/records", label: "Records" },

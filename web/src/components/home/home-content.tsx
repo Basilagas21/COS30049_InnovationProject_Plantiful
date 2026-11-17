@@ -210,7 +210,7 @@ function DeviceBody({ x, y }: { x: number; y: number }) {
   return (
     <g>
       <ellipse cx={x + 60} cy={y + 205} rx={62} ry={10} fill="#010806" opacity=".45" />
-      <rect x={x + 117} y={y + 8} width={4} height={186} rx={2} fill="#082018" />
+      <rect x={x + 116} y={y + 24} width={4} height={152} rx={2} fill="#082018" />
       <rect x={x} y={y} width={120} height={200} rx={20} fill="#0c342c" />
       <path d={`M${x + 22} ${y + 3} H${x + 98}`} stroke="#6fd6b0" strokeOpacity=".5" strokeWidth={2} strokeLinecap="round" />
       <rect x={x + 10} y={y + 16} width={100} height={158} rx={10} fill="#071c14" />
@@ -352,27 +352,29 @@ function SceneRecord() {
       </defs>
       <ellipse cx="220" cy="260" rx="205" ry="235" fill="url(#sc1-glow)" opacity=".55" />
       <g transform="translate(220 260) scale(1.2) translate(-246 -314)">
-      <path d="M190 250 L310 295" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="3 8" strokeLinecap="round" opacity=".5" />
+      <path d="M190 255 L334 377" stroke="#6fd6b0" strokeWidth="2" strokeDasharray="3 8" strokeLinecap="round" opacity=".5" />
       <DeviceBody x={70} y={170} />
       <rect x="90" y="196" width="80" height="42" rx="5" fill="#0e2c1d" stroke="#6fd6b0" strokeOpacity=".4" strokeWidth="1.5" />
-      <path d="M130 232 C129 222 131 214 130 206" stroke="#a0bd77" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M130 220 C122 218 116 212 115 205 C122 207 128 212 130 220 Z" fill="#479e65" />
-      <path d="M130 214 C138 212 144 206 145 199 C138 201 132 206 130 214 Z" fill="#479e65" />
+      <path d="M130 234 C129 226 131 216 130 206" stroke="#a0bd77" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M130 230 C124 228 119 224 118 219 C123 221 127 225 130 230 Z" fill="#479e65" />
+      <path d="M130 224 C136 222 141 218 142 213 C137 215 133 219 130 224 Z" fill="#479e65" />
+      <path d="M130 218 C125 216 121 212 120 208 C124 210 128 214 130 218 Z" fill="#479e65" />
+      <path d="M130 212 C135 210 139 206 140 202 C136 204 132 208 130 212 Z" fill="#479e65" />
       <circle cx="130" cy="203" r="2.5" fill="#e3ef26" />
       <g stroke="#6fd6b0" strokeWidth="3" strokeLinecap="round">
-        <path className="sc-field" style={{ "--fi": 0 } as CSSProperties} d="M92 250 h60" />
-        <path className="sc-field" style={{ "--fi": 1 } as CSSProperties} d="M92 264 h72" />
-        <path className="sc-field" style={{ "--fi": 2 } as CSSProperties} d="M92 278 h48" />
+        <path className="sc-field" style={{ "--fi": 0 } as CSSProperties} d="M100 250 h60" />
+        <path className="sc-field" style={{ "--fi": 1 } as CSSProperties} d="M94 264 h72" />
+        <path className="sc-field" style={{ "--fi": 2 } as CSSProperties} d="M106 278 h48" />
       </g>
-      <path d="M94 292 c0 -6 9 -6 9 0 c0 4.5 -4.5 8 -4.5 8 c0 0 -4.5 -3.5 -4.5 -8 z" fill="#e3ef26" />
-      <path d="M108 294 h56" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".6" />
+      <path d="M95 292 c0 -6 9 -6 9 0 c0 4.5 -4.5 8 -4.5 8 c0 0 -4.5 -3.5 -4.5 -8 z" fill="#e3ef26" />
+      <path d="M109 294 h56" stroke="#6fd6b0" strokeWidth="2.5" strokeLinecap="round" opacity=".6" />
       <g fill="#6fd6b0" opacity=".5">
         {Array.from({ length: 8 }).map((_, k) => {
           const r = Math.floor(k / 4), c = k % 4;
-          return <rect key={k} x={92 + c * 18} y={308 + r * 13} width="13" height="8" rx="2" />;
+          return <rect key={k} x={97 + c * 18} y={308 + r * 13} width="13" height="8" rx="2" />;
         })}
       </g>
-      <rect x="146" y="321" width="13" height="8" rx="2" fill="#e3ef26" opacity=".85" />
+      <rect x="151" y="321" width="13" height="8" rx="2" fill="#e3ef26" opacity=".85" />
       <g className="sc-typing" fill="#e3ef26"><circle cx="120" cy="334" r="2.2" /><circle cx="130" cy="334" r="2.2" /><circle cx="140" cy="334" r="2.2" /></g>
       <g transform="translate(0 -35)">
       <Soil cx={362} cy={468} rx={60} />
@@ -386,11 +388,11 @@ function SceneRecord() {
       <circle cx="362" cy="303" r="4" fill="#e3ef26" />
       <PlantTag x={340} y={418} s={44} />
       <g stroke="#6fd6b0" strokeWidth="3" strokeLinecap="round" opacity=".9">
-        <path d="M310 304 v-18 h18" /><path d="M404 286 h18 v18" /><path d="M422 458 v18 h-18" /><path d="M328 476 h-18 v-18" />
+        <path d="M334 424 v-12 h12" /><path d="M378 412 h12 v12" /><path d="M390 467 v12 h-12" /><path d="M346 479 h-12 v-12" />
       </g>
       <g className="sc-scan">
-        <rect x="312" y="288" width="108" height="12" fill="url(#sc1-scan)" />
-        <rect x="312" y="288" width="108" height="3" rx="1.5" fill="#e3ef26" />
+        <rect x="336" y="416" width="52" height="12" fill="url(#sc1-scan)" />
+        <rect x="336" y="416" width="52" height="3" rx="1.5" fill="#e3ef26" />
       </g>
       </g>
       </g>

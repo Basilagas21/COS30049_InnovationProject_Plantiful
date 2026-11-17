@@ -341,7 +341,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 @keyframes field-fill { 0% { stroke-dashoffset: 100; opacity: .3; } 15% { stroke-dashoffset: 0; opacity: 1; } 70% { stroke-dashoffset: 0; opacity: 1; } 85% { stroke-dashoffset: 100; opacity: .3; } 100% { stroke-dashoffset: 100; opacity: .3; } }
 @keyframes typing-blink { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
 @keyframes packet-move { 0% { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateX(128px); opacity: 0; } }
-@keyframes scan-sweep { 0% { transform: translateY(0); opacity: .5; } 50% { transform: translateY(93px); opacity: 1; } 100% { transform: translateY(186px); opacity: .5; } }
+@keyframes scan-sweep { 0% { transform: translateY(0); opacity: .5; } 50% { transform: translateY(27px); opacity: 1; } 100% { transform: translateY(54px); opacity: .5; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes mag-scan { 0% { transform: translate(0,0); } 30% { transform: translate(46px,22px); } 55% { transform: translate(16px,64px); } 80% { transform: translate(0,0); } 100% { transform: translate(0,0); } }
 @keyframes check-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }

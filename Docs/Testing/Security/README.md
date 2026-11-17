@@ -17,6 +17,7 @@ The extracts support Section 8 of the [Sprint 2 report](../../Reports/Sprint2/Sp
 | EV-SEC-07 | Tracked code does not contain a client-side service-role secret, and no environment file is tracked | 6 November 2026 | [Bundle and secret check](evidence/S2-SEC-05-bundle-secret-2026-11-06.md) | Source review, not a full native binary inspection |
 | EV-SEC-08 | A stored private IP disclosure in test data was removed and the affected pages were rechecked | 10 October 2026 | [Private IP resolution](evidence/S2-SEC-03-private-ip-2026-10-10.md) | Field removal from the public query remains open as R-10 |
 | EV-SEC-09 | Integrated IoT changes pass 36 automated tests on `c49d33b` | 6 November 2026 | [IoT integration check](evidence/S2-IOT-2026-11-06.md) | Fake service and serial fixtures. Not physical-node, hosted-database or field evidence |
+| EV-SEC-10 | Local checks re-ran at `d468ffa`. Web 56 tests, 46 passed and 10 gated live checks skipped. Mobile 30 passed. IoT 36 passed. Web build and both type/lint checks passed. Expo Doctor 19 of 20 with 11 mismatches. Web audit 0, mobile audit 1 moderate transitive advisory | 16 November 2026 | [Check log](evidence/S2-CHECKS-2026-11-16.md) | Local repository only. Not hosted runtime, device or release-candidate evidence. The mobile `node-forge` entry is a tooling transitive dependency and is not shown to be bundled |
 
 ## What the evidence supports
 
@@ -33,8 +34,9 @@ The extracts support Section 8 of the [Sprint 2 report](../../Reports/Sprint2/Sp
 - It does not prove that the final deployed schema matches the tested schema.
 - It does not prove that the final deployment still has every expected RLS and storage policy.
 - It does not prove that the current deployment has been scanned with ZAP.
-- It does not prove that the web build runs correctly on the hosted deployment. The local production build passed at `3866309`.
+- It does not prove that the web build runs correctly on the hosted deployment. The local production build passed at `d468ffa`.
 - It does not prove that mobile version mismatches are harmless.
+- It does not prove that the 16 November `node-forge` advisory is unreachable in the application runtime.
 - It does not prove that local mobile storage is encrypted.
 - It does not prove that the exposed credential has been revoked or that the affected accounts have been reset.
 - It does not establish compliance with a data protection statute or certification scheme.
@@ -79,4 +81,4 @@ The security section is suitable for submission as an honest Sprint 2 position. 
 2. Re-run ZAP against the final web deployment or record the scan as not completed.
 3. Confirm credential rotation and account recovery.
 4. Record the final release revision and the completed production build result.
-5. Confirm the dispositions for R-03 and R-06 to R-10.
+5. Confirm the recorded R-01 to R-10 dispositions, decide the remaining R-03 deferral or configuration and obtain owner sign-off.

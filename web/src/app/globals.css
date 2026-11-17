@@ -449,7 +449,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 /* ===== Responsive ===== */
 @media (max-width: 1024px) {
   .home-cards { grid-template-columns: 1fr; }
-  .home-card { min-height: 420px; }
+  .home-card { min-height: 380px; }
   .home-close-grid { grid-template-columns: 1fr; }
   .home-colophon { border-left: none; padding-left: 0; border-top: 1px solid #fffdee24; padding-top: 1.75rem; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
@@ -475,7 +475,11 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   .home-canopy::before { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, #03100aee 30%, #03100a99); }
   .home-hero-copy { z-index: 2; }
   .home-banner-actions { grid-template-columns: 1fr; max-width: none; }
-  .home-card { min-height: 400px; }
+  .home-card { min-height: 360px; }
+  .home-card-glass { margin: 12px; padding: 16px; }
+  .home-card-title { font-size: 24px; }
+  .home-card-desc { margin-top: 8px; font-size: 13px; }
+  .home-card-action { margin-top: 10px; padding-top: 10px; }
   .footer-grid { grid-template-columns: 1fr; gap: 1.75rem; }
   .footer-nature-wrap { min-height: 260px; }
 }

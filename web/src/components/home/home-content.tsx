@@ -309,8 +309,6 @@ function SceneSeed() {
         <path d="M220 450 C217 424 224 398 220 370 C218 362 221 355 220 350" stroke="#a0bd77" strokeWidth="6" strokeLinecap="round" />
         <Leaf x={220} y={419} s={0.85} flip angle={-14} round veins="none" />
         <Leaf x={220} y={413} s={0.95} angle={7} round veins="none" />
-        <Leaf x={220} y={390} s={0.55} flip angle={-20} veins="soft" />
-        <Leaf x={220} y={399} s={0.62} angle={13} veins="soft" />
         <path d="M220 350 C220 340 225 333 232 333 C239 333 242 340 237 345 C233 349 228 346 229 341 C230 338 233 337 235 339" stroke="#479e65" strokeWidth="4.5" strokeLinecap="round" fill="none" />
         <circle cx="235" cy="339" r="2.5" fill="#e3ef26" />
       </g>
@@ -379,6 +377,7 @@ function SceneRecord() {
       <g transform="translate(0 -35)">
       <Soil cx={362} cy={468} rx={60} />
       <path d="M362 468 C360 436 364 410 362 378 C361 356 363 340 362 322" stroke="#a0bd77" strokeWidth="5" strokeLinecap="round" />
+      <Leaf x={362} y={440} s={0.6} angle={4} />
       <Leaf x={362} y={410} s={0.7} flip />
       <Leaf x={362} y={378} s={0.7} />
       <Leaf x={362} y={348} s={0.55} flip angle={-6} />
@@ -500,6 +499,7 @@ function SceneCanopy() {
       </g>
       <Soil cx={220} cy={472} rx={118} />
       <path d="M220 472 C217 426 223 376 220 326 C217 280 223 248 220 214" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
+      <Leaf x={220} y={455} s={0.9} angle={5} />
       <Leaf x={220} y={420} s={1.2} flip angle={-6} />
       <Leaf x={220} y={364} s={1.2} angle={6} />
       <Leaf x={220} y={303} s={0.95} flip angle={-9} />

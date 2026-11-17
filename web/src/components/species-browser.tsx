@@ -3,6 +3,10 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { SpeciesListItem } from "@/lib/species";
+import {
+  familyFromTaxonomy,
+  isThreatenedStatus,
+} from "@/lib/species-taxonomy";
 
 type Props = {
   species: SpeciesListItem[];
@@ -10,37 +14,46 @@ type Props = {
   visitor?: boolean;
 };
 
-const THREATENED_STATUSES = new Set([
-  "vulnerable",
-  "endangered",
-  "critically endangered",
-]);
-
-function isThreatened(status: string | null): boolean {
-  return status ? THREATENED_STATUSES.has(status.trim().toLowerCase()) : false;
-}
-
 export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
   const [query, setQuery] = useState("");
   const [threatenedOnly, setThreatenedOnly] = useState(false);
+  const [family, setFamily] = useState("all");
+
+  const families = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const entry of species) {
+      const name = familyFromTaxonomy(entry.taxonomy) ?? "Unclassified";
+      counts.set(name, (counts.get(name) ?? 0) + 1);
+    }
+    return [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  }, [species]);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return species.filter((entry) => {
-      if (threatenedOnly && !isThreatened(entry.conservationStatus)) return false;
+      if (threatenedOnly && !isThreatenedStatus(entry.conservationStatus)) {
+        return false;
+      }
+      if (
+        family !== "all" &&
+        (familyFromTaxonomy(entry.taxonomy) ?? "Unclassified") !== family
+      ) {
+        return false;
+      }
       if (!q) return true;
       const haystack =
         `${entry.scientificName} ${entry.commonName ?? ""} ${entry.taxonomy ?? ""}`.toLowerCase();
       return haystack.includes(q);
     });
-  }, [species, query, threatenedOnly]);
+  }, [species, query, threatenedOnly, family]);
 
   const threatenedCount = useMemo(
-    () => species.filter((s) => isThreatened(s.conservationStatus)).length,
+    () => species.filter((s) => isThreatenedStatus(s.conservationStatus)).length,
     [species],
   );
 
-  const filtersActive = Boolean(query.trim()) || threatenedOnly;
+  const filtersActive =
+    Boolean(query.trim()) || threatenedOnly || family !== "all";
 
   return (
     <>
@@ -62,16 +75,33 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
           }`}
         >
           {threatenedOnly ? "All statuses" : "Threatened only"}
-          <span className="text-xs">
-            {threatenedCount}
-          </span>
+          <span className="text-xs">{threatenedCount}</span>
         </button>
+
+        <label htmlFor="species-family" className="sr-only">
+          Plant family
+        </label>
+        <select
+          id="species-family"
+          value={family}
+          onChange={(event) => setFamily(event.target.value)}
+          className="h-10 rounded-full border border-pine/15 bg-white px-4 text-sm text-pine outline-none transition-colors focus:border-emerald"
+        >
+          <option value="all">All families</option>
+          {families.map(([name, count]) => (
+            <option key={name} value={name}>
+              {name} ({count})
+            </option>
+          ))}
+        </select>
+
         {filtersActive && (
           <button
             type="button"
             onClick={() => {
               setQuery("");
               setThreatenedOnly(false);
+              setFamily("all");
             }}
             className="inline-flex h-10 items-center rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse"
           >
@@ -79,7 +109,7 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
           </button>
         )}
         <span className="ml-auto text-sm text-moss">
-          {visible.length} {visible.length === 1 ? "species" : "species"}
+          {visible.length} species
           {filtersActive ? " filtered" : ""}
         </span>
       </div>

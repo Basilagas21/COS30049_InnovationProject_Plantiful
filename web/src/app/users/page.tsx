@@ -5,7 +5,9 @@ import { UserRoleSelect } from "@/components/user-role-select";
 import type { ManagedRole } from "./roles";
 
 export default async function UsersPage() {
-  if ((await getCurrentRole()) !== "admin") redirect("/records");
+  const role = await getCurrentRole();
+  if (!role) redirect("/signin");
+  if (role !== "admin") redirect("/records");
 
   const supabase = await createClient();
   const {

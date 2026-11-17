@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { isOfficer, isAdmin } from "@/lib/auth";
+import { getCurrentRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ApproveRejectButtons } from "@/components/approve-reject";
 import { ObservationPhotos } from "@/components/observation-photos";
@@ -21,10 +21,12 @@ type PendingRow = {
 };
 
 export default async function ApprovalsPage() {
-  if (!(await isOfficer())) redirect("/records");
+  const role = await getCurrentRole();
+  if (!role) redirect("/signin");
+  if (role !== "conservation_officer" && role !== "admin") redirect("/records");
 
   const supabase = await createClient();
-  const admin = await isAdmin();
+  const admin = role === "admin";
 
   const { data: rows, error } = await supabase
     .from("plant_records")

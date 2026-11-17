@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { fetchReports } from "@/lib/reports";
-import { isOfficer } from "@/lib/auth";
+import { getCurrentRole } from "@/lib/auth";
 import { ReportForm } from "@/components/report-form";
 
 function downloadLabel(fileUrl: string): string {
@@ -12,7 +12,9 @@ function downloadLabel(fileUrl: string): string {
 }
 
 export default async function ReportsPage() {
-  if (!(await isOfficer())) redirect("/records");
+  const role = await getCurrentRole();
+  if (!role) redirect("/signin");
+  if (role !== "conservation_officer" && role !== "admin") redirect("/records");
 
   const { reports, error: reportsError } = await fetchReports();
 

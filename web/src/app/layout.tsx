@@ -85,7 +85,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <footer className="site-footer">
             <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-6 px-6">
               <div><p className="text-2xl font-semibold tracking-tight">A little closer to nature.</p><p className="mt-2 text-sm text-sprout/75">Plantiful · Niah National Park, Sarawak</p></div>
-              <Link href="/explore" className="rounded-full bg-chartreuse px-6 py-3 text-sm font-semibold text-pine">Explore the plant guide ↗</Link>
+              <div className="flex flex-wrap items-center gap-4">
+                <Link href="/learn" className="text-sm font-semibold text-sprout/80 transition-colors hover:text-chartreuse">Learn and Q&amp;A</Link>
+                <Link href="/explore" className="rounded-full bg-chartreuse px-6 py-3 text-sm font-semibold text-pine">Explore the plant guide ↗</Link>
+              </div>
             </div>
           </footer>
         </ThemeProvider>

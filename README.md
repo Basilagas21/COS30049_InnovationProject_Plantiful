@@ -78,15 +78,20 @@ COS30049_InnovationProject_Plantiful/
 ├── mobile/                ← React Native / Expo app (offline field data capture)
 │   └── src/app/           ← Expo Router screens (scan, capture, records, sync, profile)
 ├── web/                   ← Next.js web knowledge system for conservation officers
+│   ├── scripts/           ← maintenance and evaluation scripts
 │   └── src/app/           ← App Router pages (explore, species, map, records, reports, alerts, profile)
 ├── backend/
-│   └── supabase/
-│       ├── migrations/    ← 001_schema.sql + apply_project.sql (consolidated, idempotent); applied/ holds the 002–011 history
-│       └── seed.sql       ← assigns officer/admin roles by email + sample species catalogue
+│   ├── supabase/
+│   │   ├── migrations/    ← 001_schema.sql + apply_project.sql (consolidated, idempotent); applied/ holds the 002–011 history
+│   │   ├── seed.sql       ← assigns officer/admin roles by email + sample species catalogue
+│   │   └── verification/  ← manual SQL checks for RLS, photo writes and monitoring history
+│   └── tests/local/       ← pgTAP and isolated AI Field Assist checks
+├── Ai/                    ← research notebooks, datasets, training and evaluation workspace
 ├── iot/                   ← ESP32 firmware, USB bridge, simulated publisher + threat-rule evaluator (writes to Supabase)
 ├── Docs/
 │   ├── README.md          ← single documentation index and filing conventions
-│   ├── Assets/            ← shared logo and existing diagram images
+│   ├── Archive/           ← historical notes and superseded submission material
+│   ├── Assets/            ← shared logo, diagram images and QR tag samples
 │   ├── Design/            ← design proposals and optional workflows
 │   ├── Guides/            ← deployment and maintenance
 │   ├── Reports/           ← shared reports, Sprint1 and Sprint2 folders
@@ -133,7 +138,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 3. Open Dashboard > SQL Editor and run the two scripts in `backend/supabase/migrations/`: `001_schema.sql` first (tables), then `apply_project.sql` — one consolidated, idempotent script covering everything else (RLS policies, schema backfills, workflow triggers, photo visibility, the botanist approval gate, the private reports bucket, storage-bucket policies, and admin role management). The per-feature files it consolidates are kept for reference in `migrations/applied/` — never run them individually.
 4. Run `backend/supabase/seed.sql` to assign officer and admin roles by email — edit its two `update` statements to your own addresses first — and to load the sample species catalogue.
 5. Invite your own test users in Dashboard > Authentication > Users (dashboard-created users are confirmed automatically) — or register through the app; if registration says "Email not confirmed", either turn off "Confirm sign up" under Authentication > Emails (requires Admin project role) or run the one-off `update auth.users set email_confirmed_at = now() …` snippet for that account.
-6. Verify the setup with the scripts under `backend/scripts/`: `verify_public_write_block.sql` should show anonymous writes rejected and anonymous reads limited to approved and published data, and `verify_record_photo_write.sql` must report `PASS` on every line before the mobile Sync now button is used.
+6. Verify the setup with the scripts under `backend/supabase/verification/`: `verify_public_write_block.sql` should show anonymous writes rejected and anonymous reads limited to approved and published data, and `verify_record_photo_write.sql` must report `PASS` on every line before the mobile Sync now button is used.
 7. For the IoT monitoring dashboard, run `backend/supabase/migrations/012_monitoring_history.sql` once in the SQL Editor (re-runnable; adds the read path used by `/alerts` — no service key, existing RLS still applies).
 
 ### 3. Run the web app

@@ -473,14 +473,12 @@ function SceneReview() {
             </g>
           </g>
         </g>
-      </g>
-      <g className="sc-mag">
+        <path d="M217 293 L255 331" stroke="#0c342c" strokeWidth="10" strokeLinecap="round" />
+        <path d="M217 293 L255 331" stroke="#e3ef26" strokeWidth="3.5" strokeLinecap="round" />
         <circle cx="186" cy="262" r="38" fill="url(#sc3-lens)" />
         <circle cx="186" cy="262" r="38" fill="none" stroke="#0c342c" strokeWidth="5" />
-        <circle cx="186" cy="262" r="33.5" fill="none" stroke="#e3ef26" strokeWidth="1.5" opacity=".5" />
+        <circle cx="186" cy="262" r="33" fill="none" stroke="#e3ef26" strokeWidth="1.5" opacity=".5" />
         <path d="M166 245 A26 26 0 0 1 188 237" stroke="#fffdee" strokeOpacity=".85" strokeWidth="3.5" strokeLinecap="round" />
-        <path d="M217 293 L246 322" stroke="#0c342c" strokeWidth="10" strokeLinecap="round" />
-        <path d="M217 293 L246 322" stroke="#e3ef26" strokeWidth="3.5" strokeLinecap="round" />
       </g>
       </g>
     </svg>

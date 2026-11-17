@@ -332,7 +332,6 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .chain-scene.is-active .sc-packet, .chain-seed.is-active .sc-packet { animation: packet-move 3.2s linear infinite; animation-delay: calc(var(--pk) * -1.6s); }
 .chain-scene.is-active .sc-scan, .chain-seed.is-active .sc-scan { animation: scan-sweep 3.6s ease-in-out infinite; }
 .chain-scene.is-active .sc-sync, .chain-seed.is-active .sc-sync { animation: spin 3.2s linear infinite; }
-.chain-scene.is-active .sc-mag, .chain-seed.is-active .sc-mag { animation: mag-scan 4.5s ease-in-out infinite; }
 .chain-scene.is-active .sc-magclip, .chain-seed.is-active .sc-magclip { animation: mag-scan 4.5s ease-in-out infinite; }
 .chain-scene.is-active .sc-magcontent, .chain-seed.is-active .sc-magcontent { animation: mag-content 4.5s ease-in-out infinite; }
 .chain-scene.is-active .sc-check, .chain-seed.is-active .sc-check { animation: check-pulse 2.6s ease-in-out infinite; }

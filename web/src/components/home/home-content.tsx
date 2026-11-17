@@ -492,14 +492,7 @@ function SceneCanopy() {
         <radialGradient id="sc4-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".18" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".07" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
       </defs>
       <ellipse className="sc-glow" cx="220" cy="260" rx="200" ry="235" fill="url(#sc4-glow)" opacity=".55" />
-      <g transform="translate(220 260) scale(1.04) translate(-220 -290)">
-      <g fill="#2f6f52" opacity=".6">
-        <path d="M70 58 C86 92 84 132 64 162 C48 128 52 88 70 58 Z" />
-        <path d="M150 62 C168 100 166 146 146 180 C130 142 134 96 150 62 Z" />
-        <path d="M220 64 C240 104 240 156 220 200 C200 156 200 104 220 64 Z" />
-        <path d="M290 62 C308 100 306 146 286 180 C270 142 274 96 290 62 Z" />
-        <path d="M370 58 C386 92 384 132 364 162 C348 128 352 88 370 58 Z" />
-      </g>
+      <g transform="translate(220 260) scale(0.92) translate(-220 -317)">
       <Soil cx={220} cy={472} rx={118} />
       <path d="M220 472 C217 426 223 376 220 326 C217 280 223 248 220 214" stroke="#a0bd77" strokeWidth="7" strokeLinecap="round" />
       <Leaf x={220} y={455} s={0.9} angle={5} />

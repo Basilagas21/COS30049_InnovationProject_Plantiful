@@ -440,11 +440,16 @@ function SceneSync() {
 function SceneReview() {
   return (
     <svg className="chain-scene" viewBox="0 0 440 520" fill="none" aria-hidden="true">
-      <defs><radialGradient id="sc3-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient></defs>
+      <defs>
+        <radialGradient id="sc3-glow"><stop offset="0" stopColor="#6fd6b0" stopOpacity=".13" /><stop offset=".6" stopColor="#6fd6b0" stopOpacity=".05" /><stop offset="1" stopColor="#6fd6b0" stopOpacity="0" /></radialGradient>
+        <radialGradient id="sc3-lens" cx=".35" cy=".3" r=".9"><stop offset="0" stopColor="#fffdee" stopOpacity=".18" /><stop offset=".6" stopColor="#dff5e9" stopOpacity=".08" /><stop offset="1" stopColor="#6fd6b0" stopOpacity=".05" /></radialGradient>
+        <clipPath id="sc3-lensclip"><circle cx="186" cy="262" r="38" /></clipPath>
+      </defs>
       <ellipse cx="220" cy="260" rx="200" ry="235" fill="url(#sc3-glow)" opacity=".55" />
       <g transform="translate(220 260) scale(1.15) translate(-224 -261)">
       <Ground cx={220} cy={408} rx={102} />
       <rect x="120" y="120" width="200" height="280" rx="14" fill="#fffdee" />
+      <g id="sc3-doc">
       <rect x="142" y="142" width="70" height="70" rx="7" fill="#f3f0e3" stroke="#0c342c" strokeOpacity=".2" strokeWidth="1.5" />
       <QrGlyph x={150} y={150} s={54} ink="#0c342c" paper="#f3f0e3" />
       <path d="M226 156 h72 M226 178 h54 M226 200 h62" stroke="#0c342c" strokeWidth="3" strokeLinecap="round" opacity=".7" />
@@ -458,16 +463,24 @@ function SceneReview() {
       <path d="M244 366 c0 0 -6 -5 -6 -10 c0 -3.5 2.7 -6 6 -6 c3.3 0 6 2.5 6 6 c0 5 -6 10 -6 10 z" fill="#076653" />
       <circle cx="244" cy="356" r="2" fill="#e2fbce" />
       <path d="M262 358 h24" stroke="#0c342c" strokeOpacity=".5" strokeWidth="2.5" strokeLinecap="round" />
+      </g>
+      <g className="sc-magclip">
+        <g clipPath="url(#sc3-lensclip)">
+          <circle cx="186" cy="262" r="38" fill="#fffdee" />
+          <g transform="translate(-74.4 -104.8) scale(1.4)">
+            <g className="sc-magcontent">
+              <use href="#sc3-doc" />
+            </g>
+          </g>
+        </g>
+      </g>
       <g className="sc-mag">
-        <defs>
-          <radialGradient id="sc3-lens" cx=".35" cy=".3" r=".9"><stop offset="0" stopColor="#fffdee" stopOpacity=".18" /><stop offset=".6" stopColor="#dff5e9" stopOpacity=".08" /><stop offset="1" stopColor="#6fd6b0" stopOpacity=".05" /></radialGradient>
-        </defs>
         <circle cx="186" cy="262" r="38" fill="url(#sc3-lens)" />
         <circle cx="186" cy="262" r="38" fill="none" stroke="#0c342c" strokeWidth="5" />
         <circle cx="186" cy="262" r="33.5" fill="none" stroke="#e3ef26" strokeWidth="1.5" opacity=".5" />
         <path d="M166 245 A26 26 0 0 1 188 237" stroke="#fffdee" strokeOpacity=".85" strokeWidth="3.5" strokeLinecap="round" />
-        <path d="M213 289 L243 319" stroke="#0c342c" strokeWidth="10" strokeLinecap="round" />
-        <path d="M213 289 L243 319" stroke="#e3ef26" strokeWidth="3.5" strokeLinecap="round" />
+        <path d="M217 293 L246 322" stroke="#0c342c" strokeWidth="10" strokeLinecap="round" />
+        <path d="M217 293 L246 322" stroke="#e3ef26" strokeWidth="3.5" strokeLinecap="round" />
       </g>
       </g>
     </svg>

@@ -1,10 +1,10 @@
 import { fetchRecords } from "@/lib/records";
-import { isOfficer } from "@/lib/auth";
+import { isAuthenticated, isOfficer } from "@/lib/auth";
 import { RecordsBrowser } from "@/components/records-browser";
 
 export default async function RecordsPage() {
   const { records, error, usingSampleData } = await fetchRecords();
-  const officer = await isOfficer();
+  const [officer, authenticated] = await Promise.all([isOfficer(), isAuthenticated()]);
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
@@ -38,7 +38,7 @@ export default async function RecordsPage() {
           Could not load records from the database: {error}
         </div>
       ) : (
-        <RecordsBrowser records={records} officer={officer} />
+        <RecordsBrowser records={records} officer={officer} visitor={!authenticated} />
       )}
     </div>
   );

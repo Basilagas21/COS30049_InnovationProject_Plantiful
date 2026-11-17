@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { fetchSpecies } from "@/lib/species";
-import { isOfficer } from "@/lib/auth";
+import { isAuthenticated, isOfficer } from "@/lib/auth";
 import { SpeciesBrowser } from "@/components/species-browser";
 
 export default async function SpeciesPage() {
-  const [species, officer] = await Promise.all([fetchSpecies(), isOfficer()]);
+  const [species, officer, authenticated] = await Promise.all([
+    fetchSpecies(),
+    isOfficer(),
+    isAuthenticated(),
+  ]);
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
@@ -14,8 +18,9 @@ export default async function SpeciesPage() {
             Species catalogue
           </h1>
           <p className="mt-2 text-moss">
-            {species.length} plant species · taxonomy, conservation status and
-            descriptions
+            {!authenticated && species.length === 0
+              ? "No published species yet. Published species will appear here once a conservation officer approves a linked observation."
+              : `${species.length} plant species · taxonomy, conservation status and descriptions`}
           </p>
         </div>
         {officer ? (
@@ -30,7 +35,7 @@ export default async function SpeciesPage() {
         )}
       </div>
 
-      <SpeciesBrowser species={species} officer={officer} />
+      <SpeciesBrowser species={species} officer={officer} visitor={!authenticated} />
     </div>
   );
 }

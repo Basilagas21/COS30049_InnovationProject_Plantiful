@@ -21,7 +21,7 @@ export default async function ExplorePage() {
         </p>
       </div>
 
-      <SpeciesBrowser species={species} officer={false} />
+      <SpeciesBrowser species={species} officer={false} visitor />
     </div>
   );
 }

@@ -98,13 +98,13 @@ export default async function ExplorePage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <a
                 href="#catalogue"
-                className="rounded-full bg-[#e3ef26] px-6 py-3 text-sm font-semibold text-[#0c342c] transition-colors hover:bg-[#e2fbce]"
+                className="btn btn--primary"
               >
                 Browse the catalogue
               </a>
               <Link
                 href="/map"
-                className="rounded-full border border-white/30 px-6 py-3 text-sm font-medium text-[#fffdee] transition-colors hover:bg-white/10"
+                className="btn btn--on-dark"
               >
                 Open the species map
               </Link>

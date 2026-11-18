@@ -26,7 +26,7 @@ export default async function SpeciesPage() {
         {officer ? (
           <Link
             href="/species/new"
-            className="inline-flex h-11 items-center justify-center rounded-full bg-emerald px-6 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+            className="btn btn--primary h-11"
           >
             New species
           </Link>

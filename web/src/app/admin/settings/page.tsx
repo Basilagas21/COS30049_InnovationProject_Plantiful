@@ -26,7 +26,7 @@ export default async function AdminSettingsPage() {
         </div>
         <Link
           href="/users"
-          className="inline-flex h-11 items-center justify-center rounded-full border border-emerald px-5 text-sm font-semibold text-emerald transition-colors hover:bg-emerald hover:text-cream"
+          className="btn btn--ghost h-11"
         >
           Back to users
         </Link>
@@ -61,7 +61,7 @@ export default async function AdminSettingsPage() {
             </label>
             <button
               type="submit"
-              className="inline-flex h-11 items-center justify-center rounded-full bg-emerald px-6 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+              className="btn btn--primary h-11"
             >
               Save settings
             </button>

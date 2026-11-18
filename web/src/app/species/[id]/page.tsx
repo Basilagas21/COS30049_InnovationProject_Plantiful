@@ -122,7 +122,7 @@ export default async function SpeciesDetailPage({
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 href={`/species/${entry.id}/edit`}
-                className="inline-flex h-10 items-center rounded-full bg-emerald px-6 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+                className="btn btn--primary btn--sm h-10"
               >
                 Edit species
               </Link>

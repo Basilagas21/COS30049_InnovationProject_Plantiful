@@ -94,7 +94,7 @@ export default function ProfilePage() {
           </p>
           <Link
             href="/signin"
-            className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-emerald font-semibold text-cream transition-colors hover:bg-pine"
+            className="btn btn--primary mt-6 h-12 w-full"
           >
             Sign in
           </Link>
@@ -153,7 +153,7 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="mt-3 h-12 w-full rounded-full border border-danger text-danger transition-colors hover:bg-danger hover:text-cream"
+            className="btn btn--danger mt-3 h-12 w-full"
           >
             Sign out
           </button>

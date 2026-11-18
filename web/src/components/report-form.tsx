@@ -99,7 +99,7 @@ export function ReportForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="mt-5 rounded-full bg-emerald px-6 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine disabled:opacity-50"
+        className="btn btn--primary mt-5"
       >
         {isPending ? "Generating…" : "Generate report"}
       </button>

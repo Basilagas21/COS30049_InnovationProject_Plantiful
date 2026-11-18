@@ -38,7 +38,7 @@ export function SpeciesDeleteButton({ speciesId, speciesName }: Props) {
         type="button"
         disabled={isPending}
         onClick={handleDelete}
-        className="rounded-full border border-danger/30 bg-white px-6 py-2.5 text-sm font-semibold text-danger transition-colors hover:bg-danger hover:text-cream disabled:opacity-50"
+        className="btn btn--danger"
       >
         {isPending ? "Deleting…" : "Delete species"}
       </button>

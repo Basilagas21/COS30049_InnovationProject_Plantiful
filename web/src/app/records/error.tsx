@@ -26,7 +26,7 @@ export default function RecordsError({
         <button
           type="button"
           onClick={reset}
-          className="rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+          className="btn btn--primary"
         >
           Try again
         </button>

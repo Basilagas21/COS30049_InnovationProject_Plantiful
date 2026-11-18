@@ -42,7 +42,7 @@ export function ApproveRejectButtons({ recordId }: Props) {
           type="button"
           disabled={isPending}
           onClick={() => decide("approved")}
-          className="rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine disabled:opacity-50"
+          className="btn btn--primary"
         >
           {isPending ? "Updating…" : "Approve"}
         </button>
@@ -50,7 +50,7 @@ export function ApproveRejectButtons({ recordId }: Props) {
           type="button"
           disabled={isPending}
           onClick={() => decide("rejected")}
-          className="rounded-full border border-danger/30 bg-white px-5 py-2.5 text-sm font-semibold text-danger transition-colors hover:bg-danger hover:text-cream disabled:opacity-50"
+          className="btn btn--danger"
         >
           {isPending ? "Updating…" : "Reject"}
         </button>

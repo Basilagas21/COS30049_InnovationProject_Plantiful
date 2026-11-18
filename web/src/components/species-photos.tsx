@@ -84,7 +84,7 @@ export function PhotoGallery({ speciesId, photos, officer }: Props) {
         </h2>
         {officer && (
           <label
-            className={`inline-flex h-10 cursor-pointer items-center rounded-full bg-emerald px-6 text-sm font-semibold text-cream transition-colors hover:bg-pine ${
+            className={`btn btn--primary btn--sm h-10 cursor-pointer ${
               uploading ? "opacity-50" : ""
             }`}
           >

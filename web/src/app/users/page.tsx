@@ -151,7 +151,7 @@ export default async function UsersPage({
         </div>
         <Link
           href="/admin/settings"
-          className="inline-flex h-11 items-center justify-center rounded-full border border-emerald px-5 text-sm font-semibold text-emerald transition-colors hover:bg-emerald hover:text-cream"
+          className="btn btn--ghost h-11"
         >
           Admin settings
         </Link>
@@ -204,13 +204,13 @@ export default async function UsersPage({
           <div className="flex items-center gap-2">
             <button
               type="submit"
-              className="inline-flex h-10 items-center justify-center rounded-full bg-emerald px-5 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+              className="btn btn--primary btn--sm h-10"
             >
               Apply
             </button>
             <Link
               href="/users"
-              className="inline-flex h-10 items-center justify-center rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse"
+              className="btn btn--quiet btn--sm h-10"
             >
               Reset
             </Link>

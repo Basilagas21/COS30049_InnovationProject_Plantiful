@@ -182,7 +182,7 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
               <div className="border-t border-pine/10 p-4 pt-3">
                 <Link
                   href={`/species/${entry.id}/edit`}
-                  className="inline-flex h-9 items-center rounded-full border border-emerald px-4 text-sm font-semibold text-emerald transition-colors hover:bg-emerald hover:text-cream"
+                  className="btn btn--ghost btn--sm h-9"
                 >
                   Manage
                 </Link>

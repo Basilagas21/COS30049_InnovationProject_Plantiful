@@ -132,7 +132,7 @@ export default function ChangePasswordPage() {
           <button
             type="submit"
             disabled={busy}
-            className="mt-2 h-12 rounded-full bg-emerald font-semibold text-cream transition-colors hover:bg-pine disabled:opacity-60"
+            className="btn btn--primary mt-2 h-12 w-full"
           >
             {busy ? "Updating…" : "Update password"}
           </button>

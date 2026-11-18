@@ -136,7 +136,7 @@ export function SpeciesForm({ speciesId, initial }: Props) {
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-full bg-emerald px-6 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine disabled:opacity-50"
+          className="btn btn--primary"
         >
           {isPending ? "Saving…" : speciesId ? "Save changes" : "Create species"}
         </button>
@@ -144,7 +144,7 @@ export function SpeciesForm({ speciesId, initial }: Props) {
           type="button"
           disabled={isPending}
           onClick={() => router.back()}
-          className="rounded-full border border-pine/20 px-6 py-2.5 text-sm font-semibold text-pine transition-colors hover:bg-sprout disabled:opacity-50"
+          className="btn btn--quiet"
         >
           Cancel
         </button>

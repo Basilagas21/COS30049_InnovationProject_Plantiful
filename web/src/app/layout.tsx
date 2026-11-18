@@ -90,10 +90,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   alt="Plantiful logo"
                   width={592}
                   height={421}
-                  className="-my-2 h-12 w-auto object-contain sm:h-24"
+                  className="h-9 w-auto object-contain"
                   priority
                 />
-                <span className="brand-word text-xl tracking-tight sm:text-3xl" aria-hidden="true">
+                <span className="brand-word text-xl tracking-tight" aria-hidden="true">
                   {"plantiful".split("").map((ch, i) => (
                     <span key={i} className="bl" style={{ "--li": i } as CSSProperties}>{ch}</span>
                   ))}

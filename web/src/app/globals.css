@@ -164,7 +164,7 @@ select.field-input {
   .site-nav-wrap { position: relative; min-width: 0; }
   .site-nav-wrap.has-more::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 2.5rem; pointer-events: none; background: linear-gradient(90deg, transparent, var(--header)); }
   .site-nav { display: flex; align-items: center; justify-content: center; gap: var(--nav-gap); flex-wrap: nowrap; font-size: .85rem; font-weight: 600; }
-  .site-nav-link { position: relative; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-width: 0; min-height: 44px; padding: .5rem .9rem; border-radius: 10px; white-space: nowrap; transition: background .2s, color .2s; }
+  .site-nav-link { position: relative; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-width: 0; min-height: 44px; padding: .5rem .9rem; border-radius: 999px; white-space: nowrap; transition: background .2s, color .2s; }
   .site-nav-link:hover { background: var(--sprout); }
   .site-nav-link[aria-current="page"] { background: var(--pine); color: var(--cream); }
   /* Authed navs carry many links; keep them on one scrollable row. Visitor

@@ -156,6 +156,8 @@ select.field-input {
 @layer components {
   .site-header { position: sticky; top: 0; z-index: 40; padding: .9rem 1.25rem 0; }
   .site-header-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; padding: .65rem 1.4rem; border-radius: 999px; background: var(--header); -webkit-backdrop-filter: blur(20px) saturate(1.4); backdrop-filter: blur(20px) saturate(1.4); border: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent), inset 0 1px 0 color-mix(in srgb, var(--white) 55%, transparent); }
+  .site-nav-wrap { position: relative; min-width: 0; }
+  .site-nav-wrap.has-more::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 2.5rem; pointer-events: none; background: linear-gradient(90deg, transparent, var(--header)); }
   .site-nav { display: flex; align-items: center; justify-content: center; gap: .3rem; flex-wrap: wrap; font-size: .85rem; font-weight: 600; }
   .site-nav-link { position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 5.75rem; min-height: 44px; padding: .5rem 1rem; border-radius: 999px; white-space: nowrap; transition: background .2s, color .2s; }
   .site-nav-link::after { content: ""; position: absolute; left: 1rem; right: 1rem; bottom: .4rem; height: 2px; border-radius: 2px; background: var(--emerald); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
@@ -535,7 +537,8 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   .site-header-inner { grid-template-columns: auto auto; grid-template-areas: "brand account" "nav nav"; row-gap: .5rem; border-radius: 28px; }
   .brand { grid-area: brand; }
   .header-account { grid-area: account; }
-  .site-nav { grid-area: nav; justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; width: 100%; padding-bottom: .25rem; scrollbar-width: none; }
+  .site-nav-wrap { grid-area: nav; }
+  .site-nav { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; width: 100%; padding-bottom: .25rem; scrollbar-width: none; }
   .site-nav::-webkit-scrollbar { display: none; }
   .site-nav-link { min-width: 5.5rem; flex-shrink: 0; }
 }

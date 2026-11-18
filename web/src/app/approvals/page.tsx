@@ -129,9 +129,9 @@ export default async function ApprovalsPage() {
             return (
               <li
                 key={row.record_id}
-                className="rounded-2xl border border-pine/10 bg-white p-5"
+                className="rounded-2xl border border-pine/10 bg-white p-5 shadow-sm"
               >
-                <div className={`grid gap-5 ${!photosFailed && (photosByRecord.get(row.record_id)?.length ?? 0) > 0 ? 'sm:grid-cols-[minmax(0,240px)_minmax(0,1fr)]' : ''}`}>
+                <div className={`grid items-start gap-5 ${!photosFailed && (photosByRecord.get(row.record_id)?.length ?? 0) > 0 ? 'sm:grid-cols-[minmax(0,240px)_minmax(0,1fr)]' : ''}`}>
                 <ObservationPhotos photos={photosByRecord.get(row.record_id) ?? []} title={title} failed={photosFailed} />
                 <div className="min-w-0">
                 <div className="flex flex-col gap-4">
@@ -199,7 +199,7 @@ export default async function ApprovalsPage() {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="block rounded-2xl border border-pine/10 bg-white p-5 transition-colors hover:border-emerald/40"
+                className="block rounded-2xl border border-pine/10 bg-white p-5 shadow-sm transition-colors hover:border-emerald/40"
               >
                 <p className="font-semibold text-pine">{link.label}</p>
                 <p className="mt-1 text-sm text-moss">{link.desc}</p>

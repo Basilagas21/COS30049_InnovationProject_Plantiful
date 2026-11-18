@@ -32,8 +32,8 @@ export default async function AdminSettingsPage() {
         </Link>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <section className="rounded-3xl border border-pine/10 bg-white p-6">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        <section className="rounded-3xl border border-pine/10 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-pine">User directory</h2>
           <p className="mt-2 text-sm leading-6 text-moss">
             Choose how many accounts appear on each page of the users table.
@@ -73,7 +73,7 @@ export default async function AdminSettingsPage() {
         </section>
 
         <aside className="flex flex-col gap-4">
-          <div className="rounded-3xl border border-pine/10 bg-white p-6">
+          <div className="rounded-3xl border border-pine/10 bg-white p-6 shadow-sm">
             <h2 className="font-semibold text-pine">Admin tools</h2>
             <div className="mt-4 flex flex-col gap-2 text-sm">
               <Link
@@ -91,7 +91,7 @@ export default async function AdminSettingsPage() {
             </div>
           </div>
 
-          <div className="rounded-3xl bg-sprout p-6">
+          <div className="rounded-3xl bg-sprout p-6 shadow-sm">
             <h2 className="font-semibold text-pine">Keep settings separate</h2>
             <p className="mt-2 text-sm leading-6 text-emerald">
               Password, theme and sign-out belong on the profile page. This page

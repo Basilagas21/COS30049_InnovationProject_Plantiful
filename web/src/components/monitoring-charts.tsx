@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import type { HistoryPoint, TelemetryHistory } from "@/lib/telemetry";
+import { Arrow } from "@/components/arrow";
 
 export function monitoringTime(value: string, short = false) {
   return new Date(value).toLocaleString("en-MY", {
@@ -41,7 +42,7 @@ export function TrendChart({ history, metric }: { history: TelemetryHistory; met
   return <section className="monitor-panel">
     <div className="flex items-start justify-between gap-3">
       <div><p className="eyebrow text-moss">Environmental trend</p><h3 className="mt-2 text-lg font-semibold">{title}</h3></div>
-      <span className="monitor-icon" style={{ color }}>↗</span>
+      <span className="monitor-icon" style={{ color }}><Arrow direction="up-right" size="1.25rem" /></span>
     </div>
     <p className="mt-5 text-3xl font-semibold tracking-tight">{last == null ? "—" : last.toFixed(1)} <span className="text-sm font-normal text-moss">{unit}</span></p>
     <p className="mt-1 text-xs text-moss">Most recent non-empty bucket average in this range</p>

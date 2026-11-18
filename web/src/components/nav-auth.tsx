@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
+import { Arrow } from "@/components/arrow";
 import { usePathname, useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
@@ -119,7 +120,7 @@ export function NavAuth() {
           <span className="mt-3 inline-block rounded-full bg-sprout px-3 py-1 text-xs font-medium text-emerald">{currentProfile ? roles[currentProfile.role] ?? 'Signed in' : 'Signed in'}</span>
         </div>
         <div className="space-y-1 p-2">
-          <Link href="/profile" onClick={() => setOpenedOn(null)} className="flex min-h-11 items-center justify-between rounded-xl px-3 hover:bg-sprout">Profile & settings <span aria-hidden="true">↗</span></Link>
+          <Link href="/profile" onClick={() => setOpenedOn(null)} className="flex min-h-11 items-center justify-between rounded-xl px-3 hover:bg-sprout">Profile & settings <span aria-hidden="true"><Arrow direction="up-right" size="1em" /></span></Link>
           <button type="button" disabled={busy} onClick={handleSignOut} className="min-h-11 w-full rounded-xl px-3 text-left text-danger hover:bg-sand disabled:opacity-50">{busy ? 'Signing out…' : 'Sign out'}</button>
           {error && <p role="alert" className="px-3 pb-2 text-xs text-danger">{error}</p>}
         </div>

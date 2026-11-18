@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Arrow } from "@/components/arrow";
+import { CloseIcon } from "@/components/icons";
 import { ApproveRejectButtons } from "@/components/approve-reject";
 import { PhotoImg } from "@/components/photo-img";
 import type { RecordListItem } from "@/lib/records";
@@ -210,7 +211,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
             className="inline-flex h-10 items-center gap-2 rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse"
           >
             {selected}
-            <span aria-hidden="true">✕</span>
+            <span aria-hidden="true"><CloseIcon size="1em" /></span>
           </button>
         )}
 
@@ -306,7 +307,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
             className="inline-flex h-10 items-center gap-2 rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse"
           >
             Reset filters
-            <span aria-hidden="true">✕</span>
+            <span aria-hidden="true"><CloseIcon size="1em" /></span>
           </button>
         )}
       </div>

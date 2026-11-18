@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { RANGES, STALE_AFTER_MS, overallStatus, readingStatus, type LiveTelemetry, type TelemetryHistory, type TelemetryRange } from "@/lib/telemetry";
 import { EventStrips, monitoringTime, TrendChart } from "./monitoring-charts";
+import { RefreshIcon } from "@/components/icons";
 
 // Separate live/history clocks; abort old filter requests and never overlap polls.
 function useTelemetry<T>(url: string, interval: number, enabled: boolean, refresh: number) {
@@ -82,7 +83,7 @@ export function MonitoringDashboard() {
       <div><p className="eyebrow text-emerald">Plantiful / Field intelligence</p><h1 className="mt-3 font-semibold">Plant monitoring</h1><p className="mt-3 max-w-xl text-sm leading-relaxed text-moss">A closer look at the conditions around your plants. Environmental readings, field activity and threat alerts in one place.</p></div>
       <div className="flex flex-wrap items-center gap-3">
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={auto} onChange={(e) => setAuto(e.target.checked)} className="accent-emerald" />Auto-refresh</label>
-        <button onClick={() => setRefresh((n) => n + 1)} disabled={live.busy || history.busy} className="rounded-full bg-pine px-5 py-3 text-sm font-medium text-cream disabled:opacity-50">{live.busy ? "Checking…" : "Refresh now ↻"}</button>
+        <button onClick={() => setRefresh((n) => n + 1)} disabled={live.busy || history.busy} className="rounded-full bg-pine px-5 py-3 text-sm font-medium text-cream disabled:opacity-50">{live.busy ? "Checking…" : <>Refresh now <RefreshIcon size="1em" /></>}</button>
       </div>
     </header>
 

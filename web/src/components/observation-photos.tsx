@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { PhotoImg } from "@/components/photo-img";
 import { Arrow } from "@/components/arrow";
+import { CloseIcon } from "@/components/icons";
 
 export function ObservationPhotos({ photos, title, failed }: { photos: string[]; title: string; failed: boolean }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -20,7 +21,7 @@ export function ObservationPhotos({ photos, title, failed }: { photos: string[];
         <PhotoImg key={photos[current]} src={photos[current]} alt={`Observation photograph ${current + 1} of ${title}`} className="aspect-[4/3] w-full object-cover" />
         <button type="button" onClick={() => dialog.current?.showModal()} aria-label={`Inspect full photograph of ${title}`}
           className="absolute inset-0 rounded-xl focus-visible:-outline-offset-4 focus-visible:outline-emerald">
-          <span className="absolute bottom-3 right-3 rounded-full bg-[#0c342c] px-3 py-2 text-xs font-semibold text-[#fffdee]">Inspect photo ↗</span>
+          <span className="absolute bottom-3 right-3 rounded-full bg-[#0c342c] px-3 py-2 text-xs font-semibold text-[#fffdee]">Inspect photo <Arrow direction="up-right" size="1em" /></span>
         </button>
       </div>
       {photos.length > 1 && <ul className="mt-2 flex gap-2 overflow-x-auto p-1">
@@ -41,7 +42,7 @@ export function ObservationPhotos({ photos, title, failed }: { photos: string[];
         className="m-auto max-h-[94dvh] w-[min(94vw,1000px)] overflow-auto rounded-2xl bg-[#0b1512] p-0 text-[#fffdee] backdrop:bg-black/80">
         <div className="flex items-center justify-between gap-4 px-4 py-3">
           <p className="text-sm font-medium">{title}</p>
-          <form method="dialog"><button className="min-h-11 rounded-full px-4 text-sm hover:bg-white/10 focus-visible:outline-chartreuse">Close ✕</button></form>
+          <form method="dialog"><button className="min-h-11 rounded-full px-4 text-sm hover:bg-white/10 focus-visible:outline-chartreuse">Close <CloseIcon size="1em" /></button></form>
         </div>
         <PhotoImg key={photos[current]} src={photos[current]} alt={`Full observation photograph ${current + 1} of ${title}`} className="max-h-[65dvh] min-h-32 w-full object-contain" />
         <div className="flex items-center justify-between gap-3 px-4 py-3">

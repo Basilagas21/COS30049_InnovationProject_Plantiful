@@ -542,6 +542,9 @@ export function HomeContent({
   const rootRef = useRef<HTMLDivElement>(null);
   useHomeMotion(rootRef);
   const featured = records.find((r) => r.isPublished) ?? records.find((r) => r.approvalStatus === "approved") ?? null;
+  const published = records.filter((r) => r.isPublished);
+  const verifiedCount = published.length;
+  const speciesCount = new Set(published.map((r) => r.scientificName)).size;
 
   return (
     <div ref={rootRef} className="home-root">
@@ -725,7 +728,21 @@ export function HomeContent({
         <div className="home-close-scrim" aria-hidden="true" />
         <div className="home-close-copy">
           <h2 className="home-close-title home-reveal">The catalogue grows one <span className="home-close-accent">verified</span> record at a time.</h2>
-          <div className="home-colophon home-reveal" style={{ "--reveal-i": 1 } as CSSProperties}>
+          {verifiedCount > 0 ? (
+            <dl className="home-close-ledger home-reveal" style={{ "--reveal-i": 1 } as CSSProperties}>
+              <div className="home-close-stat">
+                <dt className="home-close-stat-label">verified records</dt>
+                <dd className="home-close-stat-num">{String(verifiedCount).padStart(2, "0")}</dd>
+              </div>
+              <div className="home-close-stat">
+                <dt className="home-close-stat-label">species</dt>
+                <dd className="home-close-stat-num">{String(speciesCount).padStart(2, "0")}</dd>
+              </div>
+            </dl>
+          ) : (
+            <p className="home-close-empty home-reveal" style={{ "--reveal-i": 1 } as CSSProperties}>Awaiting the first verified record.</p>
+          )}
+          <div className="home-colophon home-reveal" style={{ "--reveal-i": 2 } as CSSProperties}>
             <p className="home-colophon-mark">plantiful<span>.</span></p>
             <p>
               Built for Sarawak Forestry Corporation at Niah National Park, with

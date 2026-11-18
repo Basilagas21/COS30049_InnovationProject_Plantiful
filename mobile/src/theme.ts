@@ -24,7 +24,7 @@ export const lightColors: ThemeColors = {
   pine: '#0C342C',
   white: '#FFFFFF',
   sand: '#F3F0E3',
-  muted: '#6B7568',
+  muted: '#5B6558',
   danger: '#B54A3B',
   surface: '#FFFFFA',
   border: '#DBE5D5',

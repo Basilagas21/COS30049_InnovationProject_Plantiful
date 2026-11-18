@@ -114,7 +114,7 @@ export default async function ExplorePage() {
           {featured ? (
             <Link
               href={`/species/${featured.id}`}
-              className="group rounded-3xl border border-white/15 bg-black/25 p-6 backdrop-blur-md transition-colors hover:bg-black/35"
+              className="group rounded-3xl border border-white/15 bg-black/45 p-6 backdrop-blur-md transition-colors hover:bg-black/55"
             >
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e2fbce]/80">
                 Featured species
@@ -130,7 +130,7 @@ export default async function ExplorePage() {
                   {featured.conservationStatus}
                 </span>
               )}
-              <p className="mt-4 line-clamp-3 text-sm leading-6 text-[#fffdee]/80">
+              <p className="mt-4 line-clamp-3 text-sm leading-6 text-[#fffdee]/90">
                 {featured.description ??
                   "A verified species record from the Niah National Park catalogue."}
               </p>
@@ -145,7 +145,7 @@ export default async function ExplorePage() {
               </span>
             </Link>
           ) : (
-            <div className="rounded-3xl border border-white/15 bg-black/25 p-6 backdrop-blur-md">
+            <div className="rounded-3xl border border-white/15 bg-black/45 p-6 backdrop-blur-md">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e2fbce]/80">
                 Catalogue in progress
               </p>

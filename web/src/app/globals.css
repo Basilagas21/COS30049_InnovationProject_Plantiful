@@ -145,6 +145,7 @@ select.field-input {
   :focus-visible { outline: 3px solid var(--emerald); outline-offset: 4px; }
   ::selection { background: #e3ef26; color: #0c342c; }
   ::placeholder { color: color-mix(in srgb, var(--moss) 92%, transparent); opacity: 1; }
+  input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="url"]:focus, input[type="number"]:focus, input:not([type]):focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--emerald) 18%, transparent); }
   select { -webkit-appearance: none; appearance: none; padding-right: 2.5rem; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a8a7a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.9rem center; background-size: 14px; }
   * { scrollbar-width: thin; scrollbar-color: var(--emerald) transparent; }
   ::-webkit-scrollbar { width: 10px; height: 10px; }

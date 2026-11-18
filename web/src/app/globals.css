@@ -216,7 +216,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .site-content .rounded-2xl { border-radius: 1.5rem; }
 .site-content .rounded-3xl { border-radius: 2rem; }
 .site-content .bg-white { background-color: var(--surface); }
-.site-content .shadow-sm { box-shadow: 0 6px 24px color-mix(in srgb, var(--shadow) 3%, transparent); }
+.site-content .shadow-sm { box-shadow: 0 1px 2px color-mix(in srgb, var(--shadow) 5%, transparent), 0 6px 24px color-mix(in srgb, var(--shadow) 7%, transparent); }
 
 /* Film-grain tooth over the whole page. */
 .site-grain { position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: .04; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"); }

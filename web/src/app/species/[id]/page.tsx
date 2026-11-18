@@ -23,29 +23,7 @@ export default async function SpeciesDetailPage({
         ← Back to species
       </Link>
 
-      <div className="mt-6 grid gap-10 lg:grid-cols-2">
-        <div>
-          <div className="relative">
-            {entry.photoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={entry.photoUrl}
-                alt={entry.scientificName}
-                className="aspect-[4/5] w-full rounded-3xl object-cover"
-              />
-            ) : (
-              <div className="flex aspect-[4/5] w-full items-center justify-center rounded-3xl bg-gradient-to-br from-sprout to-cream text-6xl">
-                🌿
-              </div>
-            )}
-            {!entry.isPublished && (
-              <span className="absolute top-4 left-4 rounded-full bg-chartreuse px-3 py-1 text-xs font-bold text-pine">
-                Unpublished
-              </span>
-            )}
-          </div>
-        </div>
-
+      <div className="mt-6 max-w-3xl">
         <div className="flex flex-col gap-6">
           <div>
             <span
@@ -131,39 +109,60 @@ export default async function SpeciesDetailPage({
         </div>
       </div>
 
-      {questions.length > 0 && (
-        <section className="mt-12">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="eyebrow text-emerald">Visitor Q&amp;A</p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
-                Learn more about this species
-              </h2>
-            </div>
-            <Link
-              href="/learn"
-              className="text-sm font-semibold text-emerald hover:underline"
-            >
-              More plant questions →
-            </Link>
-          </div>
+      <div className="relative mt-12 overflow-hidden rounded-3xl border border-pine/10 bg-sprout">
+        {entry.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={entry.photoUrl}
+            alt={`${entry.scientificName} botanical photo`}
+            className="aspect-[16/6] w-full object-cover"
+          />
+        ) : (
+          <div
+            role="img"
+            aria-label="Botanical illustration"
+            className="aspect-[16/6] w-full bg-[url('/botanical.svg')] bg-contain bg-center bg-no-repeat"
+          />
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-pine/55 via-transparent to-transparent" />
+        <p className="absolute bottom-4 left-5 text-sm font-semibold text-white">
+          {entry.commonName ?? entry.scientificName}
+        </p>
+      </div>
 
-          <div className="mt-5 grid gap-3 lg:grid-cols-2">
-            {questions.map((item) => (
-              <details
-                key={item.question}
-                className="rounded-2xl border border-pine/10 bg-white p-5 open:bg-sprout/30"
+      {questions.length > 0 && (
+        <section className="mt-8">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="eyebrow text-emerald">Visitor Q&amp;A</p>
+                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
+                  Learn more about this species
+                </h2>
+              </div>
+              <Link
+                href="/learn"
+                className="text-sm font-semibold text-emerald hover:underline"
               >
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold text-pine [&::-webkit-details-marker]:hidden">
-                  {item.question}
-                  <span aria-hidden="true" className="text-lg text-emerald">
-                    +
-                  </span>
-                </summary>
-                <p className="mt-3 text-sm leading-7 text-moss">{item.answer}</p>
-              </details>
-            ))}
-          </div>
+                More plant questions →
+              </Link>
+            </div>
+
+            <div className="mt-5 grid gap-3 lg:grid-cols-2">
+              {questions.map((item) => (
+                <details
+                  key={item.question}
+                  className="rounded-2xl border border-pine/10 bg-white p-5 open:bg-sprout/30"
+                >
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold text-pine [&::-webkit-details-marker]:hidden">
+                    {item.question}
+                    <span aria-hidden="true" className="text-lg text-emerald">
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-sm leading-7 text-moss">{item.answer}</p>
+                </details>
+              ))}
+            </div>
         </section>
       )}
 

@@ -60,6 +60,8 @@
   --chart-temperature: #bb642c;
   --chart-humidity: #327c92;
   --chart-soil: #367849;
+  /* Canonical nav rhythm, shared by every page (lifted from the homepage). */
+  --nav-gap: clamp(.45rem, 1.2vw, .7rem);
 }
 
 [data-theme="dark"] {
@@ -155,19 +157,18 @@ select.field-input {
 }
 
 @layer components {
-  .site-header { position: sticky; top: 0; z-index: 40; padding: .9rem 1.25rem 0; }
-  .site-header-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; padding: .65rem 1.4rem; border-radius: 999px; background: var(--header); -webkit-backdrop-filter: blur(20px) saturate(1.4); backdrop-filter: blur(20px) saturate(1.4); border: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent), inset 0 1px 0 color-mix(in srgb, var(--white) 55%, transparent); }
+  /* Canonical header: a full-width flush bar with a bottom hairline, shared by
+     every page. Lifted from the homepage so inner pages read as one app. */
+  .site-header { position: sticky; top: 0; z-index: 40; padding: 0; }
+  .site-header-inner { width: 100%; max-width: none; margin: 0; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; padding: var(--nav-gap) 1.5rem; border-radius: 0; background: var(--header); -webkit-backdrop-filter: blur(20px) saturate(1.4); backdrop-filter: blur(20px) saturate(1.4); border: none; border-bottom: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent); }
   .site-nav-wrap { position: relative; min-width: 0; }
   .site-nav-wrap.has-more::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 2.5rem; pointer-events: none; background: linear-gradient(90deg, transparent, var(--header)); }
-  .site-nav { display: flex; align-items: center; justify-content: center; gap: .3rem; flex-wrap: wrap; font-size: .85rem; font-weight: 600; }
-  .site-nav-link { position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 5.75rem; min-height: 44px; padding: .5rem 1rem; border-radius: 999px; white-space: nowrap; transition: background .2s, color .2s; }
-  .site-nav-link::after { content: ""; position: absolute; left: 1rem; right: 1rem; bottom: .4rem; height: 2px; border-radius: 2px; background: var(--emerald); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+  .site-nav { display: flex; align-items: center; justify-content: center; gap: var(--nav-gap); flex-wrap: nowrap; font-size: .85rem; font-weight: 600; }
+  .site-nav-link { position: relative; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-width: 0; min-height: 44px; padding: .5rem .9rem; border-radius: 10px; white-space: nowrap; transition: background .2s, color .2s; }
   .site-nav-link:hover { background: var(--sprout); }
-  .site-nav-link:hover::after { transform: scaleX(1); }
   .site-nav-link[aria-current="page"] { background: var(--pine); color: var(--cream); }
-  .site-nav-link[aria-current="page"]::after { transform: scaleX(0); }
-  /* Authed navs carry many links; keep them on one scrollable row instead of
-     wrapping into misaligned lines. Visitor navs keep the centred pills. */
+  /* Authed navs carry many links; keep them on one scrollable row. Visitor
+     navs stay centred in the same flush bar. */
   .site-nav--dense { flex-wrap: nowrap; justify-content: flex-start; gap: .15rem; font-size: .8rem; overflow-x: auto; scrollbar-width: none; }
   .site-nav--dense::-webkit-scrollbar { display: none; }
   .site-nav--dense .site-nav-link { min-width: 0; flex-shrink: 0; padding: .45rem .55rem; }
@@ -188,14 +189,9 @@ select.field-input {
   .skip-link:focus { transform: translateY(0); }
 }
 
-/* Attached nav on the homepage, keeping the original theme-aware glass. */
-body:has(.home-canopy) { --nav-gap: clamp(.45rem, 1.2vw, .7rem); }
-body:has(.home-canopy) .site-header { padding: 0; }
-body:has(.home-canopy) .site-header-inner { max-width: none; width: 100%; margin: 0; border-radius: 0; padding: var(--nav-gap) 1.5rem; border: none; border-bottom: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent); }
+/* Homepage-only brand lockup and sign-in delight; the header bar itself is now
+   the shared canonical treatment above, so no nav overrides are needed here. */
 body:has(.home-canopy) .brand { gap: 0; position: relative; }
-body:has(.home-canopy) .site-nav { flex-wrap: nowrap; justify-content: center; gap: var(--nav-gap); }
-body:has(.home-canopy) .site-nav-link { flex: 0 0 auto; min-width: 0; }
-body:has(.home-canopy) .site-nav-link::after { content: none; }
 body:has(.home-canopy) .header-account a[href="/signin"] { padding-left: 1.9rem; padding-right: 1.9rem; transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, background .25s ease; }
 body:has(.home-canopy) .header-account a[href="/signin"]:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--emerald) 86%, #ffffff); box-shadow: 0 10px 26px color-mix(in srgb, var(--emerald) 45%, transparent); }
 
@@ -535,24 +531,23 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   .live-chip { display: none; }
 }
 @media (max-width: 900px) {
-  .site-header-inner { grid-template-columns: auto auto; grid-template-areas: "brand account" "nav nav"; row-gap: .5rem; border-radius: 28px; }
+  .site-header-inner { grid-template-columns: auto auto; grid-template-areas: "brand account" "nav nav"; row-gap: .5rem; border-radius: 0; }
   .brand { grid-area: brand; }
   .header-account { grid-area: account; }
   .site-nav-wrap { grid-area: nav; }
   .site-nav { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; width: 100%; padding-bottom: .25rem; scrollbar-width: none; }
   .site-nav::-webkit-scrollbar { display: none; }
-  .site-nav-link { min-width: 5.5rem; flex-shrink: 0; }
+  .site-nav-link { min-width: 0; flex-shrink: 0; }
 }
 @media (max-width: 640px) {
   .auth-layout { grid-template-columns: 1fr; gap: 1.25rem; padding-top: 1.25rem; }
   .auth-story { min-height: 0; padding: 2rem; }
-  .site-header { padding: .6rem .75rem 0; }
+  .site-header { padding: 0; }
   .site-header-inner { padding: .6rem 1rem; gap: .75rem; }
   /* Avatar-only account chip so the brand wordmark keeps its full width. */
   .account-name { display: none; }
   .site-nav { gap: .1rem; }
   .site-nav-link { min-width: 0; padding: .45rem .6rem; font-size: .82rem; }
-  body:has(.home-canopy) .site-nav { justify-content: flex-start; }
   .home-canopy { padding: calc(var(--header-h, 110px) + 2rem) 1.5rem 6rem; }
   .home-frond-wrap { left: auto; right: -60px; top: calc(var(--header-h, 110px) - 20px); translate: none; opacity: .18; width: 320px; }
   .home-canopy::before { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, #03100aee 30%, #03100a99); }

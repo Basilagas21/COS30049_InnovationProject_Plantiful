@@ -344,7 +344,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-chain-step { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; opacity: 0; transform: translateY(18px); transition: opacity .5s cubic-bezier(.16,1,.3,1), transform .5s cubic-bezier(.16,1,.3,1); pointer-events: none; }
 .home-chain-step.is-active { opacity: 1; transform: none; pointer-events: auto; }
 .home-chain-step h3 { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(1.6rem, 2.6vw, 2.4rem); font-weight: 640; letter-spacing: -0.02em; line-height: 1.15; }
-.home-chain-step p { margin-top: .9rem; max-width: 46ch; font-size: 1.05rem; line-height: 1.7; color: #fffdeecf; }
+.home-chain-step p { margin-top: .9rem; max-width: 46ch; font-size: 1.05rem; line-height: 1.7; color: #fffdeee0; }
 .home-chain-stage.is-peak .home-chain-step.is-active h3 { color: #e3ef26; text-shadow: 0 0 24px #e3ef2666; }
 .chain-icon { width: 68px; height: 68px; stroke: #6fd6b0; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 1.15rem; filter: drop-shadow(0 0 10px #6fd6b033); }
 .chain-icon--peak { stroke: #e3ef26; filter: drop-shadow(0 0 12px #e3ef2644); }

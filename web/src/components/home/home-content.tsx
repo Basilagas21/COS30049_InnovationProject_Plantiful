@@ -714,24 +714,25 @@ export function HomeContent({
         </div>
       </section>
 
-      <section className="home-close" aria-label="Start exploring">
-        <div className="home-close-grid">
-          <div>
-            <h2 className="home-close-title home-reveal">The catalogue grows one verified record at a time.</h2>
-            <div className="home-close-actions home-reveal" style={{ "--reveal-i": 1 } as CSSProperties}>
-              <Link href="/explore" className="home-btn">Browse the published catalogue<Arrow /></Link>
-              <Link href="/map" className="home-btn home-btn--ghost">Open the species map<Arrow /></Link>
-              <Link href="/signin" className="home-btn home-btn--ghost">Sign in to contribute<Arrow /></Link>
-            </div>
-          </div>
-          <div className="home-colophon home-reveal" style={{ "--reveal-i": 2 } as CSSProperties}>
+      <section className="home-close" aria-label="The catalogue grows">
+        <Image
+          src="/images/home/canopy-wide.jpg"
+          alt="Sunlight filtering through mist over the forest canopy"
+          fill
+          sizes="100vw"
+          className="home-close-photo"
+        />
+        <div className="home-close-scrim" aria-hidden="true" />
+        <div className="home-close-copy">
+          <h2 className="home-close-title home-reveal">The catalogue grows one <span className="home-close-accent">verified</span> record at a time.</h2>
+          <div className="home-colophon home-reveal" style={{ "--reveal-i": 1 } as CSSProperties}>
             <p className="home-colophon-mark">plantiful<span>.</span></p>
             <p>
               Built for Sarawak Forestry Corporation at Niah National Park, with
-              industry partner NeuonAI. Photographs ship with the project asset
-              library; the frond illustration is part of the Plantiful brand.
+              industry partner NeuonAI.
             </p>
             <p>Every public record is reviewed before publication.</p>
+            <p className="home-colophon-credit">Canopy photograph by Charles Ray, via Unsplash.</p>
           </div>
         </div>
       </section>

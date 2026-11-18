@@ -302,12 +302,16 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-card:focus-visible { outline: 3px solid var(--emerald); outline-offset: 5px; }
 @media (prefers-reduced-transparency: reduce) { .home-card-glass { background: #0c342ce6; -webkit-backdrop-filter: none; backdrop-filter: none; } }
 
-.home-close { background: var(--forest-night); color: #fffdee; padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 6vw, 5.5rem); }
-.home-close-grid { margin: auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
-.home-close-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(2rem, 4.4vw, 3.6rem); font-weight: 620; letter-spacing: -0.03em; line-height: 1.06; max-width: 22ch; color: #fffdee; }
-.home-close-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin-top: 2rem; }
-.home-close-actions .home-btn { padding: .75rem 1rem; font-size: .85rem; white-space: nowrap; }
-.home-colophon { border-left: 1px solid #fffdee24; padding-left: clamp(1.5rem, 3vw, 2.5rem); font-size: .9rem; line-height: 1.7; color: #fffdeeb3; }
+/* Cinematic closing band: a full-viewport forest canopy frame with the manifesto
+   overlaid, dark in both themes like the opening canopy. */
+.home-close { position: relative; isolation: isolate; overflow: hidden; min-height: 100svh; display: flex; align-items: center; padding: clamp(4rem, 9vw, 7rem) clamp(1.5rem, 6vw, 5.5rem); background: #071c14; color: #fffdee; }
+.home-close-photo { object-fit: cover; object-position: center; z-index: -2; }
+.home-close-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #04100bf2 0%, #04100bd9 34%, #04100b66 62%, #04100b1f 100%), linear-gradient(0deg, #04100bd9 0%, #04100b33 30%, transparent 55%); }
+.home-close-copy { position: relative; z-index: 1; max-width: 52rem; }
+.home-close-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(2.4rem, 5.5vw, 4.5rem); font-weight: 640; letter-spacing: -0.03em; line-height: 1.08; max-width: 18ch; color: #fffdee; text-wrap: balance; }
+.home-close-accent { color: #e3ef26; text-shadow: 0 0 24px #e3ef2666; }
+.home-colophon { margin-top: clamp(2rem, 4vw, 3rem); max-width: 42rem; font-size: .9rem; line-height: 1.7; color: #fffdeeb3; }
+.home-colophon-credit { font-size: .78rem; color: #fffdee9e; }
 .home-colophon-mark { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-weight: 700; font-size: 1.4rem; letter-spacing: -0.02em; color: #fffdee; margin-bottom: .9rem; }
 .home-colophon-mark span { color: #6fd6b0; }
 .home-colophon p + p { margin-top: .9rem; }
@@ -535,11 +539,6 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 [data-theme="light"] .home-card:hover .home-card-title .home-arrow { background: #e3ef26; color: #0c342c; }
 [data-theme="light"] .home-card-desc { color: #0c342cd9; }
 [data-theme="light"] .home-card-action { border-top-color: #0c342c22; color: #076653; }
-[data-theme="light"] .home-close { background: #eef5e8; color: #0c342c; }
-[data-theme="light"] .home-close-title { color: #0c342c; }
-[data-theme="light"] .home-colophon { border-left-color: #0c342c24; color: #0c342cc8; }
-[data-theme="light"] .home-colophon-mark { color: #0c342c; }
-[data-theme="light"] .home-colophon-mark span { color: #076653; }
 @media (prefers-reduced-transparency: reduce) {
   [data-theme="light"] .home-card-glass { background: #f3f0e3f2; }
   [data-theme="light"] .home-chain-art { background: #f3f0e3f2; }
@@ -549,8 +548,6 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 @media (max-width: 1024px) {
   .home-cards { grid-template-columns: 1fr; }
   .home-card { min-height: 380px; }
-  .home-close-grid { grid-template-columns: 1fr; }
-  .home-colophon { border-left: none; padding-left: 0; border-top: 1px solid #fffdee24; padding-top: 1.75rem; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .live-chip { display: none; }
 }
@@ -578,7 +575,8 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   [data-theme="light"] .home-canopy::before { background: linear-gradient(90deg, #fffdeeee 30%, #fffdee99); }
   .home-hero-copy { z-index: 2; }
   .home-banner-actions { grid-template-columns: 1fr; max-width: none; }
-  .home-close-actions { grid-template-columns: 1fr; }
+  /* Lighter scrim on phones so the canopy stays visible behind the manifesto. */
+  .home-close-scrim { background: linear-gradient(90deg, #04100be6 0%, #04100bb3 45%, #04100b66 100%), linear-gradient(0deg, #04100bd9 0%, transparent 50%); }
   .home-card { min-height: 360px; }
   .home-card-glass { margin: 12px; padding: 16px; }
   .home-card-title { font-size: 24px; }

@@ -107,7 +107,7 @@ export function NavAuth() {
         onClick={() => setOpenedOn(open ? null : pathname)}
         className="flex min-h-11 items-center gap-2 rounded-full border border-pine/15 bg-surface py-1 pl-1 pr-3 text-sm text-pine transition hover:bg-sprout">
         <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-sprout text-xs font-bold text-emerald">{avatarContent}</span>
-        <span className="max-w-24 truncate font-semibold sm:max-w-36">{name}</span>
+        <span className="account-name max-w-24 truncate font-semibold sm:max-w-36">{name}</span>
         <svg aria-hidden="true" viewBox="0 0 16 16" className={`h-3 w-3 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m4 6 4 4 4-4" /></svg>
       </button>
       {open && <section id={panelId} aria-label="Your account" className="absolute right-0 top-full z-50 mt-3 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-pine/15 bg-surface text-sm text-pine shadow-xl">

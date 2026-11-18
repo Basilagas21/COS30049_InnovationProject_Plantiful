@@ -132,6 +132,12 @@ select.field-input {
   padding-right: 2.5rem;
 }
 
+/* Compact 40px fields need less vertical padding so the text is not clipped. */
+.field-input.h-10 {
+  padding-top: .4rem;
+  padding-bottom: .4rem;
+}
+
 @layer base {
   h1, h2, h3 { text-wrap: balance; letter-spacing: -0.035em; }
   button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
@@ -537,6 +543,8 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   .auth-story { min-height: 0; padding: 2rem; }
   .site-header { padding: .6rem .75rem 0; }
   .site-header-inner { padding: .6rem 1rem; gap: .75rem; }
+  /* Avatar-only account chip so the brand wordmark keeps its full width. */
+  .account-name { display: none; }
   .site-nav { gap: .1rem; }
   .site-nav-link { min-width: 0; padding: .45rem .6rem; font-size: .82rem; }
   .home-canopy { padding: calc(var(--header-h, 110px) + 2rem) 1.5rem 6rem; }

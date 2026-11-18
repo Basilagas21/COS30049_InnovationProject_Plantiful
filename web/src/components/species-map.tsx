@@ -464,7 +464,7 @@ export function SpeciesMap({ points }: Props) {
           </dl>
         </div>
 
-        <div className="rounded-2xl bg-emerald p-5 text-cream">
+        <div className="rounded-2xl border border-pine/10 bg-white p-5 text-pine">
           <h2 className="font-semibold">Legend</h2>
           <ul className="mt-3 space-y-2 text-sm">
             <li className="flex items-center gap-2">

@@ -16,7 +16,7 @@ export default async function RecordsPage() {
           <p className="mt-2 text-moss">
             {error
               ? "Records unavailable"
-              : `${records.length} field observations synced from the mobile app`}
+              : `${records.length} field observation${records.length === 1 ? "" : "s"} synced from the mobile app`}
           </p>
         </div>
         {officer && (

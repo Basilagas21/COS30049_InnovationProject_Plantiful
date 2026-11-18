@@ -145,7 +145,7 @@ export default function RegisterPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Create a password"
                 className="h-11 w-full rounded-xl border border-pine/15 bg-cream pr-12 pl-4 text-sm outline-none transition-colors focus:border-emerald"
               />
               {renderEyeButton()}
@@ -153,14 +153,17 @@ export default function RegisterPage() {
           </label>
           <label className="flex flex-col gap-1.5 text-sm">
             <span className="font-medium text-pine">Confirm password</span>
-            <input
-              type={showPassword ? "text" : "password"}
-              required
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              placeholder="••••••••"
-              className="h-11 rounded-xl border border-pine/15 bg-cream px-4 text-sm outline-none transition-colors focus:border-emerald"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                placeholder="Re-enter password"
+                className="h-11 w-full rounded-xl border border-pine/15 bg-cream pr-12 pl-4 text-sm outline-none transition-colors focus:border-emerald"
+              />
+              {renderEyeButton()}
+            </div>
           </label>
 
           {error && (

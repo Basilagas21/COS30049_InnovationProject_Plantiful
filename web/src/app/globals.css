@@ -311,7 +311,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-close-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(2.4rem, 5.5vw, 4.5rem); font-weight: 640; letter-spacing: -0.03em; line-height: 1.08; max-width: 18ch; color: #fffdee; text-wrap: balance; }
 .home-close-accent { color: #e3ef26; text-shadow: 0 0 24px #e3ef2666; }
 .home-colophon { margin-top: clamp(2rem, 4vw, 3rem); max-width: 42rem; font-size: .9rem; line-height: 1.7; color: #fffdeeb3; }
-.home-colophon-credit { font-size: .78rem; color: #fffdee9e; }
+.home-colophon-credit { font-size: .78rem; color: #fffdeec4; }
 .home-colophon-mark { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-weight: 700; font-size: 1.4rem; letter-spacing: -0.02em; color: #fffdee; margin-bottom: .9rem; }
 .home-colophon-mark span { color: #6fd6b0; }
 .home-colophon p + p { margin-top: .9rem; }
@@ -575,8 +575,13 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   [data-theme="light"] .home-canopy::before { background: linear-gradient(90deg, #fffdeeee 30%, #fffdee99); }
   .home-hero-copy { z-index: 2; }
   .home-banner-actions { grid-template-columns: 1fr; max-width: none; }
-  /* Lighter scrim on phones so the canopy stays visible behind the manifesto. */
-  .home-close-scrim { background: linear-gradient(90deg, #04100be6 0%, #04100bb3 45%, #04100b66 100%), linear-gradient(0deg, #04100bd9 0%, transparent 50%); }
+  /* Phones: anchor the copy to the bottom and scrim from the bottom up, so the
+     canopy and light shafts stay visible above the manifesto. */
+  .home-close { align-items: flex-end; padding: 4rem 1.5rem 2.25rem; }
+  .home-close-scrim { background: linear-gradient(0deg, #04100bf2 0%, #04100be6 25%, #04100bcc 45%, #04100ba6 60%, #04100b66 72%, #04100b1a 84%, transparent 94%); }
+  .home-colophon { margin-top: 1.5rem; font-size: .82rem; line-height: 1.55; }
+  .home-colophon-mark { font-size: 1.2rem; margin-bottom: .6rem; }
+  .home-colophon p + p { margin-top: .6rem; }
   .home-card { min-height: 360px; }
   .home-card-glass { margin: 12px; padding: 16px; }
   .home-card-title { font-size: 24px; }

@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { Arrow } from "@/components/arrow";
 import { ApproveRejectButtons } from "@/components/approve-reject";
 import { PhotoImg } from "@/components/photo-img";
 import type { RecordListItem } from "@/lib/records";
@@ -194,7 +195,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
                     className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm transition-colors hover:bg-sprout"
                   >
                     <span className="font-medium text-pine">{option.label}</span>
-                    <span className="text-xs text-moss">→</span>
+                    <span className="text-xs text-moss"><Arrow direction="right" size="1em" /></span>
                   </button>
                 </li>
               ))}

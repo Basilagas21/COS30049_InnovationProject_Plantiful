@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Arrow } from "@/components/arrow";
 import {
   conservationStatusGuide,
   visitorPlantQuestions,
@@ -139,7 +140,7 @@ export default function LearnPage() {
           href="/explore"
           className="mt-6 inline-flex text-sm font-semibold text-emerald hover:underline"
         >
-          Browse published species →
+          Browse published species <Arrow direction="right" size="1em" />
         </Link>
       </section>
     </div>

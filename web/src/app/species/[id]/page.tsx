@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Arrow } from "@/components/arrow";
 import { notFound } from "next/navigation";
 import { fetchSpeciesById } from "@/lib/species";
 import { isOfficer } from "@/lib/auth";
@@ -20,7 +21,7 @@ export default async function SpeciesDetailPage({
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
       <Link href="/species" className="text-sm font-medium text-emerald hover:underline">
-        ← Back to species
+        <Arrow direction="left" size="1em" /> Back to species
       </Link>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
@@ -144,7 +145,7 @@ export default async function SpeciesDetailPage({
               href="/learn"
               className="text-sm font-semibold text-emerald hover:underline"
             >
-              More plant questions →
+              More plant questions <Arrow direction="right" size="1em" />
             </Link>
           </div>
 

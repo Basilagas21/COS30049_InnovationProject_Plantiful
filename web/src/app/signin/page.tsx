@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Arrow } from "@/components/arrow";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
@@ -148,7 +149,7 @@ export default function SignInPage() {
           </Link>
         </p>
         <Link href="/" className="mt-4 inline-block text-sm font-medium text-emerald hover:underline">
-          ← Back to home
+          <Arrow direction="left" size="1em" /> Back to home
         </Link>
       </div>
     </div>

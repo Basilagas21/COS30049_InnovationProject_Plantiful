@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Arrow } from "@/components/arrow";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
@@ -50,7 +51,7 @@ export default function ChangePasswordPage() {
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6 py-16">
       <div className="rounded-3xl border border-pine/10 bg-white p-8">
         <Link href="/profile" className="text-sm font-medium text-emerald hover:underline">
-          ← Back to profile
+          <Arrow direction="left" size="1em" /> Back to profile
         </Link>
         <h1 className="mt-4 text-2xl font-bold tracking-tight text-pine">
           Change password

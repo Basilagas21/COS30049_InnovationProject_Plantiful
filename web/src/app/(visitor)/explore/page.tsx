@@ -6,6 +6,7 @@ import {
 } from "@/lib/species-taxonomy";
 import { visitorPlantQuestions } from "@/lib/plant-learning";
 import { SpeciesBrowser } from "@/components/species-browser";
+import { Arrow } from "@/components/arrow";
 
 function formatUpdated(value: string | null): string {
   if (!value) return "Not yet";
@@ -139,7 +140,7 @@ export default async function ExplorePage() {
                   aria-hidden="true"
                   className="ml-1 transition-transform group-hover:translate-x-1"
                 >
-                  →
+                  <Arrow direction="right" size="1em" />
                 </span>
               </span>
             </Link>
@@ -159,7 +160,7 @@ export default async function ExplorePage() {
                 href="/map"
                 className="mt-5 inline-flex text-sm font-semibold text-[#e3ef26]"
               >
-                Explore the map →
+                Explore the map <Arrow direction="right" size="1em" />
               </Link>
             </div>
           )}
@@ -209,7 +210,7 @@ export default async function ExplorePage() {
             href="/learn"
             className="text-sm font-semibold text-emerald hover:underline"
           >
-            Read the learning guide →
+            Read the learning guide <Arrow direction="right" size="1em" />
           </Link>
         </div>
 
@@ -235,7 +236,7 @@ export default async function ExplorePage() {
             href="/records"
             className="text-sm font-semibold text-emerald hover:underline"
           >
-            Explore verified observations →
+            Explore verified observations <Arrow direction="right" size="1em" />
           </Link>
         </div>
 

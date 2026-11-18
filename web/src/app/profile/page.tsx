@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Arrow } from "@/components/arrow";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
@@ -104,7 +105,7 @@ export default function ProfilePage() {
             </Link>
           </p>
           <Link href="/" className="mt-4 inline-block text-sm font-medium text-emerald hover:underline">
-            ← Back to home
+            <Arrow direction="left" size="1em" /> Back to home
           </Link>
         </div>
       </div>
@@ -140,7 +141,7 @@ export default function ProfilePage() {
               Update the password for your account
             </span>
           </span>
-          <span className="text-emerald">→</span>
+          <span className="text-emerald"><Arrow direction="right" size="1em" /></span>
         </Link>
 
         <div className="mt-6 border-t border-pine/10 pt-6">

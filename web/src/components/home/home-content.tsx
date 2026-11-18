@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { RecordListItem } from "@/lib/records";
 import { useHomeMotion } from "./use-home-motion";
+import { Arrow as ArrowIcon } from "@/components/arrow";
 
 const SPORES = [
   { left: 8, dur: 11, delay: 0, dx: 26, size: 4 },
@@ -73,11 +74,7 @@ const CHAIN = [
 ];
 
 function Arrow() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" className="home-arrow" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 12 L12 4 M5.5 4 H12 V10.5" />
-    </svg>
-  );
+  return <ArrowIcon className="home-arrow" />;
 }
 
 const CHAIN_ICONS: string[][] = [

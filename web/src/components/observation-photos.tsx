@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { PhotoImg } from "@/components/photo-img";
+import { Arrow } from "@/components/arrow";
 
 export function ObservationPhotos({ photos, title, failed }: { photos: string[]; title: string; failed: boolean }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -44,9 +45,9 @@ export function ObservationPhotos({ photos, title, failed }: { photos: string[];
         </div>
         <PhotoImg key={photos[current]} src={photos[current]} alt={`Full observation photograph ${current + 1} of ${title}`} className="max-h-[65dvh] min-h-32 w-full object-contain" />
         <div className="flex items-center justify-between gap-3 px-4 py-3">
-          <button type="button" disabled={photos.length < 2} onClick={() => move(-1)} className="min-h-11 rounded-full px-4 text-sm hover:bg-white/10 disabled:opacity-30 focus-visible:outline-chartreuse">← Previous</button>
+          <button type="button" disabled={photos.length < 2} onClick={() => move(-1)} className="min-h-11 rounded-full px-4 text-sm hover:bg-white/10 disabled:opacity-30 focus-visible:outline-chartreuse"><Arrow direction="left" size="1em" /> Previous</button>
           <span aria-live="polite" className="text-xs">{current + 1} / {photos.length}</span>
-          <button type="button" disabled={photos.length < 2} onClick={() => move(1)} className="min-h-11 rounded-full px-4 text-sm hover:bg-white/10 disabled:opacity-30 focus-visible:outline-chartreuse">Next →</button>
+          <button type="button" disabled={photos.length < 2} onClick={() => move(1)} className="min-h-11 rounded-full px-4 text-sm hover:bg-white/10 disabled:opacity-30 focus-visible:outline-chartreuse">Next <Arrow direction="right" size="1em" /></button>
         </div>
       </dialog>
     </section>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Arrow } from "@/components/arrow";
 import { redirect } from "next/navigation";
 import { getCurrentRole } from "@/lib/auth";
 import { getUsersPageSize } from "@/lib/admin-settings";
@@ -312,10 +313,10 @@ export default async function UsersPage({
               href={buildUsersHref({ q, role: roleFilter, sort, page: page - 1 })}
               className="font-semibold text-emerald hover:underline"
             >
-              ← Previous
+              <Arrow direction="left" size="1em" /> Previous
             </Link>
           ) : (
-            <span className="text-moss/50">← Previous</span>
+            <span className="text-moss/50"><Arrow direction="left" size="1em" /> Previous</span>
           )}
 
           <span className="text-moss">
@@ -328,10 +329,10 @@ export default async function UsersPage({
               href={buildUsersHref({ q, role: roleFilter, sort, page: page + 1 })}
               className="font-semibold text-emerald hover:underline"
             >
-              Next →
+              Next <Arrow direction="right" size="1em" />
             </Link>
           ) : (
-            <span className="text-moss/50">Next →</span>
+            <span className="text-moss/50">Next <Arrow direction="right" size="1em" /></span>
           )}
         </nav>
       )}

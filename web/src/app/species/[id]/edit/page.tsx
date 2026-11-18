@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Arrow } from "@/components/arrow";
 import { notFound, redirect } from "next/navigation";
 import { fetchSpeciesById } from "@/lib/species";
 import { isOfficer } from "@/lib/auth";
@@ -18,7 +19,7 @@ export default async function EditSpeciesPage({
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
       <Link href={`/species/${id}`} className="text-sm font-medium text-emerald hover:underline">
-        ← Back to {entry.scientificName}
+        <Arrow direction="left" size="1em" /> Back to {entry.scientificName}
       </Link>
       <h1 className="mt-4 text-3xl font-bold tracking-tight text-pine sm:text-4xl">
         Edit species

@@ -157,6 +157,11 @@ select.field-input {
   .site-nav-link:hover::after { transform: scaleX(1); }
   .site-nav-link[aria-current="page"] { background: var(--pine); color: var(--cream); }
   .site-nav-link[aria-current="page"]::after { transform: scaleX(0); }
+  /* Authed navs carry many links; keep them on one scrollable row instead of
+     wrapping into misaligned lines. Visitor navs keep the centred pills. */
+  .site-nav--dense { flex-wrap: nowrap; justify-content: flex-start; gap: .15rem; font-size: .8rem; overflow-x: auto; scrollbar-width: none; }
+  .site-nav--dense::-webkit-scrollbar { display: none; }
+  .site-nav--dense .site-nav-link { min-width: 0; flex-shrink: 0; padding: .45rem .55rem; }
   .site-content { min-width: 0; }
   .site-content > :not(.home-root) { animation: page-in .35s ease-out; }
   .site-content table { border-collapse: collapse; width: 100%; font-size: .875rem; }

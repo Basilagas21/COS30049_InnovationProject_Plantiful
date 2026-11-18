@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation";
 
 export function SiteNav({ links }: { links: { href: string; label: string }[] }) {
   const pathname = usePathname();
+  const dense = links.length > 7;
   return (
-    <nav aria-label="Main navigation" className="site-nav min-w-0">
+    <nav aria-label="Main navigation" className={`site-nav min-w-0${dense ? " site-nav--dense" : ""}`}>
       {links.map(({ href, label }) => {
         const active =
           href === "/"

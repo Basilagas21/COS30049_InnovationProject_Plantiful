@@ -261,10 +261,11 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-card:focus-visible { outline: 3px solid var(--emerald); outline-offset: 5px; }
 @media (prefers-reduced-transparency: reduce) { .home-card-glass { background: #0c342ce6; -webkit-backdrop-filter: none; backdrop-filter: none; } }
 
-.home-close { background: var(--forest-night); color: #fffdee; padding: clamp(3rem, 7vw, 6rem) 1.5rem; }
-.home-close-grid { max-width: 96rem; margin: auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+.home-close { background: var(--forest-night); color: #fffdee; padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 6vw, 5.5rem); }
+.home-close-grid { margin: auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
 .home-close-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(2rem, 4.4vw, 3.6rem); font-weight: 620; letter-spacing: -0.03em; line-height: 1.06; max-width: 22ch; color: #fffdee; }
-.home-close-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
+.home-close-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-top: 2rem; }
+.home-close-actions .home-btn:first-child { grid-column: 1 / -1; }
 .home-colophon { border-left: 1px solid #fffdee24; padding-left: clamp(1.5rem, 3vw, 2.5rem); font-size: .9rem; line-height: 1.7; color: #fffdeeb3; }
 .home-colophon-mark { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-weight: 700; font-size: 1.4rem; letter-spacing: -0.02em; color: #fffdee; margin-bottom: .9rem; }
 .home-colophon-mark span { color: #6fd6b0; }
@@ -382,13 +383,14 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 /* ===== Full-height footer ===== */
 .site-footer--full { background: var(--footer); color: var(--footer-text); padding: 0; overflow: hidden; min-height: 100svh; display: flex; flex-direction: column; }
 .footer-top { padding: clamp(3rem, 6vw, 5rem) 0 2.5rem; }
+.footer-top > div { max-width: none; padding-inline: clamp(1.5rem, 6vw, 5.5rem); }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 2.5rem; }
 .footer-brand p:first-child { font-family: var(--font-bricolage), var(--font-public), sans-serif; }
 .footer-brand p + p { margin-top: .75rem; font-size: .9rem; line-height: 1.7; color: color-mix(in srgb, var(--footer-text) 72%, transparent); max-width: 34ch; }
 .footer-col h3 { font-family: var(--font-martian), monospace; font-size: .7rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--footer-text) 72%, transparent); margin-bottom: 1rem; }
 .footer-col a, .footer-col span { display: block; padding: .3rem 0; font-size: .92rem; color: color-mix(in srgb, var(--footer-text) 88%, transparent); transition: color .2s, transform .2s; }
 .footer-col a:hover { color: #e3ef26; transform: translateX(3px); }
-.footer-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid color-mix(in srgb, var(--footer-text) 16%, transparent); font-family: var(--font-martian), monospace; font-size: .72rem; letter-spacing: .06em; color: color-mix(in srgb, var(--footer-text) 76%, transparent); }
+.footer-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid color-mix(in srgb, var(--footer-text) 16%, transparent); font-family: var(--font-martian), monospace; font-size: .72rem; letter-spacing: .06em; color: color-mix(in srgb, var(--footer-text) 88%, transparent); }
 .footer-nature-wrap { position: relative; flex: 1; min-height: 320px; }
 
 /* Night-forest nature scene. */
@@ -530,6 +532,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   .home-canopy::before { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, #03100aee 30%, #03100a99); }
   .home-hero-copy { z-index: 2; }
   .home-banner-actions { grid-template-columns: 1fr; max-width: none; }
+  .home-close-actions { grid-template-columns: 1fr; }
   .home-card { min-height: 360px; }
   .home-card-glass { margin: 12px; padding: 16px; }
   .home-card-title { font-size: 24px; }

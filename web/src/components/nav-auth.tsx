@@ -121,6 +121,9 @@ export function NavAuth() {
         </div>
         <div className="space-y-1 p-2">
           <Link href="/profile" onClick={() => setOpenedOn(null)} className="flex min-h-11 items-center justify-between rounded-xl px-3 hover:bg-sprout">Profile & settings <span aria-hidden="true"><Arrow direction="up-right" size="1em" /></span></Link>
+          {currentProfile?.role === "admin" && (
+            <Link href="/admin/settings" onClick={() => setOpenedOn(null)} className="flex min-h-11 items-center justify-between rounded-xl px-3 hover:bg-sprout">Admin settings <span aria-hidden="true"><Arrow direction="up-right" size="1em" /></span></Link>
+          )}
           <button type="button" disabled={busy} onClick={handleSignOut} className="min-h-11 w-full rounded-xl px-3 text-left text-danger hover:bg-sand disabled:opacity-50">{busy ? 'Signing out…' : 'Sign out'}</button>
           {error && <p role="alert" className="px-3 pb-2 text-xs text-danger">{error}</p>}
         </div>

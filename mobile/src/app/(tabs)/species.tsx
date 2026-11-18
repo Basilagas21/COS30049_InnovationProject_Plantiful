@@ -219,11 +219,13 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
+    minHeight: 42,
     gap: 4,
   },
   sciName: {
     flex: 1,
     fontSize: 16,
+    lineHeight: 21,
     fontWeight: '700',
     color: colors.pine,
     fontStyle: 'italic',

@@ -46,7 +46,7 @@ export function FieldAssistPanel({ serverId, synced }: { serverId: string | null
   const attempt = data?.attempts[0];
   const canDecide = synced && !cached && data?.owner && attempt?.stale === false && ['succeeded', 'no_match'].includes(attempt.status);
   const button = (label: string, action: () => void, disabled = false) => <Pressable accessibilityRole="button" accessibilityState={{ disabled: busy || disabled }}
-    disabled={busy || disabled} onPress={action} style={{ minHeight: 44, justifyContent: 'center', padding: 12, borderRadius: 12,
+    disabled={busy || disabled} onPress={action} style={{ minHeight: 44, alignItems: 'center', justifyContent: 'center', padding: 12, borderRadius: 12,
       backgroundColor: colors.sprout, opacity: busy || disabled ? 0.5 : 1 }}><Text style={{ color: colors.emerald, fontWeight: '600' }}>{label}</Text></Pressable>;
   const decide = (outcome: string, extra: object = {}) => void act('PATCH', { attemptId: attempt?.attempt_id, role: 'collector', outcome, note, ...extra });
   return <View style={{ padding: 16, gap: 12, borderRadius: 20, backgroundColor: colors.white }}>

@@ -30,11 +30,12 @@ export default async function ReportsPage() {
         </p>
       </div>
 
-      <div className="mt-8 max-w-2xl">
-        <ReportForm />
-      </div>
+      <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-start">
+        <div>
+          <ReportForm />
+        </div>
 
-      <div className="mt-12">
+        <div>
         <h2 className="text-xl font-bold tracking-tight text-pine">
           Generated reports
         </h2>
@@ -55,7 +56,7 @@ export default async function ReportsPage() {
             </p>
           </div>
         ) : (
-          <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
             {reports.map((report) => (
               <li
                 key={report.id}
@@ -101,6 +102,7 @@ export default async function ReportsPage() {
             ))}
           </ul>
         )}
+        </div>
       </div>
     </div>
   );

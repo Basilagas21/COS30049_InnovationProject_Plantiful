@@ -588,7 +588,7 @@ export default function SyncScreen() {
                 <Text style={styles.recordMeta}>Captured {new Date(r.capture_ts).toLocaleString()}</Text>
                 {r.qr_code ? <Text style={styles.recordMeta}>Tag: {r.qr_code}</Text> : null}
                 <Text style={styles.recordMeta}>Saved to server · Officer approval is separate</Text>
-                <Text style={styles.seeAll}>Open record →</Text>
+                <Text style={styles.seeAll}>Open record <Ionicons name="arrow-forward" size={13} color={colors.emerald} /></Text>
               </Pressable>
             ))}
             <Text style={styles.recordMeta} accessibilityLiveRegion="polite">Page {syncedPage} of {syncedPageCount}</Text>

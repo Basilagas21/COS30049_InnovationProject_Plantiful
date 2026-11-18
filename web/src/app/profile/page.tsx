@@ -143,6 +143,21 @@ export default function ProfilePage() {
           <span className="text-emerald">→</span>
         </Link>
 
+        {role === "admin" && (
+          <Link
+            href="/admin/settings"
+            className="mt-3 flex items-center justify-between rounded-2xl border border-pine/10 bg-cream p-4 text-sm transition-colors hover:border-emerald"
+          >
+            <span>
+              <span className="block font-semibold text-pine">Admin settings</span>
+              <span className="mt-0.5 block text-moss">
+                Manage admin defaults such as directory page size
+              </span>
+            </span>
+            <span className="text-emerald">→</span>
+          </Link>
+        )}
+
         <div className="mt-6 border-t border-pine/10 pt-6">
           <ThemeControl />
         </div>

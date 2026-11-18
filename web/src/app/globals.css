@@ -264,8 +264,8 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-close { background: var(--forest-night); color: #fffdee; padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 6vw, 5.5rem); }
 .home-close-grid { margin: auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
 .home-close-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(2rem, 4.4vw, 3.6rem); font-weight: 620; letter-spacing: -0.03em; line-height: 1.06; max-width: 22ch; color: #fffdee; }
-.home-close-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-top: 2rem; }
-.home-close-actions .home-btn:first-child { grid-column: 1 / -1; }
+.home-close-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin-top: 2rem; }
+.home-close-actions .home-btn { padding: .75rem 1rem; font-size: .85rem; white-space: nowrap; }
 .home-colophon { border-left: 1px solid #fffdee24; padding-left: clamp(1.5rem, 3vw, 2.5rem); font-size: .9rem; line-height: 1.7; color: #fffdeeb3; }
 .home-colophon-mark { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-weight: 700; font-size: 1.4rem; letter-spacing: -0.02em; color: #fffdee; margin-bottom: .9rem; }
 .home-colophon-mark span { color: #6fd6b0; }
@@ -381,8 +381,8 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 }
 
 /* ===== Full-height footer ===== */
-.site-footer--full { background: var(--footer); color: var(--footer-text); padding: 0; overflow: hidden; min-height: 100svh; display: flex; flex-direction: column; }
-.footer-top { padding: clamp(3rem, 6vw, 5rem) 0 2.5rem; }
+.site-footer--full { background: var(--footer); color: var(--footer-text); padding: 0; overflow: hidden; height: 100svh; display: flex; flex-direction: column; }
+.footer-top { padding: calc(var(--header-h, 72px) + clamp(1.5rem, 3vw, 2.5rem)) 0 2rem; }
 .footer-top > div { max-width: none; padding-inline: clamp(1.5rem, 6vw, 5.5rem); }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 2.5rem; }
 .footer-brand p:first-child { font-family: var(--font-bricolage), var(--font-public), sans-serif; }
@@ -391,7 +391,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .footer-col a, .footer-col span { display: block; padding: .3rem 0; font-size: .92rem; color: color-mix(in srgb, var(--footer-text) 88%, transparent); transition: color .2s, transform .2s; }
 .footer-col a:hover { color: #e3ef26; transform: translateX(3px); }
 .footer-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid color-mix(in srgb, var(--footer-text) 16%, transparent); font-family: var(--font-martian), monospace; font-size: .72rem; letter-spacing: .06em; color: color-mix(in srgb, var(--footer-text) 88%, transparent); }
-.footer-nature-wrap { position: relative; flex: 1; min-height: 320px; }
+.footer-nature-wrap { position: relative; flex: 1; min-height: 0; }
 
 /* Night-forest nature scene. */
 .forest-night { position: absolute; inset: 0; overflow: hidden; background: linear-gradient(#0a1f16, #071c14 55%, #04100b); }
@@ -400,7 +400,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .forest-night-star { position: absolute; border-radius: 50%; background: #fffdee; animation: star-twinkle 4s ease-in-out infinite; }
 .forest-night-mist { position: absolute; left: -10%; right: -10%; height: 120px; bottom: 60px; background: linear-gradient(transparent, #6fd6b01f, transparent); filter: blur(8px); animation: mist-drift 18s ease-in-out infinite; }
 .forest-night-mist--b { bottom: 20px; animation-duration: 24s; animation-delay: -6s; opacity: .7; }
-.firefly { position: absolute; bottom: 30px; border-radius: 50%; background: #e3ef26; box-shadow: 0 0 8px #e3ef26cc; opacity: 0; animation: firefly-rise ease-in-out infinite; }
+.firefly { position: absolute; bottom: 0; border-radius: 50%; background: #e3ef26; box-shadow: 0 0 8px #e3ef26cc; opacity: 0; animation: firefly-rise ease-in-out infinite; }
 .forest-night-silhouette { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 62%; }
 .sway { transform-origin: bottom center; animation: tree-sway 9s ease-in-out infinite; }
 .sway--mid { animation-duration: 11s; animation-delay: -2s; }
@@ -417,7 +417,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
 @keyframes star-twinkle { 0%, 100% { opacity: .25; } 50% { opacity: .95; } }
 @keyframes mist-drift { 0%, 100% { transform: translateX(-3%); } 50% { transform: translateX(3%); } }
-@keyframes firefly-rise { 0% { opacity: 0; transform: translate(0, 0); } 15% { opacity: .9; } 85% { opacity: .6; } 100% { opacity: 0; transform: translate(var(--fx, 20px), -260px); } }
+@keyframes firefly-rise { 0% { opacity: 0; transform: translate(0, 0); } 12% { opacity: .9; } 88% { opacity: .5; } 100% { opacity: 0; transform: translate(var(--fx, 20px), -100vh); } }
 @keyframes tree-sway { 0%, 100% { transform: rotate(-0.5deg); } 50% { transform: rotate(0.5deg); } }
 
 /* ===== Monitor workspace (unchanged) ===== */

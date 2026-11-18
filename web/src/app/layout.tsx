@@ -73,10 +73,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   alt="Plantiful logo"
                   width={592}
                   height={421}
-                  className="h-9 w-auto object-contain"
+                  className="-my-2 h-[5.5rem] w-auto object-contain sm:h-24"
                   priority
                 />
-                <span className="text-xl tracking-tight">plantiful<span className="text-emerald">.</span></span>
+                <span className="text-3xl tracking-tight">plantiful<span className="text-emerald">.</span></span>
               </Link>
               <SiteNav links={navLinks} />
             </div>

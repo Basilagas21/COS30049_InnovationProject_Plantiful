@@ -14,7 +14,7 @@ function SpeciesCover({ uri, name }: { uri?: string | null; name: string }) {
   return uri && !failed ? (
     <Image source={{ uri }} accessibilityLabel={name} onError={() => setFailed(true)} style={{ width: '100%', aspectRatio: 1.8 }} resizeMode="cover" />
   ) : (
-    <View style={{ padding: 18, backgroundColor: colors.sprout, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+    <View style={{ width: '100%', aspectRatio: 1.8, padding: 18, backgroundColor: colors.sprout, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
       <Ionicons name="leaf-outline" size={24} color={colors.emerald} />
       <Text style={{ color: colors.pine, flex: 1, fontSize: 12 }}>{uri ? 'Reference photo unavailable' : 'Reference photo not added yet'}</Text>
     </View>

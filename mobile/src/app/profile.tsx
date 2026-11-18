@@ -235,13 +235,13 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   button: {
     alignSelf: 'stretch',
-    backgroundColor: colors.emerald,
+    backgroundColor: colors.chartreuse,
     borderRadius: 24,
     paddingVertical: 14,
     alignItems: 'center',
   },
   buttonText: {
-    color: colors.white,
+    color: colors.onChartreuse,
     fontSize: 15,
     fontWeight: '700',
   },

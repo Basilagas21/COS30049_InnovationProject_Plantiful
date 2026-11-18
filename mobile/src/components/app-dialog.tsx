@@ -277,8 +277,8 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) =>
       borderColor: 'transparent',
     },
     buttonPrimary: {
-      backgroundColor: colors.emerald,
-      borderColor: colors.emerald,
+      backgroundColor: colors.chartreuse,
+      borderColor: colors.chartreuse,
     },
     buttonSoft: {
       backgroundColor: colors.sprout,
@@ -303,7 +303,7 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) =>
       color: colors.pine,
     },
     buttonTextPrimary: {
-      color: colors.white,
+      color: colors.onChartreuse,
     },
     buttonTextSoft: {
       color: colors.emerald,

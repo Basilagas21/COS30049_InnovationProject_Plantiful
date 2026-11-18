@@ -715,14 +715,14 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
     fontWeight: '700',
   },
   primaryButton: {
-    backgroundColor: colors.emerald,
+    backgroundColor: colors.chartreuse,
     borderRadius: 24,
     paddingVertical: 14,
     paddingHorizontal: 24,
     alignItems: 'center',
   },
   primaryButtonText: {
-    color: colors.white,
+    color: colors.onChartreuse,
     fontSize: 16,
     fontWeight: '700',
   },

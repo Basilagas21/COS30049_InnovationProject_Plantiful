@@ -619,7 +619,7 @@ export function HomeContent({
         <div className="home-chain-track">
           <div className="home-chain-stage">
             <ChainBackdropLayer />
-            <div className="home-chain-head">
+            <div className="home-chain-head home-reveal">
               <h2 className="home-chain-title">From forest floor<br />to public record.</h2>
               <p className="home-chain-lede">Every entry in the canopy travels the same path, and nothing is published unchecked.</p>
             </div>

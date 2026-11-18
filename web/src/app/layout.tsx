@@ -75,6 +75,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             __html: `(function(){try{var t=localStorage.getItem("plantiful.theme")||"system";var d=t===\"dark\"||(t===\"system\"&&window.matchMedia(\"(prefers-color-scheme: dark)\").matches);document.documentElement.setAttribute(\"data-theme\",d?\"dark\":\"light\");document.documentElement.style.colorScheme=d?\"dark\":\"light\"}catch(e){}})()`,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("js-home")`,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-cream text-pine">
         <ThemeProvider>

@@ -11,27 +11,39 @@ export function SmoothScroll() {
 
     const chainTrack = document.querySelector<HTMLElement>(".home-chain-track");
     const chainStage = document.querySelector<HTMLElement>(".home-chain-stage");
+    const journeyEl = document.querySelector<HTMLElement>(".home-journey");
+    const closeEl = document.querySelector<HTMLElement>(".home-close");
+    const footerEl = document.querySelector<HTMLElement>(".site-footer");
     const headerEl = document.querySelector<HTMLElement>(".site-header");
-    // The chain plays over a fixed number of wheel notches so the last one lands
-    // exactly on the section boundary instead of bleeding into the next section.
+    // Each section plays over a fixed number of wheel notches so the last one
+    // lands exactly on the section boundary instead of bleeding into the next.
     const CHAIN_STEPS = 13;
+    const SECTION_STEPS = 6;
     // eslint-disable-next-line prefer-const -- instance is read by its own constructor callbacks below
     let lenis: Lenis;
-    const chainBounds = () => {
-      if (!chainTrack || !chainStage || window.innerWidth <= 640) return null;
-      const play = chainTrack.offsetHeight - chainStage.offsetHeight;
-      if (play <= 0) return null;
-      const start = chainTrack.getBoundingClientRect().top + lenis.scroll - (headerEl?.offsetHeight ?? 0);
-      return { start, play, step: play / CHAIN_STEPS };
+    const seatedTop = (el: HTMLElement) => el.getBoundingClientRect().top + lenis.scroll - (headerEl?.offsetHeight ?? 0);
+    const quantRegions = () => {
+      if (window.innerWidth <= 640) return [];
+      const regions: { start: number; end: number; steps: number }[] = [];
+      if (chainTrack && chainStage) {
+        const play = chainTrack.offsetHeight - chainStage.offsetHeight;
+        if (play > 0) regions.push({ start: seatedTop(chainTrack), end: seatedTop(chainTrack) + play, steps: CHAIN_STEPS });
+      }
+      if (journeyEl && closeEl) {
+        regions.push({ start: seatedTop(journeyEl), end: seatedTop(closeEl), steps: SECTION_STEPS });
+        if (footerEl) regions.push({ start: seatedTop(closeEl), end: seatedTop(footerEl), steps: SECTION_STEPS });
+      }
+      return regions;
     };
     const virtualScroll = (data: { deltaY: number }): boolean => {
-      const c = chainBounds();
-      if (c) {
-        const pos = lenis.targetScroll;
-        if (pos >= c.start && pos <= c.start + c.play) {
-          const rel = pos - c.start;
-          const idx = data.deltaY > 0 ? Math.floor((rel + 1) / c.step) + 1 : Math.ceil((rel - 1) / c.step) - 1;
-          if (idx >= 0 && idx <= CHAIN_STEPS) data.deltaY = c.start + idx * c.step - pos;
+      const pos = lenis.targetScroll;
+      for (const r of quantRegions()) {
+        if (pos >= r.start && pos < r.end) {
+          const step = (r.end - r.start) / r.steps;
+          const rel = pos - r.start;
+          const idx = data.deltaY > 0 ? Math.floor((rel + 1) / step) + 1 : Math.ceil((rel - 1) / step) - 1;
+          if (idx >= 0 && idx <= r.steps) data.deltaY = r.start + idx * step - pos;
+          break;
         }
       }
       return true;

@@ -443,6 +443,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .footer-col a:hover { color: #e3ef26; transform: translateX(3px); }
 .footer-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid color-mix(in srgb, var(--footer-text) 16%, transparent); font-family: var(--font-martian), monospace; font-size: .72rem; letter-spacing: .06em; color: color-mix(in srgb, var(--footer-text) 88%, transparent); }
 .footer-nature-wrap { position: relative; flex: 1; min-height: 0; }
+.footer-nature-parallax { position: absolute; inset: 0; }
 
 /* Night-forest nature scene. */
 .forest-night { position: absolute; inset: 0; overflow: hidden; background: linear-gradient(#07100e, #071c14 55%, #04100b); }
@@ -452,7 +453,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .forest-night-mist { position: absolute; left: -10%; right: -10%; height: 120px; bottom: 60px; background: linear-gradient(transparent, #6fd6b01f, transparent); filter: blur(8px); animation: mist-drift 18s ease-in-out infinite; }
 .forest-night-mist--b { bottom: 20px; animation-duration: 24s; animation-delay: -6s; opacity: .7; }
 .firefly { position: absolute; bottom: 0; border-radius: 50%; background: #e3ef26; box-shadow: 0 0 8px #e3ef26cc; opacity: 0; animation: firefly-rise linear infinite; }
-.forest-night-grass { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; pointer-events: none; }
+.forest-night-grass { position: absolute; left: -6%; bottom: 0; width: 112%; pointer-events: none; }
 .forest-night-grass--back { height: 52%; opacity: .55; filter: blur(3px); }
 .forest-night-grass--front { height: 42%; opacity: .95; }
 

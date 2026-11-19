@@ -9,7 +9,7 @@ import { NavAuth } from "@/components/nav-auth";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { InteractionLogger } from "@/components/interaction-logger";
 import { SmoothScroll } from "@/components/home/smooth-scroll";
-import { FooterNature } from "@/components/home/footer-nature";
+import { FooterNatureParallax } from "@/components/home/footer-nature-parallax";
 import { ThemeProvider } from "@/lib/theme-provider";
 import "./globals.css";
 
@@ -143,7 +143,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </div>
             </div>
             <div className="footer-nature-wrap">
-              <FooterNature />
+              <FooterNatureParallax />
             </div>
           </footer>
         </ThemeProvider>

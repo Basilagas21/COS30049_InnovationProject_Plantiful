@@ -8,7 +8,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Plantiful | Visit Niah National Park",
   description:
-    "Plantiful is a public biodiversity initiative with Sarawak Forestry Corporation (SFC) at Niah National Park. Learn about the park, meet the project, and get involved — no account needed.",
+    "Plantiful is a public biodiversity initiative with Sarawak Forestry Corporation (SFC) at Niah National Park. Learn about the park, meet the project, and get involved. No account needed.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -20,8 +20,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <header className="site-header">
           <div className="site-header-inner">
-            <a
-              href="#top"
+            <Link
+              href="/"
               className="flex shrink-0 items-center gap-1 font-semibold text-pine"
               aria-label="Plantiful home"
             >
@@ -36,11 +36,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className="text-xl tracking-tight">
                 plantiful<span className="text-emerald">.</span>
               </span>
-            </a>
+            </Link>
             <div className="flex justify-center">
               <VisitorNav />
             </div>
-            {/* Public visitor site — intentionally no sign-in / account nav here.
+            {/* Public visitor site, intentionally no sign-in / account nav here.
                 This is a separate app from the main Plantiful system. */}
             <a
               href={PLANTIFUL_APP_URL}

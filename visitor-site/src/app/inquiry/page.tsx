@@ -5,7 +5,7 @@ import { InquiryForm } from "@/components/inquiry-form";
 export const metadata: Metadata = {
   title: "Inquiry | Plantiful",
   description:
-    "Send Sarawak Forestry Corporation's Plantiful team an inquiry — questions, volunteering, student placements, partnerships, or anything else.",
+    "Send Sarawak Forestry Corporation's Plantiful team an inquiry: questions, volunteering, student placements, partnerships, or anything else.",
 };
 
 export default function InquiryPage() {
@@ -21,8 +21,8 @@ export default function InquiryPage() {
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-7 text-moss">
         Questions about the park, interested in volunteering as a field
-        botanist, a student placement, a partnership, or anything else —
-        tell us about it below and someone from the Plantiful team will get
+        botanist, a student placement, a partnership, or anything else?
+        Tell us about it below and someone from the Plantiful team will get
         back to you.
       </p>
 

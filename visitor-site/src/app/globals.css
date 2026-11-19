@@ -30,6 +30,7 @@
   --danger: #b54a3b;
   --white: #ffffff;
   --surface: #fffffa;
+  --shadow: #0c342c;
   --header: #fffdeef2;
   --footer: #0c342c;
   --footer-text: #fffdee;
@@ -47,6 +48,7 @@
   --danger: #e2887a;
   --white: #16302a;
   --surface: #102019;
+  --shadow: #000000;
   --header: #0b1512e6;
   --footer: #07100e;
   --footer-text: #e8f1e9;
@@ -121,4 +123,371 @@ body {
 [data-theme="dark"] .bg-chartreuse\/60,
 [data-theme="dark"] .bg-chartreuse\/70 {
   color: #0c342c;
+}
+
+/* Hero photo crossfade: three stacked <img> siblings take turns fading in
+   with a slow Ken Burns zoom, each getting an equal third of an 18s cycle
+   via a staggered animation-delay. No JS, no layout shift. */
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  z-index: -20;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: hero-crossfade 18s ease-in-out infinite;
+}
+.hero-photo:nth-of-type(1) {
+  animation-delay: 0s;
+}
+.hero-photo:nth-of-type(2) {
+  animation-delay: 6s;
+}
+.hero-photo:nth-of-type(3) {
+  animation-delay: 12s;
+}
+
+@keyframes hero-crossfade {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  4% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  34% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+/* Scroll-reveal: sections fade/slide in once as a visitor scrolls to them.
+   The "reveal" component adds "reveal-visible" via IntersectionObserver. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Branded route loading screen, ported from the main Plantiful app
+   (web/src/app/globals.css + loading.tsx) so both apps feel like one
+   product during route transitions, not just visually similar pages. */
+.plantiful-loader {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - 12rem);
+  overflow: hidden;
+  padding: 3rem 1.5rem;
+  background:
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--sprout) 52%, transparent), transparent 31rem),
+    radial-gradient(circle at 15% 85%, color-mix(in srgb, var(--chartreuse) 11%, transparent), transparent 22rem);
+}
+.plantiful-loader::before {
+  content: "";
+  position: absolute;
+  inset: -12% -8%;
+  z-index: -1;
+  background: url("/botanical.svg") center / contain no-repeat;
+  opacity: 0.045;
+  transform: rotate(-8deg);
+  animation: plantiful-drift 18s ease-in-out infinite alternate;
+}
+.plantiful-loader-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 30rem);
+  padding: 3rem 2.25rem 2.5rem;
+  border: 1px solid color-mix(in srgb, var(--pine) 9%, transparent);
+  border-radius: 2.5rem;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: 0 24px 70px color-mix(in srgb, var(--shadow) 8%, transparent);
+  text-align: center;
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+}
+.plantiful-loader-emblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 23rem;
+  height: 23rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--chartreuse) 38%, transparent), transparent 48%),
+    color-mix(in srgb, #fffdee 92%, var(--sprout));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--pine) 8%, transparent),
+    0 18px 42px color-mix(in srgb, var(--emerald) 14%, transparent);
+}
+.plantiful-loader-emblem::after {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--chartreuse) 30%, transparent), transparent 70%);
+  animation: plantiful-breathe 2.8s ease-in-out infinite;
+}
+.plantiful-loader-ring,
+.plantiful-loader-orbit {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.plantiful-loader-ring-outer {
+  inset: 0;
+  border: 1px dashed color-mix(in srgb, var(--emerald) 32%, transparent);
+  animation: plantiful-spin 16s linear infinite;
+}
+.plantiful-loader-ring-inner {
+  inset: 1.8rem;
+  border: 1px solid color-mix(in srgb, var(--pine) 10%, transparent);
+}
+.plantiful-loader-orbit {
+  inset: -1.3rem;
+  animation: plantiful-spin 4.8s linear infinite;
+}
+.plantiful-loader-orbit::before {
+  content: "";
+  position: absolute;
+  top: -0.2rem;
+  left: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: -0.75rem;
+  border-radius: 50% 0 50% 50%;
+  background: var(--emerald);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--emerald) 45%, transparent);
+  transform: rotate(45deg);
+}
+.plantiful-loader-orbit-two {
+  inset: -2.9rem;
+  animation: plantiful-spin 7.5s linear infinite reverse;
+}
+.plantiful-loader-orbit-two::before {
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-left: -0.45rem;
+  background: var(--chartreuse);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--chartreuse) 60%, transparent);
+}
+.plantiful-loader-logo {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  animation: plantiful-breathe 2.8s ease-in-out infinite;
+  filter: drop-shadow(0 10px 18px color-mix(in srgb, var(--emerald) 18%, transparent));
+}
+.plantiful-loader-title {
+  margin-top: 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--pine);
+}
+.plantiful-loader-copy {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--moss);
+}
+.plantiful-loader-progress {
+  width: min(15rem, 70vw);
+  height: 0.38rem;
+  margin-top: 1.65rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pine) 8%, transparent);
+  box-shadow: inset 0 1px 2px color-mix(in srgb, var(--pine) 8%, transparent);
+}
+.plantiful-loader-progress span {
+  display: block;
+  width: 42%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--emerald), var(--chartreuse), var(--emerald));
+  background-size: 200% 100%;
+  animation:
+    plantiful-progress 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite,
+    plantiful-shimmer 1.4s linear infinite;
+}
+.plantiful-loader-dots {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+.plantiful-loader-dots span {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: var(--emerald);
+  opacity: 0.3;
+  animation: plantiful-dot 1.3s ease-in-out infinite;
+}
+.plantiful-loader-dots span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+.plantiful-loader-dots span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+.plantiful-loader-spore {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--chartreuse);
+  opacity: 0.5;
+  animation: plantiful-float 6s ease-in-out infinite;
+}
+.plantiful-loader-spore-one {
+  top: 18%;
+  left: 14%;
+  animation-delay: -1.5s;
+}
+.plantiful-loader-spore-two {
+  top: 30%;
+  right: 12%;
+  width: 0.7rem;
+  height: 0.7rem;
+  background: var(--emerald);
+  animation-delay: -3s;
+}
+.plantiful-loader-spore-three {
+  bottom: 18%;
+  left: 22%;
+  width: 0.35rem;
+  height: 0.35rem;
+  animation-delay: -4.5s;
+}
+
+@keyframes plantiful-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes plantiful-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.045);
+  }
+}
+@keyframes plantiful-drift {
+  from {
+    transform: rotate(-8deg) scale(1.1);
+  }
+  to {
+    transform: rotate(-4deg) scale(1.16);
+  }
+}
+@keyframes plantiful-progress {
+  0% {
+    transform: translateX(-115%);
+  }
+  55% {
+    transform: translateX(45%);
+  }
+  100% {
+    transform: translateX(240%);
+  }
+}
+@keyframes plantiful-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+@keyframes plantiful-dot {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-0.2rem);
+  }
+}
+@keyframes plantiful-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(0, -1.2rem, 0) scale(1.15);
+    opacity: 0.7;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .plantiful-loader-card {
+    background: var(--surface);
+  }
+}
+
+@media (max-width: 640px) {
+  .plantiful-loader {
+    min-height: calc(100vh - 9rem);
+    padding: 2rem 1rem;
+  }
+  .plantiful-loader-card {
+    padding: 2.25rem 1.25rem 1.9rem;
+    border-radius: 2rem;
+  }
+  .plantiful-loader-emblem {
+    width: min(20rem, calc(100vw - 4.5rem));
+    height: min(20rem, calc(100vw - 4.5rem));
+  }
+  .plantiful-loader-orbit {
+    inset: -0.75rem;
+  }
+  .plantiful-loader-orbit-two {
+    inset: -1.5rem;
+  }
+  .plantiful-loader-orbit::before {
+    width: 1rem;
+    height: 1rem;
+    margin-left: -0.5rem;
+  }
+  .plantiful-loader-orbit-two::before {
+    width: 0.65rem;
+    height: 0.65rem;
+    margin-left: -0.325rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .hero-photo:first-of-type {
+    opacity: 1;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }

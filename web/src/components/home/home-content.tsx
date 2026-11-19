@@ -742,16 +742,8 @@ export function HomeContent({
           ) : (
             <p className="home-close-empty home-reveal" style={{ "--reveal-i": 1 } as CSSProperties}>Awaiting the first verified record.</p>
           )}
-          <div className="home-colophon home-reveal" style={{ "--reveal-i": 2 } as CSSProperties}>
-            <p className="home-colophon-mark">plantiful<span>.</span></p>
-            <p>
-              Built for Sarawak Forestry Corporation at Niah National Park, with
-              industry partner NeuonAI.
-            </p>
-            <p>Every public record is reviewed before publication.</p>
-            <p className="home-colophon-credit">Canopy photograph by Charles Ray, via Unsplash.</p>
-          </div>
         </div>
+        <p className="home-close-credit home-reveal" style={{ "--reveal-i": 2 } as CSSProperties}>Canopy photograph by Charles Ray, via Unsplash.</p>
       </section>
     </div>
   );

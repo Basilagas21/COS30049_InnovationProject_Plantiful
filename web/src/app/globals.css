@@ -304,7 +304,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 
 /* Cinematic closing band: a full-viewport forest canopy frame with the manifesto
    overlaid, dark in both themes like the opening canopy. */
-.home-close { position: relative; isolation: isolate; overflow: hidden; min-height: 100svh; display: flex; align-items: center; padding: clamp(4rem, 9vw, 7rem) clamp(1.5rem, 6vw, 5.5rem); background: #071c14; color: #fffdee; }
+.home-close { position: relative; isolation: isolate; overflow: hidden; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: clamp(4rem, 9vw, 7rem) clamp(1.5rem, 6vw, 5.5rem); background: #071c14; color: #fffdee; }
 .home-close-photo { object-fit: cover; object-position: center; z-index: -2; }
 .home-close-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #04100bf2 0%, #04100bd9 34%, #04100b66 62%, #04100b1f 100%), linear-gradient(0deg, #04100bd9 0%, #04100b33 30%, transparent 55%); }
 .home-close-copy { position: relative; z-index: 1; max-width: 52rem; }
@@ -320,11 +320,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-close-stat-label { font-family: var(--font-martian), monospace; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: #fffdeecc; }
 .home-close-empty { margin-top: clamp(1.75rem, 3.5vw, 2.5rem); font-size: .95rem; color: #fffdeec8; }
 @media (prefers-reduced-transparency: reduce) { .home-close-ledger { background: #0c342ce6; -webkit-backdrop-filter: none; backdrop-filter: none; } }
-.home-colophon { margin-top: clamp(2rem, 4vw, 3rem); max-width: 42rem; font-size: .9rem; line-height: 1.7; color: #fffdeeb3; }
-.home-colophon-credit { font-size: .78rem; color: #fffdeec4; }
-.home-colophon-mark { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-weight: 700; font-size: 1.4rem; letter-spacing: -0.02em; color: #fffdee; margin-bottom: .9rem; }
-.home-colophon-mark span { color: #6fd6b0; }
-.home-colophon p + p { margin-top: .9rem; }
+.home-close-credit { position: absolute; left: clamp(1.5rem, 6vw, 5.5rem); bottom: clamp(1.5rem, 3vw, 2.5rem); z-index: 1; font-size: .85rem; letter-spacing: .02em; color: #fffdeed9; }
 
 /* Reveal entrance: visible by default, enhanced only with JS and motion. */
 .home-reveal { opacity: 1; }
@@ -587,11 +583,9 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   .home-banner-actions { grid-template-columns: 1fr; max-width: none; }
   /* Phones: anchor the copy to the bottom and scrim from the bottom up, so the
      canopy and light shafts stay visible above the manifesto. */
-  .home-close { align-items: flex-end; padding: 4rem 1.5rem 2.25rem; }
+  .home-close { justify-content: flex-end; padding: 4rem 1.5rem 2.25rem; }
   .home-close-scrim { background: linear-gradient(0deg, #04100bf2 0%, #04100be6 25%, #04100bcc 45%, #04100ba6 60%, #04100b66 72%, #04100b1a 84%, transparent 94%); }
-  .home-colophon { margin-top: 1.5rem; font-size: .82rem; line-height: 1.55; }
-  .home-colophon-mark { font-size: 1.2rem; margin-bottom: .6rem; }
-  .home-colophon p + p { margin-top: .6rem; }
+  .home-close-credit { position: static; margin-top: 1.25rem; font-size: .72rem; }
   .home-close-ledger { margin-top: 1.5rem; padding: .8rem 1.1rem; }
   .home-close-stat { padding: 0 1rem; gap: .3rem; }
   .home-close-stat-num { font-size: 1.5rem; }

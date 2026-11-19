@@ -432,8 +432,8 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 }
 
 /* ===== Full-height footer ===== */
-.site-footer--full { background: var(--footer); color: var(--footer-text); padding: 0; overflow: hidden; height: 100svh; display: flex; flex-direction: column; }
-.footer-top { padding: calc(var(--header-h, 72px) + clamp(1.5rem, 3vw, 2.5rem)) 0 2rem; }
+.site-footer--full { background: var(--footer); color: var(--footer-text); padding: 0; overflow: hidden; height: calc(100svh - var(--header-h, 72px)); display: flex; flex-direction: column; }
+.footer-top { padding: clamp(1.5rem, 3vw, 2.5rem) 0 2rem; }
 .footer-top > div { max-width: none; padding-inline: clamp(1.5rem, 6vw, 5.5rem); }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 2.5rem; }
 .footer-brand p:first-child { font-family: var(--font-bricolage), var(--font-public), sans-serif; }
@@ -595,6 +595,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   .home-card-title { font-size: 24px; }
   .home-card-desc { margin-top: 8px; font-size: 13px; }
   .home-card-action { margin-top: 10px; padding-top: 10px; }
+  .site-footer--full { height: auto; }
   .footer-grid { grid-template-columns: 1fr; gap: 1.75rem; }
   .footer-nature-wrap { min-height: 260px; }
 }

@@ -114,14 +114,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <div className="footer-grid">
                   <div className="footer-brand">
                     <p className="footer-statement text-2xl font-semibold tracking-tight">A little closer to nature.</p>
-                    <p>Plantiful · a verified biodiversity catalogue for Niah National Park, Sarawak.</p>
+                    <p>plantiful · a verified biodiversity catalogue for Niah National Park, Sarawak.</p>
                   </div>
                   <nav className="footer-col" aria-label="Browse">
                     <h3>Browse</h3>
                     <Link href="/explore">Plant guide</Link>
                     <Link href="/learn">Learning guide</Link>
+                    <Link href="/species">Species catalogue</Link>
                     <Link href="/map">Species map</Link>
-                    <Link href="/records">Field records</Link>
+                    <Link href="/records">Plant records</Link>
                   </nav>
                   <nav className="footer-col" aria-label="Workspace">
                     <h3>Workspace</h3>
@@ -137,8 +138,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   </div>
                 </div>
                 <div className="footer-base">
-                  <span>© 2026 Plantiful · COS30049 Innovation Project</span>
-                  <span>Every public record is reviewed before publication.</span>
+                  <span>© 2026 plantiful</span>
                 </div>
               </div>
             </div>

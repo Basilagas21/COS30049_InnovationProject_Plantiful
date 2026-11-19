@@ -324,7 +324,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-close-stat-label { font-family: var(--font-martian), monospace; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: #fffdeecc; }
 .home-close-empty { margin-top: clamp(1.75rem, 3.5vw, 2.5rem); font-size: .95rem; color: #fffdeec8; }
 @media (prefers-reduced-transparency: reduce) { .home-close-ledger { background: #0c342ce6; -webkit-backdrop-filter: none; backdrop-filter: none; } }
-.home-close-credit { position: absolute; left: clamp(1.5rem, 6vw, 5.5rem); bottom: clamp(1.5rem, 3vw, 2.5rem); z-index: 1; font-size: .85rem; letter-spacing: .02em; color: #fffdeed9; }
+.home-close-credit { position: absolute; left: clamp(1.5rem, 6vw, 5.5rem); bottom: clamp(1.5rem, 3vw, 2.5rem); z-index: 1; font-size: .75rem; letter-spacing: .02em; color: #fffdee66; }
 
 /* Reveal entrance: visible by default, enhanced only with JS and motion. */
 .home-reveal { opacity: 1; }

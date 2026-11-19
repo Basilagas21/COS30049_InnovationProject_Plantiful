@@ -291,7 +291,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-journey-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(1.9rem, 3.4vw, 3rem); font-weight: 620; letter-spacing: -0.025em; line-height: 1.08; margin-bottom: clamp(1.75rem, 4vw, 3rem); }
 .home-cards { display: grid; gap: 1.25rem; grid-template-columns: repeat(3, 1fr); }
 .home-card { position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: flex-end; min-height: clamp(320px, calc(100svh - var(--header-h, 72px) - 320px), 480px); overflow: hidden; border-radius: 28px; border: 1px solid color-mix(in srgb, var(--emerald) 30%, transparent); background: #0a271c; color: #fffdee; box-shadow: 0 20px 50px #071c1433; transition: transform .3s ease, box-shadow .3s ease; }
-.home-card:hover { transform: translateY(-6px); box-shadow: 0 28px 60px #071c144d, 0 0 45px #6fd6b030, 0 0 90px #6fd6b014; }
+.home-card:hover { transform: translateY(-6px); box-shadow: 0 28px 60px #071c144d, 0 0 42px #6fd6b026, 0 0 85px #6fd6b010; }
 .home-card-photo { object-fit: cover; transition: transform .6s ease; }
 .home-card:hover .home-card-photo { transform: scale(1.04); }
 .home-card-shade { position: absolute; inset: 0; background: linear-gradient(180deg, #03100a33, transparent 28%, #03100ae6 78%); pointer-events: none; }
@@ -555,7 +555,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 [data-theme="light"] .chain-backdrop { opacity: .3; }
 [data-theme="light"] .home-journey-title { color: #0c342c; }
 [data-theme="light"] .home-card { box-shadow: 0 20px 50px #0c342c26; }
-[data-theme="light"] .home-card:hover { box-shadow: 0 28px 60px #0c342c33, 0 0 45px #07665330, 0 0 90px #07665314; }
+[data-theme="light"] .home-card:hover { box-shadow: 0 28px 60px #0c342c33, 0 0 42px #07665326, 0 0 85px #07665310; }
 [data-theme="light"] .home-card-glow { background: radial-gradient(#07665340, transparent 70%); }
 [data-theme="light"] .home-card-glass { border-color: #ffffff66; border-top-color: #ffffffaa; background: linear-gradient(135deg, #ffffffe6, #f3f0e3d9); box-shadow: inset 0 1px 0 #ffffffcc, 0 8px 24px #0c342c33; }
 [data-theme="light"] .home-card-title { color: #0c342c; }

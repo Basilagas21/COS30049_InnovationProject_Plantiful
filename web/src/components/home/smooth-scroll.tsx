@@ -81,7 +81,7 @@ export function SmoothScroll() {
     };
     const onWheel = () => {
       window.clearTimeout(snapTimer);
-      snapTimer = window.setTimeout(snapToGrid, 160);
+      snapTimer = window.setTimeout(snapToGrid, 350);
     };
     window.addEventListener("wheel", onWheel, { passive: true });
 

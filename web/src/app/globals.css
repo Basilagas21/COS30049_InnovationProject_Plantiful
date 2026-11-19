@@ -290,7 +290,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-journey { min-height: calc(100svh - var(--header-h, 72px)); display: flex; flex-direction: column; justify-content: center; padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 6vw, 5.5rem); scroll-margin-top: calc(var(--header-h, 72px) + 1rem); }
 .home-journey-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(1.9rem, 3.4vw, 3rem); font-weight: 620; letter-spacing: -0.025em; line-height: 1.08; margin-bottom: clamp(1.75rem, 4vw, 3rem); }
 .home-cards { display: grid; gap: 1.25rem; grid-template-columns: repeat(3, 1fr); }
-.home-card { position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: flex-end; min-height: 480px; overflow: hidden; border-radius: 28px; border: 1px solid color-mix(in srgb, var(--emerald) 30%, transparent); background: #0a271c; color: #fffdee; box-shadow: 0 20px 50px #071c1433; transition: transform .3s ease, box-shadow .3s ease; }
+.home-card { position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: flex-end; min-height: clamp(320px, calc(100svh - var(--header-h, 72px) - 320px), 480px); overflow: hidden; border-radius: 28px; border: 1px solid color-mix(in srgb, var(--emerald) 30%, transparent); background: #0a271c; color: #fffdee; box-shadow: 0 20px 50px #071c1433; transition: transform .3s ease, box-shadow .3s ease; }
 .home-card:hover { transform: translateY(-6px); box-shadow: 0 28px 60px #071c144d, 0 0 40px #6fd6b022; }
 .home-card-photo { object-fit: cover; transition: transform .6s ease; }
 .home-card:hover .home-card-photo { transform: scale(1.04); }

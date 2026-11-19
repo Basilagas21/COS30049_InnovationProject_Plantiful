@@ -37,6 +37,17 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       { threshold: 0.15 },
     );
     reveals.forEach((el) => io.observe(el));
+    // Record-driven blocks (live chip, ledger) stream in after hydration; adopt
+    // any reveal element that appears later so its entrance still fires.
+    const mo = new MutationObserver(() => {
+      for (const el of Array.from(root.querySelectorAll<HTMLElement>(".home-reveal"))) {
+        if (!reveals.includes(el)) {
+          reveals.push(el);
+          io.observe(el);
+        }
+      }
+    });
+    mo.observe(root, { childList: true, subtree: true });
 
     // Centre the frond in the gap between the slogan's right edge and the
     // canopy's right edge, so the breathing room on both sides is equal.
@@ -180,6 +191,7 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     return () => {
       root.classList.remove("js-home");
       io.disconnect();
+      mo.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       banner?.removeEventListener("pointermove", onBannerMove);

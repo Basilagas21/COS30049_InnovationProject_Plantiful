@@ -25,12 +25,20 @@ export function SmoothScroll() {
     const quantRegions = () => {
       if (window.innerWidth <= 640) return [];
       const regions: { start: number; end: number; steps: number }[] = [];
+      let chainEnd: number | null = null;
       if (chainTrack && chainStage) {
         const play = chainTrack.offsetHeight - chainStage.offsetHeight;
-        if (play > 0) regions.push({ start: seatedTop(chainTrack), end: seatedTop(chainTrack) + play, steps: CHAIN_STEPS });
+        if (play > 0) {
+          chainEnd = seatedTop(chainTrack) + play;
+          regions.push({ start: seatedTop(chainTrack), end: chainEnd, steps: CHAIN_STEPS });
+        }
       }
       if (journeyEl && closeEl) {
-        regions.push({ start: seatedTop(journeyEl), end: seatedTop(closeEl), steps: SECTION_STEPS });
+        const journeySeat = seatedTop(journeyEl);
+        // The chain stage scrolls off between the chain end and the journey seating;
+        // step through that gap too so section 2 does not leak into section 3 as free scroll.
+        if (chainEnd !== null && chainEnd < journeySeat) regions.push({ start: chainEnd, end: journeySeat, steps: SECTION_STEPS });
+        regions.push({ start: journeySeat, end: seatedTop(closeEl), steps: SECTION_STEPS });
         if (footerEl) regions.push({ start: seatedTop(closeEl), end: seatedTop(footerEl), steps: SECTION_STEPS });
       }
       return regions;

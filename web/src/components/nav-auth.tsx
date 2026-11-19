@@ -85,7 +85,7 @@ export function NavAuth() {
   }
 
   if (loading) return <span className="h-11 w-28 rounded-full bg-sprout" role="status" aria-label="Loading account" />;
-  if (!user) return <Link href="/signin" className="inline-flex min-h-11 items-center rounded-full bg-emerald px-4 text-sm font-semibold text-cream">Sign in</Link>;
+  if (!user) return <Link href="/signin" className="inline-flex min-h-11 w-28 items-center justify-center rounded-full bg-emerald px-4 text-sm font-semibold text-cream">Sign in</Link>;
 
   const currentProfile = profile?.id === user.id ? profile : null;
   const metadataName = user.user_metadata?.full_name ?? user.user_metadata?.name;

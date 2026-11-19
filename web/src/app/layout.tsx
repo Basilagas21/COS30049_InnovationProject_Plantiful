@@ -78,20 +78,20 @@ const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
   subsets: ["latin"],
   axes: ["opsz"],
-  display: "swap",
+  display: "optional",
 });
 
 const publicSans = Public_Sans({
   variable: "--font-public",
   subsets: ["latin"],
   style: ["normal", "italic"],
-  display: "swap",
+  display: "optional",
 });
 
 const martianMono = Martian_Mono({
   variable: "--font-martian",
   subsets: ["latin"],
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata: Metadata = {

@@ -451,11 +451,10 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .forest-night-star { position: absolute; border-radius: 50%; background: #fffdee; animation: star-twinkle 4s ease-in-out infinite; }
 .forest-night-mist { position: absolute; left: -10%; right: -10%; height: 120px; bottom: 60px; background: linear-gradient(transparent, #6fd6b01f, transparent); filter: blur(8px); animation: mist-drift 18s ease-in-out infinite; }
 .forest-night-mist--b { bottom: 20px; animation-duration: 24s; animation-delay: -6s; opacity: .7; }
-.firefly { position: absolute; bottom: 0; border-radius: 50%; background: #e3ef26; box-shadow: 0 0 8px #e3ef26cc; opacity: 0; animation: firefly-rise ease-in-out infinite; }
-.forest-night-silhouette { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 62%; }
-.sway { transform-origin: bottom center; animation: tree-sway 9s ease-in-out infinite; }
-.sway--mid { animation-duration: 11s; animation-delay: -2s; }
-.sway--near { animation-duration: 13s; animation-delay: -4s; }
+.firefly { position: absolute; bottom: 0; border-radius: 50%; background: #e3ef26; box-shadow: 0 0 8px #e3ef26cc; opacity: 0; animation: firefly-rise linear infinite; }
+.forest-night-grass { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; pointer-events: none; }
+.forest-night-grass--back { height: 52%; opacity: .55; filter: blur(3px); }
+.forest-night-grass--front { height: 42%; opacity: .95; }
 
 /* ===== Motion ===== */
 @keyframes page-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -468,8 +467,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
 @keyframes star-twinkle { 0%, 100% { opacity: .25; } 50% { opacity: .95; } }
 @keyframes mist-drift { 0%, 100% { transform: translateX(-3%); } 50% { transform: translateX(3%); } }
-@keyframes firefly-rise { 0% { opacity: 0; transform: translate(0, 0); } 12% { opacity: .9; } 88% { opacity: .5; } 100% { opacity: 0; transform: translate(var(--fx, 20px), -100vh); } }
-@keyframes tree-sway { 0%, 100% { transform: rotate(-0.5deg); } 50% { transform: rotate(0.5deg); } }
+@keyframes firefly-rise { 0% { opacity: 0; transform: translate(0, 0); } 12% { opacity: .9; } 88% { opacity: .5; } 100% { opacity: 0; transform: translate(var(--fx, 20px), -55svh); } }
 
 /* ===== Monitor workspace (unchanged) ===== */
 .monitor-workspace { background: radial-gradient(ellipse at 95% 20%, color-mix(in srgb, var(--sprout) 33%, transparent), transparent 55%); }

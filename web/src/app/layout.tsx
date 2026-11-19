@@ -114,11 +114,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <div className="footer-grid">
                   <div className="footer-brand">
                     <p className="footer-statement text-2xl font-semibold tracking-tight">A little closer to nature.</p>
-                    <p>plantiful · a verified biodiversity catalogue for Niah National Park, Sarawak.</p>
+                    <p>Plantiful · A verified biodiversity catalogue for Niah National Park, Sarawak.</p>
                   </div>
                   <nav className="footer-col" aria-label="Browse">
                     <h3>Browse</h3>
-                    <Link href="/explore">Plant guide</Link>
+                    <Link href="/explore">Explore plants</Link>
                     <Link href="/learn">Learning guide</Link>
                     <Link href="/species">Species catalogue</Link>
                     <Link href="/map">Species map</Link>
@@ -127,18 +127,18 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   <nav className="footer-col" aria-label="Workspace">
                     <h3>Workspace</h3>
                     <Link href="/signin">Sign in</Link>
-                    <Link href="/register">Create an account</Link>
+                    <Link href="/register">Create your account</Link>
                     <Link href="/profile">Your profile</Link>
                   </nav>
                   <div className="footer-col">
                     <h3>Partners</h3>
                     <span>Sarawak Forestry Corporation</span>
-                    <span>NeuonAI · industry partner</span>
+                    <span>NeuonAI · Industry partner</span>
                     <span>Niah National Park, Sarawak</span>
                   </div>
                 </div>
                 <div className="footer-base">
-                  <span>© 2026 plantiful</span>
+                  <span>© 2026 Plantiful</span>
                 </div>
               </div>
             </div>

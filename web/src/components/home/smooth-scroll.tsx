@@ -43,19 +43,6 @@ export function SmoothScroll() {
       }
       return regions;
     };
-    const virtualScroll = (data: { deltaY: number }): boolean => {
-      const pos = lenis.targetScroll;
-      for (const r of quantRegions()) {
-        if (pos >= r.start && pos < r.end) {
-          const step = (r.end - r.start) / r.steps;
-          const rel = pos - r.start;
-          const idx = data.deltaY > 0 ? Math.floor((rel + 1) / step) + 1 : Math.ceil((rel - 1) / step) - 1;
-          if (idx >= 0 && idx <= r.steps) data.deltaY = r.start + idx * step - pos;
-          break;
-        }
-      }
-      return true;
-    };
     lenis = new Lenis({
       lerp: 0.09,
       smoothWheel: true,
@@ -63,8 +50,37 @@ export function SmoothScroll() {
       wheelMultiplier: 1,
       touchMultiplier: 1.5,
       anchors: false,
-      virtualScroll,
     });
+
+    // A physical wheel notch can fire several wheel events, so stepping once per
+    // event overshoots the section boundary. Instead let Lenis glide freely, then
+    // settle onto the nearest notch boundary once scrolling pauses, so the rest
+    // never bleeds past a section edge.
+    let snapTimer = 0;
+    const snapToGrid = () => {
+      const regions = quantRegions();
+      if (!regions.length) return;
+      const pos = lenis.targetScroll;
+      let best = pos;
+      let bestDist = Infinity;
+      for (const r of regions) {
+        const step = (r.end - r.start) / r.steps;
+        for (let k = 0; k <= r.steps; k++) {
+          const pt = r.start + k * step;
+          const d = Math.abs(pt - pos);
+          if (d < bestDist) {
+            bestDist = d;
+            best = pt;
+          }
+        }
+      }
+      if (bestDist > 1) lenis.scrollTo(best, { duration: 0.45 });
+    };
+    const onWheel = () => {
+      window.clearTimeout(snapTimer);
+      snapTimer = window.setTimeout(snapToGrid, 160);
+    };
+    window.addEventListener("wheel", onWheel, { passive: true });
 
     let raf = 0;
     const loop = (time: number) => {
@@ -97,6 +113,8 @@ export function SmoothScroll() {
 
     return () => {
       cancelAnimationFrame(raf);
+      window.clearTimeout(snapTimer);
+      window.removeEventListener("wheel", onWheel);
       document.removeEventListener("click", onClick);
       reduce.removeEventListener("change", onReduceChange);
       lenis.destroy();

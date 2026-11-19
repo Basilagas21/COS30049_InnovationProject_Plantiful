@@ -37,9 +37,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           { href: "/approvals", label: "Approvals" },
           { href: "/reports", label: "Reports" },
           { href: "/alerts", label: "Monitoring" },
+          { href: "/admin/inquiries", label: "Inquiries" },
         ]
       : []),
-    ...(admin ? [{ href: "/users", label: "Users" }] : []),
+    ...(admin
+      ? [
+          { href: "/users", label: "Users" },
+          { href: "/admin/settings", label: "Admin settings" },
+        ]
+      : []),
   ];
 
   return (
@@ -68,10 +74,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   alt="Plantiful logo"
                   width={592}
                   height={421}
-                  className="-my-2 h-[5.5rem] w-auto object-contain sm:h-24"
+                  className="h-9 w-auto object-contain"
                   priority
                 />
-                <span className="text-3xl tracking-tight">plantiful<span className="text-emerald">.</span></span>
+                <span className="text-xl tracking-tight">plantiful<span className="text-emerald">.</span></span>
               </Link>
               <SiteNav links={navLinks} />
             </div>
@@ -81,7 +87,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-6 px-6">
               <div><p className="text-2xl font-semibold tracking-tight">A little closer to nature.</p><p className="mt-2 text-sm text-sprout/75">Plantiful · Niah National Park, Sarawak</p></div>
               <div className="flex flex-wrap items-center gap-4">
-                <Link href="/learn" className="text-sm font-semibold text-white transition-colors hover:text-chartreuse">Learn and Q&amp;A</Link>
+                <Link href="/learn" className="text-sm font-semibold text-sprout/80 transition-colors hover:text-chartreuse">Learn and Q&amp;A</Link>
                 <Link href="/explore" className="rounded-full bg-chartreuse px-6 py-3 text-sm font-semibold text-pine">Explore the plant guide ↗</Link>
               </div>
             </div>

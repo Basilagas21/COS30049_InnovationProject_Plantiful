@@ -1,0 +1,31 @@
+{
+  "name": "plantiful-visitor-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Standalone public visitor website for Plantiful / Sarawak Forestry Corporation (SFC) — no sign-in, no shared code with the main Plantiful app.",
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "next": "^16.4.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.5",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "^16.4.6",
+    "tailwindcss": "4.3.5",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "magic-string": "0.30.21"
+  }
+}

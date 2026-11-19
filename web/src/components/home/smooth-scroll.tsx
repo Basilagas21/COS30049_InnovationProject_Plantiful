@@ -61,6 +61,9 @@ export function SmoothScroll() {
       const regions = quantRegions();
       if (!regions.length) return;
       const pos = lenis.targetScroll;
+      // The hero (section 1) sits above the first boundary and scrolls freely;
+      // never snap it back down to the chain start.
+      if (pos < Math.min(...regions.map((r) => r.start))) return;
       let best = pos;
       let bestDist = Infinity;
       for (const r of regions) {

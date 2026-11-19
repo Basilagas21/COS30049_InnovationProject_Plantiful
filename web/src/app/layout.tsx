@@ -50,17 +50,6 @@ const FROND_BOOTSTRAP = `(function () {
     ty = ((e.clientY - r.top) / r.height - 0.5) * 18;
     start();
   }, { passive: true });
-  var t0 = performance.now();
-  function arm() {
-    var root = d.querySelector(".home-root");
-    if (root && !reduce.matches) root.classList.add("js-home");
-  }
-  function showChip() {
-    var ch = d.querySelector(".live-chip");
-    if (ch) ch.classList.add("chip-in");
-  }
-  arm();
-  setTimeout(showChip, 1400);
   layout();
   window.addEventListener("resize", layout);
   window.addEventListener("load", layout);
@@ -68,9 +57,6 @@ const FROND_BOOTSTRAP = `(function () {
   new MutationObserver(function () {
     var w = d.querySelector(".home-frond-wrap");
     if (w && (w !== wrap || !w.style.left || w.style.left === "0px")) layout();
-    arm();
-    var ch = d.querySelector(".live-chip");
-    if (ch && !ch.classList.contains("chip-in") && performance.now() - t0 >= 1400) ch.classList.add("chip-in");
   }).observe(d.body, { childList: true, subtree: true });
 })();`;
 

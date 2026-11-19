@@ -279,7 +279,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-btn--ghost { background: #6fd6b01f; color: #fffdee; border: 1px solid #6fd6b066; -webkit-backdrop-filter: blur(12px) saturate(1.3); backdrop-filter: blur(12px) saturate(1.3); box-shadow: inset 0 1px 0 #ffffff26; }
 .home-btn--ghost:hover { background: #6fd6b033; border-color: #6fd6b0b3; box-shadow: 0 10px 30px #6fd6b026, 0 0 26px #6fd6b03d, inset 0 1px 0 #ffffff33; }
 
-.live-chip { position: absolute; right: clamp(1.5rem, 8vw, 7rem); bottom: clamp(170px, 23vh, 225px); z-index: 3; width: 300px; border-radius: 18px; border: 1px solid #6fd6b055; border-top-color: #6fd6b099; background: linear-gradient(135deg, #ffffff26, #0c342cb3); will-change: transform; box-shadow: inset 0 1px 0 #ffffff33, 0 18px 44px #00000066, 0 0 40px #6fd6b022; padding: 16px 18px; animation: chip-float 7s ease-in-out infinite; }
+.live-chip { position: absolute; right: clamp(1.5rem, 8vw, 7rem); bottom: clamp(170px, 23vh, 225px); z-index: 3; width: 300px; border-radius: 18px; border: 1px solid #6fd6b055; border-top-color: #6fd6b099; background: linear-gradient(135deg, #ffffff26, #0c342c99); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff33, 0 18px 44px #00000066, 0 0 40px #6fd6b022; padding: 16px 18px; animation: chip-float 7s ease-in-out infinite; }
 .live-chip-row { display: flex; align-items: center; gap: 8px; font-family: var(--font-martian), monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: #e3ef26; }
 .live-chip-pulse { width: 8px; height: 8px; border-radius: 50%; background: #e3ef26; box-shadow: 0 0 10px #e3ef26; animation: pulse 2s ease-in-out infinite; }
 .live-chip-name { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: 1.25rem; font-weight: 640; margin-top: 9px; color: #fffdee; }
@@ -330,7 +330,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-reveal { opacity: 1; }
 .js-home .home-reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
 .js-home .home-reveal.is-in { opacity: 1; transform: none; }
-.js-home .live-chip { opacity: 0; animation: chip-rise .9s cubic-bezier(.16,1,.3,1) .35s both, chip-float 7s ease-in-out 1.25s infinite; }
+.js-home .live-chip { animation: chip-rise .9s cubic-bezier(.16,1,.3,1) .35s backwards, chip-float 7s ease-in-out 1.25s infinite; }
 .js-home .home-card.home-reveal.is-in { transition: transform .3s ease, box-shadow .55s ease-out, opacity .8s cubic-bezier(.16,1,.3,1); animation: card-rise .8s cubic-bezier(.16,1,.3,1) backwards; animation-delay: calc(var(--reveal-i, 0) * 150ms); }
 .js-home .home-title-inner { animation: title-rise .9s cubic-bezier(.16,1,.3,1) both; }
 .js-home .home-title-line:nth-child(1) .home-title-inner { animation-delay: .05s; }
@@ -537,7 +537,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 [data-theme="light"] .home-lede { color: #0c342cdd; }
 [data-theme="light"] .home-btn--ghost { background: color-mix(in srgb, #076653 10%, transparent); color: #0c342c; border-color: color-mix(in srgb, #076653 40%, transparent); box-shadow: inset 0 1px 0 #ffffff66; }
 [data-theme="light"] .home-btn--ghost:hover { background: color-mix(in srgb, #076653 18%, transparent); border-color: #076653; box-shadow: 0 10px 30px #07665326; }
-[data-theme="light"] .live-chip { border-color: #07665355; border-top-color: #07665399; background: linear-gradient(135deg, #ffffffd9, #e2fbceb3); box-shadow: inset 0 1px 0 #ffffffaa, 0 18px 44px #0c342c26; }
+[data-theme="light"] .live-chip { border-color: #07665355; border-top-color: #07665399; background: linear-gradient(135deg, #ffffffd9, #e2fbce99); box-shadow: inset 0 1px 0 #ffffffaa, 0 18px 44px #0c342c26; }
 [data-theme="light"] .live-chip-row { color: #076653; }
 [data-theme="light"] .live-chip-name { color: #0c342c; }
 [data-theme="light"] .live-chip-meta { color: #0c342ccc; }

@@ -538,7 +538,7 @@ function LiveChip({ recordsPromise }: { recordsPromise: Promise<RecordListItem[]
   const records = use(recordsPromise);
   const featured = records.find((r) => r.isPublished) ?? records.find((r) => r.approvalStatus === "approved") ?? null;
   return (
-    <div className="live-chip home-reveal" style={{ "--reveal-i": 2 } as CSSProperties}>
+    <div className="live-chip">
       {featured ? (
         <>
           <p className="live-chip-row"><span className="live-chip-pulse" />Latest verification</p>

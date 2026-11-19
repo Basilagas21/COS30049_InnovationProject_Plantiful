@@ -62,7 +62,11 @@
   --chart-soil: #367849;
   /* Canonical nav rhythm, shared by every page (lifted from the homepage). */
   --nav-gap: clamp(.45rem, 1.2vw, .7rem);
+  /* Fixed header height so first paint and hydration agree (no layout shift). */
+  --header-h: 67px;
 }
+
+html { scrollbar-gutter: stable; }
 
 [data-theme="dark"] {
   color-scheme: dark;
@@ -159,8 +163,8 @@ select.field-input {
 @layer components {
   /* Canonical header: a full-width flush bar with a bottom hairline, shared by
      every page. Lifted from the homepage so inner pages read as one app. */
-  .site-header { position: sticky; top: 0; z-index: 40; padding: 0; }
-  .site-header-inner { width: 100%; max-width: none; margin: 0; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; padding: var(--nav-gap) 1.5rem; border-radius: 0; background: var(--header); -webkit-backdrop-filter: blur(20px) saturate(1.4); backdrop-filter: blur(20px) saturate(1.4); border: none; border-bottom: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent); }
+  .site-header { position: sticky; top: 0; z-index: 40; padding: 0; height: var(--header-h, 67px); }
+  .site-header-inner { width: 100%; max-width: none; margin: 0; height: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; padding: var(--nav-gap) 1.5rem; border-radius: 0; background: var(--header); -webkit-backdrop-filter: blur(20px) saturate(1.4); backdrop-filter: blur(20px) saturate(1.4); border: none; border-bottom: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent); }
   .site-nav-wrap { position: relative; min-width: 0; }
   .site-nav-wrap.has-more::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 2.5rem; pointer-events: none; background: linear-gradient(90deg, transparent, var(--header)); }
   .site-nav { display: flex; align-items: center; justify-content: center; gap: var(--nav-gap); flex-wrap: nowrap; font-size: .85rem; font-weight: 600; }
@@ -258,7 +262,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-spores { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
 .home-spore { position: absolute; bottom: -8px; border-radius: 50%; background: #e3ef26; box-shadow: 0 0 10px #e3ef26; opacity: 0; animation: spore-rise linear infinite; }
 .home-frond-wrap { position: absolute; left: 75%; top: calc(50% + 27px); translate: -50% -50%; width: clamp(340px, 38vw, 560px); z-index: -1; will-change: transform; }
-.home-frond { width: 100%; aspect-ratio: 752 / 885; background: url('/botanical.svg') center / contain no-repeat; filter: drop-shadow(0 0 60px #6fd6b088) drop-shadow(0 0 26px #e3ef2666) drop-shadow(0 16px 40px #00000066); transform-origin: bottom center; animation: frond-in 1.2s ease-out both, frond-sway 12s ease-in-out 1.2s infinite; }
+.home-frond { width: 100%; aspect-ratio: 752 / 885; background: url('/botanical.svg') center / contain no-repeat; filter: drop-shadow(0 0 60px #6fd6b088) drop-shadow(0 0 26px #e3ef2666) drop-shadow(0 16px 40px #00000066); transform-origin: bottom center; animation: frond-sway 12s ease-in-out infinite; }
 .home-hero-copy { position: relative; z-index: 2; max-width: 46rem; }
 .home-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(3rem, 7vw, 6rem); font-weight: 680; line-height: 1.0; letter-spacing: -0.035em; }
 .home-title-line { display: block; }
@@ -475,7 +479,6 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 @keyframes card-rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
 @keyframes title-rise { from { opacity: 0; transform: translateY(0.3em); filter: blur(8px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 @keyframes curtain-sway { 0%, 100% { transform: rotate(12deg) translateX(0) scaleY(1); } 50% { transform: rotate(16deg) translateX(40px) scaleY(1.08); } }
-@keyframes frond-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes frond-sway { 0%, 100% { transform: rotate(-1.2deg); } 50% { transform: rotate(1.2deg); } }
 @keyframes spore-rise { 0% { opacity: 0; transform: translate(0, 0); } 12% { opacity: .8; } 88% { opacity: .5; } 100% { opacity: 0; transform: translate(var(--sdx, 20px), -110vh); } }
 @keyframes chip-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -571,6 +574,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   .live-chip { display: none; }
 }
 @media (max-width: 900px) {
+  :root { --header-h: 124px; }
   .site-header-inner { grid-template-columns: auto auto; grid-template-areas: "brand account" "nav nav"; row-gap: .5rem; border-radius: 0; }
   .brand { grid-area: brand; }
   .header-account { grid-area: account; }

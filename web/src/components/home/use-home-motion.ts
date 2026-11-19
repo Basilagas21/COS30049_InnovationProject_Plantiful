@@ -10,9 +10,6 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     const doc = document.documentElement;
     const reveals = Array.from(root.querySelectorAll<HTMLElement>(".home-reveal"));
-    const banner = root.querySelector<HTMLElement>(".home-canopy");
-    const frond = root.querySelector<HTMLElement>(".home-frond-wrap");
-    const heroCopy = root.querySelector<HTMLElement>(".home-hero-copy");
     const canopyBack = root.querySelector<HTMLElement>(".canopy-floor--back");
     const canopyFront = root.querySelector<HTMLElement>(".canopy-floor--front");
     const aurora = root.querySelector<HTMLElement>(".aurora-field");
@@ -48,20 +45,6 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       }
     });
     mo.observe(root, { childList: true, subtree: true });
-
-    // Centre the frond in the gap between the slogan's right edge and the
-    // canopy's right edge, so the breathing room on both sides is equal.
-    const layoutFrond = () => {
-      if (!frond || !banner || !heroCopy) return;
-      if (window.innerWidth <= 640) {
-        frond.style.left = "";
-        return;
-      }
-      const canopyRect = banner.getBoundingClientRect();
-      const copyRight = heroCopy.getBoundingClientRect().right - canopyRect.left;
-      const centre = (copyRight + canopyRect.width) / 2;
-      frond.style.left = `${centre.toFixed(1)}px`;
-    };
 
     // Scroll-driven verification chain: a record climbs the vine as you scroll.
     const chainTrack = root.querySelector<HTMLElement>(".home-chain-track");
@@ -129,14 +112,12 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       }
       updateChain();
     };
-    layoutFrond();
     layoutChain();
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
 
     const onResize = () => {
       syncHeader();
-      layoutFrond();
       layoutChain();
       onScroll();
     };
@@ -145,47 +126,10 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       document.fonts.ready
         .then(() => {
           syncHeader();
-          layoutFrond();
           layoutChain();
           onScroll();
         })
         .catch(() => {});
-    }
-
-    const target = { x: 0, y: 0 };
-    const current = { x: 0, y: 0 };
-    let parallaxRaf = 0;
-    const tick = () => {
-      current.x += (target.x - current.x) * 0.08;
-      current.y += (target.y - current.y) * 0.08;
-      if (Math.abs(target.x - current.x) > 0.05 || Math.abs(target.y - current.y) > 0.05) {
-        parallaxRaf = requestAnimationFrame(tick);
-      } else {
-        current.x = target.x;
-        current.y = target.y;
-        parallaxRaf = 0;
-      }
-      if (frond) frond.style.transform = `translate(${current.x.toFixed(2)}px, ${current.y.toFixed(2)}px)`;
-    };
-    const startParallax = () => {
-      if (!parallaxRaf) parallaxRaf = requestAnimationFrame(tick);
-    };
-    const onBannerMove = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse" || !banner) return;
-      const rect = banner.getBoundingClientRect();
-      target.x = ((event.clientX - rect.left) / rect.width - 0.5) * 24;
-      target.y = ((event.clientY - rect.top) / rect.height - 0.5) * 18;
-      startParallax();
-    };
-    const onBannerLeave = () => {
-      target.x = 0;
-      target.y = 0;
-      startParallax();
-    };
-
-    if (!reduce.matches) {
-      banner?.addEventListener("pointermove", onBannerMove);
-      banner?.addEventListener("pointerleave", onBannerLeave);
     }
 
     return () => {
@@ -194,13 +138,6 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       mo.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
-      banner?.removeEventListener("pointermove", onBannerMove);
-      banner?.removeEventListener("pointerleave", onBannerLeave);
-      if (parallaxRaf) cancelAnimationFrame(parallaxRaf);
-      if (frond) {
-        frond.style.transform = "";
-        frond.style.left = "";
-      }
       doc.style.removeProperty("--home-p");
     };
   }, [rootRef]);

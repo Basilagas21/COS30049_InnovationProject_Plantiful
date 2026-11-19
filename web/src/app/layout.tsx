@@ -13,6 +13,53 @@ import { FooterNatureParallax } from "@/components/home/footer-nature-parallax";
 import { ThemeProvider } from "@/lib/theme-provider";
 import "./globals.css";
 
+// Runs at parse time, before the React bundle hydrates, so the frond is already
+// centred and cursor-tracking on first paint (no hydration jump or delay).
+const FROND_BOOTSTRAP = `(function () {
+  var d = document;
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var wrap = null;
+  function layout() {
+    var canopy = d.querySelector(".home-canopy");
+    wrap = d.querySelector(".home-frond-wrap");
+    if (!canopy || !wrap) return;
+    if (window.innerWidth <= 640) { wrap.style.left = ""; return; }
+    var copy = d.querySelector(".home-hero-copy");
+    if (!copy) return;
+    var cr = canopy.getBoundingClientRect();
+    var right = copy.getBoundingClientRect().right - cr.left;
+    wrap.style.left = ((right + cr.width) / 2).toFixed(1) + "px";
+  }
+  var tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+  function tick() {
+    cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
+    if (wrap) wrap.style.transform = "translate(" + cx.toFixed(2) + "px, " + cy.toFixed(2) + "px)";
+    if (Math.abs(tx - cx) > 0.05 || Math.abs(ty - cy) > 0.05) raf = requestAnimationFrame(tick);
+    else { cx = tx; cy = ty; raf = 0; }
+  }
+  function start() { if (!raf) raf = requestAnimationFrame(tick); }
+  d.addEventListener("pointermove", function (e) {
+    if (e.pointerType !== "mouse" || reduce.matches) return;
+    var t = e.target;
+    var canopy = t && t.closest ? t.closest(".home-canopy") : null;
+    if (!canopy) { if (tx || ty) { tx = 0; ty = 0; start(); } return; }
+    wrap = d.querySelector(".home-frond-wrap");
+    if (!wrap) return;
+    var r = canopy.getBoundingClientRect();
+    tx = ((e.clientX - r.left) / r.width - 0.5) * 24;
+    ty = ((e.clientY - r.top) / r.height - 0.5) * 18;
+    start();
+  }, { passive: true });
+  layout();
+  window.addEventListener("resize", layout);
+  window.addEventListener("load", layout);
+  if (d.fonts && d.fonts.ready) d.fonts.ready.then(layout).catch(function () {});
+  new MutationObserver(function () {
+    var w = d.querySelector(".home-frond-wrap");
+    if (w && (w !== wrap || (!w.style.left && window.innerWidth > 640))) layout();
+  }).observe(d.body, { childList: true, subtree: true });
+})();`;
+
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
   subsets: ["latin"],
@@ -147,6 +194,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             </div>
           </footer>
         </ThemeProvider>
+        <script dangerouslySetInnerHTML={{ __html: FROND_BOOTSTRAP }} />
       </body>
     </html>
   );

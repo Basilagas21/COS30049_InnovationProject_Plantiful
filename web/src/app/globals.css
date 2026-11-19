@@ -283,7 +283,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .live-chip-meta-date { display: block; white-space: nowrap; margin-top: 1px; }
 .live-chip-ok { margin-top: 11px; display: inline-flex; align-items: center; gap: 7px; background: #e3ef26; color: #0c342c; font-weight: 700; font-size: .72rem; padding: 6px 12px; border-radius: 999px; }
 
-.home-journey { margin: auto; padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 6vw, 5.5rem); scroll-margin-top: calc(var(--header-h, 72px) + 1rem); }
+.home-journey { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 6vw, 5.5rem); scroll-margin-top: calc(var(--header-h, 72px) + 1rem); }
 .home-journey-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(1.9rem, 3.4vw, 3rem); font-weight: 620; letter-spacing: -0.025em; line-height: 1.08; margin-bottom: clamp(1.75rem, 4vw, 3rem); }
 .home-cards { display: grid; gap: 1.25rem; grid-template-columns: repeat(3, 1fr); }
 .home-card { position: relative; isolation: isolate; display: flex; flex-direction: column; justify-content: flex-end; min-height: 480px; overflow: hidden; border-radius: 28px; border: 1px solid color-mix(in srgb, var(--emerald) 30%, transparent); background: #0a271c; color: #fffdee; box-shadow: 0 20px 50px #071c1433; transition: transform .3s ease, box-shadow .3s ease; }
@@ -334,8 +334,8 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 
 /* ===== Scroll-driven verification chain ===== */
 .home-chain { position: relative; background: radial-gradient(50% 40% at 78% 18%, #0e5a3e4d, transparent 70%), radial-gradient(45% 40% at 15% 80%, #173a2a66, transparent 70%), linear-gradient(180deg, #03100a, #071c14 40%, #04100b); color: #fffdee; }
-.home-chain-track { height: 300vh; }
-.home-chain-stage { position: sticky; top: var(--header-h, 72px); height: calc(100svh - var(--header-h, 72px)); display: grid; grid-template-columns: minmax(0, 1fr) clamp(340px, 38.8vw, 572px); grid-template-rows: auto minmax(0, 1fr); column-gap: clamp(1.5rem, 6vw, 5.5rem); row-gap: clamp(1.5rem, 6vw, 5.5rem); padding: clamp(1.5rem, 6vw, 5.5rem); overflow: hidden; }
+.home-chain-track { height: 300svh; }
+.home-chain-stage { position: sticky; top: 0; height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr) clamp(340px, 38.8vw, 572px); grid-template-rows: auto minmax(0, 1fr); column-gap: clamp(1.5rem, 6vw, 5.5rem); row-gap: clamp(1.5rem, 6vw, 5.5rem); padding: calc(var(--header-h, 72px) + clamp(1.5rem, 6vw, 5.5rem)) clamp(1.5rem, 6vw, 5.5rem) clamp(1.5rem, 6vw, 5.5rem); overflow: hidden; }
 .home-chain-head { grid-column: 1; grid-row: 1; max-width: 60rem; position: relative; z-index: 1; }
 .home-chain-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(1.9rem, 3.4vw, 3rem); font-weight: 620; letter-spacing: -0.025em; line-height: 1.08; }
 .home-chain-lede { margin-top: .9rem; max-width: 52ch; font-size: 1.1rem; line-height: 1.7; color: #fffdeee0; }

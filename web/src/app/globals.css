@@ -301,10 +301,13 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-card-title { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-bricolage), var(--font-public), sans-serif; color: #fffdee; font-size: 28px; font-weight: 640; line-height: 1.15; }
 .home-card-title .home-arrow { width: 30px; height: 30px; padding: 6px; flex-shrink: 0; border-radius: 50%; border: 1px solid #ffffff55; background: #ffffff14; color: #e3ef26; transition: background .2s, color .2s; }
 .home-card:hover .home-card-title .home-arrow { background: #e3ef26; color: #0c342c; }
-.home-card-desc { display: block; color: #fffdeee6; margin-top: 10px; font-size: 14px; line-height: 1.6; }
+.home-card-desc { display: block; color: #fffdeee6; margin-top: 10px; font-size: 14px; line-height: 1.6; min-height: 3.2em; }
 .home-card-action { display: block; margin-top: 14px; padding-top: 12px; border-top: 1px solid #ffffff30; font-size: 13px; font-weight: 600; color: #e3ef26; }
 .home-card:focus-visible { outline: 3px solid var(--emerald); outline-offset: 5px; }
 @media (prefers-reduced-transparency: reduce) { .home-card-glass { background: #0c342ce6; -webkit-backdrop-filter: none; backdrop-filter: none; } }
+/* Narrow three-column band: the longest description wraps to three lines here,
+   so reserve three lines to keep all glass panels equal height. */
+@media (min-width: 1025px) and (max-width: 1280px) { .home-card-desc { min-height: 4.8em; } }
 
 /* Cinematic closing band: a full-viewport forest canopy frame with the manifesto
    overlaid, dark in both themes like the opening canopy. */

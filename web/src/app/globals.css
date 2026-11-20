@@ -164,7 +164,7 @@ select.field-input {
   /* Canonical header: a full-width flush bar with a bottom hairline, shared by
      every page. Lifted from the homepage so inner pages read as one app. */
   .site-header { position: sticky; top: 0; z-index: 40; padding: 0; height: var(--header-h, 67px); }
-  .site-header-inner { width: 100%; max-width: none; margin: 0; height: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; padding: var(--nav-gap) 1.5rem; border-radius: 0; background: var(--header); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); border: none; border-bottom: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent); }
+  .site-header-inner { width: 100%; max-width: none; margin: 0; height: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; padding: var(--nav-gap) 1.5rem; border-radius: 0; background: var(--header); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); border: none; border-bottom: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent); }
   .site-nav-wrap { position: relative; min-width: 0; }
   .site-nav-wrap.has-more::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 2.5rem; pointer-events: none; background: linear-gradient(90deg, transparent, var(--header)); }
   .site-nav { display: flex; align-items: center; justify-content: center; gap: var(--nav-gap); flex-wrap: nowrap; font-size: .85rem; font-weight: 600; }
@@ -209,7 +209,7 @@ select.field-input {
   .btn--danger:hover:not(:disabled) { background: var(--danger); color: var(--cream); border-color: var(--danger); }
   /* For buttons placed on dark imagery or banners that stay dark in both themes
      (the visitor heroes). Mirrors the homepage dark ghost, without the sheen. */
-  .btn--on-dark { background: #6fd6b01f; color: #fffdee; border: 1px solid #6fd6b066; -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff26; }
+  .btn--on-dark { background: #6fd6b01f; color: #fffdee; border: 1px solid #6fd6b066; -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff26; }
   .btn--on-dark:hover:not(:disabled) { background: #6fd6b033; border-color: #6fd6b0b3; box-shadow: 0 10px 30px #6fd6b026, inset 0 1px 0 #ffffff33; }
   .btn--sm { min-height: 36px; padding: .4rem 1rem; font-size: .8rem; }
 }
@@ -276,10 +276,10 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-btn:hover { background: #edf55a; box-shadow: 0 14px 40px #e3ef2659, 0 0 26px #e3ef2640, inset 0 1px 0 #ffffff88; }
 .home-btn .home-arrow { width: 15px; height: 15px; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
 .home-btn:hover .home-arrow, .home-btn:focus-visible .home-arrow { transform: translate(2px, -2px); }
-.home-btn--ghost { background: #6fd6b01f; color: #fffdee; border: 1px solid #6fd6b066; -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff26; }
+.home-btn--ghost { background: #6fd6b01f; color: #fffdee; border: 1px solid #6fd6b066; -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff26; }
 .home-btn--ghost:hover { background: #6fd6b033; border-color: #6fd6b0b3; box-shadow: 0 10px 30px #6fd6b026, 0 0 26px #6fd6b03d, inset 0 1px 0 #ffffff33; }
 
-.live-chip { position: absolute; right: clamp(1.5rem, 8vw, 7rem); bottom: clamp(170px, 23vh, 225px); z-index: 3; width: 300px; border-radius: 20px; border: 1px solid #6fd6b055; border-top-color: #6fd6b099; background: linear-gradient(135deg, #ffffff26, #0c342c99); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff33, 0 18px 44px #00000066, 0 0 40px #6fd6b022; padding: 16px 18px; animation: chip-float 7s ease-in-out infinite; }
+.live-chip { position: absolute; right: clamp(1.5rem, 8vw, 7rem); bottom: clamp(170px, 23vh, 225px); z-index: 3; width: 300px; border-radius: 20px; border: 1px solid #6fd6b055; border-top-color: #6fd6b099; background: linear-gradient(135deg, #ffffff26, #0c342c99); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff33, 0 18px 44px #00000066, 0 0 40px #6fd6b022; padding: 16px 18px; animation: chip-float 7s ease-in-out infinite; }
 .live-chip-row { display: flex; align-items: center; gap: 8px; font-family: var(--font-martian), monospace; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: #e3ef26; }
 .live-chip-pulse { width: 8px; height: 8px; border-radius: 50%; background: #e3ef26; box-shadow: 0 0 10px #e3ef26; animation: pulse 2s ease-in-out infinite; }
 .live-chip-name { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: 1.25rem; font-weight: 640; margin-top: 9px; color: #fffdee; }
@@ -297,7 +297,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-card-shade { position: absolute; inset: 0; background: linear-gradient(180deg, #03100a33, transparent 28%, #03100ae6 78%); pointer-events: none; }
 .home-card-glow { position: absolute; inset: auto -20% -15% -20%; height: 160px; z-index: 1; background: radial-gradient(#e3ef2650, transparent 70%); filter: blur(16px); pointer-events: none; opacity: 0; transition: opacity .6s ease-out; }
 .home-card:hover .home-card-glow, .home-card:focus-visible .home-card-glow { opacity: 1; }
-.home-card-glass { position: relative; z-index: 2; display: block; margin: 14px; padding: 20px; border: 1px solid #ffffff4d; border-top-color: #ffffff99; border-radius: 20px; background: linear-gradient(135deg, #ffffff1f, #0c342c80); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff40, 0 8px 24px #00000040; }
+.home-card-glass { position: relative; z-index: 2; display: block; margin: 14px; padding: 20px; border: 1px solid #ffffff4d; border-top-color: #ffffff99; border-radius: 20px; background: linear-gradient(135deg, #ffffff1f, #0c342c80); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff40, 0 8px 24px #00000040; }
 .home-card-title { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-bricolage), var(--font-public), sans-serif; color: #fffdee; font-size: 28px; font-weight: 640; line-height: 1.15; }
 .home-card-title .home-arrow { width: 30px; height: 30px; padding: 6px; flex-shrink: 0; border-radius: 50%; border: 1px solid #ffffff55; background: #ffffff14; color: #e3ef26; transition: background .2s, color .2s; }
 .home-card:hover .home-card-title .home-arrow { background: #e3ef26; color: #0c342c; }
@@ -315,7 +315,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .home-close-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(2.4rem, 5.5vw, 4.5rem); font-weight: 640; letter-spacing: -0.03em; line-height: 1.08; max-width: 18ch; color: #fffdee; text-wrap: balance; }
 .home-close-accent { color: #e3ef26; text-shadow: 0 0 24px #e3ef2666; }
 /* Live field ledger: real catalogue counts in the product's monospace data voice. */
-.home-close-ledger { display: inline-flex; align-items: stretch; margin-top: clamp(1.75rem, 4vw, 3rem); padding: 1rem 1.5rem; border-radius: 20px; background: linear-gradient(135deg, #ffffff1f, #0c342c40); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); border: 1px solid #ffffff4d; border-top-color: #ffffff99; box-shadow: inset 0 1px 0 #ffffff33, 0 8px 24px #00000040; }
+.home-close-ledger { display: inline-flex; align-items: stretch; margin-top: clamp(1.75rem, 4vw, 3rem); padding: 1rem 1.5rem; border-radius: 20px; background: linear-gradient(135deg, #ffffff1f, #0c342c40); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); border: 1px solid #ffffff4d; border-top-color: #ffffff99; box-shadow: inset 0 1px 0 #ffffff33, 0 8px 24px #00000040; }
 .home-close-stat { display: flex; flex-direction: column-reverse; align-items: flex-start; gap: .4rem; padding: 0 1.5rem; }
 .home-close-stat:first-child { padding-left: 0; }
 .home-close-stat:last-child { padding-right: 0; }
@@ -373,7 +373,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .chain-icon--peak { stroke: #e3ef26; filter: drop-shadow(0 0 12px #e3ef2644); }
 .chain-icon path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .8s cubic-bezier(.16,1,.3,1); transition-delay: calc(var(--pi, 0) * 70ms); }
 .home-chain-step.is-active .chain-icon path { stroke-dashoffset: 0; }
-.home-chain-art { grid-column: 2; grid-row: 1 / 3; position: relative; z-index: 1; align-self: center; justify-self: center; width: 100%; max-height: 100%; aspect-ratio: 440 / 520; border-radius: 20px; border: 1px solid #ffffff4d; border-top-color: #ffffff99; background: linear-gradient(135deg, #ffffff26, #0c342c4d); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff40, 0 8px 24px #00000040, 0 0 40px #6fd6b01a; overflow: hidden; }
+.home-chain-art { grid-column: 2; grid-row: 1 / 3; position: relative; z-index: 1; align-self: center; justify-self: center; width: 100%; max-height: 100%; aspect-ratio: 440 / 520; border-radius: 20px; border: 1px solid #ffffff4d; border-top-color: #ffffff99; background: linear-gradient(135deg, #ffffff26, #0c342c4d); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); box-shadow: inset 0 1px 0 #ffffff40, 0 8px 24px #00000040, 0 0 40px #6fd6b01a; overflow: hidden; }
 .home-chain-art-inner { position: absolute; inset: 18px; }
 @media (prefers-reduced-transparency: reduce) { .home-chain-art { background: #0c342ce6; -webkit-backdrop-filter: none; backdrop-filter: none; } }
 .chain-art-spores { position: absolute; inset: 16px; z-index: 2; pointer-events: none; }
@@ -665,8 +665,8 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   box-shadow: 0 24px 70px color-mix(in srgb, var(--shadow) 8%, transparent);
   text-align: center;
-  -webkit-backdrop-filter: blur(22px);
-  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 .plantiful-loader-emblem {
   position: relative;

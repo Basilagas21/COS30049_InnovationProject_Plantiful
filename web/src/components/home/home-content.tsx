@@ -719,14 +719,14 @@ export function HomeContent({
       </section>
 
       <section className="home-journey" aria-label="A connected conservation journey">
-        <h2 className="home-journey-title home-reveal">For the forest.<br />For the future.</h2>
+        <h2 className="home-journey-title home-reveal" style={{ "--reveal-i": 0 } as CSSProperties}>For the forest.<br />For the future.</h2>
         <div className="home-cards">
           {JOURNEY.map((item, i) => (
             <Link
               key={item.title}
               href={item.href}
               className="home-card home-reveal"
-              style={{ "--reveal-i": i } as CSSProperties}
+              style={{ "--reveal-i": i + 1 } as CSSProperties}
             >
               <Image
                 src={`/images/home/${item.image}`}
@@ -758,7 +758,7 @@ export function HomeContent({
         />
         <div className="home-close-scrim" aria-hidden="true" />
         <div className="home-close-copy">
-          <h2 className="home-close-title home-reveal">The catalogue grows one <span className="home-close-accent">verified</span> record at a time.</h2>
+          <h2 className="home-close-title home-reveal" style={{ "--reveal-i": 0 } as CSSProperties}>The catalogue grows one <span className="home-close-accent">verified</span> record at a time.</h2>
           <Suspense fallback={null}>
             <CloseLedger recordsPromise={recordsPromise} />
           </Suspense>

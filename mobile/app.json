@@ -46,6 +46,12 @@
           "barcodeScannerEnabled": true
         }
       ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow Plantiful to record your voice to fill in field note details."
+        }
+      ],
       "expo-font",
       "expo-status-bar",
       "expo-system-ui",

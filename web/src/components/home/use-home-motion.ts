@@ -58,8 +58,25 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const seedScene = root.querySelector<SVGElement>(".chain-seed");
     const introStep = root.querySelector<HTMLElement>(".home-chain-intro");
     let vineLen = 0;
+    let notch = 120;
 
     const layoutChain = () => {
+      // Size the chain track so its scroll play (track - stage) is a whole
+      // number of wheel notches: the animation then ends exactly on a scroll
+      // step instead of overshooting into the next section. Only the track
+      // length is tuned — the nav and stage keep their natural fixed heights.
+      // notch is detected from real wheel events (detectNotch below); notch=0
+      // (continuous trackpad) leaves the natural two-section play untouched.
+      if (chainTrack && chainStage) {
+        if (window.innerWidth <= 640) {
+          chainTrack.style.height = "";
+        } else {
+          const stageH = chainStage.offsetHeight;
+          const naturalPlay = 2 * stageH;
+          const play = notch > 0 ? Math.round(naturalPlay / notch) * notch : naturalPlay;
+          chainTrack.style.height = `${stageH + play}px`;
+        }
+      }
       if (!vinePath) return;
       vineLen = vinePath.getTotalLength();
       if (vineGrow) {
@@ -123,6 +140,30 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       onScroll();
     };
     window.addEventListener("resize", onResize);
+    // Detect the device's wheel notch (GCD of the pixel deltas = one notch) and
+    // re-tune the chain track to it, so the last scroll lands on the chain end
+    // on any mouse. A tiny GCD means a continuous trackpad: drop the tuning.
+    const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a);
+    const notchSamples: number[] = [];
+    const detectNotch = (e: WheelEvent) => {
+      if (e.deltaMode !== 0) return;
+      const d = Math.round(Math.abs(e.deltaY));
+      if (d > 0) notchSamples.push(d);
+      if (notchSamples.length < 5) return;
+      const big = notchSamples.filter((x) => x >= 40);
+      let detected = 0;
+      if (big.length >= 3) {
+        const g = big.reduce((a, b) => gcd(a, b));
+        if (g >= 50) detected = g;
+      }
+      if (detected !== notch) {
+        notch = detected;
+        layoutChain();
+        onScroll();
+      }
+      window.removeEventListener("wheel", detectNotch);
+    };
+    window.addEventListener("wheel", detectNotch, { passive: true });
     if (document.fonts?.ready) {
       document.fonts.ready
         .then(() => {
@@ -139,6 +180,7 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       mo.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("wheel", detectNotch);
       doc.style.removeProperty("--home-p");
     };
   }, [rootRef]);

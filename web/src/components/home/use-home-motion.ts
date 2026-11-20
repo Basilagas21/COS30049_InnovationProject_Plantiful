@@ -56,14 +56,12 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     let stageH = 0;
     let trackTop = 0;
     let trackH = 0;
-    let scrollMax = 0;
     let lastActive = -2;
     let lastLit = -1;
 
     const cacheGeometry = () => {
       headerH = header?.offsetHeight ?? 0;
       stageH = chainStage?.offsetHeight ?? window.innerHeight;
-      scrollMax = doc.scrollHeight - window.innerHeight;
       if (chainTrack) {
         const r = chainTrack.getBoundingClientRect();
         trackTop = r.top + window.scrollY;
@@ -131,7 +129,6 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const doScroll = () => {
       const vh = window.innerHeight;
       const sy = window.scrollY;
-      doc.style.setProperty("--home-p", scrollMax > 0 ? (sy / scrollMax).toFixed(4) : "0");
       if (!reduce.matches && sy < vh * 1.2) {
         if (canopyBack) canopyBack.style.transform = `translateY(${(sy * 0.12).toFixed(1)}px)`;
         if (canopyFront) canopyFront.style.transform = `translateY(${(sy * 0.2).toFixed(1)}px)`;
@@ -188,7 +185,6 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       if (scrollRaf) cancelAnimationFrame(scrollRaf);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
-      doc.style.removeProperty("--home-p");
     };
   }, [rootRef]);
 }

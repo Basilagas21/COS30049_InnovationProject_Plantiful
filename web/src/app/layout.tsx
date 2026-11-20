@@ -28,7 +28,10 @@ const FROND_BOOTSTRAP = `(function () {
     if (!copy || !copy.firstChild) return;
     var cr = canopy.getBoundingClientRect();
     var right = copy.getBoundingClientRect().right - cr.left;
-    wrap.style.left = ((right + cr.width) / 2).toFixed(1) + "px";
+    var center = (right + cr.width) / 2;
+    wrap.style.left = center.toFixed(1) + "px";
+    var chip = d.querySelector(".live-chip");
+    if (chip) chip.style.left = (center + 112 - chip.offsetWidth / 2).toFixed(1) + "px";
   }
   var tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
   function tick() {
@@ -56,7 +59,9 @@ const FROND_BOOTSTRAP = `(function () {
   if (d.fonts && d.fonts.ready) d.fonts.ready.then(layout).catch(function () {});
   new MutationObserver(function () {
     var w = d.querySelector(".home-frond-wrap");
+    var c = d.querySelector(".live-chip");
     if (w && (w !== wrap || !w.style.left || w.style.left === "0px")) layout();
+    else if (c && !c.style.left) layout();
   }).observe(d.body, { childList: true, subtree: true });
 })();`;
 

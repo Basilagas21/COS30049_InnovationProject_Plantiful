@@ -553,7 +553,7 @@ function LiveChipDetails({ recordsPromise }: { recordsPromise: Promise<RecordLis
 
 function LiveChip({ recordsPromise }: { recordsPromise: Promise<RecordListItem[]> }) {
   return (
-    <div className="live-chip">
+    <div className="live-chip" suppressHydrationWarning>
       <p className="live-chip-row"><span className="live-chip-pulse" />Latest verification</p>
       <Suspense fallback={null}>
         <LiveChipDetails recordsPromise={recordsPromise} />

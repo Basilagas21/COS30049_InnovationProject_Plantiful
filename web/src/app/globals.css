@@ -164,7 +164,7 @@ select.field-input {
   /* Canonical header: a full-width flush bar with a bottom hairline, shared by
      every page. Lifted from the homepage so inner pages read as one app. */
   .site-header { position: sticky; top: 0; z-index: 40; padding: 0; height: var(--header-h, 67px); }
-  .site-header-inner { width: 100%; max-width: none; margin: 0; height: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; padding: var(--nav-gap) 1.5rem; border-radius: 0; background: var(--header); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); border: none; border-bottom: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent); }
+  .site-header-inner { width: 100%; max-width: none; margin: 0; height: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; padding: var(--header-pad-y, var(--nav-gap)) 1.5rem; border-radius: 0; background: var(--header); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); border: none; border-bottom: 1px solid color-mix(in srgb, var(--pine) 12%, transparent); box-shadow: 0 10px 34px color-mix(in srgb, var(--shadow) 14%, transparent); }
   .site-nav-wrap { position: relative; min-width: 0; }
   .site-nav-wrap.has-more::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 2.5rem; pointer-events: none; background: linear-gradient(90deg, transparent, var(--header)); }
   .site-nav { display: flex; align-items: center; justify-content: center; gap: var(--nav-gap); flex-wrap: nowrap; font-size: .85rem; font-weight: 600; }

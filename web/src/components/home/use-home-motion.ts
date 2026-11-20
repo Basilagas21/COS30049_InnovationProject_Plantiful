@@ -14,9 +14,31 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const canopyFront = root.querySelector<HTMLElement>(".canopy-floor--front");
     const aurora = root.querySelector<HTMLElement>(".aurora-field");
 
+    let baseHeader = 0;
+    let baseContent = 0;
     const syncHeader = () => {
       const header = document.querySelector<HTMLElement>(".site-header");
-      if (header) doc.style.setProperty("--header-h", `${header.offsetHeight}px`);
+      if (!header) return;
+      const inner = header.querySelector<HTMLElement>(".site-header-inner");
+      if (!baseHeader) {
+        baseHeader = header.offsetHeight;
+        if (inner) {
+          const cs = getComputedStyle(inner);
+          baseContent = baseHeader - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+        }
+      }
+      // Calibrate the header height so the section below it (viewport - header)
+      // is a whole multiple of the wheel notch (120px), letting every section
+      // scroll in whole notches with no fractional remainder. The nav padding
+      // shrinks to keep its content fitted at the calibrated height.
+      const NOTCH = 120;
+      const targetSection = Math.round((window.innerHeight - baseHeader) / NOTCH) * NOTCH;
+      let targetHeader = window.innerHeight - targetSection;
+      const minHeader = baseContent + 8;
+      if (targetHeader < minHeader) targetHeader = minHeader;
+      const padY = Math.max(4, (targetHeader - baseContent) / 2);
+      doc.style.setProperty("--header-h", `${targetHeader.toFixed(2)}px`);
+      doc.style.setProperty("--header-pad-y", `${padY.toFixed(2)}px`);
     };
     syncHeader();
 

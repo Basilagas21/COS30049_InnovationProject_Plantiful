@@ -2,6 +2,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions, type CameraCapturedPicture } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import QRCode from 'react-native-qrcode-svg';
+import {
+  RecordingPresets,
+  requestRecordingPermissionsAsync,
+  setAudioModeAsync,
+  useAudioRecorder,
+  useAudioRecorderState,
+} from 'expo-audio';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -23,6 +30,8 @@ import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
 import { generateTag, TAG_LABEL } from '@/lib/tags';
 import { getCurrentUserId } from '@/lib/currentUser';
 import { FieldEvidenceChecklist } from '@/components/field-evidence-checklist';
+import { structureVoiceNote, VOICE_RECORDING_MIME_TYPE, type StructuredFieldNote } from '@/lib/voice-field-note';
+
 
 export default function DiscoverPlantScreen() {
   const { colors, styles } = useThemeStyles(createStyles);
@@ -46,6 +55,13 @@ export default function DiscoverPlantScreen() {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const voiceRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const voiceRecorderState = useAudioRecorderState(voiceRecorder);
+  const [hasVoiceRecording, setHasVoiceRecording] = useState(false);
+  const [voiceStructuring, setVoiceStructuring] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [voiceSuggestion, setVoiceSuggestion] = useState<StructuredFieldNote | null>(null);
 
   const [speciesOptions, setSpeciesOptions] = useState<SpeciesOption[]>([]);
   const [catalogSnapshotLabel, setCatalogSnapshotLabel] = useState('an earlier sync');
@@ -116,6 +132,74 @@ export default function DiscoverPlantScreen() {
       setLocating(false);
     }
   }, []);
+
+  const startVoiceRecording = useCallback(async () => {
+    try {
+      const { granted } = await requestRecordingPermissionsAsync();
+      if (!granted) {
+        Alert.alert('Microphone access needed', 'Allow microphone access to record a voice note.');
+        return;
+      }
+      setVoiceError(null);
+      setVoiceSuggestion(null);
+      setHasVoiceRecording(false);
+
+      // Right after permission is granted (or if something else just let go of
+      // the microphone), iOS can briefly fail to activate the audio session.
+      // That's usually transient, so retry once after a short pause before
+      // surfacing an error.
+      let lastError: unknown;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        try {
+          await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
+          await voiceRecorder.prepareToRecordAsync();
+          voiceRecorder.record();
+          return;
+        } catch (error) {
+          lastError = error;
+          await new Promise((resolve) => setTimeout(resolve, 400));
+        }
+      }
+      throw lastError;
+    } catch (error) {
+      console.warn('[voice-note] startVoiceRecording failed', error);
+      const message = error instanceof Error ? error.message : 'Please try again.';
+      Alert.alert('Could not start recording', message);
+    }
+  }, [voiceRecorder]);
+
+  const stopVoiceRecording = useCallback(async () => {
+    try {
+      await voiceRecorder.stop();
+      setHasVoiceRecording(Boolean(voiceRecorder.uri));
+    } catch (error) {
+      console.warn('[voice-note] stopVoiceRecording failed', error);
+      const message = error instanceof Error ? error.message : 'Could not save that recording.';
+      Alert.alert('Recording failed', message);
+    }
+  }, [voiceRecorder]);
+
+  const structureVoiceRecording = useCallback(async () => {
+    if (!voiceRecorder.uri) return;
+    setVoiceStructuring(true);
+    setVoiceError(null);
+    try {
+      const structured = await structureVoiceNote(voiceRecorder.uri, VOICE_RECORDING_MIME_TYPE);
+      setVoiceSuggestion(structured);
+    } catch (error) {
+      setVoiceError(error instanceof Error ? error.message : 'Could not structure that note.');
+    } finally {
+      setVoiceStructuring(false);
+    }
+  }, [voiceRecorder]);
+
+  const applyVoiceSuggestion = useCallback(() => {
+    if (!voiceSuggestion) return;
+    if (voiceSuggestion.heightCm !== null) setHeightCm(String(voiceSuggestion.heightCm));
+    if (voiceSuggestion.phenology) setPhenology(voiceSuggestion.phenology);
+    if (voiceSuggestion.morphology) setMorphology(voiceSuggestion.morphology);
+    if (voiceSuggestion.notes) setNotes(voiceSuggestion.notes);
+  }, [voiceSuggestion]);
 
   const takePhoto = useCallback(async () => {
     if (!cameraRef.current) return;
@@ -429,6 +513,70 @@ export default function DiscoverPlantScreen() {
             <Ionicons name="locate-outline" size={18} color={colors.pine} />
             <Text style={styles.ghostButtonText}>{locating ? 'Locating…' : location ? 'Update location' : 'Capture GPS'}</Text>
           </Pressable>
+        </View>
+
+        <View style={styles.card}>
+          <View style={styles.voiceHeaderRow}>
+            <View style={styles.voiceHeaderText}>
+              <Text style={styles.sectionLabel}>VOICE NOTE</Text>
+              <Text style={styles.hint}>
+                Speak what you&apos;re seeing. The AI will suggest values for the fields below,
+                nothing is filled in until you tap to use them.
+              </Text>
+            </View>
+            <Pressable
+              style={[styles.voiceButton, voiceRecorderState.isRecording && styles.voiceButtonActive]}
+              onPress={voiceRecorderState.isRecording ? stopVoiceRecording : startVoiceRecording}
+            >
+              <Ionicons
+                name={voiceRecorderState.isRecording ? 'stop' : 'mic-outline'}
+                size={20}
+                color={voiceRecorderState.isRecording ? colors.white : colors.emerald}
+              />
+            </Pressable>
+          </View>
+
+          {voiceRecorderState.isRecording && (
+            <Text style={styles.hint}>
+              Recording… {Math.round((voiceRecorderState.durationMillis ?? 0) / 1000)}s
+            </Text>
+          )}
+
+          {hasVoiceRecording && !voiceRecorderState.isRecording && (
+            <Pressable
+              style={styles.ghostButton}
+              onPress={structureVoiceRecording}
+              disabled={voiceStructuring}
+            >
+              <Ionicons name="sparkles-outline" size={18} color={colors.pine} />
+              <Text style={styles.ghostButtonText}>
+                {voiceStructuring ? 'Structuring…' : 'Structure this recording'}
+              </Text>
+            </Pressable>
+          )}
+
+          {voiceError && <Text style={styles.matchNote}>{voiceError}</Text>}
+
+          {voiceSuggestion && (
+            <View style={styles.suggestionBox}>
+              <Text style={styles.suggestionTitle}>✦ AI suggested from your note</Text>
+              {voiceSuggestion.heightCm !== null && (
+                <Text style={styles.locationMeta}>Height: {voiceSuggestion.heightCm} cm</Text>
+              )}
+              {voiceSuggestion.phenology && (
+                <Text style={styles.locationMeta}>Phenology: {voiceSuggestion.phenology}</Text>
+              )}
+              {voiceSuggestion.morphology && (
+                <Text style={styles.locationMeta}>Morphology: {voiceSuggestion.morphology}</Text>
+              )}
+              {voiceSuggestion.notes && (
+                <Text style={styles.locationMeta}>Notes: {voiceSuggestion.notes}</Text>
+              )}
+              <Pressable style={styles.applyButton} onPress={applyVoiceSuggestion}>
+                <Text style={styles.applyButtonText}>Use these values below</Text>
+              </Pressable>
+            </View>
+          )}
         </View>
 
         <View style={styles.card}>
@@ -778,5 +926,51 @@ const createStyles = (colors: ThemeColors, surfaces: ThemeSurfaces) => StyleShee
   },
   shutterBusy: {
     opacity: 0.4,
+  },
+  voiceHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  voiceHeaderText: {
+    flex: 1,
+    gap: 4,
+  },
+  voiceButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.sprout,
+  },
+  voiceButtonActive: {
+    backgroundColor: colors.danger,
+  },
+  suggestionBox: {
+    backgroundColor: colors.sprout,
+    borderRadius: 16,
+    padding: 14,
+    gap: 4,
+  },
+  suggestionTitle: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: colors.emerald,
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  applyButton: {
+    marginTop: 8,
+    backgroundColor: colors.emerald,
+    borderRadius: 20,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  applyButtonText: {
+    color: colors.white,
+    fontSize: 13,
+    fontWeight: '700',
   },
 });

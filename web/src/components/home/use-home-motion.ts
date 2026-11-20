@@ -14,6 +14,7 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const canopyFront = root.querySelector<HTMLElement>(".canopy-floor--front");
     const aurora = root.querySelector<HTMLElement>(".aurora-field");
 
+    let notch = 120;
     let baseHeader = 0;
     let baseContent = 0;
     const syncHeader = () => {
@@ -21,6 +22,11 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       if (!header) return;
       const inner = header.querySelector<HTMLElement>(".site-header-inner");
       if (!baseHeader) {
+        // Measure the natural height with any prior calibration cleared, so a
+        // re-run (e.g. StrictMode's double effect) doesn't capture the already
+        // calibrated height as the base.
+        doc.style.removeProperty("--header-h");
+        doc.style.removeProperty("--header-pad-y");
         baseHeader = header.offsetHeight;
         if (inner) {
           const cs = getComputedStyle(inner);
@@ -28,17 +34,23 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
         }
       }
       // Calibrate the header height so the section below it (viewport - header)
-      // is a whole multiple of the wheel notch (120px), letting every section
-      // scroll in whole notches with no fractional remainder. The nav padding
-      // shrinks to keep its content fitted at the calibrated height.
-      const NOTCH = 120;
-      const targetSection = Math.round((window.innerHeight - baseHeader) / NOTCH) * NOTCH;
-      let targetHeader = window.innerHeight - targetSection;
-      const minHeader = baseContent + 8;
-      if (targetHeader < minHeader) targetHeader = minHeader;
-      const padY = Math.max(4, (targetHeader - baseContent) / 2);
-      doc.style.setProperty("--header-h", `${targetHeader.toFixed(2)}px`);
-      doc.style.setProperty("--header-pad-y", `${padY.toFixed(2)}px`);
+      // is a whole multiple of the wheel notch, letting every section scroll in
+      // whole notches with no fractional remainder. The notch is detected from
+      // real wheel events (detectNotch below) so this adapts to any device; 120px
+      // is the common default. notch=0 means a continuous input (trackpad) with
+      // no discrete notch, so the header keeps its natural height.
+      if (notch > 0) {
+        const targetSection = Math.round((window.innerHeight - baseHeader) / notch) * notch;
+        let targetHeader = window.innerHeight - targetSection;
+        const minHeader = baseContent + 8;
+        if (targetHeader < minHeader) targetHeader = minHeader;
+        const padY = Math.max(4, (targetHeader - baseContent) / 2);
+        doc.style.setProperty("--header-h", `${targetHeader.toFixed(2)}px`);
+        doc.style.setProperty("--header-pad-y", `${padY.toFixed(2)}px`);
+      } else {
+        doc.style.setProperty("--header-h", `${baseHeader}px`);
+        doc.style.removeProperty("--header-pad-y");
+      }
     };
     syncHeader();
 
@@ -145,6 +157,32 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       onScroll();
     };
     window.addEventListener("resize", onResize);
+    // Detect the device's actual wheel notch from the first few scroll events:
+    // the greatest common divisor of the pixel deltas is the single-notch step.
+    // Recalibrate to it so whole-notch scrolling holds on any mouse; a tiny GCD
+    // means a continuous trackpad (no discrete notch), so drop the calibration.
+    const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a);
+    const notchSamples: number[] = [];
+    const detectNotch = (e: WheelEvent) => {
+      if (e.deltaMode !== 0) return;
+      const d = Math.round(Math.abs(e.deltaY));
+      if (d > 0) notchSamples.push(d);
+      if (notchSamples.length < 5) return;
+      const big = notchSamples.filter((x) => x >= 40);
+      let detected = 0;
+      if (big.length >= 3) {
+        const g = big.reduce((a, b) => gcd(a, b));
+        if (g >= 50) detected = g;
+      }
+      if (detected !== notch) {
+        notch = detected;
+        syncHeader();
+        layoutChain();
+        onScroll();
+      }
+      window.removeEventListener("wheel", detectNotch);
+    };
+    window.addEventListener("wheel", detectNotch, { passive: true });
     if (document.fonts?.ready) {
       document.fonts.ready
         .then(() => {
@@ -161,6 +199,7 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
       mo.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("wheel", detectNotch);
       doc.style.removeProperty("--home-p");
     };
   }, [rootRef]);

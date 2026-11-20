@@ -338,6 +338,11 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
    backdrop-filter blur each frame. Pure rendering hints — no visual change.
    Lifts scroll well past 60fps on real hardware. */
 .site-header-inner, .live-chip, .home-card-glass, .home-close-ledger, .home-chain-art, .home-btn--ghost, .btn--on-dark { will-change: backdrop-filter, transform; transform: translateZ(0); }
+/* Bake the filtered/animated decorations (frond drop-shadows, blurred curtains,
+   drifting particles) into GPU layers so their motion composites instead of
+   re-rasterising the filter each frame. Rendering hint only — no visual change. */
+.home-frond, .curtain, .home-frond-wrap { will-change: transform; }
+.firefly, .home-spore, .forest-night-star { will-change: transform, opacity; }
 /* Off-screen sections pause their ambient animations (toggled by IntersectionObserver);
    play-state only, no layout change. */
 .is-dormant, .is-dormant *, .is-dormant *::before, .is-dormant *::after { animation-play-state: paused !important; }

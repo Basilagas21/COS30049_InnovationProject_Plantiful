@@ -35,6 +35,23 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     );
     reveals.forEach((el) => io.observe(el));
 
+    // Pause ambient animations (fireflies, spores, mist, sway) on sections that
+    // are off-screen so they don't cost frames while scrolling elsewhere. This
+    // only toggles animation-play-state — no layout change, so scroll alignment
+    // is untouched. A generous rootMargin resumes them just before they appear.
+    const dormantSections = Array.from(
+      root.querySelectorAll<HTMLElement>(".home-canopy, .home-chain-track, .home-journey, .home-close"),
+    );
+    const footerEl = document.querySelector<HTMLElement>(".site-footer--full");
+    if (footerEl) dormantSections.push(footerEl);
+    const dormantIO = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) entry.target.classList.toggle("is-dormant", !entry.isIntersecting);
+      },
+      { rootMargin: "100% 0px" },
+    );
+    dormantSections.forEach((el) => dormantIO.observe(el));
+
     // Scroll-driven verification chain: a record climbs the vine as you scroll.
     const chainTrack = root.querySelector<HTMLElement>(".home-chain-track");
     const chainStage = root.querySelector<HTMLElement>(".home-chain-stage");
@@ -181,6 +198,7 @@ export function useHomeMotion(rootRef: RefObject<HTMLDivElement | null>) {
     return () => {
       root.classList.remove("js-home");
       io.disconnect();
+      dormantIO.disconnect();
       mo.disconnect();
       if (scrollRaf) cancelAnimationFrame(scrollRaf);
       window.removeEventListener("scroll", onScroll);

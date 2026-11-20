@@ -338,6 +338,9 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
    backdrop-filter blur each frame. Pure rendering hints — no visual change.
    Lifts scroll well past 60fps on real hardware. */
 .site-header-inner, .live-chip, .home-card-glass, .home-close-ledger, .home-chain-art, .home-btn--ghost, .btn--on-dark { will-change: backdrop-filter, transform; transform: translateZ(0); }
+/* Off-screen sections pause their ambient animations (toggled by IntersectionObserver);
+   play-state only, no layout change. */
+.is-dormant, .is-dormant *, .is-dormant *::before, .is-dormant *::after { animation-play-state: paused !important; }
 .js-home .live-chip { animation: chip-fade .9s cubic-bezier(.16,1,.3,1) .35s backwards, chip-float 7s ease-in-out infinite; }
 .js-home .home-card.home-reveal.is-in { transition: transform .3s ease, box-shadow .55s ease-out, opacity .8s cubic-bezier(.16,1,.3,1); animation: card-rise .8s cubic-bezier(.16,1,.3,1) backwards; animation-delay: calc(var(--reveal-i, 0) * 150ms); }
 .js-home .home-title-inner { animation: title-rise .9s cubic-bezier(.16,1,.3,1) both; }

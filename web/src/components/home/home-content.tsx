@@ -619,7 +619,7 @@ export function HomeContent({
             />
           ))}
         </div>
-        <div className="home-frond-wrap" aria-hidden="true">
+        <div className="home-frond-wrap" aria-hidden="true" suppressHydrationWarning>
           <div className="home-frond" />
         </div>
         <div className="home-hero-copy">

@@ -359,7 +359,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 /* ===== Scroll-driven verification chain ===== */
 .home-chain { position: relative; background: radial-gradient(50% 40% at 78% 18%, #0e5a3e4d, transparent 70%), radial-gradient(45% 40% at 15% 80%, #173a2a66, transparent 70%), linear-gradient(180deg, #03100a, #071c14 40%, #04100b); color: #fffdee; }
 .home-chain-track { height: calc(300svh - 3 * var(--header-h, 72px)); }
-.home-chain-stage { position: sticky; top: var(--header-h, 72px); height: calc(100svh - var(--header-h, 72px)); display: grid; grid-template-columns: minmax(0, 1fr) clamp(340px, 38.8vw, 572px); grid-template-rows: auto minmax(0, 1fr); column-gap: clamp(1.5rem, 6vw, 5.5rem); row-gap: clamp(1.5rem, 6vw, 5.5rem); padding: clamp(1.5rem, 6vw, 5.5rem); overflow: hidden; }
+.home-chain-stage { position: sticky; top: var(--header-h, 72px); height: calc(100svh - var(--header-h, 72px)); width: 100%; max-width: 1500px; margin-inline: auto; display: grid; grid-template-columns: minmax(0, 1fr) clamp(340px, 38.8vw, 572px); grid-template-rows: auto minmax(0, 1fr); column-gap: clamp(1.5rem, 6vw, 5.5rem); row-gap: clamp(1.5rem, 6vw, 5.5rem); padding: clamp(1.5rem, 6vw, 5.5rem); overflow: hidden; }
 .home-chain-head { grid-column: 1; grid-row: 1; max-width: 60rem; position: relative; z-index: 1; }
 .home-chain-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(1.9rem, 3.4vw, 3rem); font-weight: 620; letter-spacing: -0.025em; line-height: 1.08; }
 .home-chain-lede { margin-top: .9rem; max-width: 52ch; font-size: 1.1rem; line-height: 1.7; color: #fffdeee0; }

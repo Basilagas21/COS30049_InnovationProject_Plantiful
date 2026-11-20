@@ -466,13 +466,18 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
    and drifting spores in place of moon and fireflies, and the grass taking the
    same colour it has on the opening canopy. */
 [data-theme="light"] .forest-night { background: linear-gradient(#f3f0e3, #e8f1e9 55%, #dcefe2); }
-[data-theme="light"] .forest-night-sky { background: radial-gradient(60% 50% at 70% 18%, #f5d76e40, transparent 70%); }
-[data-theme="light"] .forest-night-moon { background: radial-gradient(circle at 38% 35%, #fff7d6, #f5d76e 60%, #e8b84d); box-shadow: 0 0 60px #f5d76e88, 0 0 120px #f5d76e44; }
+[data-theme="light"] .forest-night-sky { background: radial-gradient(55% 45% at 70% 18%, #f6c44555, transparent 72%); }
+/* The sun reads as a light source, not a shaded ball: a centred white-hot core
+   (no specular hotspot), a wide warm corona that lights the sky, and a soft
+   breathing haze rather than discrete icon rays. */
+[data-theme="light"] .forest-night-moon { background: radial-gradient(circle at 50% 50%, #fffdf2 0%, #fff3c4 40%, #f8cf5e 78%, #f6c445 100%); box-shadow: 0 0 24px #fff3c4b3, 0 0 60px #f8cf5e99, 0 0 120px #f5d76e66, 0 0 240px #f5d76e3d; }
+[data-theme="light"] .forest-night-moon::before { content: ""; position: absolute; inset: -60%; border-radius: 50%; background: radial-gradient(circle, #f6c44500 38%, #f6c44526 52%, #f6c44500 72%); animation: sun-breathe 7s ease-in-out infinite; }
 [data-theme="light"] .forest-night-star { opacity: 0; }
 [data-theme="light"] .forest-night-mist { background: linear-gradient(transparent, #ffffff80, transparent); }
 [data-theme="light"] .firefly { background: #076653; box-shadow: 0 0 12px #07665388; }
 [data-theme="light"] .forest-night-grass { opacity: .3; }
 [data-theme="light"] .footer-col a:hover { color: #076653; }
+@keyframes sun-breathe { 0%, 100% { opacity: .8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.06); } }
 
 /* ===== Motion ===== */
 @keyframes page-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }

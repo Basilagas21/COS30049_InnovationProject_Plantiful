@@ -503,6 +503,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 }
 .explore-qa-a { margin-top: 0.5rem; font-size: 0.95rem; line-height: 1.65; color: var(--moss); }
 @media (max-width: 767px) { .explore-qa-grid { grid-template-columns: 1fr; } }
+.explore-hero-lede, .explore-featured-desc, .explore-step-body, .explore-qa-a { text-wrap: pretty; }
 
 /* A single visitor species reads as a featured horizontal row, not a lone grid card. */
 .explore-species-row {

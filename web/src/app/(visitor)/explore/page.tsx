@@ -137,75 +137,47 @@ export default async function ExplorePage() {
         </div>
       </section>
 
-      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="explore-stats">
         {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-2xl border border-pine/10 bg-white p-5"
-          >
-            <p className="text-xs font-semibold uppercase tracking-wide text-moss">
-              {stat.label}
-            </p>
-            <p className="mt-2 text-2xl font-semibold text-pine">
-              {stat.value}
-            </p>
+          <div key={stat.label} className="explore-stat">
+            <p className="explore-stat-label">{stat.label}</p>
+            <p className="explore-stat-value">{stat.value}</p>
           </div>
         ))}
       </div>
 
-      <section className="mt-10 grid gap-4 md:grid-cols-3">
+      <section className="explore-steps" aria-label="How a record becomes public">
         {steps.map((step) => (
-          <div
-            key={step.step}
-            className="rounded-2xl border border-pine/10 bg-white p-5"
-          >
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-sprout text-xs font-bold text-emerald">
-              {step.step}
-            </span>
-            <h2 className="mt-4 font-semibold text-pine">{step.title}</h2>
-            <p className="mt-2 text-sm leading-6 text-moss">{step.body}</p>
+          <div key={step.step} className="explore-step">
+            <span className="explore-step-node">{step.step}</span>
+            <h2 className="explore-step-title">{step.title}</h2>
+            <p className="explore-step-body">{step.body}</p>
           </div>
         ))}
       </section>
 
-      <section className="mt-10 rounded-3xl border border-pine/10 bg-sprout/60 p-6 sm:p-8">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="eyebrow text-emerald">Visitor Q&amp;A</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-pine">
-              Questions visitors often ask
-            </h2>
-          </div>
-          <Link
-            href="/learn"
-            className="text-sm font-semibold text-emerald hover:underline"
-          >
+      <section className="explore-section">
+        <div className="explore-section-head">
+          <h2 className="explore-section-title">Questions visitors often ask</h2>
+          <Link href="/learn" className="explore-section-link">
             Read the learning guide <Arrow direction="right" size="1em" />
           </Link>
         </div>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-2">
+        <div className="explore-qa-grid">
           {visitorPlantQuestions.slice(0, 4).map((item) => (
-            <div key={item.question} className="rounded-2xl bg-white p-5">
-              <h3 className="font-semibold text-pine">{item.question}</h3>
-              <p className="mt-2 text-sm leading-6 text-moss">{item.answer}</p>
+            <div key={item.question} className="explore-qa-item">
+              <h3 className="explore-qa-q">{item.question}</h3>
+              <p className="explore-qa-a">{item.answer}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section id="catalogue" className="mt-12 scroll-mt-24">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="eyebrow text-emerald">Published catalogue</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
-              Browse the plant guide
-            </h2>
-          </div>
-          <Link
-            href="/records"
-            className="text-sm font-semibold text-emerald hover:underline"
-          >
+      <section id="catalogue" className="explore-section scroll-mt-24">
+        <div className="explore-section-head">
+          <h2 className="explore-section-title">Browse the plant guide</h2>
+          <Link href="/records" className="explore-section-link">
             Explore verified observations <Arrow direction="right" size="1em" />
           </Link>
         </div>

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { Arrow } from "@/components/arrow";
 import type { SpeciesListItem } from "@/lib/species";
 import {
   familyFromTaxonomy,
@@ -13,6 +14,46 @@ type Props = {
   officer: boolean;
   visitor?: boolean;
 };
+
+function VisitorSpeciesRow({ entry }: { entry: SpeciesListItem }) {
+  return (
+    <Link href={`/species/${entry.id}`} className="explore-species-row group">
+      <div className="explore-species-row-media">
+        {entry.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={entry.photoUrl} alt={entry.scientificName} />
+        ) : (
+          <div className="explore-species-row-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+            </svg>
+          </div>
+        )}
+        {!entry.isPublished && (
+          <span className="explore-species-row-unpublished">Unpublished</span>
+        )}
+      </div>
+      <div className="explore-species-row-body">
+        <p className="explore-species-row-eyebrow">
+          {entry.commonName ?? "Plant species"}
+        </p>
+        <h3 className="explore-species-row-name">{entry.scientificName}</h3>
+        {entry.conservationStatus && (
+          <span className="explore-species-row-status">
+            {entry.conservationStatus}
+          </span>
+        )}
+        {entry.taxonomy && (
+          <p className="explore-species-row-taxonomy">{entry.taxonomy}</p>
+        )}
+        <span className="explore-species-row-link">
+          Read the species profile <Arrow direction="right" size="1em" />
+        </span>
+      </div>
+    </Link>
+  );
+}
 
 export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
   const [query, setQuery] = useState("");
@@ -114,6 +155,11 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
         </span>
       </div>
 
+      {visitor && visible.length === 1 ? (
+        <div className="mt-8">
+          <VisitorSpeciesRow entry={visible[0]} />
+        </div>
+      ) : (
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {visible.length === 0 && (
           <div className="col-span-full rounded-2xl border border-pine/10 bg-white px-5 py-10 text-center text-sm text-moss">
@@ -191,6 +237,7 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
           </div>
         ))}
       </div>
+      )}
     </>
   );
 }

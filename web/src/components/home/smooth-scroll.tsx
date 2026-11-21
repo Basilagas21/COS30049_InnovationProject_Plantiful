@@ -30,7 +30,7 @@ export function SmoothScroll() {
     let multiplier = 1;
     const calibrate = () => {
       const header = document.querySelector<HTMLElement>(".site-header");
-      const navH = header?.offsetHeight ?? 0;
+      const navH = header?.getBoundingClientRect().height ?? 0;
       const section = window.innerHeight - navH;
       if (notch <= 0 || section <= 0) {
         multiplier = 1;

@@ -23,12 +23,14 @@ const FROND_BOOTSTRAP = `(function () {
     var canopy = d.querySelector(".home-canopy");
     wrap = d.querySelector(".home-frond-wrap");
     if (!canopy || !wrap) return;
+    var z = Math.max(1, window.innerWidth / 1536);
+    d.documentElement.style.setProperty("--hscale", z);
     if (window.innerWidth <= 640) { wrap.style.left = ""; return; }
     var copy = d.querySelector(".home-hero-copy");
     if (!copy || !copy.firstChild) return;
     var cr = canopy.getBoundingClientRect();
-    var right = copy.getBoundingClientRect().right - cr.left;
-    var center = (right + cr.width) / 2;
+    var right = (copy.getBoundingClientRect().right - cr.left) / z;
+    var center = (right + cr.width / z) / 2;
     wrap.style.left = center.toFixed(1) + "px";
     var chip = d.querySelector(".live-chip");
     if (chip) chip.style.left = (center + 112 - chip.offsetWidth / 2).toFixed(1) + "px";

@@ -476,6 +476,13 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 .footer-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid color-mix(in srgb, var(--footer-text) 16%, transparent); font-family: var(--font-martian), monospace; font-size: .72rem; letter-spacing: .06em; color: color-mix(in srgb, var(--footer-text) 88%, transparent); }
 .footer-nature-wrap { position: relative; flex: 1; min-height: 0; }
 .footer-nature-parallax { position: absolute; inset: 0; }
+/* Short viewports: give the link/copyright block more of the footer height so
+   the top row is not crammed against the edge while the scene below dominates. */
+@media (max-height: 820px) {
+  .footer-top { flex: 1.5; }
+  .footer-nature-wrap { flex: 1; }
+  .footer-base { margin-top: 1.75rem; }
+}
 
 /* Night-forest nature scene. */
 .forest-night { position: absolute; inset: 0; overflow: hidden; background: linear-gradient(#07100e, #071c14 55%, #04100b); }

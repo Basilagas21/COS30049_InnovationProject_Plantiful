@@ -72,94 +72,64 @@ export default async function ExplorePage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
-      <section className="relative isolate overflow-hidden rounded-[2rem] bg-[#0c342c] text-[#fffdee]">
+      <section className="explore-hero">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={heroImage}
-          alt=""
-          className="absolute inset-0 -z-20 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0c342c] via-[#0c342c]/90 to-[#0c342c]/30" />
+        <img src={heroImage} alt="" className="explore-hero-img" />
+        <div className="explore-hero-scrim" />
 
-        <div className="relative grid gap-10 p-8 sm:p-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+        <div className="explore-hero-grid">
           <div>
-            <span className="inline-flex rounded-full bg-[#e3ef26] px-3 py-1 text-sm font-semibold text-[#0c342c]">
-              Public plant guide
-            </span>
-            <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-              Explore Niah&apos;s plants
+            <h1 className="explore-hero-title">
+              Explore <span className="explore-accent">Niah&apos;s</span> plants
             </h1>
-            <p className="mt-4 max-w-xl text-base leading-7 text-[#e2fbce]">
+            <p className="explore-hero-lede">
               A public reference to the published species catalogue of Niah
               National Park. Search by scientific or common name, browse by
               family, and see how field observations are verified before
               publication.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="#catalogue"
-                className="btn btn--primary"
-              >
+            <div className="explore-hero-actions">
+              <a href="#catalogue" className="btn btn--primary">
                 Browse the catalogue
               </a>
-              <Link
-                href="/map"
-                className="btn btn--on-dark"
-              >
+              <Link href="/map" className="btn btn--on-dark">
                 Open the species map
               </Link>
             </div>
           </div>
 
           {featured ? (
-            <Link
-              href={`/species/${featured.id}`}
-              className="group rounded-3xl border border-white/15 bg-black/45 p-6 backdrop-blur-md transition-colors hover:bg-black/55"
-            >
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e2fbce]/80">
-                Featured species
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold italic">
-                {featured.scientificName}
-              </h2>
-              <p className="mt-1 text-sm text-[#e2fbce]">
+            <Link href={`/species/${featured.id}`} className="explore-featured group">
+              <p className="explore-featured-eyebrow">Featured species</p>
+              <h2 className="explore-featured-name">{featured.scientificName}</h2>
+              <p className="explore-featured-common">
                 {featured.commonName ?? "Published species"}
               </p>
               {featured.conservationStatus && (
-                <span className="mt-3 inline-flex rounded-full bg-[#e3ef26] px-3 py-1 text-xs font-bold text-[#0c342c]">
+                <span className="explore-featured-status">
                   {featured.conservationStatus}
                 </span>
               )}
-              <p className="mt-4 line-clamp-3 text-sm leading-6 text-[#fffdee]/90">
+              <p className="explore-featured-desc">
                 {featured.description ??
                   "A verified species record from the Niah National Park catalogue."}
               </p>
-              <span className="mt-5 inline-flex text-sm font-semibold text-[#e3ef26]">
+              <span className="explore-featured-link">
                 Read the species profile
-                <span
-                  aria-hidden="true"
-                  className="ml-1 transition-transform group-hover:translate-x-1"
-                >
-                  <Arrow direction="right" size="1em" />
-                </span>
+                <Arrow direction="right" size="1em" />
               </span>
             </Link>
           ) : (
-            <div className="rounded-3xl border border-white/15 bg-black/45 p-6 backdrop-blur-md">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e2fbce]/80">
-                Catalogue in progress
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold">
+            <div className="explore-featured">
+              <p className="explore-featured-eyebrow">Catalogue in progress</p>
+              <h2 className="explore-featured-name explore-featured-name--plain">
                 The first species are being verified
               </h2>
-              <p className="mt-3 text-sm leading-6 text-[#fffdee]/80">
+              <p className="explore-featured-desc">
                 Approved field observations will appear here once a conservation
                 officer publishes them.
               </p>
-              <Link
-                href="/map"
-                className="mt-5 inline-flex text-sm font-semibold text-[#e3ef26]"
-              >
+              <Link href="/map" className="explore-featured-link">
                 Explore the map <Arrow direction="right" size="1em" />
               </Link>
             </div>

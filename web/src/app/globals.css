@@ -247,7 +247,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 
 /* ===== Homepage: Aurora Canopy ===== */
 .home-root { position: relative; animation: home-fade .55s ease-out both; }
-.home-canopy { position: relative; isolation: isolate; overflow: hidden; margin-top: calc(-1 * var(--header-h, 72px)); min-height: 100svh; display: flex; align-items: center; padding: calc(var(--header-h, 72px) + clamp(1.5rem, 4svh, 3rem)) clamp(1.5rem, 6vw, 5.5rem) clamp(3rem, 12svh, 8rem); background: radial-gradient(55% 45% at 78% 12%, #0e5a3e 0%, transparent 70%), radial-gradient(45% 40% at 18% 20%, #173a2a 0%, transparent 70%), radial-gradient(60% 50% at 50% 0%, #0c342c 0%, transparent 75%), #03100a; color: #fffdee; }
+.home-canopy { position: relative; isolation: isolate; overflow: hidden; margin-top: calc(-1 * var(--header-h, 72px)); min-height: 100svh; display: flex; align-items: center; padding: calc(var(--header-h, 72px) + clamp(3rem, 12svh, 8rem)) clamp(1.5rem, 6vw, 5.5rem) clamp(3rem, 12svh, 8rem); background: radial-gradient(55% 45% at 78% 12%, #0e5a3e 0%, transparent 70%), radial-gradient(45% 40% at 18% 20%, #173a2a 0%, transparent 70%), radial-gradient(60% 50% at 50% 0%, #0c342c 0%, transparent 75%), #03100a; color: #fffdee; }
 .aurora-field { position: absolute; inset: -25% -15% 0; z-index: -3; will-change: transform; }
 .curtain { position: absolute; top: -160px; width: 340px; height: 760px; filter: blur(26px); opacity: .8; mix-blend-mode: screen; transform-origin: top center; animation: curtain-sway 18s ease-in-out infinite; }
 .curtain--1 { left: 6%; background: linear-gradient(180deg, #e3ef2600, #e3ef26aa 30%, #6fd6b088 60%, #6fd6b000); transform: rotate(14deg); }

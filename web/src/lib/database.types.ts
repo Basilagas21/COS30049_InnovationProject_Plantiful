@@ -240,6 +240,27 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["reports"]["Insert"]>;
         Relationships: [];
       };
+      inquiries: {
+        Row: {
+          inquiry_id: string;
+          name: string;
+          email: string;
+          subject: string;
+          message: string;
+          status: "new" | "read" | "archived";
+          created_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["inquiries"]["Row"],
+          "inquiry_id" | "created_at" | "status"
+        > & {
+          inquiry_id?: string;
+          created_at?: string;
+          status?: "new" | "read" | "archived";
+        };
+        Update: Partial<Database["public"]["Tables"]["inquiries"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

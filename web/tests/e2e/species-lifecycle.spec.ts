@@ -26,7 +26,7 @@ async function signIn(page: import("@playwright/test").Page, email: string) {
   await page.fill('input[type="email"]', email);
   await page.fill('input[type="password"]', TEST_PASSWORD);
   await page.click('button:has-text("Sign in")');
-  await page.waitForURL(/\/(records|species|profile)/, { timeout: 15_000 });
+  await page.waitForURL(/\/$/, { timeout: 15_000 });
 }
 
 async function deleteSpecies(id: string) {

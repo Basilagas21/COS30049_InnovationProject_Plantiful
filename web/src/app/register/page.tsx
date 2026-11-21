@@ -58,7 +58,7 @@ export default function RegisterPage() {
       return;
     }
 
-    router.push("/records");
+    router.push("/");
     router.refresh();
   }
 

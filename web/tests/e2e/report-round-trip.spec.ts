@@ -34,7 +34,7 @@ test("officer generates, downloads and removes a report end to end", async ({ pa
   await page.fill('input[type="email"]', "dld@officer.com");
   await page.fill('input[type="password"]', TEST_PASSWORD);
   await page.click('button:has-text("Sign in")');
-  await page.waitForURL(/\/(records|species|profile)/, { timeout: 15_000 });
+  await page.waitForURL(/\/$/, { timeout: 15_000 });
 
   await page.goto("/reports");
   await expect(page.getByRole("heading", { name: "Reports", exact: true })).toBeVisible({ timeout: 20_000 });

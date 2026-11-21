@@ -412,6 +412,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   .explore-stats { grid-template-columns: repeat(2, 1fr); }
   .explore-stat:nth-child(3) { border-left: 0; }
   .explore-stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .explore-stat-value { font-size: 1.5rem; }
 }
 
 /* Verification steps: a connected progression, not isolated cards. */
@@ -508,6 +509,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 /* A single visitor species reads as a featured horizontal row, not a lone grid card. */
 .explore-species-row {
   display: flex;
+  align-items: stretch;
   overflow: hidden;
   border-radius: 1.5rem;
   border: 1px solid var(--border);
@@ -520,22 +522,24 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   border-color: color-mix(in srgb, var(--emerald) 40%, transparent);
   box-shadow: 0 1px 2px color-mix(in srgb, var(--shadow) 5%, transparent), 0 18px 44px color-mix(in srgb, var(--shadow) 14%, transparent), 0 0 40px color-mix(in srgb, var(--emerald) 12%, transparent);
 }
-.explore-species-row-media { position: relative; flex: 0 0 340px; aspect-ratio: 4 / 3; overflow: hidden; background: color-mix(in srgb, var(--sprout) 70%, transparent); }
+.explore-species-row-media { position: relative; flex: 0 0 340px; overflow: hidden; background: color-mix(in srgb, var(--sprout) 70%, transparent); }
 .explore-species-row-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .explore-species-row-placeholder { display: flex; height: 100%; width: 100%; align-items: center; justify-content: center; color: color-mix(in srgb, var(--emerald) 50%, transparent); }
 .explore-species-row-unpublished { position: absolute; top: 0.75rem; left: 0.75rem; border-radius: 999px; background: var(--chartreuse); color: #0c342c; padding: 0.25rem 0.75rem; font-size: 0.72rem; font-weight: 700; }
-.explore-species-row-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 1.75rem 2rem; }
+.explore-species-row-body { flex: 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem 2.5rem; align-content: center; padding: 1.75rem 2rem; }
+.explore-species-row-main, .explore-species-row-side { display: flex; flex-direction: column; justify-content: flex-start; min-width: 0; }
 .explore-species-row-eyebrow { font-family: var(--font-martian), monospace; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--emerald); }
 .explore-species-row-name { margin-top: 0.5rem; font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: 1.9rem; font-weight: 640; font-style: italic; line-height: 1.1; letter-spacing: -0.02em; color: var(--pine); }
 .explore-species-row-status { margin-top: 0.9rem; align-self: flex-start; border-radius: 999px; background: var(--sprout); color: var(--emerald); padding: 0.25rem 0.75rem; font-size: 0.72rem; font-weight: 700; }
+.explore-species-row-desc { font-size: 0.95rem; line-height: 1.6; color: var(--moss); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .explore-species-row-taxonomy { margin-top: 0.9rem; font-size: 0.9rem; color: var(--moss); }
-.explore-species-row-link { margin-top: 1.25rem; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; font-weight: 600; color: var(--emerald); }
+.explore-species-row-link { margin-top: 1.25rem; align-self: flex-start; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; font-weight: 600; color: var(--emerald); }
 .explore-species-row-link svg { transition: transform 0.3s ease; }
 .explore-species-row:hover .explore-species-row-link svg { transform: translateX(3px); }
 @media (max-width: 767px) {
   .explore-species-row { flex-direction: column; }
   .explore-species-row-media { flex: none; width: 100%; aspect-ratio: 16 / 10; }
-  .explore-species-row-body { padding: 1.5rem; }
+  .explore-species-row-body { grid-template-columns: 1fr; gap: 1rem; padding: 1.5rem; }
 }
 
 /* Film-grain tooth over the whole page. */

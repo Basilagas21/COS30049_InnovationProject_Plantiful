@@ -35,21 +35,28 @@ function VisitorSpeciesRow({ entry }: { entry: SpeciesListItem }) {
         )}
       </div>
       <div className="explore-species-row-body">
-        <p className="explore-species-row-eyebrow">
-          {entry.commonName ?? "Plant species"}
-        </p>
-        <h3 className="explore-species-row-name">{entry.scientificName}</h3>
-        {entry.conservationStatus && (
-          <span className="explore-species-row-status">
-            {entry.conservationStatus}
+        <div className="explore-species-row-main">
+          <p className="explore-species-row-eyebrow">
+            {entry.commonName ?? "Plant species"}
+          </p>
+          <h3 className="explore-species-row-name">{entry.scientificName}</h3>
+          {entry.conservationStatus && (
+            <span className="explore-species-row-status">
+              {entry.conservationStatus}
+            </span>
+          )}
+        </div>
+        <div className="explore-species-row-side">
+          {entry.description && (
+            <p className="explore-species-row-desc">{entry.description}</p>
+          )}
+          {entry.taxonomy && (
+            <p className="explore-species-row-taxonomy">{entry.taxonomy}</p>
+          )}
+          <span className="explore-species-row-link">
+            Read the species profile <Arrow direction="right" size="1em" />
           </span>
-        )}
-        {entry.taxonomy && (
-          <p className="explore-species-row-taxonomy">{entry.taxonomy}</p>
-        )}
-        <span className="explore-species-row-link">
-          Read the species profile <Arrow direction="right" size="1em" />
-        </span>
+        </div>
       </div>
     </Link>
   );

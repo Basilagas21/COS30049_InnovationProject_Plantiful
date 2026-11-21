@@ -308,6 +308,14 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 /* Narrow three-column band: the longest description wraps to three lines here,
    so reserve three lines to keep all glass panels equal height. */
 @media (min-width: 1025px) and (max-width: 1280px) { .home-card-desc { min-height: 4.8em; } }
+/* Short viewports: the card itself shrinks, so compact the glass panel to keep
+   it under half the card height instead of dominating it. */
+@media (max-height: 760px) {
+  .home-card-glass { margin: 10px; padding: 14px; }
+  .home-card-title { font-size: 24px; }
+  .home-card-desc { margin-top: 8px; font-size: 13px; min-height: 3.2em; }
+  .home-card-action { margin-top: 10px; padding-top: 10px; }
+}
 
 /* Cinematic closing band: a full-viewport forest canopy frame with the manifesto
    overlaid, dark in both themes like the opening canopy. */

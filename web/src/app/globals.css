@@ -223,7 +223,7 @@ select.field-input {
 
 /* Homepage-only brand lockup and sign-in delight; the header bar itself is now
    the shared canonical treatment above, so no nav overrides are needed here. */
-body:has(.home-canopy) .brand { gap: 0; position: relative; }
+body:has(.home-canopy) .brand { position: relative; }
 body:has(.home-canopy) .header-account a[href="/signin"] { padding-left: 1.9rem; padding-right: 1.9rem; transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, background .25s ease; }
 body:has(.home-canopy) .header-account a[href="/signin"]:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--emerald) 86%, #ffffff); box-shadow: 0 10px 26px color-mix(in srgb, var(--emerald) 45%, transparent); }
 

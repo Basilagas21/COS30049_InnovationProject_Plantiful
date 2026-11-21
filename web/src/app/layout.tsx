@@ -138,7 +138,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <a href="#main-content" className="skip-link">Skip to content</a>
           <header className="site-header">
             <div className="site-header-inner">
-              <Link href="/" className="brand flex shrink-0 items-center gap-2 font-semibold text-pine" aria-label="Plantiful home">
+              <Link href="/" className="brand flex shrink-0 items-center gap-0 font-semibold text-pine" aria-label="Plantiful home">
                 <Image
                   src="/plantiful_logo.png"
                   alt="Plantiful logo"

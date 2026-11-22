@@ -88,17 +88,20 @@ export default async function ExplorePage() {
                 publication.
               </p>
               <div className="explore-v2-actions">
-                <a href="#catalogue" className="btn btn--primary">
+                <a href="#catalogue" className="home-btn">
                   Browse the catalogue
+                  <Arrow className="home-arrow" />
                 </a>
-                <Link href="/map" className="btn btn--on-dark">
+                <Link href="/map" className="home-btn home-btn--ghost">
                   Open the species map
+                  <Arrow className="home-arrow" />
                 </Link>
               </div>
             </div>
 
             {featured ? (
               <Link href={`/species/${featured.id}`} className="explore-featured group">
+                <Arrow className="explore-featured-arrow" />
                 <p className="explore-featured-eyebrow">Featured species</p>
                 <h2 className="explore-featured-name">{featured.scientificName}</h2>
                 <p className="explore-featured-common">
@@ -115,7 +118,6 @@ export default async function ExplorePage() {
                 </p>
                 <span className="explore-featured-link">
                   Read the species profile
-                  <Arrow direction="right" size="1em" />
                 </span>
               </Link>
             ) : (

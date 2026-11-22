@@ -187,21 +187,18 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
           </div>
         )}
         {visible.map((entry) => (
-          <div
-            key={entry.id}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-pine/10 bg-white transition-shadow hover:shadow-lg"
-          >
-            <Link href={`/species/${entry.id}`} className="flex flex-1 flex-col">
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-sprout/70">
+          <div key={entry.id} className="species-card group">
+            <Link href={`/species/${entry.id}`} className="species-card-link">
+              <div className="species-card-media">
                 {entry.photoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={entry.photoUrl}
                     alt={entry.scientificName}
-                    className="absolute inset-0 h-full w-full object-cover"
+                    className="species-card-img"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-emerald/50">
+                  <div className="species-card-placeholder">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
                       <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
@@ -209,30 +206,33 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
                   </div>
                 )}
                 {!entry.isPublished && (
-                  <span className="absolute top-3 left-3 inline-block rounded-full bg-chartreuse px-3 py-1 text-xs font-bold text-pine">
-                    Unpublished
-                  </span>
+                  <span className="species-card-unpublished">Unpublished</span>
                 )}
+                <span className="species-card-arrow" aria-hidden="true">
+                  <Arrow direction="right" size="1em" />
+                </span>
               </div>
-              <div className="p-5">
-                <p className="text-xs font-medium uppercase tracking-wide text-emerald">
+              <div className="species-card-body">
+                <p className="species-card-eyebrow">
                   {entry.commonName ?? "Plant species"}
                 </p>
-                <h3 className="mt-1 text-lg font-semibold text-pine italic">
-                  {entry.scientificName}
-                </h3>
-                {entry.conservationStatus && (
-                  <p className="mt-2 inline-block rounded-full bg-sprout px-2.5 py-0.5 text-xs font-semibold text-emerald">
-                    {entry.conservationStatus}
-                  </p>
-                )}
-                {entry.taxonomy && (
-                  <p className="mt-3 text-sm text-moss">{entry.taxonomy}</p>
-                )}
+                <h3 className="species-card-name">{entry.scientificName}</h3>
+                <div className="species-card-meta">
+                  <span className="species-card-status-slot">
+                    {entry.conservationStatus && (
+                      <span className="species-card-status">
+                        {entry.conservationStatus}
+                      </span>
+                    )}
+                  </span>
+                  {entry.taxonomy && (
+                    <p className="species-card-taxonomy">{entry.taxonomy}</p>
+                  )}
+                </div>
               </div>
             </Link>
             {officer && (
-              <div className="border-t border-pine/10 p-4 pt-3">
+              <div className="species-card-manage">
                 <Link
                   href={`/species/${entry.id}/edit`}
                   className="btn btn--ghost btn--sm h-9"

@@ -542,6 +542,28 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
   .explore-species-row-body { grid-template-columns: 1fr; gap: 1rem; padding: 1.5rem; }
 }
 
+/* Catalogue grid cards: the growth state. Aligned metadata baselines, a hover
+   affordance on the primary navigation object, display name and mono eyebrow. */
+.species-card { display: flex; flex-direction: column; overflow: hidden; border-radius: 1.5rem; border: 1px solid var(--border); background: var(--surface); box-shadow: 0 1px 2px color-mix(in srgb, var(--shadow) 5%, transparent), 0 6px 24px color-mix(in srgb, var(--shadow) 7%, transparent); transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+.species-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--emerald) 40%, transparent); box-shadow: 0 1px 2px color-mix(in srgb, var(--shadow) 5%, transparent), 0 18px 44px color-mix(in srgb, var(--shadow) 14%, transparent), 0 0 40px color-mix(in srgb, var(--emerald) 12%, transparent); }
+.species-card-link { display: flex; flex: 1; flex-direction: column; }
+.species-card-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: color-mix(in srgb, var(--sprout) 70%, transparent); }
+.species-card-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.species-card:hover .species-card-img { transform: scale(1.05); }
+.species-card-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, color-mix(in srgb, var(--forest-night) 38%, transparent), transparent 46%); pointer-events: none; }
+.species-card-placeholder { display: flex; height: 100%; width: 100%; align-items: center; justify-content: center; color: color-mix(in srgb, var(--emerald) 50%, transparent); }
+.species-card-unpublished { position: absolute; top: 0.75rem; left: 0.75rem; z-index: 1; border-radius: 999px; background: var(--chartreuse); color: #0c342c; padding: 0.25rem 0.75rem; font-size: 0.72rem; font-weight: 700; }
+.species-card-arrow { position: absolute; top: 0.75rem; right: 0.75rem; z-index: 1; display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 999px; background: color-mix(in srgb, var(--surface) 88%, transparent); border: 1px solid var(--border); color: var(--emerald); opacity: 0; transform: translateX(-4px); transition: opacity 0.3s ease, transform 0.3s ease; }
+.species-card:hover .species-card-arrow, .species-card:focus-within .species-card-arrow { opacity: 1; transform: translateX(0); }
+.species-card-body { display: flex; flex: 1; flex-direction: column; padding: 1.25rem 1.4rem 1.4rem; }
+.species-card-eyebrow { font-family: var(--font-martian), monospace; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--emerald); }
+.species-card-name { margin-top: 0.4rem; font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: 1.3rem; font-weight: 640; font-style: italic; line-height: 1.15; letter-spacing: -0.02em; color: var(--pine); }
+.species-card-meta { margin-top: auto; padding-top: 1rem; }
+.species-card-status-slot { display: flex; align-items: center; min-height: 1.75rem; }
+.species-card-status { display: inline-block; border-radius: 999px; background: var(--sprout); color: var(--emerald); padding: 0.25rem 0.75rem; font-size: 0.72rem; font-weight: 700; }
+.species-card-taxonomy { margin-top: 0.5rem; font-size: 0.85rem; color: var(--moss); }
+.species-card-manage { border-top: 1px solid var(--line); padding: 1rem 1.4rem; }
+
 /* Film-grain tooth over the whole page. */
 .site-grain { position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: .04; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"); }
 

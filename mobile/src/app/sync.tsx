@@ -204,6 +204,10 @@ export default function SyncScreen() {
       return;
     }
 
+    setState('syncing');
+    setSynced(0);
+    setFailed(0);
+
     const db = await openDatabase();
 
     const { data: session } = await supabase.auth.getSession();
@@ -213,10 +217,6 @@ export default function SyncScreen() {
       setMessage('Sign in on the Profile tab to unlock syncing.');
       return;
     }
-
-    setState('syncing');
-    setSynced(0);
-    setFailed(0);
 
     const { data: species } = await supabase
       .from('species')

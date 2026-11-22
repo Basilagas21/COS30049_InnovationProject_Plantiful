@@ -62,7 +62,7 @@ export default async function PlantDetailPage({
   const statusMeaning = describeConservationStatus(entry.conservationStatus);
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
+    <div className="page-fade-in mx-auto w-full max-w-5xl flex-1 px-6 py-12">
       <Link href="/species" className="block text-sm font-medium text-emerald hover:underline">
         ← Back to species
       </Link>
@@ -70,12 +70,14 @@ export default async function PlantDetailPage({
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         <div>
           {entry.photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={entry.photoUrl}
-              alt={entry.scientificName}
-              className="aspect-[4/5] w-full rounded-3xl object-cover"
-            />
+            <div className="photo-zoom aspect-[4/5] w-full rounded-3xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={entry.photoUrl}
+                alt={entry.scientificName}
+                className="h-full w-full object-cover"
+              />
+            </div>
           ) : (
             <div className="flex aspect-[4/5] w-full items-center justify-center rounded-3xl bg-gradient-to-br from-sprout to-cream text-6xl">
               🌿

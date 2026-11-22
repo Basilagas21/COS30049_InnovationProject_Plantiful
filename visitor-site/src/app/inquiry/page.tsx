@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function InquiryPage() {
   return (
-    <div className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">
+    <div className="page-fade-in mx-auto w-full max-w-3xl flex-1 px-6 py-12">
       <Link href="/" className="block text-sm font-medium text-emerald hover:underline">
         ← Back to home
       </Link>

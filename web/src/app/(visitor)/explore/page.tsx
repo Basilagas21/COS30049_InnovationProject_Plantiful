@@ -44,9 +44,9 @@ export default async function ExplorePage() {
   const heroImage = featured?.photoUrl ?? "/images/home/rafflesia.jpg";
 
   const stats = [
-    { label: "Published species", value: String(species.length) },
-    { label: "Threatened", value: String(threatenedCount) },
-    { label: "Plant families", value: String(familyCount) },
+    { label: "Published species", value: String(species.length).padStart(2, "0") },
+    { label: "Threatened", value: String(threatenedCount).padStart(2, "0") },
+    { label: "Plant families", value: String(familyCount).padStart(2, "0") },
     { label: "Last updated", value: formatUpdated(lastUpdated) },
   ];
 

@@ -46,7 +46,7 @@ export function InquiryForm() {
 
   if (status === "sent") {
     return (
-      <div className="rounded-2xl bg-sprout p-6 text-center sm:p-8">
+      <div className="form-success rounded-2xl bg-sprout p-6 text-center sm:p-8">
         <p className="text-lg font-semibold text-pine">Thanks, {name.split(" ")[0] || "there"}.</p>
         <p className="mt-2 text-sm leading-6 text-moss">
           We&apos;ve received your inquiry about &ldquo;{subject}&rdquo; and someone from the
@@ -104,7 +104,7 @@ export function InquiryForm() {
       </label>
 
       {error && (
-        <p className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger sm:col-span-2">
+        <p className="form-error rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger sm:col-span-2">
           {error}
         </p>
       )}
@@ -112,7 +112,9 @@ export function InquiryForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="h-12 rounded-full bg-emerald px-8 font-semibold text-cream transition-colors hover:bg-pine disabled:cursor-not-allowed disabled:opacity-70 sm:col-span-2 sm:w-fit"
+        className={`btn-pop h-12 rounded-full bg-emerald px-8 font-semibold text-cream transition-colors hover:bg-pine disabled:cursor-not-allowed disabled:opacity-70 sm:col-span-2 sm:w-fit ${
+          status === "submitting" ? "btn-loading" : ""
+        }`}
       >
         {status === "submitting" ? "Sending…" : "Send inquiry"}
       </button>

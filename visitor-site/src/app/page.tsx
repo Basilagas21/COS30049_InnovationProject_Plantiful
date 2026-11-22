@@ -71,13 +71,13 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/inquiry"
-              className="rounded-full bg-[#e3ef26] px-6 py-3 text-sm font-semibold text-[#0c342c] transition-colors hover:bg-[#e2fbce]"
+              className="btn-pop rounded-full bg-[#e3ef26] px-6 py-3 text-sm font-semibold text-[#0c342c] transition-colors hover:bg-[#e2fbce]"
             >
               Send an inquiry
             </Link>
             <Link
               href="/species"
-              className="rounded-full border border-white/30 px-6 py-3 text-sm font-medium text-[#fffdee] transition-colors hover:bg-white/10"
+              className="btn-pop rounded-full border border-white/30 px-6 py-3 text-sm font-medium text-[#fffdee] transition-colors hover:bg-white/10"
             >
               Browse the species catalogue →
             </Link>
@@ -96,14 +96,17 @@ export default function Home() {
             Sarawak&apos;s other protected areas.
           </p>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <Reveal className="mt-6 grid gap-4 md:grid-cols-3 reveal-stagger">
             {sfcFacts.map((fact) => (
-              <div key={fact.title} className="rounded-2xl border border-pine/10 bg-white p-5">
+              <div
+                key={fact.title}
+                className="card-lift rounded-2xl border border-pine/10 bg-white p-5"
+              >
                 <h3 className="font-semibold text-pine">{fact.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-moss">{fact.body}</p>
               </div>
             ))}
-          </div>
+          </Reveal>
         </section>
       </Reveal>
 
@@ -131,13 +134,13 @@ export default function Home() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/species"
-              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-pine transition-colors hover:bg-cream"
+              className="btn-pop rounded-full bg-white px-6 py-3 text-sm font-semibold text-pine transition-colors hover:bg-cream"
             >
               Open the full catalogue →
             </Link>
             <a
-              href={PLANTIFUL_APP_URL}
-              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-pine transition-colors hover:bg-cream"
+              href={`${PLANTIFUL_APP_URL}/map`}
+              className="btn-pop rounded-full bg-white px-6 py-3 text-sm font-semibold text-pine transition-colors hover:bg-cream"
             >
               Open the map ↗
             </a>
@@ -145,43 +148,41 @@ export default function Home() {
         </section>
       </Reveal>
 
-      <Reveal>
-        <section className="mt-12 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-3xl border border-pine/10 bg-white p-6 sm:p-8">
-            <p className="eyebrow text-emerald">See the data for yourself</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-pine">
-              Explore verified plants
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-moss">
-              Browse published species, filter by conservation status, and see
-              what SFC&apos;s botanists have verified so far on its own page,
-              with a live, read-only view of the real catalogue.
-            </p>
-            <Link
-              href="/species"
-              className="mt-4 inline-flex rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine"
-            >
-              Browse species →
-            </Link>
-          </div>
-          <div className="rounded-3xl border border-pine/10 bg-white p-6 sm:p-8">
-            <p className="eyebrow text-emerald">Get in touch</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-pine">
-              Send us an inquiry
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-moss">
-              Questions about the park, volunteering as a field botanist, a
-              student placement, or a partnership: tell us what&apos;s on your
-              mind and the Plantiful team will get back to you.
-            </p>
-            <Link
-              href="/inquiry"
-              className="mt-4 inline-flex rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine"
-            >
-              Send an inquiry →
-            </Link>
-          </div>
-        </section>
+      <Reveal className="mt-12 grid gap-4 sm:grid-cols-2 reveal-stagger">
+        <div className="card-lift rounded-3xl border border-pine/10 bg-white p-6 sm:p-8">
+          <p className="eyebrow text-emerald">See the data for yourself</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-pine">
+            Explore verified plants
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-moss">
+            Browse published species, filter by conservation status, and see
+            what SFC&apos;s botanists have verified so far on its own page,
+            with a live, read-only view of the real catalogue.
+          </p>
+          <Link
+            href="/species"
+            className="btn-pop mt-4 inline-flex rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+          >
+            Browse species →
+          </Link>
+        </div>
+        <div className="card-lift rounded-3xl border border-pine/10 bg-white p-6 sm:p-8">
+          <p className="eyebrow text-emerald">Get in touch</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-pine">
+            Send us an inquiry
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-moss">
+            Questions about the park, volunteering as a field botanist, a
+            student placement, or a partnership: tell us what&apos;s on your
+            mind and the Plantiful team will get back to you.
+          </p>
+          <Link
+            href="/inquiry"
+            className="btn-pop mt-4 inline-flex rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+          >
+            Send an inquiry →
+          </Link>
+        </div>
       </Reveal>
 
       <Reveal>
@@ -209,22 +210,25 @@ export default function Home() {
             Visiting &amp; contributing
           </h2>
 
-          <div className="mt-6 grid gap-3 lg:grid-cols-2">
+          <Reveal className="mt-6 grid items-start gap-3 lg:grid-cols-2 reveal-stagger">
             {faqs.map((item) => (
               <details
                 key={item.question}
-                className="group rounded-2xl border border-pine/10 bg-white p-5 open:bg-sprout/30"
+                className="group rounded-2xl border border-pine/10 bg-white p-5 transition-colors duration-300 open:bg-sprout/30"
               >
                 <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold text-pine [&::-webkit-details-marker]:hidden">
                   {item.question}
-                  <span aria-hidden="true" className="text-lg text-emerald">
+                  <span
+                    aria-hidden="true"
+                    className="text-lg text-emerald transition-transform duration-300 group-open:rotate-45"
+                  >
                     +
                   </span>
                 </summary>
                 <p className="mt-3 text-sm leading-7 text-moss">{item.answer}</p>
               </details>
             ))}
-          </div>
+          </Reveal>
         </section>
       </Reveal>
     </div>

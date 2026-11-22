@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 This is a separate app from the main Plantiful system. */}
             <a
               href={PLANTIFUL_APP_URL}
-              className="shrink-0 rounded-full border border-pine/15 px-4 py-2 text-sm font-semibold text-pine transition-colors hover:bg-sprout/60"
+              className="btn-pop shrink-0 rounded-full border border-pine/15 px-4 py-2 text-sm font-semibold text-pine transition-colors hover:bg-sprout/60"
             >
               <span className="hidden sm:inline">Open the knowledge system</span>
               <span className="sm:hidden">Open site</span> ↗
@@ -71,7 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Link>
               <a
                 href={PLANTIFUL_APP_URL}
-                className="rounded-full bg-chartreuse px-6 py-3 text-sm font-semibold text-pine"
+                className="btn-pop rounded-full bg-chartreuse px-6 py-3 text-sm font-semibold text-pine"
               >
                 Open the knowledge system ↗
               </a>

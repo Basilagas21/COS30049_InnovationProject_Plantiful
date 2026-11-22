@@ -45,7 +45,7 @@ export default async function SpeciesPage() {
       </Link>
 
       <p className="eyebrow mt-6 text-emerald">A taste of the catalogue</p>
-      <h1 className="mt-2 text-4xl font-semibold tracking-tight text-pine">
+      <h1 className="heading-accent mt-2 text-4xl font-semibold tracking-tight">
         Verified plants of Niah
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-7 text-moss">
@@ -100,25 +100,41 @@ export default async function SpeciesPage() {
                 <Link
                   key={item.id}
                   href={`/plants/${item.id}`}
-                  className="card-lift flex basis-full flex-col rounded-2xl border border-pine/10 bg-white p-5 transition-colors hover:border-emerald/40 sm:basis-[calc(50%_-_0.5rem)] lg:basis-[calc(33.3333%_-_0.6667rem)]"
+                  className="card-lift flex basis-full flex-col overflow-hidden rounded-2xl border border-pine/10 bg-white transition-colors hover:border-emerald/40 sm:basis-[calc(50%_-_0.5rem)] lg:basis-[calc(33.3333%_-_0.6667rem)]"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="font-semibold text-pine">
-                      {item.commonName || item.scientificName}
-                    </h3>
-                    {item.conservationStatus && (
-                      <span
-                        className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${statusBadgeClass(item.conservationStatus)}`}
-                      >
-                        {item.conservationStatus}
-                      </span>
+                  <div className="photo-zoom aspect-[4/3] w-full bg-sprout/40">
+                    {item.photoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={item.photoUrl}
+                        alt={item.scientificName}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-4xl">
+                        🌿
+                      </div>
                     )}
                   </div>
-                  <p className="mt-1 text-sm italic text-moss">{item.scientificName}</p>
-                  {item.description && (
-                    <p className="mt-3 text-sm leading-6 text-moss">{truncate(item.description, 140)}</p>
-                  )}
-                  <span className="mt-auto pt-4 text-sm font-semibold text-emerald">View plant →</span>
+                  <div className="flex flex-1 flex-col p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="font-semibold text-pine">
+                        {item.commonName || item.scientificName}
+                      </h3>
+                      {item.conservationStatus && (
+                        <span
+                          className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${statusBadgeClass(item.conservationStatus)}`}
+                        >
+                          {item.conservationStatus}
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1 text-sm italic text-moss">{item.scientificName}</p>
+                    {item.description && (
+                      <p className="mt-3 text-sm leading-6 text-moss">{truncate(item.description, 140)}</p>
+                    )}
+                    <span className="mt-auto pt-4 text-sm font-semibold text-emerald">View plant →</span>
+                  </div>
                 </Link>
               ))}
             </Reveal>

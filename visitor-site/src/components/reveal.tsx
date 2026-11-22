@@ -14,9 +14,14 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 export function Reveal({
   children,
   className = "",
+  spotlight = false,
 }: {
   children: ReactNode;
   className?: string;
+  /** Opt-in: also dims/highlights direct [data-active-card] children as
+   *  they cross the viewport's vertical center, independent of the
+   *  one-time reveal above (see the second effect below). */
+  spotlight?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   // Always starts false on both server and client. Checking
@@ -55,6 +60,30 @@ export function Reveal({
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
+
+  // Separate, independent observer: a persistent "spotlight" that keeps
+  // dimming/brightening cards as the visitor scrolls past, rather than a
+  // one-time reveal. Opt-in so the many sections that don't use it pay
+  // nothing extra for it.
+  useEffect(() => {
+    if (!spotlight) return;
+    const node = ref.current;
+    if (!node || typeof IntersectionObserver === "undefined") return;
+
+    const cards = Array.from(node.querySelectorAll<HTMLElement>("[data-active-card]"));
+    if (cards.length === 0) return;
+
+    const spotlightObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          entry.target.classList.toggle("is-spotlight-active", entry.isIntersecting);
+        }
+      },
+      { rootMargin: "-42% 0px -42% 0px", threshold: 0 },
+    );
+    cards.forEach((card) => spotlightObserver.observe(card));
+    return () => spotlightObserver.disconnect();
+  }, [spotlight]);
 
   return (
     <div ref={ref} className={`reveal ${visible ? "reveal-visible" : ""} ${className}`}>

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { PLANTIFUL_APP_URL } from "@/lib/config";
 import { Reveal } from "@/components/reveal";
+import { ParticleField } from "@/components/particle-field";
+import { StickySpotlight } from "@/components/sticky-spotlight";
 
 const sfcFacts = [
   {
@@ -44,21 +46,21 @@ export default function Home() {
   return (
     <div id="top" className="mx-auto w-full max-w-6xl flex-1 scroll-mt-24 px-6 py-12">
       <section className="relative isolate overflow-hidden rounded-[2rem] bg-[#0c342c] text-[#fffdee]">
-        {/* Three photos take turns fading in with a slow zoom (see
-            .hero-photo in globals.css) instead of one static image. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/hornbill.jpeg" alt="" className="hero-photo" />
+        {/* Two plant/forest photos take turns fading in with a slow zoom
+            (see .hero-photo in globals.css) instead of one static image.
+            Deliberately plant- and forest-only here, no wildlife photos:
+            this is a plant documentation system, not a wildlife one. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/images/rafflesia.jpg" alt="" className="hero-photo" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/orangutan.jpeg" alt="" className="hero-photo" />
+        <img src="/images/forest-trail.jpg" alt="" className="hero-photo" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0c342c] via-[#0c342c]/95 to-[#0c342c]/55" />
 
         <div className="relative max-w-3xl p-8 sm:p-12">
           <span className="inline-flex rounded-full bg-[#e3ef26] px-3 py-1 text-sm font-semibold text-[#0c342c]">
             Welcome, visitor
           </span>
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="heading-accent mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
             A little closer to Niah National Park.
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[#e2fbce]">
@@ -71,7 +73,7 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/inquiry"
-              className="btn-pop rounded-full bg-[#e3ef26] px-6 py-3 text-sm font-semibold text-[#0c342c] transition-colors hover:bg-[#e2fbce]"
+              className="btn-pop btn-glow rounded-full bg-[#e3ef26] px-6 py-3 text-sm font-semibold text-[#0c342c] transition-colors hover:bg-[#e2fbce]"
             >
               Send an inquiry
             </Link>
@@ -87,148 +89,251 @@ export default function Home() {
 
       <Reveal>
         <section id="about-sfc" className="mt-12 scroll-mt-24">
-          <p className="eyebrow text-emerald">Who manages this park</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
-            Sarawak Forestry Corporation (SFC)
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-moss">
-            SFC is the state body responsible for Niah National Park and
-            Sarawak&apos;s other protected areas.
-          </p>
+          {/* At lg+ this same heading moves inside the spotlight panel
+              itself (passed below as `header`), so it's hidden here to
+              avoid showing it twice; below lg, where the panel falls back
+              to a plain stacked layout, it stays visible above as before. */}
+          <div className="lg:hidden">
+            <p className="eyebrow text-emerald">Who manages this park</p>
+            <h2 className="heading-accent mt-2 text-3xl font-semibold tracking-tight">
+              Sarawak Forestry Corporation (SFC)
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-moss">
+              SFC is the state body responsible for Niah National Park and
+              Sarawak&apos;s other protected areas.
+            </p>
+          </div>
 
-          <Reveal className="mt-6 grid gap-4 md:grid-cols-3 reveal-stagger">
-            {sfcFacts.map((fact) => (
-              <div
-                key={fact.title}
-                className="card-lift rounded-2xl border border-pine/10 bg-white p-5"
-              >
-                <h3 className="font-semibold text-pine">{fact.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-moss">{fact.body}</p>
-              </div>
-            ))}
-          </Reveal>
+          {/* Desktop/tablet: pinned, center-card-spotlight scrollytelling
+              section (see StickySpotlight) — one fact lit up and centered
+              at a time, the other two dimmed as left/right previews,
+              modeled on the neuon.ai layout. Needs real scroll distance
+              to pin against, so below lg it's swapped for a plain stacked
+              layout instead (right below). */}
+          <div className="spotlight-desktop-wrap mt-6 hidden lg:block">
+            <StickySpotlight
+              facts={sfcFacts}
+              bgImage="/images/niah-cave.jpg"
+              header={
+                <>
+                  <p className="eyebrow text-emerald">Who manages this park</p>
+                  <h2 className="heading-accent font-semibold tracking-tight">
+                    Sarawak Forestry Corporation (SFC)
+                  </h2>
+                  <p className="leading-6 text-moss">
+                    SFC is the state body responsible for Niah National Park
+                    and Sarawak&apos;s other protected areas.
+                  </p>
+                </>
+              }
+            />
+          </div>
+
+          <div className="spotlight-mobile-wrap relative mt-6 overflow-hidden rounded-3xl p-4 lg:hidden">
+            <ParticleField />
+            <Reveal className="relative grid gap-4 reveal-stagger" spotlight>
+              {sfcFacts.map((fact) => (
+                <div
+                  key={fact.title}
+                  data-active-card
+                  className="card-lift scroll-spotlight rounded-2xl border border-pine/10 bg-white p-5"
+                >
+                  <h3 className="heading-accent font-semibold">{fact.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-moss">{fact.body}</p>
+                </div>
+              ))}
+            </Reveal>
+          </div>
         </section>
       </Reveal>
 
       <Reveal>
         <section id="why-plantiful" className="mt-12 scroll-mt-24 rounded-3xl border border-pine/10 bg-sprout/60 p-6 sm:p-8">
-          <p className="eyebrow text-emerald">About Plantiful</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
-            Ground-truthing, made simple for the field
-          </h2>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-moss">
-            Plantiful is SFC&apos;s digital system for documenting the plant life of
-            Niah National Park. Botanists working with SFC scan QR-tagged plants
-            and record what they find: species, condition, and photos, even
-            where there&apos;s no signal, syncing once they&apos;re back in range.
-          </p>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-moss">
-            Nothing goes public straight away. A conservation officer reviews
-            every submission before it&apos;s published, checking the species
-            identification and details are correct. An IoT sensor network also
-            keeps watch over monitored field sites around the clock. The result
-            is a public, verified record of Niah&apos;s plant life, built up
-            survey by survey, that researchers, students and curious
-            visitors can all browse for free.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href="/species"
-              className="btn-pop rounded-full bg-white px-6 py-3 text-sm font-semibold text-pine transition-colors hover:bg-cream"
-            >
-              Open the full catalogue →
-            </Link>
-            <a
-              href={`${PLANTIFUL_APP_URL}/map`}
-              className="btn-pop rounded-full bg-white px-6 py-3 text-sm font-semibold text-pine transition-colors hover:bg-cream"
-            >
-              Open the map ↗
-            </a>
+          <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div>
+              <p className="eyebrow-badge eyebrow-badge-chartreuse">About Plantiful</p>
+              <h2 className="heading-accent mt-3 text-3xl font-semibold tracking-tight">
+                Ground-truthing, made simple for the field
+              </h2>
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-moss">
+                Plantiful is SFC&apos;s digital system for documenting the plant life of
+                Niah National Park. Botanists working with SFC scan QR-tagged plants
+                and record what they find: species, condition, and photos, even
+                where there&apos;s no signal, syncing once they&apos;re back in range.
+              </p>
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-moss">
+                Nothing goes public straight away. A conservation officer reviews
+                every submission before it&apos;s published, checking the species
+                identification and details are correct. An IoT sensor network also
+                keeps watch over monitored field sites around the clock. The result
+                is a public, verified record of Niah&apos;s plant life, built up
+                survey by survey, that researchers, students and curious
+                visitors can all browse for free.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/species"
+                  className="btn-pop rounded-full bg-white px-6 py-3 text-sm font-semibold text-pine transition-colors hover:bg-cream"
+                >
+                  Open the full catalogue →
+                </Link>
+                <a
+                  href={`${PLANTIFUL_APP_URL}/map`}
+                  className="btn-pop rounded-full bg-white px-6 py-3 text-sm font-semibold text-pine transition-colors hover:bg-cream"
+                >
+                  Open the map ↗
+                </a>
+              </div>
+            </div>
+
+            {/* Two photos (other than rafflesia) take turns fading in with
+                a slow zoom, same technique as the hero's crossfade. A
+                couple of soft, slowly drifting color blobs sit behind the
+                rounded photo frame (in this non-clipping outer wrapper, so
+                they're not cut off by the frame's own rounded corners),
+                for a bit more visual color around this section. */}
+            <div className="relative">
+              <div className="color-blob color-blob-chartreuse" style={{ top: "-10%", left: "-12%" }} aria-hidden="true" />
+              <div className="color-blob color-blob-emerald" style={{ bottom: "-14%", right: "-10%" }} aria-hidden="true" />
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/forest-trail.jpg" alt="A boardwalk trail through the rainforest at Niah National Park" className="panel-photo" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/niah-cave.jpg" alt="The mouth of a Niah cave opening onto the rainforest" className="panel-photo" />
+              </div>
+            </div>
           </div>
         </section>
       </Reveal>
 
-      <Reveal className="mt-12 grid gap-4 sm:grid-cols-2 reveal-stagger">
-        <div className="card-lift rounded-3xl border border-pine/10 bg-white p-6 sm:p-8">
-          <p className="eyebrow text-emerald">See the data for yourself</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-pine">
-            Explore verified plants
-          </h2>
-          <p className="mt-3 text-sm leading-6 text-moss">
-            Browse published species, filter by conservation status, and see
-            what SFC&apos;s botanists have verified so far on its own page,
-            with a live, read-only view of the real catalogue.
-          </p>
-          <Link
-            href="/species"
-            className="btn-pop mt-4 inline-flex rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+      <div className="relative mt-12 overflow-hidden rounded-3xl">
+        <ParticleField />
+        <Reveal className="relative grid gap-4 sm:grid-cols-2 reveal-stagger" spotlight>
+          <div
+            data-active-card
+            className="card-lift scroll-spotlight overflow-hidden rounded-3xl border border-pine/10 bg-white"
           >
-            Browse species →
-          </Link>
-        </div>
-        <div className="card-lift rounded-3xl border border-pine/10 bg-white p-6 sm:p-8">
-          <p className="eyebrow text-emerald">Get in touch</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-pine">
-            Send us an inquiry
-          </h2>
-          <p className="mt-3 text-sm leading-6 text-moss">
-            Questions about the park, volunteering as a field botanist, a
-            student placement, or a partnership: tell us what&apos;s on your
-            mind and the Plantiful team will get back to you.
-          </p>
-          <Link
-            href="/inquiry"
-            className="btn-pop mt-4 inline-flex rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+            <div className="h-1.5 w-full bg-gradient-to-r from-chartreuse via-emerald to-chartreuse" aria-hidden="true" />
+            <div className="relative aspect-[16/9] w-full overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/jungle-flower.jpg"
+                alt="A cluster of orange tropical jungle flowers with red centers"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="p-6 sm:p-8">
+              <p className="eyebrow-badge eyebrow-badge-emerald">See the data for yourself</p>
+              <h2 className="heading-accent mt-3 text-2xl font-semibold tracking-tight">
+                Explore verified plants
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-moss">
+                Browse published species, filter by conservation status, and see
+                what SFC&apos;s botanists have verified so far on its own page,
+                with a live, read-only view of the real catalogue.
+              </p>
+              <Link
+                href="/species"
+                className="btn-pop mt-4 inline-flex rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+              >
+                Browse species →
+              </Link>
+            </div>
+          </div>
+          <div
+            data-active-card
+            className="card-lift scroll-spotlight overflow-hidden rounded-3xl border border-pine/10 bg-white"
           >
-            Send an inquiry →
-          </Link>
-        </div>
-      </Reveal>
+            <div className="h-1.5 w-full bg-gradient-to-r from-emerald via-chartreuse to-emerald" aria-hidden="true" />
+            <div className="relative aspect-[16/9] w-full overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/cave-explorers.jpg"
+                alt="Two hikers looking up at the entrance of a Niah cave"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="p-6 sm:p-8">
+              <p className="eyebrow-badge eyebrow-badge-sprout">Get in touch</p>
+              <h2 className="heading-accent mt-3 text-2xl font-semibold tracking-tight">
+                Send us an inquiry
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-moss">
+                Questions about the park, volunteering as a field botanist, a
+                student placement, or a partnership: tell us what&apos;s on your
+                mind and the Plantiful team will get back to you.
+              </p>
+              <Link
+                href="/inquiry"
+                className="btn-pop mt-4 inline-flex rounded-full bg-emerald px-5 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+              >
+                Send an inquiry →
+              </Link>
+            </div>
+          </div>
+        </Reveal>
+      </div>
 
       <Reveal>
         <section id="visiting" className="mt-12 scroll-mt-24 rounded-3xl border border-pine/10 bg-white p-6 sm:p-8">
-          <p className="eyebrow text-emerald">Planning a visit</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
-            Visiting Niah National Park
-          </h2>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-moss">
-            Niah National Park is best known for the Niah Caves and the
-            archaeological and biodiversity significance that earned it UNESCO
-            World Heritage status. Opening hours, entry permits, guide
-            requirements and transport can change, so for up-to-date visiting
-            details, including how to get there and what to bring, check
-            directly with Sarawak Forestry Corporation&apos;s official visitor
-            information before you go, rather than relying on this page alone.
-          </p>
+          <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div>
+              <p className="eyebrow text-emerald">Planning a visit</p>
+              <h2 className="heading-accent mt-2 text-3xl font-semibold tracking-tight">
+                Visiting Niah National Park
+              </h2>
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-moss">
+                Niah National Park is best known for the Niah Caves and the
+                archaeological and biodiversity significance that earned it UNESCO
+                World Heritage status. Opening hours, entry permits, guide
+                requirements and transport can change, so for up-to-date visiting
+                details, including how to get there and what to bring, check
+                directly with Sarawak Forestry Corporation&apos;s official visitor
+                information before you go, rather than relying on this page alone.
+              </p>
+            </div>
+            <div className="photo-zoom photo-breathe aspect-[4/3] w-full overflow-hidden rounded-2xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/forest-trail.jpg"
+                alt="A wooden boardwalk trail through the rainforest at Niah National Park"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </div>
         </section>
       </Reveal>
 
       <Reveal>
         <section id="faq" className="mt-12 scroll-mt-24">
           <p className="eyebrow text-emerald">A few common questions</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
+          <h2 className="heading-accent mt-2 text-3xl font-semibold tracking-tight">
             Visiting &amp; contributing
           </h2>
 
-          <Reveal className="mt-6 grid items-start gap-3 lg:grid-cols-2 reveal-stagger">
-            {faqs.map((item) => (
-              <details
-                key={item.question}
-                className="group rounded-2xl border border-pine/10 bg-white p-5 transition-colors duration-300 open:bg-sprout/30"
-              >
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold text-pine [&::-webkit-details-marker]:hidden">
-                  {item.question}
-                  <span
-                    aria-hidden="true"
-                    className="text-lg text-emerald transition-transform duration-300 group-open:rotate-45"
-                  >
-                    +
-                  </span>
-                </summary>
-                <p className="mt-3 text-sm leading-7 text-moss">{item.answer}</p>
-              </details>
-            ))}
-          </Reveal>
+          <div className="relative mt-6 overflow-hidden rounded-3xl">
+            <ParticleField />
+            <Reveal className="relative grid items-start gap-3 p-1 lg:grid-cols-2 reveal-stagger" spotlight>
+              {faqs.map((item) => (
+                <details
+                  key={item.question}
+                  data-active-card
+                  className="group scroll-spotlight-soft rounded-2xl border border-pine/10 bg-white p-5 transition-colors duration-300 open:bg-sprout/30"
+                >
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold text-pine [&::-webkit-details-marker]:hidden">
+                    {item.question}
+                    <span
+                      aria-hidden="true"
+                      className="text-lg text-emerald transition-transform duration-300 group-open:rotate-45"
+                    >
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-sm leading-7 text-moss">{item.answer}</p>
+                </details>
+              ))}
+            </Reveal>
+          </div>
         </section>
       </Reveal>
     </div>

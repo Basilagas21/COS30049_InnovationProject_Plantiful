@@ -272,6 +272,8 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
                       src={entry.photoUrl}
                       alt={entry.scientificName}
                       className="species-card-img"
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="species-card-placeholder">

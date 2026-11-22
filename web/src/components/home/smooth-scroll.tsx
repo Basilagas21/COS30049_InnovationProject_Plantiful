@@ -106,8 +106,12 @@ export function SmoothScroll() {
       if (!el) return;
       event.preventDefault();
       const header = document.querySelector(".site-header");
-      const offset = header ? header.getBoundingClientRect().height + 16 : 0;
-      lenis.scrollTo(el, { offset: -offset });
+      const headerH = header ? header.getBoundingClientRect().height : 0;
+      // A target that declares its own scroll-margin-top lands flush to that
+      // margin (Lenis honours it); other anchors keep the default breathing gap.
+      const scrollMargin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+      const offset = scrollMargin > 0 ? 0 : -(headerH + 16);
+      lenis.scrollTo(el, { offset });
       history.pushState(null, "", `#${id}`);
     };
     document.addEventListener("click", onClick);

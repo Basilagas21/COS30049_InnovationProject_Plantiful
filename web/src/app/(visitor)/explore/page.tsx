@@ -149,7 +149,7 @@ export default async function ExplorePage() {
 
         <section
           id="catalogue"
-          className="explore-v2-catalogue scroll-mt-24"
+          className="explore-v2-catalogue"
         >
           <div className="explore-section-head explore-v2-catalogue-head">
             <h2 className="explore-section-title">Browse the plant guide</h2>

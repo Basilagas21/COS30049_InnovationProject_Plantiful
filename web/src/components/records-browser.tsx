@@ -159,14 +159,14 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
             onFocus={() => setOpen(true)}
             onKeyDown={handleKeyDown}
             onBlur={() => setTimeout(() => setOpen(false), 120)}
-            className="h-10 w-full rounded-full border border-pine/15 bg-white pr-9 pl-4 text-sm outline-none transition-colors focus:border-emerald"
+            className="h-10 min-h-11 w-full rounded-full border border-pine/15 bg-white pr-9 pl-4 text-sm outline-none transition-colors focus:border-emerald sm:min-h-0"
           />
           {query && (
             <button
               type="button"
               onClick={clearSearch}
               aria-label="Clear search"
-              className="absolute top-1/2 right-3 -translate-y-1/2 text-moss transition-colors hover:text-pine"
+              className="absolute top-1/2 right-3 flex h-11 w-11 -translate-y-1/2 items-center justify-center text-moss transition-colors hover:text-pine sm:h-8 sm:w-8"
             >
               <svg
                 width="16"
@@ -208,7 +208,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
           <button
             type="button"
             onClick={clearSearch}
-            className="inline-flex h-10 items-center gap-2 rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse"
+            className="inline-flex h-10 min-h-11 items-center gap-2 rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse sm:min-h-0"
           >
             {selected}
             <span aria-hidden="true"><CloseIcon size="1em" /></span>
@@ -222,7 +222,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <label className="inline-flex h-10 items-center gap-2 rounded-full border border-pine/15 bg-white pl-4 pr-2 text-sm text-pine">
+        <label className="inline-flex h-10 min-h-11 items-center gap-2 rounded-full border border-pine/15 bg-white pl-4 pr-2 text-sm text-pine sm:min-h-0">
           <span className="text-moss">Sort</span>
           <select
             aria-label="Sort records"
@@ -235,13 +235,13 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
           </select>
         </label>
 
-        <div className="inline-flex h-10 items-center rounded-full border border-pine/15 bg-white p-1">
+        <div className="inline-flex items-center rounded-full border border-pine/15 bg-white p-1 sm:h-10">
           {STATUS_OPTIONS.map((option) => (
             <button
               key={option.key}
               type="button"
               onClick={() => setStatus(option.key)}
-              className={`h-8 rounded-full px-3.5 text-xs font-semibold transition-colors ${
+              className={`h-8 min-h-11 rounded-full px-3.5 text-xs font-semibold transition-colors sm:min-h-0 ${
                 status === option.key
                   ? "bg-emerald text-cream"
                   : "text-moss hover:text-pine"
@@ -253,7 +253,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
         </div>
 
         {conservationOptions.length > 0 && (
-          <label className="inline-flex h-10 items-center gap-2 rounded-full border border-pine/15 bg-white pl-4 pr-2 text-sm text-pine">
+          <label className="inline-flex h-10 min-h-11 items-center gap-2 rounded-full border border-pine/15 bg-white pl-4 pr-2 text-sm text-pine sm:min-h-0">
             <span className="text-moss">Status</span>
             <select
               aria-label="Filter by conservation status"
@@ -271,7 +271,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
           </label>
         )}
 
-        <label className="inline-flex h-10 items-center gap-2 rounded-full border border-pine/15 bg-white pl-4 pr-2 text-sm text-pine">
+        <label className="inline-flex h-10 min-h-11 items-center gap-2 rounded-full border border-pine/15 bg-white pl-4 pr-2 text-sm text-pine sm:min-h-0">
           <span className="text-moss">Date</span>
           <select
             aria-label="Filter by date range"
@@ -291,7 +291,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
           type="button"
           onClick={() => setPhotoOnly((value) => !value)}
           aria-pressed={photoOnly}
-          className={`inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors ${
+          className={`inline-flex h-10 min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors sm:min-h-0 ${
             photoOnly
               ? "border-emerald bg-emerald text-cream"
               : "border-pine/15 bg-white text-moss hover:text-pine"
@@ -304,7 +304,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
           <button
             type="button"
             onClick={clearFilters}
-            className="inline-flex h-10 items-center gap-2 rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse"
+            className="inline-flex h-10 min-h-11 items-center gap-2 rounded-full bg-sprout px-4 text-sm font-semibold text-emerald transition-colors hover:bg-chartreuse sm:min-h-0"
           >
             Reset filters
             <span aria-hidden="true"><CloseIcon size="1em" /></span>

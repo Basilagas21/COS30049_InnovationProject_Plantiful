@@ -120,12 +120,12 @@ export function SpeciesForm({ speciesId, initial }: Props) {
         />
       </Field>
 
-      <label className="flex items-center gap-3 rounded-2xl bg-sprout/70 px-4 py-3 text-sm font-medium text-pine">
+      <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-2xl bg-sprout/70 px-4 py-3 text-sm font-medium text-pine">
         <input
           type="checkbox"
           name="is_published"
           defaultChecked={Boolean(initial?.is_published)}
-          className="h-4 w-4 accent-emerald"
+          className="h-5 w-5 accent-emerald"
         />
         Published — visible to the public
       </label>

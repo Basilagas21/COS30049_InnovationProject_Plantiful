@@ -44,7 +44,7 @@ export function UserNameForm({ userId, name }: Props) {
             setError(null);
             setEditing(true);
           }}
-          className="rounded-full border border-pine/15 px-2.5 py-1 text-xs font-semibold text-emerald transition-colors hover:border-emerald"
+          className="min-h-11 rounded-full border border-pine/15 px-2.5 py-1 text-xs font-semibold text-emerald transition-colors hover:border-emerald sm:min-h-0"
           aria-label={`Edit name for ${name}`}
         >
           Edit
@@ -65,12 +65,12 @@ export function UserNameForm({ userId, name }: Props) {
           onChange={(event) => setValue(event.target.value)}
           disabled={isPending}
           maxLength={80}
-          className="h-8 w-full rounded-full border border-pine/15 bg-white px-3 text-sm text-pine outline-none transition-colors focus:border-emerald"
+          className="h-8 min-h-11 w-full rounded-full border border-pine/15 bg-white px-3 text-sm text-pine outline-none transition-colors focus:border-emerald sm:min-h-0"
         />
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-full bg-emerald px-3 py-1.5 text-xs font-semibold text-cream transition-colors hover:bg-pine disabled:opacity-60"
+          className="min-h-11 rounded-full bg-emerald px-3 py-1.5 text-xs font-semibold text-cream transition-colors hover:bg-pine disabled:opacity-60 sm:min-h-0"
         >
           Save
         </button>
@@ -82,7 +82,7 @@ export function UserNameForm({ userId, name }: Props) {
             setValue(name);
             setError(null);
           }}
-          className="rounded-full border border-pine/15 px-3 py-1.5 text-xs font-semibold text-moss transition-colors hover:border-pine/30 disabled:opacity-60"
+          className="min-h-11 rounded-full border border-pine/15 px-3 py-1.5 text-xs font-semibold text-moss transition-colors hover:border-pine/30 disabled:opacity-60 sm:min-h-0"
         >
           Cancel
         </button>

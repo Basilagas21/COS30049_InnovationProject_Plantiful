@@ -83,7 +83,7 @@ export default function LearnPage() {
               key={item.question}
               className="group rounded-2xl border border-pine/10 bg-white p-5 open:bg-sprout/30"
             >
-              <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold text-pine [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-11 cursor-pointer list-none items-start justify-between gap-4 font-semibold text-pine sm:min-h-0 [&::-webkit-details-marker]:hidden">
                 {item.question}
                 <span aria-hidden="true" className="text-lg text-emerald">
                   +
@@ -138,7 +138,7 @@ export default function LearnPage() {
         </div>
         <Link
           href="/explore"
-          className="mt-6 inline-flex text-sm font-semibold text-emerald hover:underline"
+          className="mt-6 inline-flex min-h-11 items-center text-sm font-semibold text-emerald hover:underline sm:min-h-0"
         >
           Browse published species <Arrow direction="right" size="1em" />
         </Link>

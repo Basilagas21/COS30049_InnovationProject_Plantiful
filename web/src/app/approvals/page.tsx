@@ -179,7 +179,7 @@ export default async function ApprovalsPage() {
                 </div>
 
                  <div className="mt-4 border-t border-pine/10 pt-4">
-                   <Link href={`/records/${row.record_id}#ai-field-assist`} className="mb-3 block text-sm font-semibold text-emerald underline">Inspect AI suggestions and identification history</Link>
+                   <Link href={`/records/${row.record_id}#ai-field-assist`} className="mb-3 block min-h-11 text-sm font-semibold text-emerald underline sm:min-h-0">Inspect AI suggestions and identification history</Link>
                    <ApproveRejectButtons recordId={row.record_id} />
                 </div>
                 </div>

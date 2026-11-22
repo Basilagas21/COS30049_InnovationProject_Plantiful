@@ -67,11 +67,11 @@ export default function RegisterPage() {
       type="button"
       onClick={() => setShowPassword((v) => !v)}
       aria-label={showPassword ? "Hide password" : "Show password"}
-      className="absolute top-1/2 right-3 -translate-y-1/2 text-moss transition-colors hover:text-pine"
+      className="absolute top-0 right-0 flex h-11 w-11 items-center justify-center text-moss transition-colors hover:text-pine"
     >
       <svg
-        width="20"
-        height="20"
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -193,7 +193,7 @@ export default function RegisterPage() {
             Sign in
           </Link>
         </p>
-        <Link href="/" className="mt-4 inline-block text-sm font-medium text-emerald hover:underline">
+        <Link href="/" className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-emerald hover:underline sm:min-h-0">
           <Arrow direction="left" size="1em" /> Back to home
         </Link>
       </div>

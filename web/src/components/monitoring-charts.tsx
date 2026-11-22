@@ -87,7 +87,7 @@ export function EventStrips({ history }: { history: TelemetryHistory }) {
     <div className="flex flex-wrap items-start justify-between gap-4">
       <div><p className="eyebrow text-moss">Activity over time</p><h3 className="mt-2 text-xl font-semibold">Movement & rain</h3></div>
       <div role="group" aria-label="Activity chart time scale" className="flex flex-wrap gap-1 rounded-2xl bg-pine/5 p-1">
-        {(["recorded", "full"] as const).map((value) => <button key={value} type="button" aria-pressed={view === value} onClick={() => setView(value)} className={`rounded-full px-3 py-2 text-xs transition ${view === value ? "bg-white font-semibold text-emerald shadow-sm" : "text-moss hover:text-pine"}`}>{value === "recorded" ? "Recorded period" : "Full time range"}</button>)}
+        {(["recorded", "full"] as const).map((value) => <button key={value} type="button" aria-pressed={view === value} onClick={() => setView(value)} className={`min-h-11 rounded-full px-3 py-2 text-xs transition sm:min-h-0 ${view === value ? "bg-white font-semibold text-emerald shadow-sm" : "text-moss hover:text-pine"}`}>{value === "recorded" ? "Recorded period" : "Full time range"}</button>)}
       </div>
     </div>
     <p className="mt-2 text-sm text-moss">Green marks a bucket with a positive reading. Grey means readings without a detection. Blank means no data.</p>

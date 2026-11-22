@@ -390,7 +390,7 @@ export function SpeciesMap({ points }: Props) {
                 type="button"
                 onClick={() => setFilter(key)}
                 aria-pressed={active}
-                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                className={`flex min-h-11 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors sm:min-h-0 ${
                   active
                     ? "border-emerald bg-emerald text-cream"
                     : "border-pine/15 bg-white text-moss hover:bg-sprout/50"

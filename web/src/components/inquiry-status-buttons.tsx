@@ -35,7 +35,7 @@ export function InquiryStatusButtons({ inquiryId, status }: Props) {
             type="button"
             disabled={isPending}
             onClick={() => update("read")}
-            className="rounded-full bg-emerald px-4 py-2 text-xs font-semibold text-cream transition-colors hover:bg-pine disabled:opacity-50"
+            className="min-h-11 rounded-full bg-emerald px-4 py-2 text-xs font-semibold text-cream transition-colors hover:bg-pine disabled:opacity-50 sm:min-h-0"
           >
             {isPending ? "Updating…" : "Mark read"}
           </button>
@@ -45,7 +45,7 @@ export function InquiryStatusButtons({ inquiryId, status }: Props) {
             type="button"
             disabled={isPending}
             onClick={() => update("archived")}
-            className="rounded-full border border-pine/20 bg-white px-4 py-2 text-xs font-semibold text-moss transition-colors hover:bg-sand disabled:opacity-50"
+            className="min-h-11 rounded-full border border-pine/20 bg-white px-4 py-2 text-xs font-semibold text-moss transition-colors hover:bg-sand disabled:opacity-50 sm:min-h-0"
           >
             {isPending ? "Updating…" : "Archive"}
           </button>
@@ -54,7 +54,7 @@ export function InquiryStatusButtons({ inquiryId, status }: Props) {
             type="button"
             disabled={isPending}
             onClick={() => update("new")}
-            className="rounded-full border border-pine/20 bg-white px-4 py-2 text-xs font-semibold text-moss transition-colors hover:bg-sand disabled:opacity-50"
+            className="min-h-11 rounded-full border border-pine/20 bg-white px-4 py-2 text-xs font-semibold text-moss transition-colors hover:bg-sand disabled:opacity-50 sm:min-h-0"
           >
             {isPending ? "Updating…" : "Restore"}
           </button>

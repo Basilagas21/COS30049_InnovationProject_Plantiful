@@ -104,7 +104,7 @@ export default function ProfilePage() {
               Create an account
             </Link>
           </p>
-          <Link href="/" className="mt-4 inline-block text-sm font-medium text-emerald hover:underline">
+          <Link href="/" className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-emerald hover:underline sm:min-h-0">
             <Arrow direction="left" size="1em" /> Back to home
           </Link>
         </div>

@@ -486,6 +486,7 @@ select.field-input {
 .explore-section-link {
   display: inline-flex;
   align-items: center;
+  min-height: 1.5rem;
   gap: 0.35rem;
   font-size: 0.9rem;
   font-weight: 600;
@@ -642,6 +643,18 @@ select.field-input {
 .species-browser-pagenav { display: flex; align-items: center; gap: 0.75rem; justify-self: center; }
 .species-browser-pagenav .btn { min-width: 6.5rem; justify-content: center; }
 .species-browser-pagination > .species-browser-select { justify-self: end; }
+@media (max-width: 767px) {
+  .btn--sm { min-height: 44px; }
+  .species-browser-filterbtn { height: 2.75rem; }
+  .species-browser-select { height: 2.75rem; }
+  .species-browser-chip { height: 2.75rem; }
+  .field-input.h-10 { min-height: 44px; }
+  .explore-section-link { min-height: 2.75rem; }
+  .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-in,
+  .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-out,
+  .maplibregl-ctrl-group button.maplibregl-ctrl-compass { width: 44px; height: 44px; }
+  .maplibregl-ctrl-attrib .maplibregl-ctrl-attrib-button { width: 44px; height: 44px; }
+}
 @media (max-width: 1279px) { .species-browser-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 1023px) { .species-browser-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 767px) {

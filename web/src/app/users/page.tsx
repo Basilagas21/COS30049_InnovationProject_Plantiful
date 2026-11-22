@@ -235,7 +235,7 @@ export default async function UsersPage({
           </p>
           <Link
             href="/admin/settings"
-            className="font-semibold text-emerald hover:underline"
+            className="inline-flex min-h-11 items-center font-semibold text-emerald hover:underline sm:min-h-0"
           >
             {pageSize} per page
           </Link>
@@ -311,7 +311,7 @@ export default async function UsersPage({
           {page > 1 ? (
             <Link
               href={buildUsersHref({ q, role: roleFilter, sort, page: page - 1 })}
-              className="font-semibold text-emerald hover:underline"
+              className="inline-flex min-h-11 items-center font-semibold text-emerald hover:underline sm:min-h-0"
             >
               <Arrow direction="left" size="1em" /> Previous
             </Link>
@@ -327,7 +327,7 @@ export default async function UsersPage({
           {page < totalPages ? (
             <Link
               href={buildUsersHref({ q, role: roleFilter, sort, page: page + 1 })}
-              className="font-semibold text-emerald hover:underline"
+              className="inline-flex min-h-11 items-center font-semibold text-emerald hover:underline sm:min-h-0"
             >
               Next <Arrow direction="right" size="1em" />
             </Link>

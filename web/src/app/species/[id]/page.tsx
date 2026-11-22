@@ -20,7 +20,7 @@ export default async function SpeciesDetailPage({
 
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
-      <Link href="/species" className="text-sm font-medium text-emerald hover:underline">
+      <Link href="/species" className="inline-flex min-h-11 items-center text-sm font-medium text-emerald hover:underline sm:min-h-0">
         <Arrow direction="left" size="1em" /> Back to species
       </Link>
 
@@ -91,7 +91,7 @@ export default async function SpeciesDetailPage({
 
           <Link
             href={`/map?species_id=${entry.id}`}
-            className="inline-flex h-10 w-fit items-center rounded-full border border-pine/20 bg-white px-6 text-sm font-semibold text-pine transition-colors hover:bg-sprout"
+            className="inline-flex h-10 min-h-11 w-fit items-center rounded-full border border-pine/20 bg-white px-6 text-sm font-semibold text-pine transition-colors hover:bg-sprout sm:min-h-0"
           >
             View distribution on map
           </Link>

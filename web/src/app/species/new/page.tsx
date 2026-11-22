@@ -9,7 +9,7 @@ export default async function NewSpeciesPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
-      <Link href="/species" className="text-sm font-medium text-emerald hover:underline">
+      <Link href="/species" className="inline-flex min-h-11 items-center text-sm font-medium text-emerald hover:underline sm:min-h-0">
         <Arrow direction="left" size="1em" /> Back to species
       </Link>
       <h1 className="mt-4 text-3xl font-bold tracking-tight text-pine sm:text-4xl">

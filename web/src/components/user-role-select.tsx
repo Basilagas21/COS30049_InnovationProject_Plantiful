@@ -48,7 +48,7 @@ export function UserRoleSelect({ userId, role, isSelf }: Props) {
             type="button"
             disabled={isPending || (isSelf && candidate !== current)}
             onClick={() => change(candidate)}
-            className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors disabled:cursor-not-allowed ${
+            className={`min-h-11 rounded-full px-3 py-1 text-xs font-semibold transition-colors disabled:cursor-not-allowed sm:min-h-0 ${
               candidate === current
                 ? "bg-emerald text-cream"
                 : "text-moss hover:text-pine"

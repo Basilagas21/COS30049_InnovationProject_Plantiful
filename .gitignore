@@ -106,6 +106,9 @@ web/CLAUDE.md
 # Claude Code local config
 .claude/
 
+# Claude-generated local artefacts
+/Claude outputs/
+
 # Security pack (plan, assessment, findings register and raw evidence) - local only
 Docs/Security/
 

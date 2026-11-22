@@ -141,6 +141,10 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
           />
         </div>
 
+        <span className="species-browser-count" aria-live="polite">
+          {visible.length} species{filtersActive ? " filtered" : ""}
+        </span>
+
         <button
           type="button"
           className="species-browser-filterbtn"
@@ -166,10 +170,6 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
             <span className="species-browser-filterbtn-count">{activeFilterCount}</span>
           )}
         </button>
-
-        <span className="species-browser-count" aria-live="polite">
-          {visible.length} species{filtersActive ? " filtered" : ""}
-        </span>
 
         {filterOpen && (
           <div className="species-browser-filtermenu" role="dialog" aria-label="Filter the catalogue">

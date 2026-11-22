@@ -9,7 +9,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 const roles: Record<string, string> = { botanist: "Botanist", conservation_officer: "Conservation officer", admin: "Admin" };
 
-export function NavAuth() {
+export function NavAuth({ placement = "top" }: { placement?: "top" | "sidebar" } = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const panelId = useId();
@@ -99,7 +99,7 @@ export function NavAuth() {
     : initials;
 
   return (
-    <div ref={container} className="relative shrink-0" onBlur={event => {
+    <div ref={container} className={placement === "sidebar" ? "relative w-full" : "relative shrink-0"} onBlur={event => {
       if (!event.currentTarget.contains(event.relatedTarget)) setOpenedOn(null);
     }}>
       <button ref={trigger} type="button" aria-expanded={open} aria-controls={panelId} aria-label={`Account for ${name}`}
@@ -109,7 +109,7 @@ export function NavAuth() {
         <span className="max-w-24 truncate font-semibold sm:max-w-36">{name}</span>
         <svg aria-hidden="true" viewBox="0 0 16 16" className={`h-3 w-3 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m4 6 4 4 4-4" /></svg>
       </button>
-      {open && <section id={panelId} aria-label="Your account" className="absolute right-0 top-full z-50 mt-3 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-pine/15 bg-surface text-sm text-pine shadow-xl">
+      {open && <section id={panelId} aria-label="Your account" className={`absolute top-full z-50 mt-3 w-[min(20rem,calc(100vw-2rem))] ${placement === "sidebar" ? "left-0" : "right-0"} overflow-hidden rounded-2xl border border-pine/15 bg-surface text-sm text-pine shadow-xl`}>
         <div className="border-b border-pine/10 p-4">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-moss">Your account</p>
           <div className="flex items-center gap-3">

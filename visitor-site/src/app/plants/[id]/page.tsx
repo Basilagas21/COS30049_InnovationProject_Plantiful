@@ -93,7 +93,7 @@ export default async function PlantDetailPage({
               {entry.conservationStatus}
             </span>
           )}
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-pine sm:text-4xl">
+          <h1 className="heading-accent mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
             {entry.commonName || entry.scientificName}
           </h1>
           {entry.commonName && (

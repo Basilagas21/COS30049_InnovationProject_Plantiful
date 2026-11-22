@@ -16,7 +16,7 @@ export default function InquiryPage() {
       </Link>
 
       <p className="eyebrow mt-6 text-emerald">Get in touch</p>
-      <h1 className="mt-2 text-4xl font-semibold tracking-tight text-pine">
+      <h1 className="heading-accent mt-2 text-4xl font-semibold tracking-tight">
         Send us an inquiry
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-7 text-moss">

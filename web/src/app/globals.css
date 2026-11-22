@@ -557,8 +557,8 @@ select.field-input {
   .explore-v2-hero-grid { grid-template-columns: 1fr; }
   .explore-v2-hero-scrim { background: linear-gradient(180deg, #0c342cf2 0%, #0c342cd9 55%, #0c342c99 100%); }
 }
-.explore-v2-catalogue { scroll-margin-top: var(--header-h); flex: 1; display: flex; flex-direction: column; align-items: center; padding: clamp(2.5rem, 5vh, 4rem) clamp(1.5rem, 6vw, 5.5rem) clamp(2.5rem, 5vh, 4rem); }
-.explore-v2-secondary { padding: 0 clamp(1.5rem, 6vw, 5.5rem) clamp(2.5rem, 5vh, 4rem); }
+.explore-v2-catalogue { scroll-margin-top: var(--header-h); flex: 1; display: flex; flex-direction: column; align-items: center; padding: clamp(2.5rem, 5vh, 4rem) clamp(1.5rem, 6vw, 5.5rem) 0; }
+.explore-v2-secondary { padding: clamp(2.5rem, 5vh, 4rem) clamp(1.5rem, 6vw, 5.5rem) clamp(2.5rem, 5vh, 4rem); }
 .explore-v2-secondary-inner { max-width: 96rem; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(2.5rem, 5vh, 4rem); }
 .explore-v2-steps-row { margin-top: 1.75rem; }
 
@@ -598,7 +598,7 @@ select.field-input {
   gap: 0.6rem;
   width: 100%;
   padding: 0.5rem 0.7rem 0.5rem 1.1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
   border-radius: 1rem;
   border: 1px solid color-mix(in srgb, var(--pine) 15%, transparent);
   background: var(--white);
@@ -629,7 +629,7 @@ select.field-input {
 .species-browser-select { height: 2.25rem; padding: 0 2.2rem 0 1rem; border-radius: 999px; border: 1px solid var(--border); background-color: var(--surface); color: var(--pine); font-size: 0.85rem; outline: none; white-space: nowrap; }
 .species-browser-select:focus { border-color: var(--emerald); }
 .species-browser-count { margin-left: auto; font-family: var(--font-martian), monospace; font-size: 0.78rem; color: var(--moss); white-space: nowrap; }
-.species-browser-results { width: 100%; flex: 1; }
+.species-browser-results { width: 100%; flex: 1; margin-top: 1.5rem; }
 .species-browser-grid { width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; align-content: start; }
 .species-browser-grid .species-card-media { aspect-ratio: 16 / 10; }
 .species-browser-grid .species-card-body { padding: 1rem 1.25rem 1.1rem; }

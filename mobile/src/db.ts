@@ -838,6 +838,18 @@ export async function updateLocalRecord(
 }
 
 export async function deleteLocalPhoto(db: SQLite.SQLiteDatabase, photoId: string) {
+  const photo = await db.getFirstAsync<{ local_uri: string }>(
+    'SELECT local_uri FROM local_photos WHERE id = ?',
+    photoId
+  );
+  if (photo) {
+    try {
+      const file = new File(photo.local_uri);
+      if (file.exists) file.delete();
+    } catch {
+      // A missing or unreadable file shouldn't block deleting the photo row.
+    }
+  }
   await db.runAsync('DELETE FROM local_photos WHERE id = ?', photoId);
 }
 

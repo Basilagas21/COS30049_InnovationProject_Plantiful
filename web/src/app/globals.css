@@ -221,19 +221,19 @@ select.field-input {
   .btn--sm { min-height: 36px; padding: .4rem 1rem; font-size: .8rem; }
 }
 
-/* Homepage-only brand lockup and sign-in delight; the header bar itself is now
-   the shared canonical treatment above, so no nav overrides are needed here. */
-body:has(.home-canopy) .brand { position: relative; }
-body:has(.home-canopy) .header-account a[href="/signin"] { padding-left: 1.9rem; padding-right: 1.9rem; transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, background .25s ease; }
-body:has(.home-canopy) .header-account a[href="/signin"]:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--emerald) 86%, #ffffff); box-shadow: 0 10px 26px color-mix(in srgb, var(--emerald) 45%, transparent); }
+/* Shared brand lockup and sign-in delight: the same hover treatment runs on every
+   page so the header stays consistent across the site. */
+.brand { position: relative; }
+.header-account a[href="/signin"] { padding-left: 1.9rem; padding-right: 1.9rem; transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, background .25s ease; }
+.header-account a[href="/signin"]:hover { transform: translateY(-2px); background: color-mix(in srgb, var(--emerald) 86%, #ffffff); box-shadow: 0 10px 26px color-mix(in srgb, var(--emerald) 45%, transparent); }
 
 /* Branding easter egg: hover gently wakes the lockup with a tame bounce and a soft wave through the wordmark. */
-body:has(.home-canopy) .brand img { transform-origin: 50% 88%; }
-body:has(.home-canopy) .brand:hover img { animation: sprout-boing .8s cubic-bezier(.34,1.56,.64,1); }
-body:has(.home-canopy) .brand-word .bl { display: inline-block; }
-body:has(.home-canopy) .brand:hover .bl { animation: letter-wave .7s cubic-bezier(.34,1.56,.64,1) calc(var(--li, 0) * 40ms) both; }
-body:has(.home-canopy) .brand-dot { display: inline-block; }
-body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in-out .38s both; }
+.brand img { transform-origin: 50% 88%; }
+.brand:hover img { animation: sprout-boing .8s cubic-bezier(.34,1.56,.64,1); }
+.brand-word .bl { display: inline-block; }
+.brand:hover .bl { animation: letter-wave .7s cubic-bezier(.34,1.56,.64,1) calc(var(--li, 0) * 40ms) both; }
+.brand-dot { display: inline-block; }
+.brand:hover .brand-dot { animation: dot-glow .9s ease-in-out .38s both; }
 
 @keyframes sprout-boing { 0% { transform: scale(1) rotate(0deg); } 30% { transform: scale(1.08) rotate(-3deg); } 55% { transform: scale(.98) rotate(1.5deg); } 75% { transform: scale(1.02) rotate(-.5deg); } 100% { transform: scale(1) rotate(0deg); } }
 @keyframes letter-wave { 0% { transform: translateY(0); color: var(--pine); text-shadow: 0 0 0 transparent; } 30% { transform: translateY(-3px); color: var(--emerald); text-shadow: 0 0 10px color-mix(in srgb, var(--chartreuse) 60%, transparent); } 60% { transform: translateY(1px); color: var(--pine); } 100% { transform: translateY(0); color: var(--pine); text-shadow: 0 0 0 transparent; } }

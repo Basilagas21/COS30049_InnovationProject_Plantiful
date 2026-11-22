@@ -140,6 +140,8 @@ export default function RegisterScreen() {
                 style={styles.eyeButton}
                 onPress={() => setShowPassword((v) => !v)}
                 hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
               >
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}

@@ -180,6 +180,9 @@ export default function RecordsScreen() {
               key={option.key}
               onPress={() => setStatusFilter(option.key)}
               style={[styles.chip, statusFilter === option.key && styles.chipActive]}
+              accessibilityRole="button"
+              accessibilityLabel={`Filter by ${option.label}`}
+              accessibilityState={{ selected: statusFilter === option.key }}
             >
               <Text
                 style={[styles.chipText, statusFilter === option.key && styles.chipTextActive]}

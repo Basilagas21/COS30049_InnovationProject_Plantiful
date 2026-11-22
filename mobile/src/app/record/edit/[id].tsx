@@ -383,7 +383,7 @@ export default function EditRecordScreen() {
               {selectedSpecies
                 ? `${selectedSpecies.common_name ?? selectedSpecies.scientific_name} (${selectedSpecies.scientific_name})`
                 : speciesOptions.length === 0
-                  ? 'No species catalog — sync once while signed in'
+                  ? 'No species catalogue, sync once while signed in'
                   : 'Select species…'}
             </Text>
           </Pressable>
@@ -529,7 +529,7 @@ export default function EditRecordScreen() {
             <ScrollView style={styles.modalList}>
               {speciesOptions.length === 0 ? (
                 <Text style={styles.hint}>
-                  The species catalog is empty. Open Sync and press Sync now while signed in to download it.
+                  The species catalogue is empty. Open Sync and press Sync now while signed in to download it.
                 </Text>
               ) : (
                 speciesOptions.map((species) => (

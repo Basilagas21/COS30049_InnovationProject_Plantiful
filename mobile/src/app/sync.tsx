@@ -115,19 +115,19 @@ async function uploadPhoto(
   photo: { id: string; local_uri: string }
 ): Promise<string> {
   if (!photo.local_uri.startsWith('file:')) {
-    throw new Error('Photo is not stored on this device — open the record and attach the photo again.');
+    throw new Error('Photo is not stored on this device; open the record and attach the photo again.');
   }
 
   const file = new File(photo.local_uri);
   if (!file.exists || (file.size ?? 0) < 1024) {
-    throw new Error('Photo file is missing on this device — open the record and attach the photo again.');
+    throw new Error('Photo file is missing on this device; open the record and attach the photo again.');
   }
 
   const bytes = await file.bytes();
   const isJpeg = bytes[0] === 0xff && bytes[1] === 0xd8;
   const isPng = bytes[0] === 0x89 && bytes[1] === 0x50;
   if (!isJpeg && !isPng) {
-    throw new Error('Stored photo is not a valid image — attach the photo again.');
+    throw new Error('Stored photo is not a valid image; attach the photo again.');
   }
 
   const contentType = isPng ? 'image/png' : 'image/jpeg';

@@ -581,7 +581,7 @@ export default function NewCaptureScreen() {
           {photoUri ? (
             <Pressable style={styles.photoPreviewBtn} onPress={choosePhotoSource}>
               <Ionicons name="image" size={18} color={colors.onChartreuse} />
-              <Text style={styles.photoPreviewText}>Photo attached — replace</Text>
+              <Text style={styles.photoPreviewText}>Photo attached - replace</Text>
             </Pressable>
           ) : (
             <Pressable style={styles.ghostButton} onPress={choosePhotoSource}>

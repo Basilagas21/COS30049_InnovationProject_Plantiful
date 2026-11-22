@@ -31,6 +31,7 @@ import {
 import { getCurrentPosition, openLocationSettings, persistCapturedPhoto, type LocationFix } from '@/lib/location';
 import { generateTag, isValidTag, normalizeTag, TAG_LABEL } from '@/lib/tags';
 import { PHENOLOGY_OPTIONS } from '@/lib/phenology';
+import { parseDbhCm, parseHeightCm } from '@/lib/validation';
 import { FieldEvidenceChecklist } from '@/components/field-evidence-checklist';
 
 type PhotoRow = { id: string; local_uri: string };
@@ -217,11 +218,20 @@ export default function EditRecordScreen() {
       return;
     }
 
+    const height = parseHeightCm(heightCm);
+    if (height === undefined) {
+      Alert.alert('Check the height', 'Enter the height as a positive number of centimetres, e.g. 120 or 12.5.');
+      return;
+    }
+    const dbh = parseDbhCm(dbhCm);
+    if (dbh === undefined) {
+      Alert.alert('Check the stem diameter', 'Enter the DBH as a positive number of centimetres, e.g. 30 or 12.5.');
+      return;
+    }
+
     setSaving(true);
     try {
       const db = await openDatabase();
-      const height = heightCm.trim();
-      const dbh = dbhCm.trim();
       await updateLocalRecord(db, recordId, {
         qr_code: tag,
         species_id: selectedSpecies?.species_id ?? null,
@@ -229,8 +239,8 @@ export default function EditRecordScreen() {
         gps_lat: location?.lat ?? null,
         gps_lng: location?.lng ?? null,
         gps_accuracy_m: location?.accuracyM ?? null,
-        height_cm: height ? Number(height) : null,
-        dbh_cm: dbh ? Number(dbh) : null,
+        height_cm: height,
+        dbh_cm: dbh,
         taxonomy: taxonomy.trim() || null,
         phenology,
         morphology: morphology.trim() || null,

@@ -26,22 +26,56 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [officer, admin] = await Promise.all([isOfficer(), isAdmin()]);
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/explore", label: "Explore" },
-    { href: "/learn", label: "Learn" },
-    { href: "/species", label: "Species" },
-    { href: "/map", label: "Map" },
-    { href: "/records", label: "Records" },
+    { href: "/", label: "Home", group: "Browse" },
+    { href: "/explore", label: "Explore", group: "Browse" },
+    { href: "/learn", label: "Learn", group: "Browse" },
+    { href: "/species", label: "Species", group: "Browse" },
+    { href: "/map", label: "Map", group: "Browse" },
+    { href: "/records", label: "Records", group: "Browse" },
     ...(officer
       ? [
-          { href: "/approvals", label: "Approvals" },
-          { href: "/reports", label: "Reports" },
-          { href: "/alerts", label: "Monitoring" },
-          { href: "/admin/inquiries", label: "Inquiries" },
+          { href: "/approvals", label: "Approvals", group: "Review" },
+          { href: "/reports", label: "Reports", group: "Review" },
+          { href: "/alerts", label: "Monitoring", group: "Review" },
+          { href: "/admin/inquiries", label: "Inquiries", group: "Review" },
         ]
       : []),
-    ...(admin ? [{ href: "/users", label: "Users" }] : []),
+    ...(admin
+      ? [
+          { href: "/users", label: "Users", group: "Admin" },
+          { href: "/admin/settings", label: "Settings", group: "Admin" },
+        ]
+      : []),
   ];
+
+  const logo = (
+    <Link href="/" className="flex shrink-0 items-center gap-1 font-semibold text-pine" aria-label="Plantiful home">
+      <Image
+        src="/plantiful_logo.png"
+        alt="Plantiful logo"
+        width={592}
+        height={421}
+        className="h-9 w-auto object-contain"
+        priority
+      />
+      <span className="text-xl tracking-tight">plantiful<span className="text-emerald">.</span></span>
+    </Link>
+  );
+
+  const page = (
+    <>
+      <main id="main-content" className="site-content flex flex-1 flex-col">{children}</main>
+      <footer className="site-footer">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-6 px-6">
+          <div><p className="text-2xl font-semibold tracking-tight">A little closer to nature.</p><p className="mt-2 text-sm text-sprout/75">Plantiful · Niah National Park, Sarawak</p></div>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href="/learn" className="text-sm font-semibold text-sprout/80 transition-colors hover:text-chartreuse">Learn and Q&amp;A</Link>
+            <Link href="/explore" className="rounded-full bg-chartreuse px-6 py-3 text-sm font-semibold text-pine">Explore the plant guide ↗</Link>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
 
   return (
     <html
@@ -61,32 +95,26 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <ThemeProvider>
           <InteractionLogger />
           <a href="#main-content" className="skip-link">Skip to content</a>
-          <header className="site-header">
-            <div className="site-header-inner">
-              <Link href="/" className="flex shrink-0 items-center gap-1 font-semibold text-pine" aria-label="Plantiful home">
-                <Image
-                  src="/plantiful_logo.png"
-                  alt="Plantiful logo"
-                  width={592}
-                  height={421}
-                  className="h-9 w-auto object-contain"
-                  priority
-                />
-                <span className="text-xl tracking-tight">plantiful<span className="text-emerald">.</span></span>
-              </Link>
-              <SiteNav links={navLinks} />
+          {admin ? (
+            // Admins get a side bar, because they have the most links.
+            <div className="admin-shell">
+              <aside className="admin-sidebar">
+                {logo}
+                <SiteNav links={navLinks} variant="sidebar" />
+              </aside>
+              <div className="admin-page">{page}</div>
             </div>
-          </header>
-          <main id="main-content" className="site-content flex flex-1 flex-col">{children}</main>
-          <footer className="site-footer">
-            <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-6 px-6">
-              <div><p className="text-2xl font-semibold tracking-tight">A little closer to nature.</p><p className="mt-2 text-sm text-sprout/75">Plantiful · Niah National Park, Sarawak</p></div>
-              <div className="flex flex-wrap items-center gap-4">
-                <Link href="/learn" className="text-sm font-semibold text-sprout/80 transition-colors hover:text-chartreuse">Learn and Q&amp;A</Link>
-                <Link href="/explore" className="rounded-full bg-chartreuse px-6 py-3 text-sm font-semibold text-pine">Explore the plant guide ↗</Link>
-              </div>
-            </div>
-          </footer>
+          ) : (
+            <>
+              <header className="site-header">
+                <div className="site-header-inner">
+                  {logo}
+                  <SiteNav links={navLinks} />
+                </div>
+              </header>
+              {page}
+            </>
+          )}
         </ThemeProvider>
       </body>
     </html>

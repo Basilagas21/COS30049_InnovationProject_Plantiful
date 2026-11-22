@@ -98,7 +98,7 @@ export default async function RecordDetailPage({
                     : "Rejected"}
               </span>
             )}
-            <h1 className="mt-3 text-4xl font-bold tracking-tight text-pine">
+            <h1 className="heading-accent mt-3 text-4xl font-bold tracking-tight">
               {record.scientificName}
             </h1>
             <p className="mt-1 text-lg italic text-moss">{record.commonName}</p>

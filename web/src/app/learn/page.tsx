@@ -4,6 +4,9 @@ import {
   conservationStatusGuide,
   visitorPlantQuestions,
 } from "@/lib/plant-learning";
+import { ParticleField } from "@/components/particle-field";
+import { Reveal } from "@/components/reveal";
+import { StickySpotlight } from "@/components/sticky-spotlight";
 
 export const metadata: Metadata = {
   title: "Learn about Niah's plants | Plantiful",
@@ -37,12 +40,13 @@ export default function LearnPage() {
           className="absolute inset-0 -z-20 h-full w-full object-cover"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0c342c] via-[#0c342c]/95 to-[#0c342c]/55" />
+        <ParticleField density="soft" />
 
         <div className="relative max-w-3xl p-8 sm:p-12">
           <span className="inline-flex rounded-full bg-[#e3ef26] px-3 py-1 text-sm font-semibold text-[#0c342c]">
             Visitor learning guide
           </span>
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="heading-accent mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
             Learn about Niah&apos;s plants
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[#e2fbce]">
@@ -52,7 +56,7 @@ export default function LearnPage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/explore"
-              className="rounded-full bg-[#e3ef26] px-6 py-3 text-sm font-semibold text-[#0c342c] transition-colors hover:bg-[#e2fbce]"
+              className="btn-glow rounded-full bg-[#e3ef26] px-6 py-3 text-sm font-semibold text-[#0c342c] transition-colors hover:bg-[#e2fbce]"
             >
               Explore the catalogue
             </Link>
@@ -67,8 +71,8 @@ export default function LearnPage() {
       </section>
 
       <section className="mt-12">
-        <p className="eyebrow text-emerald">Visitor Q&amp;A</p>
-        <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
+        <p className="eyebrow-badge eyebrow-badge-emerald">Visitor Q&amp;A</p>
+        <h2 className="heading-accent mt-2 text-3xl font-semibold tracking-tight">
           Common questions
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-moss">
@@ -95,8 +99,8 @@ export default function LearnPage() {
       </section>
 
       <section className="mt-12">
-        <p className="eyebrow text-emerald">Conservation status</p>
-        <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
+        <p className="eyebrow-badge eyebrow-badge-chartreuse">Conservation status</p>
+        <h2 className="heading-accent mt-2 text-3xl font-semibold tracking-tight">
           What the labels mean
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-moss">
@@ -119,22 +123,48 @@ export default function LearnPage() {
         </div>
       </section>
 
-      <section className="mt-12 rounded-3xl border border-pine/10 bg-sprout/60 p-6 sm:p-8">
-        <p className="eyebrow text-emerald">Using the guide</p>
-        <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
-          How to read a species page
-        </h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {speciesPageTips.map((tip, index) => (
-            <div key={tip.title} className="rounded-2xl bg-white p-5">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-sprout text-xs font-bold text-emerald">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <h3 className="mt-4 font-semibold text-pine">{tip.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-moss">{tip.body}</p>
-            </div>
-          ))}
+      <section id="using-the-guide" className="mt-12 scroll-mt-24 rounded-3xl border border-pine/10 bg-sprout/60 p-6 sm:p-8">
+        <div className="lg:hidden">
+          <p className="eyebrow-badge eyebrow-badge-sprout">Using the guide</p>
+          <h2 className="heading-accent mt-2 text-3xl font-semibold tracking-tight">
+            How to read a species page
+          </h2>
         </div>
+
+        <div className="spotlight-desktop-wrap mt-6 hidden lg:block">
+          <StickySpotlight
+            facts={speciesPageTips}
+            bgImage="/images/home/hornbill.jpeg"
+            header={
+              <>
+                <p className="eyebrow-badge eyebrow-badge-sprout">Using the guide</p>
+                <h2 className="heading-accent font-semibold tracking-tight">
+                  How to read a species page
+                </h2>
+              </>
+            }
+          />
+        </div>
+
+        <div className="spotlight-mobile-wrap relative mt-6 overflow-hidden rounded-3xl p-4 lg:hidden">
+          <ParticleField />
+          <Reveal className="relative grid gap-4 reveal-stagger" spotlight>
+            {speciesPageTips.map((tip, index) => (
+              <div
+                key={tip.title}
+                data-active-card
+                className="scroll-spotlight rounded-2xl bg-white p-5"
+              >
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-sprout text-xs font-bold text-emerald">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className="heading-accent mt-4 font-semibold">{tip.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-moss">{tip.body}</p>
+              </div>
+            ))}
+          </Reveal>
+        </div>
+
         <Link
           href="/explore"
           className="mt-6 inline-flex text-sm font-semibold text-emerald hover:underline"

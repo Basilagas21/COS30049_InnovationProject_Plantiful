@@ -85,7 +85,7 @@ export default function ProfilePage() {
             height={421}
             className="h-14 w-auto object-contain"
           />
-          <h1 className="mt-5 text-2xl font-bold tracking-tight text-pine">
+          <h1 className="heading-accent mt-5 text-2xl font-bold tracking-tight">
             Your profile
           </h1>
           <p className="mt-1 text-sm text-moss">
@@ -113,7 +113,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-6 py-12">
-      <h1 className="text-3xl font-bold tracking-tight text-pine sm:text-4xl">
+      <h1 className="heading-accent text-3xl font-bold tracking-tight sm:text-4xl">
         Profile
       </h1>
 

@@ -52,7 +52,7 @@ export default function ChangePasswordPage() {
         <Link href="/profile" className="text-sm font-medium text-emerald hover:underline">
           ← Back to profile
         </Link>
-        <h1 className="mt-4 text-2xl font-bold tracking-tight text-pine">
+        <h1 className="heading-accent mt-4 text-2xl font-bold tracking-tight">
           Change password
         </h1>
         <p className="mt-1 text-sm text-moss">

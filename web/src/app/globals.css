@@ -480,6 +480,528 @@ body {
   .plantiful-loader-orbit-two::before { width: .65rem; height: .65rem; margin-left: -.325rem; }
 }
 
+/* ---------------------------------------------------------------------
+   Motion/color polish ported from visitor-site: fade-in reveals, a
+   scroll-spotlight dim/brighten effect, floating particles, a pinned
+   scrollytelling spotlight section, sitewide pointer-tilt, a pulsing CTA
+   glow, gradient heading accents, and colorful pill-badge eyebrows. All
+   keyed off the existing --chartreuse/--emerald/--pine variables above,
+   so it reads correctly in both light and dark theme automatically.
+   ------------------------------------------------------------------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal-stagger.reveal-visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger.reveal-visible > *:nth-child(1) { transition-delay: 0.02s; }
+.reveal-stagger.reveal-visible > *:nth-child(2) { transition-delay: 0.1s; }
+.reveal-stagger.reveal-visible > *:nth-child(3) { transition-delay: 0.18s; }
+.reveal-stagger.reveal-visible > *:nth-child(4) { transition-delay: 0.26s; }
+.reveal-stagger.reveal-visible > *:nth-child(5) { transition-delay: 0.34s; }
+.reveal-stagger.reveal-visible > *:nth-child(6) { transition-delay: 0.42s; }
+.reveal-stagger.reveal-visible > *:nth-child(n + 7) { transition-delay: 0.48s; }
+
+/* Scroll-spotlight: cards dim to ~55% opacity (and shrink slightly) by
+   default, then light back up to full strength while the card sits near
+   the vertical center of the viewport. Driven by Reveal's optional
+   `spotlight` prop. */
+.scroll-spotlight {
+  opacity: 0.55;
+  transform: scale(0.97);
+  transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.scroll-spotlight.is-spotlight-active {
+  opacity: 1;
+  transform: scale(1);
+  box-shadow: 0 20px 44px color-mix(in srgb, var(--shadow) 16%, transparent);
+  border-color: color-mix(in srgb, var(--emerald) 35%, transparent);
+}
+.scroll-spotlight-soft {
+  opacity: 0.6;
+  transition: opacity 0.4s ease;
+}
+.scroll-spotlight-soft.is-spotlight-active,
+.scroll-spotlight-soft[open] {
+  opacity: 1;
+}
+
+/* Floating particle field: a handful of soft glowing dots drifting
+   slowly behind a section, used as background texture (see
+   ParticleField component). Purely decorative; needs a `position:
+   relative` ancestor, which every section using it provides. */
+.particle-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--chartreuse) 75%, transparent), transparent 70%);
+  filter: blur(1px);
+  animation-name: particle-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.particle-field-soft .particle {
+  opacity: 0.3;
+}
+.particle-field-full .particle {
+  opacity: 0.55;
+}
+@keyframes particle-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(8px, -22px, 0);
+  }
+}
+
+/* Sticky spotlight: a pinned, center-card-highlighted scrollytelling
+   treatment (see StickySpotlight component). .spotlight-scroller is made
+   tall in JS (facts.length * 80vh) purely to give the browser real
+   scroll distance to pin against; .spotlight-sticky is the part that
+   actually stays fixed on screen while that happens. */
+.spotlight-scroller {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding: 0 1.5rem;
+}
+.spotlight-step {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 80vh;
+}
+.spotlight-sticky {
+  position: sticky;
+  top: 5.5rem;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 9rem);
+  max-height: 38rem;
+  overflow: hidden;
+  border-radius: 2rem;
+  background: linear-gradient(160deg, #0c342c, #0a241f 65%, #071a16);
+  /* This panel is a deliberately fixed dark "theater" surface regardless
+     of the app's own light/dark theme toggle, so its text color is fixed
+     too rather than inherited (which would go dark-on-dark in light
+     theme). */
+  color: #fffdee;
+  isolation: isolate;
+}
+.spotlight-header {
+  position: relative;
+  z-index: 2;
+  padding: 1.75rem 2.5rem 0.5rem;
+}
+.spotlight-header .eyebrow {
+  font-size: 0.7rem;
+}
+.spotlight-header h2 {
+  margin-top: 0.35rem;
+  font-size: 1.6rem;
+}
+.spotlight-header p {
+  margin-top: 0.4rem;
+  max-width: 42rem;
+  font-size: 0.85rem;
+  color: #e2fbce;
+}
+.spotlight-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.spotlight-photo-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.spotlight-photo-img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.spotlight-photo-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(12, 52, 44, 0.8),
+    rgba(10, 36, 31, 0.68) 55%,
+    rgba(7, 26, 22, 0.85)
+  );
+}
+.spotlight-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, #fffdee 30%, transparent);
+  background: color-mix(in srgb, #0c342c 80%, transparent);
+  color: #fffdee;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transform: translateY(-50%);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+.spotlight-arrow:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--chartreuse) 85%, transparent);
+  color: #0c342c;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--chartreuse) 18%, transparent);
+  transform: translateY(-50%) scale(1.08);
+}
+.spotlight-arrow:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.spotlight-arrow-left {
+  left: 1rem;
+}
+.spotlight-arrow-right {
+  right: 1rem;
+}
+.spotlight-cards {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+.spotlight-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(32rem, 88%);
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: #fffdee;
+  color: #0c342c;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.6s ease;
+}
+.spotlight-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.5) 50%, transparent 60%);
+  transform: translateX(-130%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.spotlight-card:hover::after {
+  transform: translateX(130%);
+}
+.spotlight-card-tilt {
+  padding: 2.25rem 2.5rem;
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 0.15s ease-out;
+}
+.spotlight-card h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+.spotlight-card p {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #3f564c;
+}
+.spotlight-card.is-active {
+  box-shadow: 0 34px 70px rgba(0, 0, 0, 0.4);
+}
+@media (max-width: 640px) {
+  .spotlight-card-tilt {
+    padding: 1.5rem 1.5rem;
+  }
+}
+
+/* Sitewide pointer-tilt: any element marked data-tilt tracks the pointer
+   and tilts in 3D toward it (see tilt-init.tsx). */
+[data-tilt] {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 0.15s ease-out;
+}
+
+/* Pulsing glow ring for the site's primary calls to action — layered on
+   top of any existing hover treatment. */
+@keyframes btn-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--chartreuse) 55%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--chartreuse) 0%, transparent);
+  }
+}
+.btn-glow {
+  animation: btn-glow-pulse 2.4s ease-in-out infinite;
+}
+
+/* A little color on major headings instead of one flat text color — a
+   soft brand-gradient clipped to the letters themselves. */
+.heading-accent {
+  background: linear-gradient(100deg, var(--chartreuse) 0%, var(--emerald) 55%, var(--chartreuse) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* Same idea, for headings that sit on a literal light card (the
+   spotlight fact cards) regardless of site theme. */
+.heading-accent-dark {
+  background: linear-gradient(100deg, #076653 0%, #b08900 55%, #076653 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Colorful pill-badge eyebrow variant for spots that want more visual
+   pop than the plain small-caps .eyebrow label used elsewhere. */
+.eyebrow-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.eyebrow-badge-chartreuse {
+  background: color-mix(in srgb, var(--chartreuse) 22%, transparent);
+  color: var(--emerald);
+}
+.eyebrow-badge-emerald {
+  background: color-mix(in srgb, var(--emerald) 20%, transparent);
+  color: var(--emerald);
+}
+.eyebrow-badge-sprout {
+  background: color-mix(in srgb, var(--sprout) 55%, transparent);
+  color: var(--pine);
+}
+
+/* Soft, slowly drifting color blobs used as background decoration behind
+   a photo frame — purely for a bit of extra color, aria-hidden. */
+@keyframes blob-drift {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(10px, -14px) scale(1.08);
+  }
+}
+.color-blob {
+  position: absolute;
+  width: 55%;
+  height: 55%;
+  border-radius: 50%;
+  filter: blur(36px);
+  opacity: 0.6;
+  animation: blob-drift 9s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+.color-blob-chartreuse {
+  background: color-mix(in srgb, var(--chartreuse) 55%, transparent);
+}
+.color-blob-emerald {
+  background: color-mix(in srgb, var(--emerald) 55%, transparent);
+  animation-delay: -4.5s;
+}
+
+/* New sitewide footer: multi-column, with a back-to-top pill, a small
+   quick-link dot nav, and a glow CTA pill. */
+.site-footer-expanded {
+  position: relative;
+  padding: 2.75rem 0 2.5rem;
+}
+.footer-top-row {
+  display: flex;
+  justify-content: center;
+}
+.footer-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--footer-text) 35%, transparent);
+  padding: 0.55rem 1.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--footer-text);
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+.footer-top-btn:hover {
+  background: color-mix(in srgb, var(--footer-text) 12%, transparent);
+  transform: translateY(-2px);
+}
+.footer-columns {
+  margin: 2.5rem 0 0;
+  display: grid;
+  gap: 2rem 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 1024px) {
+  .footer-columns {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding-right: 8rem;
+  }
+}
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.footer-col-heading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--chartreuse) 85%, var(--footer-text) 15%);
+  margin-bottom: 0.15rem;
+}
+.footer-col a {
+  width: fit-content;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--footer-text) 85%, transparent);
+  transition: color 0.2s ease;
+}
+.footer-col a:hover {
+  color: var(--chartreuse);
+}
+.footer-side-nav {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .footer-side-nav {
+    position: absolute;
+    right: 2rem;
+    top: 3.25rem;
+    bottom: 7rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+}
+.footer-dot-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--footer-text) 8%, transparent);
+}
+.footer-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--footer-text) 35%, transparent);
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+.footer-dot:hover {
+  background: color-mix(in srgb, var(--chartreuse) 70%, var(--footer-text) 30%);
+}
+.footer-dot.is-active {
+  background: var(--chartreuse);
+  transform: scale(1.35);
+}
+.footer-pill-cta {
+  white-space: nowrap;
+}
+.footer-tagline {
+  margin-top: 2.75rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--footer-text) 14%, transparent);
+}
+.footer-tagline-main {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.footer-tagline-sub {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+@media (min-width: 640px) {
+  .footer-tagline-main {
+    font-size: 1.6rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* A couple of our new classes rely on an *animation* (not a transition)
+   to reach their visible end-state, so the blanket rule above — which
+   removes animations outright — would otherwise leave them stuck at
+   their invisible starting frame. These restore a static, fully visible
+   fallback. Scroll-jacking a pinned, multi-viewport-tall section is also
+   disorienting on its own, not just "animated", so it's hidden outright
+   in favor of the plain stacked fallback. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal-stagger > * {
+    opacity: 1;
+    transform: none;
+  }
+  .scroll-spotlight {
+    opacity: 1;
+    transform: none;
+    box-shadow: none;
+  }
+  .scroll-spotlight-soft {
+    opacity: 1;
+  }
+  .spotlight-desktop-wrap {
+    display: none !important;
+  }
+  .spotlight-mobile-wrap {
+    display: block !important;
+  }
 }

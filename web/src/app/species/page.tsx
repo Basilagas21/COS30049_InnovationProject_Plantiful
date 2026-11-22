@@ -14,7 +14,7 @@ export default async function SpeciesPage() {
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-pine sm:text-4xl">
+          <h1 className="heading-accent text-3xl font-bold tracking-tight sm:text-4xl">
             Species catalogue
           </h1>
           <p className="mt-2 text-moss">

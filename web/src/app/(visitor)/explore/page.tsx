@@ -5,7 +5,9 @@ import {
   isThreatenedStatus,
 } from "@/lib/species-taxonomy";
 import { visitorPlantQuestions } from "@/lib/plant-learning";
-import { SpeciesBrowser } from "@/components/species-browser";
+import { ParticleField } from "@/components/particle-field";
+import { Reveal } from "@/components/reveal";
+import { StickySpotlight } from "@/components/sticky-spotlight";
 
 function formatUpdated(value: string | null): string {
   if (!value) return "Not yet";
@@ -79,13 +81,14 @@ export default async function ExplorePage() {
           className="absolute inset-0 -z-20 h-full w-full object-cover"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0c342c] via-[#0c342c]/90 to-[#0c342c]/30" />
+        <ParticleField density="soft" />
 
         <div className="relative grid gap-10 p-8 sm:p-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
             <span className="inline-flex rounded-full bg-[#e3ef26] px-3 py-1 text-sm font-semibold text-[#0c342c]">
               Public plant guide
             </span>
-            <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="heading-accent mt-5 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
               Explore Niah&apos;s plants
             </h1>
             <p className="mt-4 max-w-xl text-base leading-7 text-[#e2fbce]">
@@ -95,12 +98,12 @@ export default async function ExplorePage() {
               publication.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="#catalogue"
-                className="rounded-full bg-[#e3ef26] px-6 py-3 text-sm font-semibold text-[#0c342c] transition-colors hover:bg-[#e2fbce]"
+              <Link
+                href="/species"
+                className="btn-glow rounded-full bg-[#e3ef26] px-6 py-3 text-sm font-semibold text-[#0c342c] transition-colors hover:bg-[#e2fbce]"
               >
                 Browse the catalogue
-              </a>
+              </Link>
               <Link
                 href="/map"
                 className="rounded-full border border-white/30 px-6 py-3 text-sm font-medium text-[#fffdee] transition-colors hover:bg-white/10"
@@ -182,26 +185,54 @@ export default async function ExplorePage() {
         ))}
       </div>
 
-      <section className="mt-10 grid gap-4 md:grid-cols-3">
-        {steps.map((step) => (
-          <div
-            key={step.step}
-            className="rounded-2xl border border-pine/10 bg-white p-5"
-          >
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-sprout text-xs font-bold text-emerald">
-              {step.step}
-            </span>
-            <h2 className="mt-4 font-semibold text-pine">{step.title}</h2>
-            <p className="mt-2 text-sm leading-6 text-moss">{step.body}</p>
-          </div>
-        ))}
+      <section id="how-it-works" className="mt-10 scroll-mt-24">
+        <div className="lg:hidden">
+          <p className="eyebrow text-emerald">How a record gets published</p>
+          <h2 className="heading-accent mt-2 text-3xl font-semibold tracking-tight">
+            From field capture to public record
+          </h2>
+        </div>
+
+        <div className="spotlight-desktop-wrap mt-6 hidden lg:block">
+          <StickySpotlight
+            facts={steps.map((step) => ({ title: step.title, body: step.body }))}
+            bgImage="/images/home/orangutan.jpeg"
+            header={
+              <>
+                <p className="eyebrow text-emerald">How a record gets published</p>
+                <h2 className="heading-accent font-semibold tracking-tight">
+                  From field capture to public record
+                </h2>
+              </>
+            }
+          />
+        </div>
+
+        <div className="spotlight-mobile-wrap relative mt-6 overflow-hidden rounded-3xl p-4 lg:hidden">
+          <ParticleField />
+          <Reveal className="relative grid gap-4 reveal-stagger" spotlight>
+            {steps.map((step) => (
+              <div
+                key={step.step}
+                data-active-card
+                className="scroll-spotlight rounded-2xl border border-pine/10 bg-white p-5"
+              >
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-sprout text-xs font-bold text-emerald">
+                  {step.step}
+                </span>
+                <h3 className="heading-accent mt-4 font-semibold">{step.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-moss">{step.body}</p>
+              </div>
+            ))}
+          </Reveal>
+        </div>
       </section>
 
       <section className="mt-10 rounded-3xl border border-pine/10 bg-sprout/60 p-6 sm:p-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="eyebrow text-emerald">Visitor Q&amp;A</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-pine">
+            <p className="eyebrow-badge eyebrow-badge-sprout">Visitor Q&amp;A</p>
+            <h2 className="heading-accent mt-2 text-2xl font-semibold tracking-tight">
               Questions visitors often ask
             </h2>
           </div>
@@ -223,23 +254,31 @@ export default async function ExplorePage() {
         </div>
       </section>
 
-      <section id="catalogue" className="mt-12 scroll-mt-24">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="eyebrow text-emerald">Published catalogue</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-pine">
-              Browse the plant guide
-            </h2>
-          </div>
+      <section className="mt-12 rounded-3xl border border-pine/10 bg-white p-6 sm:p-8">
+        <p className="eyebrow text-emerald">Published catalogue</p>
+        <h2 className="heading-accent mt-2 text-3xl font-semibold tracking-tight">
+          Browse the plant guide
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-moss">
+          Every species shown here has been through the officer review
+          process above. Search by name, filter by family or conservation
+          status, and open a full profile for each one on the species
+          catalogue.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            href="/species"
+            className="btn-glow inline-flex rounded-full bg-emerald px-6 py-3 text-sm font-semibold text-cream transition-colors hover:bg-pine"
+          >
+            Open the species catalogue →
+          </Link>
           <Link
             href="/records"
-            className="text-sm font-semibold text-emerald hover:underline"
+            className="inline-flex rounded-full border border-pine/15 px-6 py-3 text-sm font-medium text-pine transition-colors hover:bg-sprout/60"
           >
             Explore verified observations →
           </Link>
         </div>
-
-        <SpeciesBrowser species={species} officer={false} visitor />
       </section>
     </div>
   );

@@ -51,7 +51,7 @@ export default function SignInPage() {
           height={421}
           className="h-14 w-auto object-contain"
         />
-        <h1 className="mt-5 text-2xl font-bold tracking-tight text-pine">
+        <h1 className="heading-accent mt-5 text-2xl font-bold tracking-tight">
           Sign in to Plantiful
         </h1>
         <p className="mt-1 text-sm text-moss">

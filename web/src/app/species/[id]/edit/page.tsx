@@ -20,7 +20,7 @@ export default async function EditSpeciesPage({
       <Link href={`/species/${id}`} className="text-sm font-medium text-emerald hover:underline">
         ← Back to {entry.scientificName}
       </Link>
-      <h1 className="mt-4 text-3xl font-bold tracking-tight text-pine sm:text-4xl">
+      <h1 className="heading-accent mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
         Edit species
       </h1>
       <p className="mt-2 text-moss">

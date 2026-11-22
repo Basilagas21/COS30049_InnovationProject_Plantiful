@@ -21,7 +21,7 @@ export default async function ReportsPage() {
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-pine sm:text-4xl">
+        <h1 className="heading-accent text-3xl font-bold tracking-tight sm:text-4xl">
           Reports
         </h1>
         <p className="mt-2 text-moss">

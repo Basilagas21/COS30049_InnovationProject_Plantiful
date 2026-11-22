@@ -79,7 +79,7 @@ export function MonitoringDashboard() {
 
   return <div className="monitor-workspace mx-auto w-full max-w-[90rem] px-4 py-8 sm:px-8 lg:py-12">
     <header className="flex flex-wrap items-end justify-between gap-5">
-      <div><p className="eyebrow text-emerald">Plantiful / Field intelligence</p><h1 className="mt-3 font-semibold">Plant monitoring</h1><p className="mt-3 max-w-xl text-sm leading-relaxed text-moss">A closer look at the conditions around your plants. Environmental readings, field activity and threat alerts in one place.</p></div>
+      <div><p className="eyebrow text-emerald">Plantiful / Field intelligence</p><h1 className="heading-accent mt-3 font-semibold">Plant monitoring</h1><p className="mt-3 max-w-xl text-sm leading-relaxed text-moss">A closer look at the conditions around your plants. Environmental readings, field activity and threat alerts in one place.</p></div>
       <div className="flex flex-wrap items-center gap-3">
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={auto} onChange={(e) => setAuto(e.target.checked)} className="accent-emerald" />Auto-refresh</label>
         <button onClick={() => setRefresh((n) => n + 1)} disabled={live.busy || history.busy} className="rounded-full bg-pine px-5 py-3 text-sm font-medium text-cream disabled:opacity-50">{live.busy ? "Checking…" : "Refresh now ↻"}</button>

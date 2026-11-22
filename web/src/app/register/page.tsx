@@ -108,7 +108,7 @@ export default function RegisterPage() {
           className="mx-auto mt-0 w-44"
           priority
         />
-        <h1 className="mt-6 text-2xl font-bold tracking-tight text-pine">
+        <h1 className="heading-accent mt-6 text-2xl font-bold tracking-tight">
           Create your account
         </h1>
         <p className="mt-1 text-sm text-moss">

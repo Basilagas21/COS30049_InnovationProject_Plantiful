@@ -33,7 +33,7 @@ export default async function SpeciesDetailPage({
             >
               {entry.isPublished ? "Published" : "Unpublished"}
             </span>
-            <h1 className="mt-3 text-4xl font-bold tracking-tight text-pine italic">
+            <h1 className="heading-accent mt-3 text-4xl font-bold tracking-tight italic">
               {entry.scientificName}
             </h1>
             {entry.commonName && (

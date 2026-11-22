@@ -321,7 +321,7 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
           ))}
         </div>
 
-        {visitor && totalPages > 1 && (
+        {visitor && (
           <div className="species-browser-pagination">
             <span className="species-browser-pageof">
               Page {safePage} of {totalPages}

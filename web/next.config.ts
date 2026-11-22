@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   allowedDevOrigins: ["127.0.0.1", "localhost", "169.254.*.*", "192.168.*.*", "*.app.github.dev"],
   experimental: {
+    // Next.js agent-driven security upgrade (16.4.3 -> 16.4.6).
+    agentUpgrade: "security",
     // GitHub Codespaces forwards requests through *.app.github.dev,
     // which trips the Server Actions origin check.
     serverActions: {

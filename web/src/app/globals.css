@@ -471,7 +471,7 @@ body:has(.home-canopy) .brand:hover .brand-dot { animation: dot-glow .9s ease-in
 
 /* Shared section head (Q&A and catalogue): the heading carries its own weight. */
 .explore-section { margin-top: clamp(2.5rem, 6vw, 4.5rem); }
-.explore-section-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+.explore-section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 1rem; }
 .explore-section-title {
   font-family: var(--font-bricolage), var(--font-public), sans-serif;
   font-size: clamp(1.7rem, 3vw, 2.4rem);

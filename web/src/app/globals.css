@@ -557,7 +557,7 @@ select.field-input {
   .explore-v2-hero-grid { grid-template-columns: 1fr; }
   .explore-v2-hero-scrim { background: linear-gradient(180deg, #0c342cf2 0%, #0c342cd9 55%, #0c342c99 100%); }
 }
-.explore-v2-catalogue { scroll-margin-top: var(--header-h); flex: 1; display: flex; flex-direction: column; align-items: center; padding: calc(clamp(2.5rem, 5vh, 4rem) - clamp(1.5rem, 3vh, 2.25rem)) clamp(1.5rem, 6vw, 5.5rem) 0; }
+.explore-v2-catalogue { scroll-margin-top: var(--header-h); flex: 1; display: flex; flex-direction: column; align-items: center; padding: clamp(2.5rem, 5vh, 4rem) clamp(1.5rem, 6vw, 5.5rem) 0; }
 .explore-v2-secondary { padding: clamp(2.5rem, 5vh, 4rem) clamp(1.5rem, 6vw, 5.5rem) clamp(2.5rem, 5vh, 4rem); }
 .explore-v2-secondary-inner { max-width: 96rem; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(2.5rem, 5vh, 4rem); }
 .explore-v2-steps-row { margin-top: 1.75rem; }

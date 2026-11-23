@@ -550,7 +550,7 @@ select.field-input {
 .explore-v2-hero-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(100deg, #0c342cf2 0%, #0c342ce6 38%, #0c342c99 68%, #0c342c66 100%); }
 .explore-v2-hero-grid { position: relative; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(2rem, 4vw, 3.5rem); align-items: stretch; max-width: 96rem; margin: 0 auto; }
 .explore-v2-hero-left { min-width: 0; }
-.explore-v2-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 680; line-height: 1.04; letter-spacing: -0.03em; text-wrap: balance; }
+.explore-v2-title { font-family: var(--font-bricolage), var(--font-public), sans-serif; font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 680; line-height: 1.04; letter-spacing: -0.03em; text-wrap: balance; background: linear-gradient(100deg, #d7e82a 0%, #6fd6b0 55%, #d7e82a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .explore-v2-lede { margin-top: 0.9rem; max-width: 46ch; font-size: 0.98rem; line-height: 1.6; color: #e2fbce; text-wrap: pretty; }
 .explore-v2-actions { margin-top: 1.3rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; max-width: 33rem; }
 @media (max-width: 767px) { .explore-v2-actions { grid-template-columns: 1fr; max-width: none; } }
@@ -958,6 +958,32 @@ select.field-input {
 @keyframes star-twinkle { 0%, 100% { opacity: .25; } 50% { opacity: .95; } }
 @keyframes mist-drift { 0%, 100% { transform: translateX(-3%); } 50% { transform: translateX(3%); } }
 @keyframes firefly-rise { 0% { opacity: 0; transform: translate(0, 0); } 12% { opacity: .9; } 88% { opacity: .5; } 100% { opacity: 0; transform: translate(var(--fx, 20px), -55svh); } }
+
+/* ===== Gradient headings ===== */
+.heading-accent {
+  background: linear-gradient(100deg, #076653 0%, #0d9488 50%, #076653 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+[data-theme="dark"] .heading-accent {
+  background: linear-gradient(100deg, #d7e82a 0%, #6fd6b0 55%, #d7e82a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.heading-accent-night {
+  background: linear-gradient(100deg, #d7e82a 0%, #6fd6b0 55%, #d7e82a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.heading-accent-dark {
+  background: linear-gradient(100deg, #076653 0%, #8a6d00 55%, #076653 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
 /* ===== Monitor workspace (unchanged) ===== */
 .monitor-workspace { background: radial-gradient(ellipse at 95% 20%, color-mix(in srgb, var(--sprout) 33%, transparent), transparent 55%); }

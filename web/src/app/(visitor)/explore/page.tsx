@@ -79,7 +79,7 @@ export default async function ExplorePage() {
           <div className="explore-v2-hero-grid">
             <div className="explore-v2-hero-left">
               <h1 className="explore-v2-title">
-                Explore <span className="explore-accent">Niah&apos;s</span> plants
+                Explore Niah&apos;s plants
               </h1>
               <p className="explore-v2-lede">
                 A public reference to the published species catalogue of Niah
@@ -152,7 +152,7 @@ export default async function ExplorePage() {
           className="explore-v2-catalogue"
         >
           <div className="explore-section-head explore-v2-catalogue-head">
-            <h2 className="explore-section-title">Browse the plant guide</h2>
+            <h2 className="explore-section-title heading-accent">Browse the plant guide</h2>
             <Link href="/records" className="explore-section-link">
               Explore verified observations <Arrow direction="right" size="1em" />
             </Link>
@@ -164,7 +164,7 @@ export default async function ExplorePage() {
       <section className="explore-v2-secondary">
         <div className="explore-v2-secondary-inner">
           <div className="explore-v2-steps">
-            <h2 className="explore-section-title">How a record becomes public</h2>
+            <h2 className="explore-section-title heading-accent">How a record becomes public</h2>
             <div className="explore-steps explore-v2-steps-row">
               {steps.map((step) => (
                 <div key={step.step} className="explore-step">
@@ -178,7 +178,7 @@ export default async function ExplorePage() {
 
           <div className="explore-v2-qa">
             <div className="explore-section-head">
-              <h2 className="explore-section-title">Questions visitors often ask</h2>
+              <h2 className="explore-section-title heading-accent">Questions visitors often ask</h2>
               <Link href="/learn" className="explore-section-link">
                 Read the learning guide <Arrow direction="right" size="1em" />
               </Link>

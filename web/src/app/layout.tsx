@@ -9,6 +9,7 @@ import { NavAuth } from "@/components/nav-auth";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { InteractionLogger } from "@/components/interaction-logger";
 import { SmoothScroll } from "@/components/home/smooth-scroll";
+import { TiltInit } from "@/components/tilt-init";
 import { FooterNatureParallax } from "@/components/home/footer-nature-parallax";
 import { ThemeProvider } from "@/lib/theme-provider";
 import "./globals.css";
@@ -134,6 +135,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-cream text-pine">
         <ThemeProvider>
           <SmoothScroll />
+          <TiltInit />
           <div className="site-grain" aria-hidden="true" />
           <InteractionLogger />
           <a href="#main-content" className="skip-link">Skip to content</a>

@@ -727,6 +727,7 @@ export function HomeContent({
               href={item.href}
               className="home-card home-reveal"
               style={{ "--reveal-i": i + 1 } as CSSProperties}
+              data-tilt
             >
               <Image
                 src={`/images/home/${item.image}`}

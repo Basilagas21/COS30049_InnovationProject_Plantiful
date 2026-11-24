@@ -6,7 +6,6 @@ import Link from "next/link";
 import { isOfficer, isAdmin } from "@/lib/auth";
 import { SiteNav } from "@/components/site-nav";
 import { NavAuth } from "@/components/nav-auth";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { InteractionLogger } from "@/components/interaction-logger";
 import { SmoothScroll } from "@/components/home/smooth-scroll";
 import { TiltInit } from "@/components/tilt-init";
@@ -159,7 +158,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </Link>
               <SiteNav links={navLinks} />
               <div className="header-account flex shrink-0 items-center justify-end">
-                <ThemeToggle />
                 <NavAuth />
               </div>
             </div>

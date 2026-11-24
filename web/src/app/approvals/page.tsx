@@ -117,7 +117,7 @@ export default async function ApprovalsPage() {
       )}
 
       {pending.length > 0 && (
-        <ul className="mt-8 space-y-4">
+        <ul className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
           {pending.map((row) => {
             const botanist = row.botanist_id
               ? namesById.get(row.botanist_id)

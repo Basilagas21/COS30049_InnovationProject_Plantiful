@@ -11,8 +11,14 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
 REQUIRED_ENV = ("SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY")
+ENV_ALIASES = {"NEXT_PUBLIC_SUPABASE_URL": "SUPABASE_URL"}
+ENV_FILES = (
+    Path(__file__).resolve().parent / ".env",
+    Path(__file__).resolve().parent.parent / "web" / ".env.local",
+)
 
 
 # HTTP statuses that mean the request itself is invalid (bad or conflicting
@@ -31,7 +37,26 @@ class SupabaseError(RuntimeError):
         return self.status not in PERMANENT_STATUSES
 
 
+def _load_env_file(path):
+    if not path.is_file():
+        return
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        name, value = line.split("=", 1)
+        name = name.strip()
+        if name.startswith("export "):
+            name = name[len("export "):].strip()
+        value = value.strip().strip('"').strip("'")
+        target = ENV_ALIASES.get(name, name)
+        if target in REQUIRED_ENV and value and not os.environ.get(target):
+            os.environ[target] = value
+
+
 def load_config():
+    for path in ENV_FILES:
+        _load_env_file(path)
     url = os.environ.get("SUPABASE_URL", "").rstrip("/")
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
     missing = [name for name in REQUIRED_ENV if not os.environ.get(name)]
@@ -39,9 +64,9 @@ def load_config():
         sys.exit(
             "Missing environment variable(s): "
             + ", ".join(missing)
-            + "\nSet SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY from "
-            "Supabase Dashboard > Project Settings > API "
-            "(see backend/.env.example). Never commit the service-role key."
+            + "\nSet SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in iot/.env "
+            "or web/.env.local, or export them in the terminal. "
+            "See backend/.env.example. Never commit the service-role key."
         )
     return url, key
 

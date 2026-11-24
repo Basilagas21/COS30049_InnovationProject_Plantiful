@@ -13,7 +13,9 @@
 
 ## Overview
 
-Plantiful is an integrated mobile and web platform that streamlines biodiversity documentation for Sarawak Forestry Corporation (SFC) at Niah National Park. Botanists scan QR-tagged plants and record species data offline in the field, and conservation officers manage, review, and publish that data through a centralised web knowledge system. An IoT monitoring layer records environmental conditions around monitored field sites and raises alerts that conservation officers review in the web dashboard. It can be fed either by a simulated publisher or by a real ESP32 sensor node over USB.
+Plantiful is an integrated mobile and web platform that streamlines biodiversity documentation for Sarawak Forestry Corporation (SFC) at Niah National Park. Botanists scan QR-tagged plants and record species data offline in the field. Conservation officers review, approve, and publish that data through a centralised web knowledge system. An IoT monitoring layer records environmental conditions around monitored field sites and raises alerts that officers review in the web dashboard.
+
+The platform can also run an optional AI Field Assist workflow. It requests plant-identification suggestions from Pl@ntNet or Kindwise, stores evidence privately, and keeps collector and officer decisions separate. AI suggestions never auto-approve a record and never auto-publish a species.
 
 **Industry partner:** NeuonAI (SFC's commercialisation partner)
 
@@ -32,14 +34,15 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 
 | Layer | Technology |
 |---|---|
-| Mobile | Expo SDK 58 with React Native 0.88 (offline-first, QR, GPS, camera) |
-| Web | Next.js 16.4.3, React 19 and Tailwind CSS 4 |
-| Backend & DB | Supabase (PostgreSQL, auth, storage, auto-generated APIs) |
-| Offline storage | SQLite (on-device) |
-| IoT | ESP32 sensor node (DHT11/PIR/soil/rain) → USB bridge or Python simulator → threat-rule evaluator → Supabase (`sensors`, `sensor_readings`, `alerts`) → officer alert dashboard |
+| Mobile | Expo SDK 58 with React Native 0.88.1 (offline-first, QR, GPS, camera, SQLite) |
+| Web | Next.js 16.4.6, React 19.2.8 and Tailwind CSS 4 |
+| Backend and database | Supabase (PostgreSQL, auth, storage, auto-generated APIs) |
+| Offline storage | SQLite on the device |
+| IoT | ESP32 sensor node (DHT11/PIR/soil/rain) to USB bridge or Python simulator to threat-rule evaluator to Supabase (`sensors`, `sensor_readings`, `alerts`) to officer alert dashboard |
+| AI Field Assist (optional) | Pl@ntNet or Kindwise through server-side adapters, private evidence archive and separate collector/officer decisions |
 | Security testing | OWASP ZAP |
-| Version control | Git + GitHub |
-| Hosting | Vercel / Render + Supabase |
+| Version control | Git and GitHub |
+| Hosting | Vercel or Render with Supabase |
 
 ## System Architecture
 
@@ -73,145 +76,212 @@ Plantiful is an integrated mobile and web platform that streamlines biodiversity
 
 ## Repository Structure
 
-```
+```text
 COS30049_InnovationProject_Plantiful/
-├── mobile/                ← React Native / Expo app (offline field data capture)
-│   └── src/app/           ← Expo Router screens (scan, capture, records, sync, profile)
-├── web/                   ← Next.js web knowledge system for conservation officers
-│   ├── scripts/           ← maintenance and evaluation scripts
-│   └── src/app/           ← App Router pages (explore, species, map, records, reports, alerts, profile)
-├── backend/
+├── mobile/                # React Native / Expo app (offline field capture)
+│   └── src/app/           # Expo Router screens (scan, capture, records, sync, profile)
+├── web/                   # Next.js web knowledge system
+│   ├── scripts/           # evaluation and maintenance scripts
+│   └── src/app/           # App Router pages (explore, species, map, records, reports, alerts, profile)
+├── backend/               # Supabase SQL and local checks (partly local-only)
 │   ├── supabase/
-│   │   ├── migrations/    ← 001_schema.sql + apply_project.sql (consolidated, idempotent); applied/ holds the 002–011 history
-│   │   ├── seed.sql       ← assigns officer/admin roles by email + sample species catalogue
-│   │   └── verification/  ← manual SQL checks for RLS, photo writes and monitoring history
-│   └── tests/local/       ← pgTAP and isolated AI Field Assist checks
-├── Ai/                    ← research notebooks, datasets, training and evaluation workspace
-├── iot/                   ← ESP32 firmware, USB bridge, simulated publisher + threat-rule evaluator (writes to Supabase)
+│   │   ├── migrations/    # 001_schema.sql, apply_project.sql (002-011), 012-014
+│   │   ├── seed.sql       # officer/admin roles and sample species
+│   │   └── verification/  # manual SQL checks for RLS, photo writes and monitoring history
+│   └── tests/local/       # pgTAP and isolated AI Field Assist checks
+├── Ai/                    # research notebooks, datasets, training and evaluation workspace
+├── iot/                   # ESP32 firmware, USB bridge, simulator and threat-rule evaluator
 ├── Docs/
-│   ├── README.md          ← single documentation index and filing conventions
-│   ├── Archive/           ← historical notes and superseded submission material
-│   ├── Assets/            ← shared logo, diagram images and QR tag samples
-│   ├── Design/            ← design proposals and optional workflows
-│   ├── Guides/            ← deployment and maintenance
-│   ├── Reports/           ← shared reports, Sprint1 and Sprint2 folders
-│   ├── Security/          ← local-only security pack (gitignored)
-│   ├── Templates/         ← reusable docx and md templates
-│   ├── Testing/           ← historical verification records
-│   └── Marking_Rubric.md  ← assessment reference
+│   ├── README.md          # documentation index and filing conventions
+│   ├── Archive/           # historical notes and superseded material
+│   ├── Assets/            # logo, diagrams and QR tag samples
+│   ├── Design/            # design proposals and optional workflows
+│   ├── Guides/            # deployment, maintenance and AI Field Assist guides
+│   ├── Reports/           # shared reports, Sprint 1 and Sprint 2 folders
+│   ├── Security/          # local-only security pack (gitignored)
+│   ├── Templates/         # reusable docx and markdown templates
+│   ├── Testing/           # historical verification records
+│   └── Marking_Rubric.md  # assessment reference
 ├── .gitignore
 └── README.md
 ```
 
-## How to Run
+`backend/supabase` and most local environment files are intentionally gitignored. A fresh clone may not contain the live database SQL or local environment examples. Ask the project owner for the current local backend bundle if you need to create a new Supabase project.
 
-### Prerequisites
+## Fresh Setup for a New User
 
-- Node.js 20+ and npm
-- The Expo Go app on a phone (Android or iOS), or an Android emulator
-- A Supabase project (free tier is enough) with the Project URL and anon key
+### 1. Prerequisites
 
-### 1. Configure environment
+- Node.js 20.9 or newer and npm
+- Python 3.10 or newer for the IoT scripts
+- Expo Go on an Android or iOS phone, or an Android emulator
+- Access to an existing Supabase project, or permission to create a new one
 
-Create these two files (both are git-ignored) with the Supabase Project URL and anon/publishable key. These are only used on the client and are safe to expose. Values come from Supabase Dashboard > Project Settings > API Keys (the project URL is shown at the top of that page; the public key may be labelled `anon` or, on newer projects, `sb_publishable_…`).
+### 2. Clone and install
 
-`mobile/.env`:
+```powershell
+git clone https://github.com/Basilagas21/COS30049_InnovationProject_Plantiful.git
+cd COS30049_InnovationProject_Plantiful
 
+cd web
+npm ci
+cd ..
+
+cd mobile
+npm ci
+cd ..
 ```
-EXPO_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=<anon key>
-# Optional, defaults to record-photos
-EXPO_PUBLIC_SUPABASE_PHOTO_BUCKET=record-photos
-```
 
-`web/.env`:
+If `npm ci` reports a stale lockfile, use `npm install` in that folder once and commit the updated lockfile if you are the project owner.
 
-```
+### 3. Create local environment files
+
+These files are gitignored. Never commit them and never paste real keys into chat or issues.
+
+Create `web/.env.local`:
+
+```text
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-or-sb_publishable-key>
+
+# Optional server-only settings for AI Field Assist
+SUPABASE_SERVICE_ROLE_KEY=<service-role-or-sb_secret-key>
+AI_PROVIDER=plantnet
+PLANTNET_API_KEY=<plantnet-key>
+# KINDWISE_API_KEY=<kindwise-key>
+AI_PHOTO_BUCKET=record-photos
 ```
 
-### 2. Set up the backend (one time)
+Create `mobile/.env`:
+
+```text
+EXPO_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=<anon-or-sb_publishable-key>
+EXPO_PUBLIC_SUPABASE_PHOTO_BUCKET=record-photos
+
+# Optional, for AI Field Assist from a phone on the same network
+EXPO_PUBLIC_FIELD_ASSIST_URL=http://<your-lan-ip>:3000
+```
+
+For IoT scripts, create `iot/.env` or export the variables in the terminal:
+
+```text
+SUPABASE_URL=https://<project-ref>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<service-role-or-sb_secret-key>
+```
+
+The IoT bridge loads `iot/.env` first, then falls back to `web/.env.local`. It also accepts values exported in the terminal. Shell values take precedence.
+
+Use only public keys in `NEXT_PUBLIC_` and `EXPO_PUBLIC_` variables. The service-role key is server-only. Do not put it in the mobile app or any public-prefixed variable.
+
+### 4. Choose a Supabase database
+
+#### Option A: Join the existing project
+
+This is the normal path for a teammate or marker.
+
+1. Ask the project owner for the project URL, publishable/anon key, and test accounts.
+2. Put the URL and public key in `web/.env.local` and `mobile/.env`.
+3. Do not run migrations against the shared live project unless the owner asks you to.
+
+#### Option B: Create a new Supabase project
 
 1. Create a project in Supabase.
-2. Enable Supabase Auth with email/password.
-3. Open Dashboard > SQL Editor and run the two scripts in `backend/supabase/migrations/`: `001_schema.sql` first (tables), then `apply_project.sql` — one consolidated, idempotent script covering everything else (RLS policies, schema backfills, workflow triggers, photo visibility, the botanist approval gate, the private reports bucket, storage-bucket policies, and admin role management). The per-feature files it consolidates are kept for reference in `migrations/applied/` — never run them individually.
-4. Run `backend/supabase/seed.sql` to assign officer and admin roles by email — edit its two `update` statements to your own addresses first — and to load the sample species catalogue.
-5. Invite your own test users in Dashboard > Authentication > Users (dashboard-created users are confirmed automatically) — or register through the app; if registration says "Email not confirmed", either turn off "Confirm sign up" under Authentication > Emails (requires Admin project role) or run the one-off `update auth.users set email_confirmed_at = now() …` snippet for that account.
-6. Verify the setup with the scripts under `backend/supabase/verification/`: `verify_public_write_block.sql` should show anonymous writes rejected and anonymous reads limited to approved and published data, and `verify_record_photo_write.sql` must report `PASS` on every line before the mobile Sync now button is used.
-7. For the IoT monitoring dashboard, run `backend/supabase/migrations/012_monitoring_history.sql` once in the SQL Editor (re-runnable; adds the read path used by `/alerts` — no service key, existing RLS still applies).
+2. Enable email/password authentication.
+3. Open Dashboard > SQL Editor and run the scripts in this order:
+   - `backend/supabase/migrations/001_schema.sql`
+   - `backend/supabase/migrations/apply_project.sql` (covers 002-011)
+   - `backend/supabase/migrations/012_monitoring_history.sql`
+   - `backend/supabase/migrations/013_field_assist.sql` (optional, only for AI Field Assist)
+   - `backend/supabase/migrations/014_public_record_visibility.sql` (required for the public portal and raw REST visibility)
+4. Edit the two email addresses in `backend/supabase/seed.sql`, then run it to assign officer/admin roles and add sample species.
+5. Invite test users in Dashboard > Authentication > Users, or register through the app. If registration says "Email not confirmed", disable confirmation under Authentication > Emails or confirm the account manually.
+6. Run the verification SQL in `backend/supabase/verification/`:
+   - `verify_public_write_block.sql` should show anonymous writes rejected and anonymous reads limited to approved and published records.
+   - `verify_record_photo_write.sql` should report `PASS` on every line before testing mobile sync.
+   - `verify_alerts_history.sql` checks the monitoring history function.
 
-### 3. Run the web app
+### 5. Run the web app
 
-```
+```powershell
 cd web
-npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Sign in with an officer or admin account to see all records, approve or reject pending ones, and open record details. Search species in the records page with the suggestion box.
+Open `http://localhost:3000`. Sign in with an officer or admin account to review records, approve submissions, publish species, and open the monitoring dashboard.
 
-### 4. Run the mobile app
+### 6. Run the mobile app
 
-```
+```powershell
 cd mobile
-npm ci
 npm start
 ```
 
-`npm ci` installs the exact dependency versions recorded in `package-lock.json`, so every teammate gets the same working tree. `npm start` targets Expo Go explicitly, even though an optional development client package is installed. Scan the QR code with Expo Go on your phone, or press `a` for an Android emulator.
+Scan the QR code with Expo Go, or press `a` for an Android emulator. Run `npm run doctor` if Expo reports a dependency warning.
 
-Run `npm run doctor` if a dependency warning appears. It checks the installed packages against Expo SDK 58.
+For AI Field Assist from a physical phone, set `EXPO_PUBLIC_FIELD_ASSIST_URL` to the computer's reachable LAN address and restart Expo. Do not use `localhost` on the phone.
 
-A development build is available as an optional fallback if Expo Go becomes incompatible after an app store update. It requires an Expo account once and installs an app on the phone. Run `npm run build:dev:android`, install the APK, then run `npm run start:dev`. The Expo Go version is not involved in that workflow. Then:
+### 7. Run the IoT monitor (optional)
 
-1. Sign in on the Profile tab with a botanist account.
-2. Scan a plant QR tag on the Scan tab.
-3. Use the flashlight toggle in dark environments.
-4. Fill in the capture details (species, height, morphology, notes), take photos, and save.
-5. Go to Sync and tap "Sync now" to push offline captures to the central database as submitted records.
+Simulator, no hardware:
 
-### 5. Verify the full loop
-
-- A record captured on mobile shows up as Pending on the web for an officer.
-- An officer approves or rejects it. Approved records become visible to the public portal.
-- Botanists can see their own records on the web (including pending ones) after the `apply_project.sql` policy is applied.
-
-### 6. Run the IoT monitor (optional demo)
-
-Two ways to feed the same tables and dashboard: a simulator (no hardware) or a real ESP32 node over USB.
-
-**Simulator (no hardware):**
-
-```
+```powershell
 python iot/publisher.py --once
 python iot/evaluate.py
 ```
 
-The publisher registers simulated sensors and pushes synthetic readings; the evaluator applies threat rules and raises alerts.
+Real ESP32 node over USB:
 
-**Real ESP32 node (USB):**
-
-1. Wire the node and flash `iot/sketch_oct9a/sketch_oct9a.ino` (Arduino IDE, board ESP32 Dev Module). It prints a QA/QC table plus one `DATA {json}` line per reading at 115200 baud.
-2. Close the Arduino Serial Monitor, then in a PowerShell terminal set the credentials from Project Settings > API Keys (use the secret key — `service_role`, or `sb_secret_…` on newer projects):
-
-```
-$env:SUPABASE_URL = "https://<project-ref>.supabase.co"
-$env:SUPABASE_SERVICE_ROLE_KEY = "<secret key>"
+```powershell
 python -m pip install -r iot/requirements.txt
 python iot/bridge.py --port COM5
 ```
 
-The bridge registers the node's sensor, inserts each reading, and raises heat/humidity/movement alerts immediately. The secret key stays on this host only — never in the sketch, mobile app, or web client.
+Close Arduino Serial Monitor before running the bridge because only one process can own the COM port. The bridge reads `iot/.env` or `web/.env.local` automatically, so this one-line command is enough after the environment file exists.
 
-**Dashboard:** officers review alerts and the latest reading per sensor at `/alerts` in the web app. It shows per-sensor status cards, environmental trend charts, movement/rain event strips, and an alert timeline with a 1d/5d/7d/all range selector; live readings and alerts auto-refresh every 10s and charts every 60s (paused when the tab is hidden), or use **Refresh now**. Environmental history is served by a database function, so run `backend/supabase/migrations/012_monitoring_history.sql` once in the Supabase SQL Editor (re-runnable; no service key needed) or the charts report that setup is required. Details in [`iot/README.md`](iot/README.md).
+Use the simulator only for demos. Do not run `iot/publisher.py` when you want only real node data, because it registers its own demo sensors and readings.
 
-### Checks
+### 8. Verify the full loop
 
-```
-cd web && npm run lint && npm run build
-cd mobile && npx tsc --noEmit && npx expo lint && npm test
+- A mobile capture appears as Pending in the web approvals page.
+- An officer approves or rejects the record.
+- An approved record becomes public only when its species is also published.
+- Public pages show approved and published observations on `/records`, `/map`, `/species`, and `/explore`.
+- The mobile app can sync offline records and photos.
+- The IoT dashboard shows readings and alerts at `/alerts`.
+- AI Field Assist history stays separate from the official species assignment.
+
+## Common Issues
+
+- **Missing web modules such as `lenis`:** run `npm ci` in `web`, remove `web/.next`, and restart `npm run dev`.
+- **Phone cannot call the web backend:** use the computer's LAN IP in `EXPO_PUBLIC_FIELD_ASSIST_URL`, not `localhost` or `127.0.0.1`.
+- **Registration says email not confirmed:** confirm the account in Supabase or disable email confirmation for the test project.
+- **Approved record is not public:** confirm the species is published and migration `014_public_record_visibility.sql` has been applied.
+- **IoT bridge says environment variables are missing:** create `iot/.env` or check the Supabase URL and service-role key in `web/.env.local`.
+- **A key was exposed:** rotate it in Supabase Dashboard > Project Settings > API Keys, update the local environment file, and do not commit it.
+
+## Checks
+
+```powershell
+cd web
+npm run lint
+npm run build
+npm test
+
+cd ../mobile
+npx tsc --noEmit
+npm run lint
+npm test
+
+cd ..
 python -m unittest discover -s iot -p "test_*.py"
+```
+
+Optional end-to-end checks:
+
+```powershell
+cd web
+npm run test:e2e
 ```
 
 ## Docs
@@ -220,6 +290,10 @@ python -m unittest discover -s iot -p "test_*.py"
 - [Sprint 2 plans, backlog and status](Docs/README.md#sprint-2)
 - [Sprint 1 revised report and figures](Docs/README.md#sprint-1)
 - [D-02 physical IoT wiring and editable diagram](Docs/README.md#d-02-physical-build)
+- [AI Field Assist guide](Docs/Guides/AI_Field_Assist.md)
+- [Prototype deployment and maintenance](Docs/Guides/Prototype_Deployment_and_Maintenance.md)
+- [Additional Innovation testing](Docs/Testing/Additional_Innovation/README.md)
+- [AI Field Assist verification record](Docs/Testing/Additional_Innovation/Verification.md)
 - [Marking rubric](Docs/Marking_Rubric.md)
 - [System Proposal Report](Docs/Reports/System_Proposal_Report.md)
 - [Product Backlog Template](Docs/Templates/01_R_Product_Backlog_Template.md)

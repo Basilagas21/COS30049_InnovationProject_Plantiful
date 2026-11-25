@@ -9,7 +9,7 @@ import { UserNameForm } from "@/components/user-name-form";
 import { UserRoleSelect } from "@/components/user-role-select";
 import { MANAGED_ROLES, type ManagedRole } from "./roles";
 
-const SORT_OPTIONS = ["name", "email", "newest"] as const;
+const SORT_OPTIONS = ["name", "email", "newest", "oldest"] as const;
 type UserSort = (typeof SORT_OPTIONS)[number];
 
 function firstValue(value: string | string[] | undefined): string | undefined {
@@ -123,6 +123,8 @@ export default async function UsersPage({
     query = query.order("email", { ascending: true });
   } else if (sort === "newest") {
     query = query.order("created_at", { ascending: false });
+  } else if (sort === "oldest") {
+    query = query.order("created_at", { ascending: true });
   } else {
     query = query.order("name", { ascending: true });
   }
@@ -204,6 +206,7 @@ export default async function UsersPage({
               <option value="name">Name</option>
               <option value="email">Email</option>
               <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
             </select>
           </label>
 

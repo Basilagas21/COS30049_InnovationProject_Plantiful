@@ -53,7 +53,18 @@ export default async function StaffAllowlistPage() {
 
       {error && (
         <div className="mt-6 rounded-2xl border border-danger/30 bg-white px-5 py-4 text-sm text-danger">
-          Could not load the allowlist: {error.message}
+          <p className="font-semibold">Could not load the allowlist: {error.message}</p>
+          {/schema cache|staff_allowlist|relation/i.test(error.message) && (
+            <div className="mt-3 rounded-xl bg-sand/70 px-4 py-3 text-xs leading-5 text-moss">
+              <p className="font-semibold text-pine">Migration required</p>
+              <p className="mt-1">
+                Open Supabase SQL Editor and run{" "}
+                <code>backend/supabase/migrations/015_staff_allowlist.sql</code>,
+                then refresh this page. The table exists in the repository but
+                has not been applied to this Supabase project yet.
+              </p>
+            </div>
+          )}
         </div>
       )}
 

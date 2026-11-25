@@ -10,17 +10,21 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 type Status = "checking" | "ready" | "invalid" | "done";
 
 export default function ResetPasswordPage() {
-  const [status, setStatus] = useState<Status>("checking");
+  const [status, setStatus] = useState<Status>(
+    isSupabaseConfigured ? "checking" : "invalid",
+  );
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    isSupabaseConfigured
+      ? null
+      : "Supabase is not configured. Add the env vars listed in web/README.md.",
+  );
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
-      setError("Supabase is not configured. Add the env vars listed in web/README.md.");
-      setStatus("invalid");
       return;
     }
 

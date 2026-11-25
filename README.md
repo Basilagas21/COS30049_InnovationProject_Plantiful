@@ -188,15 +188,16 @@ This is the normal path for a teammate or marker.
 
 1. Create a project in Supabase.
 2. Enable email/password authentication.
-3. Open Dashboard > SQL Editor and run the scripts in this order:
+3. Under Authentication > URL Configuration, set the Site URL to `http://localhost:3000` and add `http://localhost:3000/auth/callback` as a redirect URL. Add the production callback URL after deployment. Password reset emails return through this route.
+4. Open Dashboard > SQL Editor and run the scripts in this order:
    - `backend/supabase/migrations/001_schema.sql`
    - `backend/supabase/migrations/apply_project.sql` (covers 002-011)
    - `backend/supabase/migrations/012_monitoring_history.sql`
    - `backend/supabase/migrations/013_field_assist.sql` (optional, only for AI Field Assist)
    - `backend/supabase/migrations/014_public_record_visibility.sql` (required for the public portal and raw REST visibility)
-4. Edit the two email addresses in `backend/supabase/seed.sql`, then run it to assign officer/admin roles and add sample species.
-5. Invite test users in Dashboard > Authentication > Users, or register through the app. If registration says "Email not confirmed", disable confirmation under Authentication > Emails or confirm the account manually.
-6. Run the verification SQL in `backend/supabase/verification/`:
+5. Edit the two email addresses in `backend/supabase/seed.sql`, then run it to assign officer/admin roles and add sample species.
+6. Invite test users in Dashboard > Authentication > Users, or register through the app. If registration says "Email not confirmed", disable confirmation under Authentication > Emails or confirm the account manually.
+7. Run the verification SQL in `backend/supabase/verification/`:
    - `verify_public_write_block.sql` should show anonymous writes rejected and anonymous reads limited to approved and published records.
    - `verify_record_photo_write.sql` should report `PASS` on every line before testing mobile sync.
    - `verify_alerts_history.sql` checks the monitoring history function.
@@ -256,6 +257,7 @@ Use the simulator only for demos. Do not run `iot/publisher.py` when you want on
 - **Missing web modules such as `lenis`:** run `npm ci` in `web`, remove `web/.next`, and restart `npm run dev`.
 - **Phone cannot call the web backend:** use the computer's LAN IP in `EXPO_PUBLIC_FIELD_ASSIST_URL`, not `localhost` or `127.0.0.1`.
 - **Registration says email not confirmed:** confirm the account in Supabase or disable email confirmation for the test project.
+- **Password reset link is rejected:** add `http://localhost:3000/auth/callback` to Supabase Authentication > URL Configuration and check the public Supabase URL in `web/.env.local`.
 - **Approved record is not public:** confirm the species is published and migration `014_public_record_visibility.sql` has been applied.
 - **IoT bridge says environment variables are missing:** create `iot/.env` or check the Supabase URL and service-role key in `web/.env.local`.
 - **A key was exposed:** rotate it in Supabase Dashboard > Project Settings > API Keys, update the local environment file, and do not commit it.

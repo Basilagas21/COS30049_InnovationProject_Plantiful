@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { isOfficer, isAdmin } from "@/lib/auth";
 import { SiteNav } from "@/components/site-nav";
+import { IotAlertMenu } from "@/components/iot-alert-menu";
 import { NavAuth } from "@/components/nav-auth";
 import { InteractionLogger } from "@/components/interaction-logger";
 import { SmoothScroll } from "@/components/home/smooth-scroll";
@@ -94,22 +95,39 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [officer, admin] = await Promise.all([isOfficer(), isAdmin()]);
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/explore", label: "Explore" },
-    { href: "/learn", label: "Learn" },
-    { href: "/species", label: "Species" },
-    { href: "/map", label: "Map" },
-    { href: "/records", label: "Records" },
+  const navGroups = [
+    { label: "Home", links: [{ href: "/", label: "Home" }] },
+    {
+      label: "Explore",
+      links: [
+        { href: "/explore", label: "Explore overview" },
+        { href: "/species", label: "Species catalogue" },
+        { href: "/map", label: "Species map" },
+      ],
+    },
+    { label: "Learn", links: [{ href: "/learn", label: "Learn" }] },
+    { label: "Records", links: [{ href: "/records", label: "Records" }] },
     ...(officer
       ? [
-          { href: "/approvals", label: "Approvals" },
-          { href: "/reports", label: "Reports" },
-          { href: "/alerts", label: "Monitoring" },
-          { href: "/admin/inquiries", label: "Inquiries" },
+          {
+            label: "Operations",
+            links: [
+              { href: "/approvals", label: "Approvals" },
+              { href: "/reports", label: "Reports" },
+              { href: "/admin/inquiries", label: "Inquiries" },
+              ...(admin ? [{ href: "/users", label: "Users" }] : []),
+            ],
+          },
+          {
+            label: "Monitoring",
+            links: [
+              { href: "/alerts", label: "Monitoring dashboard" },
+              { href: "/alerts#sensor-heading", label: "Latest sensor readings" },
+              { href: "/alerts#alerts-heading", label: "Threat alert timeline" },
+            ],
+          },
         ]
       : []),
-    ...(admin ? [{ href: "/users", label: "Users" }] : []),
   ];
 
   return (
@@ -156,8 +174,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   <span className="brand-dot text-emerald">.</span>
                 </span>
               </Link>
-              <SiteNav links={navLinks} />
+              <SiteNav groups={navGroups} />
               <div className="header-account flex shrink-0 items-center justify-end">
+                {officer && <IotAlertMenu />}
                 <NavAuth />
               </div>
             </div>

@@ -121,9 +121,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {
             label: "Monitoring",
             links: [
-              { href: "/alerts", label: "Monitoring dashboard" },
-              { href: "/alerts#sensor-heading", label: "Latest sensor readings" },
-              { href: "/alerts#alerts-heading", label: "Threat alert timeline" },
+              { href: "/monitoring", label: "Monitoring dashboard" },
+              { href: "/monitoring#sensor-heading", label: "Latest sensor readings" },
+              { href: "/alerts", label: "Alert notifications" },
             ],
           },
         ]

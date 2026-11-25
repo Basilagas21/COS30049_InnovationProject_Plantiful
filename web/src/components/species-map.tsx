@@ -7,6 +7,7 @@ import type {
   GeoJSONSource,
   Map as MapLibreMap,
   MapLayerMouseEvent,
+  StyleSpecification,
 } from "maplibre-gl";
 import type { MapApprovalStatus, MapPoint } from "@/lib/map";
 import { reportInteraction } from "@/lib/interactionLog";
@@ -16,6 +17,26 @@ type Props = {
 };
 
 type ApprovalFilter = "all" | MapApprovalStatus;
+
+const MAP_STYLE: StyleSpecification = {
+  version: 8,
+  sources: {
+    basemap: {
+      type: "raster",
+      tiles: ["/api/map-tiles/{z}/{y}/{x}"],
+      tileSize: 256,
+      attribution: "Tiles © Esri · Data © OpenStreetMap contributors",
+    },
+  },
+  layers: [
+    {
+      id: "map-background",
+      type: "background",
+      paint: { "background-color": "#eef3e8" },
+    },
+    { id: "basemap-streets", type: "raster", source: "basemap" },
+  ],
+};
 
 const FILTERS: { key: ApprovalFilter; label: string }[] = [
   { key: "all", label: "All" },
@@ -141,9 +162,7 @@ export function SpeciesMap({ points }: Props) {
     if (!container) return;
 
     let disposed = false;
-
-    const wheelBlocker = (event: WheelEvent) => event.preventDefault();
-    container.addEventListener("wheel", wheelBlocker, { passive: false });
+    let wheelHandler: ((event: WheelEvent) => void) | null = null;
 
     import("maplibre-gl").then((maplibregl) => {
       if (disposed) return;
@@ -162,15 +181,24 @@ export function SpeciesMap({ points }: Props) {
 
       const map = new maplibregl.Map({
         container,
-        style: "https://tiles.openfreemap.org/styles/liberty",
+        style: MAP_STYLE,
         center,
         zoom: initial.length === 1 ? 11 : 7,
-        pitch: 55,
+        pitch: 50,
         bearing: -12,
         maxPitch: 75,
+        scrollZoom: false,
         attributionControl: { compact: true },
       });
       mapRef.current = map;
+
+      wheelHandler = (event: WheelEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
+        map.easeTo({ zoom: map.getZoom() - delta * 0.002, duration: 0 });
+      };
+      container.addEventListener("wheel", wheelHandler, { passive: false });
 
       map.addControl(
         new maplibregl.NavigationControl({ visualizePitch: true, showCompass: true }),
@@ -187,9 +215,7 @@ export function SpeciesMap({ points }: Props) {
       map.on("load", () => {
         if (disposed) return;
 
-        map.setProjection({ type: "globe" });
-
-        // Real 3D relief from the AWS Open Data elevation tiles (no key
+      // Real 3D relief from the AWS Open Data elevation tiles (no key
         // needed). Capped at z12: deeper tiles are 2-4x slower to fetch with
         // no visual gain at this zoom range.
         map.addSource("terrain-dem", {
@@ -316,7 +342,7 @@ export function SpeciesMap({ points }: Props) {
 
     return () => {
       disposed = true;
-      container.removeEventListener("wheel", wheelBlocker);
+      if (wheelHandler) container.removeEventListener("wheel", wheelHandler);
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -413,7 +439,10 @@ export function SpeciesMap({ points }: Props) {
           })}
         </div>
 
-        <div className="relative min-h-[420px] overflow-hidden rounded-3xl border border-pine/10 bg-sprout/50">
+        <div
+          className="relative min-h-[420px] overflow-hidden rounded-3xl border border-pine/10 bg-sprout/50"
+          style={{ overscrollBehavior: "contain" }}
+        >
           <div ref={containerRef} className="h-[420px] w-full" />
           {!loaded && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-sprout/60">
@@ -488,7 +517,7 @@ export function SpeciesMap({ points }: Props) {
 
         <div className="rounded-2xl border border-pine/10 bg-white p-5 text-xs text-moss">
           Drag to tilt, scroll to zoom, click a marker to open its record.
-          Basemap © OpenStreetMap contributors · MapLibre · OpenFreeMap.
+          Basemap © Esri · Data © OpenStreetMap contributors · MapLibre.
         </div>
       </aside>
     </div>

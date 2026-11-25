@@ -33,8 +33,9 @@ test('stalled lookup times out and successful lookup retains its result', async 
   assert.equal(await withLookupTimeout(new Promise(() => {}), 5), null);
   assert.deepEqual(await withLookupTimeout(Promise.resolve({ id: 'record' }), 50), { id: 'record' });
 });
-test('tag validation rejects websites and accepts existing short tag format', () => {
+test('tag validation rejects websites, deep links and accepts existing short tag format', () => {
   assert.equal(isValidTag(normalizeTag('https://example.com')), false);
+  assert.equal(isValidTag(normalizeTag('exp+plantiful://?expo-url=http://172.27.247.175:8081')), false);
   assert.equal(isValidTag(normalizeTag(' plt-7f3k92 ')), true);
   assert.equal(isValidTag('A'), false);
 });

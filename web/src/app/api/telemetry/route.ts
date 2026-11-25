@@ -22,6 +22,7 @@ export async function GET(request: Request) {
     const range = params.get("range") ?? "1d";
     const sensorId = params.get("sensor") || null;
     const mode = params.get("mode") ?? "live";
+    const onlyOpen = params.get("onlyOpen") === "1";
     if (!["1d", "5d", "7d", "all"].includes(range) || !["live", "history"].includes(mode) ||
         (sensorId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sensorId))) {
       return json({ error: "Invalid monitoring filter." }, 400);
@@ -54,6 +55,7 @@ export async function GET(request: Request) {
       .lte("created_at", new Date(now).toISOString())
       .order("created_at", { ascending: false }).order("alert_id").limit(100);
     let openQuery = client.from("alerts").select("alert_id", { head: true, count: "exact" }).eq("resolved", false);
+    if (onlyOpen) alertQuery = alertQuery.eq("resolved", false);
     if (sensorId) { alertQuery = alertQuery.eq("sensor_id", sensorId); openQuery = openQuery.eq("sensor_id", sensorId); }
     if (start) alertQuery = alertQuery.gte("created_at", start);
     const [alerts, open, latest] = await Promise.all([

@@ -142,6 +142,9 @@ export function SpeciesMap({ points }: Props) {
 
     let disposed = false;
 
+    const wheelBlocker = (event: WheelEvent) => event.preventDefault();
+    container.addEventListener("wheel", wheelBlocker, { passive: false });
+
     import("maplibre-gl").then((maplibregl) => {
       if (disposed) return;
 
@@ -313,6 +316,7 @@ export function SpeciesMap({ points }: Props) {
 
     return () => {
       disposed = true;
+      container.removeEventListener("wheel", wheelBlocker);
       mapRef.current?.remove();
       mapRef.current = null;
     };

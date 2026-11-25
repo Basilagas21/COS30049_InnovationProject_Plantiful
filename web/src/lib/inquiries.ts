@@ -26,10 +26,9 @@ export type InquiriesResult = {
 };
 
 // Contact-form submissions from the standalone visitor-site's /inquiry
-// page. That site writes these with the public anon key (INSERT-only, per
-// backend/supabase/migrations/add_inquiries.sql); only conservation
-// officers and admins can read them, which is enforced by RLS on the
-// `inquiries` table, not by this function.
+// page. That site writes these with the public anon key under an INSERT-only
+// policy; only conservation officers and admins can read them, which is
+// enforced by RLS on the `inquiries` table, not by this function.
 export async function fetchInquiries({
   page = 1,
   pageSize = INQUIRIES_PAGE_SIZE,

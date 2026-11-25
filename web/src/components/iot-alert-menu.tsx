@@ -48,7 +48,7 @@ export function IotAlertMenu() {
       controller = new AbortController();
       const timeout = setTimeout(() => controller?.abort(), 20_000);
       try {
-        const response = await fetch("/api/telemetry?mode=live&range=1d", {
+        const response = await fetch("/api/telemetry?mode=live&range=all&onlyOpen=1", {
           cache: "no-store",
           signal: controller.signal,
         });
@@ -197,19 +197,19 @@ export function IotAlertMenu() {
               ))
             ) : (
               <p className="px-3 py-6 text-center text-xs text-moss">
-                No open alerts in the last 24 hours. Check sensor freshness in
-                the monitoring dashboard before treating this as normal.
+                No open alerts are available. Check sensor freshness in the
+                monitoring dashboard before treating this as normal.
               </p>
             )}
           </div>
 
           <div className="border-t border-pine/10 p-2">
             <Link
-              href="/alerts#alerts-heading"
+              href="/alerts"
               onClick={() => setOpen(false)}
               className="flex min-h-11 items-center justify-center rounded-xl bg-emerald px-3 text-sm font-semibold text-cream hover:bg-pine"
             >
-              Open monitoring dashboard
+              Open alert notifications
             </Link>
           </div>
         </section>

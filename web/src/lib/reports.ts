@@ -15,6 +15,19 @@ export type ReportsResult = {
   error: string | null;
 };
 
+export type ReportCoverage = {
+  species: number;
+  publishedSpecies: number;
+  observations: number;
+  approved: number;
+  pending: number;
+};
+
+export type ReportCoverageResult = {
+  coverage: ReportCoverage | null;
+  error: string | null;
+};
+
 export type { ReportType, ReportFormat } from "@/lib/report-types";
 export { REPORT_TYPES, REPORT_FORMATS } from "@/lib/report-types";
 
@@ -91,4 +104,56 @@ export async function fetchReports(): Promise<ReportsResult> {
   );
 
   return { reports, error: null };
+}
+
+export async function fetchReportCoverage(): Promise<ReportCoverageResult> {
+  if (!isSupabaseConfigured) {
+    return {
+      coverage: null,
+      error: "Supabase is not configured, so coverage counts cannot be loaded.",
+    };
+  }
+
+  const supabase = await createClient();
+  const [species, publishedSpecies, observations, approved, pending] =
+    await Promise.all([
+      supabase
+        .from("species")
+        .select("species_id", { count: "exact", head: true }),
+      supabase
+        .from("species")
+        .select("species_id", { count: "exact", head: true })
+        .eq("is_published", true),
+      supabase
+        .from("plant_records")
+        .select("record_id", { count: "exact", head: true }),
+      supabase
+        .from("plant_records")
+        .select("record_id", { count: "exact", head: true })
+        .eq("approval_status", "approved"),
+      supabase
+        .from("plant_records")
+        .select("record_id", { count: "exact", head: true })
+        .eq("approval_status", "pending"),
+    ]);
+
+  const error = [species, publishedSpecies, observations, approved, pending].find(
+    (result) => result.error,
+  )?.error;
+
+  if (error) {
+    console.error(`fetchReportCoverage failed: ${error.message}`);
+    return { coverage: null, error: error.message };
+  }
+
+  return {
+    coverage: {
+      species: species.count ?? 0,
+      publishedSpecies: publishedSpecies.count ?? 0,
+      observations: observations.count ?? 0,
+      approved: approved.count ?? 0,
+      pending: pending.count ?? 0,
+    },
+    error: null,
+  };
 }

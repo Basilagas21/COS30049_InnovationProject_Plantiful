@@ -51,3 +51,12 @@ export function RefreshIcon(props: { size?: number | string; className?: string;
     </IconBase>
   );
 }
+
+export function BellIcon(props: { size?: number | string; className?: string; style?: CSSProperties }) {
+  return (
+    <IconBase {...props}>
+      <path d="M8 2.2a1.2 1.2 0 0 0-1.2 1.2v.4a4.3 4.3 0 0 0-2.8 4v2.1L3 11.7h10l-1-1.8V7.8a4.3 4.3 0 0 0-2.8-4v-.4A1.2 1.2 0 0 0 8 2.2Z" />
+      <path d="M6.6 13.2a1.5 1.5 0 0 0 2.8 0" />
+    </IconBase>
+  );
+}

@@ -219,7 +219,12 @@ cd mobile
 npm start
 ```
 
-Scan the QR code with Expo Go, or press `a` for an Android emulator. Run `npm run doctor` if Expo reports a dependency warning.
+Scan the QR code with Expo Go, or press `a` for an Android emulator. Run `npm run doctor` if Expo 
+reports a dependency warning.
+
+Use `npm start` for Expo Go. Do not use `npm run start:dev` when testing with Expo Go. The dev-client
+script generates an `exp+plantiful://` link which needs a development build and shows "Can't open this
+project" in Expo Go.
 
 For AI Field Assist from a physical phone, set `EXPO_PUBLIC_FIELD_ASSIST_URL` to the computer's reachable LAN address and restart Expo. Do not use `localhost` on the phone.
 
@@ -257,7 +262,11 @@ Use the simulator only for demos. Do not run `iot/publisher.py` when you want on
 ## Common Issues
 
 - **Missing web modules such as `lenis`:** run `npm ci` in `web`, remove `web/.next`, and restart `npm run dev`.
-- **Phone cannot call the web backend:** use the computer's LAN IP in `EXPO_PUBLIC_FIELD_ASSIST_URL`, not `localhost` or `127.0.0.1`.
+- **Expo Go says "Can't open this project" and shows `exp+plantiful://`:** you started the dev client. 
+Stop it and run `npm start` from `mobile`, then scan the new QR with Expo Go. Use `npm run start:dev` 
+only after installing a development build.
+- **Phone cannot call the web backend:** use the computer's LAN IP in `EXPO_PUBLIC_FIELD_ASSIST_URL`, 
+not `localhost` or `127.0.0.1`.
 - **Registration says email not confirmed:** confirm the account in Supabase or disable email confirmation for the test project.
 - **Password reset link is rejected:** add `http://localhost:3000/auth/callback` to Supabase Authentication > URL Configuration and check the public Supabase URL in `web/.env.local`.
 - **Staff allowlist page reports a missing relation:** apply `backend/supabase/migrations/015_staff_allowlist.sql`.

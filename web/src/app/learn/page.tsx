@@ -85,15 +85,24 @@ export default function LearnPage() {
           {visitorPlantQuestions.map((item) => (
             <details
               key={item.question}
-              className="group rounded-2xl border border-pine/10 bg-white p-5 open:bg-sprout/30"
+              className="group rounded-2xl border border-pine/10 bg-white p-5 transition-colors open:border-emerald/40 open:bg-sprout/30"
             >
               <summary className="flex min-h-11 cursor-pointer list-none items-start justify-between gap-4 font-semibold text-pine sm:min-h-0 [&::-webkit-details-marker]:hidden">
                 {item.question}
-                <span aria-hidden="true" className="text-lg text-emerald">
-                  +
-                </span>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 16 16"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-emerald transition-transform group-open:rotate-180"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path d="m4 6 4 4 4-4" />
+                </svg>
               </summary>
-              <p className="mt-3 text-sm leading-7 text-moss">{item.answer}</p>
+              <p className="mt-3 border-t border-pine/10 pt-3 text-sm leading-7 text-moss">
+                {item.answer}
+              </p>
             </details>
           ))}
         </div>

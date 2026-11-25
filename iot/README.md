@@ -15,6 +15,27 @@ There are two ways to feed it, and both end at the same tables:
   forwards each line to Supabase. A Wi-Fi/MQTT transport can replace the USB
   link later without changing anything downstream.
 
+## Quick start
+
+Run these from the repository root:
+
+```powershell
+python iot/publisher.py --once --seed 7
+python iot/evaluate.py
+python -m unittest discover -s iot -p 'test_*.py'
+```
+
+If your terminal is already inside the `iot` folder, drop the `iot/` prefix:
+
+```powershell
+cd iot
+python publisher.py --once --seed 7
+python evaluate.py
+```
+
+Do not run `python iot/publisher.py` while already inside `iot`. That becomes
+`iot/iot/publisher.py` and fails with "No such file or directory".
+
 ## What lives here
 
 ```

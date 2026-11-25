@@ -83,6 +83,12 @@ export default async function AdminSettingsPage() {
                 User directory
               </Link>
               <Link
+                href="/admin/staff"
+                className="rounded-2xl border border-pine/10 px-4 py-3 font-semibold text-emerald transition-colors hover:border-emerald"
+              >
+                Staff allowlist
+              </Link>
+              <Link
                 href="/profile"
                 className="rounded-2xl border border-pine/10 px-4 py-3 font-semibold text-emerald transition-colors hover:border-emerald"
               >

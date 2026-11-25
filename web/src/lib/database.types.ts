@@ -27,6 +27,22 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["user_profiles"]["Insert"]>;
         Relationships: [];
       };
+      staff_allowlist: {
+        Row: {
+          email: string;
+          role: "botanist" | "conservation_officer" | "admin";
+          added_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          email: string;
+          role: "botanist" | "conservation_officer" | "admin";
+          added_by?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["staff_allowlist"]["Insert"]>;
+        Relationships: [];
+      };
       sync_conflicts: {
         Row: {
           conflict_id: string;

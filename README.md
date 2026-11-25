@@ -85,8 +85,8 @@ COS30049_InnovationProject_Plantiful/
 │   └── src/app/           # App Router pages (explore, species, map, records, reports, alerts, profile)
 ├── backend/               # Supabase SQL and local checks (partly local-only)
 │   ├── supabase/
-│   │   ├── migrations/    # 001_schema.sql, apply_project.sql (002-011), 012-014
-│   │   ├── seed.sql       # officer/admin roles and sample species
+│   │   ├── migrations/    # 001_schema.sql, apply_project.sql (002-011), 012-015
+│   │   ├── seed.sql       # officer/admin roles, staff allowlist and sample species
 │   │   └── verification/  # manual SQL checks for RLS, photo writes and monitoring history
 │   └── tests/local/       # pgTAP and isolated AI Field Assist checks
 ├── Ai/                    # research notebooks, datasets, training and evaluation workspace
@@ -195,7 +195,8 @@ This is the normal path for a teammate or marker.
    - `backend/supabase/migrations/012_monitoring_history.sql`
    - `backend/supabase/migrations/013_field_assist.sql` (optional, only for AI Field Assist)
    - `backend/supabase/migrations/014_public_record_visibility.sql` (required for the public portal and raw REST visibility)
-5. Edit the two email addresses in `backend/supabase/seed.sql`, then run it to assign officer/admin roles and add sample species.
+   - `backend/supabase/migrations/015_staff_allowlist.sql` (automatic staff roles from an admin-managed email allowlist)
+5. Edit the two email addresses in `backend/supabase/seed.sql`, then run it to assign officer/admin roles, add the same emails to the staff allowlist and add sample species.
 6. Invite test users in Dashboard > Authentication > Users, or register through the app. If registration says "Email not confirmed", disable confirmation under Authentication > Emails or confirm the account manually.
 7. Run the verification SQL in `backend/supabase/verification/`:
    - `verify_public_write_block.sql` should show anonymous writes rejected and anonymous reads limited to approved and published records.
@@ -244,6 +245,7 @@ Use the simulator only for demos. Do not run `iot/publisher.py` when you want on
 
 ### 8. Verify the full loop
 
+- An email on the admin **Staff allowlist** receives that role at signup, and an existing account updates when the entry changes.
 - A mobile capture appears as Pending in the web approvals page.
 - An officer approves or rejects the record.
 - An approved record becomes public only when its species is also published.
@@ -258,6 +260,7 @@ Use the simulator only for demos. Do not run `iot/publisher.py` when you want on
 - **Phone cannot call the web backend:** use the computer's LAN IP in `EXPO_PUBLIC_FIELD_ASSIST_URL`, not `localhost` or `127.0.0.1`.
 - **Registration says email not confirmed:** confirm the account in Supabase or disable email confirmation for the test project.
 - **Password reset link is rejected:** add `http://localhost:3000/auth/callback` to Supabase Authentication > URL Configuration and check the public Supabase URL in `web/.env.local`.
+- **Staff allowlist page reports a missing relation:** apply `backend/supabase/migrations/015_staff_allowlist.sql`.
 - **Approved record is not public:** confirm the species is published and migration `014_public_record_visibility.sql` has been applied.
 - **IoT bridge says environment variables are missing:** create `iot/.env` or check the Supabase URL and service-role key in `web/.env.local`.
 - **A key was exposed:** rotate it in Supabase Dashboard > Project Settings > API Keys, update the local environment file, and do not commit it.

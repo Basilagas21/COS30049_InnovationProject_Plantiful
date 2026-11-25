@@ -146,15 +146,21 @@ export default async function UsersPage({
           </h1>
           <p className="mt-2 max-w-2xl text-moss">
             Search and filter registered accounts, edit display names and grant
-            officer or admin access. New accounts start as botanists.
+            officer or admin access. New accounts start as botanists. Use the
+            staff allowlist to assign staff roles automatically at signup.
           </p>
         </div>
-        <Link
-          href="/admin/settings"
-          className="btn btn--ghost h-11"
-        >
-          Admin settings
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href="/admin/staff" className="btn btn--ghost h-11">
+            Staff allowlist
+          </Link>
+          <Link
+            href="/admin/settings"
+            className="btn btn--ghost h-11"
+          >
+            Admin settings
+          </Link>
+        </div>
       </div>
 
       <form

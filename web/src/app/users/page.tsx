@@ -148,7 +148,7 @@ export default async function UsersPage({
           </h1>
           <p className="mt-2 max-w-2xl text-moss">
             Search and filter registered accounts, edit display names and grant
-            officer or admin access. New accounts start as botanists. Use the
+            officer or admin access. New accounts start as visitors. Use the
             staff allowlist to assign staff roles automatically at signup.
           </p>
         </div>

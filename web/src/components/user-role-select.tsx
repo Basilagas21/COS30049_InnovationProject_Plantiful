@@ -12,12 +12,18 @@ type Props = {
 };
 
 const ROLE_LABELS: Record<ManagedRole, string> = {
+  visitor: "Visitor",
   botanist: "Botanist",
   conservation_officer: "Officer",
   admin: "Admin",
 };
 
-const ORDER: ManagedRole[] = ["botanist", "conservation_officer", "admin"];
+const ORDER: ManagedRole[] = [
+  "visitor",
+  "botanist",
+  "conservation_officer",
+  "admin",
+];
 
 export function UserRoleSelect({ userId, role, isSelf }: Props) {
   const router = useRouter();

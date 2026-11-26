@@ -7,18 +7,12 @@ import {
   saveStaffAllowlistEntry,
   setStaffAllowlistRole,
 } from "@/app/admin/staff/actions";
-import { MANAGED_ROLES, type ManagedRole } from "@/app/users/roles";
+import { ROLE_LABELS, STAFF_ROLES, type StaffRole } from "@/app/users/roles";
 
 type Entry = {
   email: string;
-  role: ManagedRole;
+  role: StaffRole;
   createdAt: string;
-};
-
-const ROLE_BUTTON_LABELS: Record<ManagedRole, string> = {
-  botanist: "Botanist",
-  conservation_officer: "Officer",
-  admin: "Admin",
 };
 
 function formatAdded(value: string): string {
@@ -41,7 +35,7 @@ export function StaffAllowlistManager({
 }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<ManagedRole>("conservation_officer");
+  const [role, setRole] = useState<StaffRole>("conservation_officer");
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -65,7 +59,7 @@ export function StaffAllowlistManager({
     router.refresh();
   }
 
-  async function handleRoleChange(target: string, nextRole: ManagedRole) {
+  async function handleRoleChange(target: string, nextRole: StaffRole) {
     setError(null);
     setNotice(null);
     setBusy(target);
@@ -99,7 +93,7 @@ export function StaffAllowlistManager({
       return;
     }
 
-    setNotice(`Removed ${target}. Existing accounts returned to botanist.`);
+    setNotice(`Removed ${target}. Existing accounts returned to visitor.`);
     router.refresh();
   }
 
@@ -130,12 +124,12 @@ export function StaffAllowlistManager({
             <span className="font-medium text-pine">Role</span>
             <select
               value={role}
-              onChange={(e) => setRole(e.target.value as ManagedRole)}
+              onChange={(e) => setRole(e.target.value as StaffRole)}
               className="field-input h-11"
             >
-              {MANAGED_ROLES.map((candidate) => (
+              {STAFF_ROLES.map((candidate) => (
                 <option key={candidate} value={candidate}>
-                  {ROLE_BUTTON_LABELS[candidate]}
+                  {ROLE_LABELS[candidate]}
                 </option>
               ))}
             </select>
@@ -165,7 +159,7 @@ export function StaffAllowlistManager({
         <div className="rounded-3xl border border-dashed border-pine/15 bg-sand/60 px-6 py-12 text-center">
           <p className="font-semibold text-pine">No allowlist entries yet.</p>
           <p className="mt-2 text-sm text-moss">
-            Add an officer or admin email above. Everyone else stays a botanist.
+            Add a staff email above. Everyone else stays a visitor.
           </p>
         </div>
       ) : (
@@ -200,7 +194,7 @@ export function StaffAllowlistManager({
                     </td>
                     <td className="px-4 py-3">
                       <div className="inline-flex rounded-full border border-pine/15 bg-white p-1">
-                        {MANAGED_ROLES.map((candidate) => (
+                        {STAFF_ROLES.map((candidate) => (
                           <button
                             key={candidate}
                             type="button"
@@ -219,7 +213,7 @@ export function StaffAllowlistManager({
                                 : "text-moss hover:text-pine"
                             }`}
                           >
-                            {ROLE_BUTTON_LABELS[candidate]}
+                            {ROLE_LABELS[candidate]}
                           </button>
                         ))}
                       </div>

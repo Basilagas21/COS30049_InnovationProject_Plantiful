@@ -4,7 +4,7 @@ import { Arrow } from "@/components/arrow";
 import { StaffAllowlistManager } from "@/components/staff-allowlist-manager";
 import { getCurrentRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import type { ManagedRole } from "@/app/users/roles";
+import type { StaffRole } from "@/app/users/roles";
 
 export default async function StaffAllowlistPage() {
   const role = await getCurrentRole();
@@ -22,7 +22,7 @@ export default async function StaffAllowlistPage() {
 
   const entries = (data ?? []).map((entry) => ({
     email: entry.email,
-    role: entry.role as ManagedRole,
+    role: entry.role as StaffRole,
     createdAt: entry.created_at,
   }));
 
@@ -43,7 +43,7 @@ export default async function StaffAllowlistPage() {
           <p className="mt-2 max-w-2xl text-moss">
             Give an email address its role once. New signups receive that role
             automatically, and existing accounts are updated when an entry
-            changes. Emails not on this list become botanists.
+            changes. Emails not on this list remain visitors.
           </p>
         </div>
         <Link href="/admin/settings" className="btn btn--ghost h-11">
@@ -59,7 +59,9 @@ export default async function StaffAllowlistPage() {
               <p className="font-semibold text-pine">Migration required</p>
               <p className="mt-1">
                 Open Supabase SQL Editor and run{" "}
-                <code>backend/supabase/migrations/015_staff_allowlist.sql</code>,
+                <code>backend/supabase/migrations/015_staff_allowlist.sql</code>
+                {" and then "}
+                <code>backend/supabase/migrations/016_visitor_role.sql</code>,
                 then refresh this page. The table exists in the repository but
                 has not been applied to this Supabase project yet.
               </p>
@@ -78,7 +80,7 @@ export default async function StaffAllowlistPage() {
         <p className="mt-1">
           Adding an entry updates that account immediately. Changing the role
           updates it immediately. Removing the entry returns an existing account
-          to botanist. The email must match exactly, ignoring letter case.
+to visitor. The email must match exactly, ignoring letter case. 
         </p>
       </div>
     </div>

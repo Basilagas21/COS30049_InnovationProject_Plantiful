@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentRole } from "@/lib/auth";
-import { MANAGED_ROLES, type ManagedRole } from "@/app/users/roles";
+import { STAFF_ROLES, type StaffRole } from "@/app/users/roles";
 
 type ActionResult = { ok: boolean; error?: string };
 
@@ -14,10 +14,8 @@ function normalizeEmail(value: string): string | null {
   return email;
 }
 
-function normalizeRole(value: string): ManagedRole | null {
-  return MANAGED_ROLES.includes(value as ManagedRole)
-    ? (value as ManagedRole)
-    : null;
+function normalizeRole(value: string): StaffRole | null {
+  return STAFF_ROLES.includes(value as StaffRole) ? (value as StaffRole) : null;
 }
 
 async function getAdminContext() {

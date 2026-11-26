@@ -4,6 +4,15 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { RefreshIcon } from "@/components/icons";
 import type { LiveTelemetry, ThreatAlert } from "@/lib/telemetry";
+import {
+  getAlertRetentionDays,
+  getReadAlertIds,
+  markAlertRead,
+  markAlertsRead,
+  PREFERENCES_EVENT,
+  withinRetention,
+  type AlertRetentionDays,
+} from "@/lib/notification-preferences";
 
 type AlertState = {
   alerts: ThreatAlert[];
@@ -11,6 +20,8 @@ type AlertState = {
   checkedAt: string | null;
   error: string | null;
 };
+
+const PAGE_SIZE = 6;
 
 const SEVERITY_STYLE: Record<string, string> = {
   critical: "bg-danger/10 text-danger",
@@ -36,7 +47,10 @@ export function AlertNotifications() {
   const [busy, setBusy] = useState(false);
   const [severity, setSeverity] = useState("all");
   const [status, setStatus] = useState("all");
+  const [page, setPage] = useState(1);
   const [refreshToken, setRefreshToken] = useState(0);
+  const [retentionDays, setRetentionDays] = useState<AlertRetentionDays>(30);
+  const [readIds, setReadIds] = useState<Set<string>>(new Set());
 
   const load = useCallback(async (signal?: AbortSignal) => {
     setBusy(true);
@@ -79,12 +93,43 @@ export function AlertNotifications() {
     };
   }, [load, refreshToken]);
 
-  const alerts = (state?.alerts ?? []).filter((alert) => {
+  useEffect(() => {
+    const sync = () => {
+      setRetentionDays(getAlertRetentionDays());
+      setReadIds(new Set(getReadAlertIds()));
+    };
+    const timer = window.setTimeout(sync, 0);
+    window.addEventListener(PREFERENCES_EVENT, sync);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener(PREFERENCES_EVENT, sync);
+    };
+  }, []);
+
+  const retained = (state?.alerts ?? []).filter((alert) =>
+    withinRetention(alert.created_at, retentionDays),
+  );
+
+  const filtered = retained.filter((alert) => {
     if (severity !== "all" && alert.severity !== severity) return false;
     if (status === "open" && alert.resolved) return false;
     if (status === "resolved" && !alert.resolved) return false;
     return true;
   });
+
+  const unreadOpen = retained.filter(
+    (alert) => !alert.resolved && !readIds.has(alert.alert_id),
+  ).length;
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const from = (safePage - 1) * PAGE_SIZE;
+  const visible = filtered.slice(from, from + PAGE_SIZE);
+
+  function openAlert(alertId: string) {
+    markAlertRead(alertId);
+    setReadIds(new Set(getReadAlertIds()));
+  }
 
   return (
     <div className="monitor-workspace mx-auto w-full max-w-7xl px-4 py-8 sm:px-8 lg:py-12">
@@ -103,6 +148,17 @@ export function AlertNotifications() {
           </Link>
           <button
             type="button"
+            disabled={busy || unreadOpen === 0}
+            onClick={() => {
+              markAlertsRead(retained.map((alert) => alert.alert_id));
+              setReadIds(new Set(getReadAlertIds()));
+            }}
+            className="btn btn--quiet min-h-11 disabled:opacity-50"
+          >
+            Mark all read
+          </button>
+          <button
+            type="button"
             disabled={busy}
             onClick={() => setRefreshToken((value) => value + 1)}
             className="btn btn--primary min-h-11"
@@ -114,15 +170,13 @@ export function AlertNotifications() {
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
         <div className="monitor-panel">
-          <p className="eyebrow text-moss">Open alerts</p>
-          <p className="mt-3 text-4xl font-semibold text-pine">
-            {state?.openCount ?? "—"}
-          </p>
-          <p className="mt-2 text-xs text-moss">Across all registered sensors</p>
+          <p className="eyebrow text-moss">Unread open alerts</p>
+          <p className="mt-3 text-4xl font-semibold text-pine">{unreadOpen}</p>
+          <p className="mt-2 text-xs text-moss">Cards older than {retentionDays} days are hidden</p>
         </div>
         <div className="monitor-panel">
           <p className="eyebrow text-moss">Shown in view</p>
-          <p className="mt-3 text-4xl font-semibold text-pine">{alerts.length}</p>
+          <p className="mt-3 text-4xl font-semibold text-pine">{filtered.length}</p>
           <p className="mt-2 text-xs text-moss">After the filters below</p>
         </div>
         <div className="monitor-panel">
@@ -146,7 +200,10 @@ export function AlertNotifications() {
           <select
             className="field-input mt-1"
             value={severity}
-            onChange={(event) => setSeverity(event.target.value)}
+            onChange={(event) => {
+              setSeverity(event.target.value);
+              setPage(1);
+            }}
           >
             <option value="all">All severities</option>
             <option value="critical">Critical</option>
@@ -160,7 +217,10 @@ export function AlertNotifications() {
           <select
             className="field-input mt-1"
             value={status}
-            onChange={(event) => setStatus(event.target.value)}
+            onChange={(event) => {
+              setStatus(event.target.value);
+              setPage(1);
+            }}
           >
             <option value="all">All statuses</option>
             <option value="open">Open</option>
@@ -168,7 +228,7 @@ export function AlertNotifications() {
           </select>
         </label>
         <p className="text-xs text-moss">
-          The API keeps the newest 100 events in the selected range.
+          The API keeps the newest 100 events. Retention is set in your profile.
         </p>
       </div>
 
@@ -176,7 +236,7 @@ export function AlertNotifications() {
         <p className="monitor-panel mt-6">Loading alert notifications…</p>
       )}
 
-      {state && alerts.length === 0 && (
+      {state && filtered.length === 0 && (
         <div className="mt-6 rounded-3xl border border-dashed border-pine/15 bg-sand/60 px-6 py-12 text-center">
           <p className="text-sm font-semibold text-pine">No matching alerts</p>
           <p className="mt-1 text-sm text-moss">
@@ -186,44 +246,89 @@ export function AlertNotifications() {
         </div>
       )}
 
-      {alerts.length > 0 && (
+      {visible.length > 0 && (
         <ul className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {alerts.map((alert) => (
-            <li key={alert.alert_id} className="monitor-panel flex flex-col gap-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="eyebrow text-moss">Sensor {alert.sensor_id.slice(0, 8)}</p>
-                  <h2 className="mt-2 text-lg font-semibold capitalize">
-                    {alert.alert_type.replace(/_/g, " ")}
-                  </h2>
+          {visible.map((alert) => {
+            const read = readIds.has(alert.alert_id);
+            return (
+              <li
+                key={alert.alert_id}
+                className={`monitor-panel flex flex-col gap-4 transition-opacity ${
+                  read ? "opacity-65" : ""
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="eyebrow text-moss">Sensor {alert.sensor_id.slice(0, 8)}</p>
+                    <h2 className="mt-2 text-lg font-semibold capitalize">
+                      {alert.alert_type.replace(/_/g, " ")}
+                    </h2>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                      SEVERITY_STYLE[alert.severity] ?? "bg-sand text-moss"
+                    }`}
+                  >
+                    {alert.severity}
+                  </span>
                 </div>
-                <span
-                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
-                    SEVERITY_STYLE[alert.severity] ?? "bg-sand text-moss"
-                  }`}
-                >
-                  {alert.severity}
-                </span>
-              </div>
 
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="rounded-full bg-sand px-2.5 py-1 text-moss">
-                  {alert.resolved ? "Resolved" : "Open"}
-                </span>
-                <span className="text-moss">{formatTime(alert.created_at)} MYT</span>
-              </div>
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className="rounded-full bg-sand px-2.5 py-1 text-moss">
+                    {alert.resolved ? "Resolved" : read ? "Read" : "Open"}
+                  </span>
+                  <span className="text-moss">{formatTime(alert.created_at)} MYT</span>
+                </div>
 
-              <div className="mt-auto border-t border-pine/10 pt-3">
-                <Link
-                  href="/monitoring#alerts-heading"
-                  className="text-sm font-semibold text-emerald hover:underline"
-                >
-                  View on timeline
-                </Link>
-              </div>
-            </li>
-          ))}
+                <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-pine/10 pt-3">
+                  <Link
+                    href="/monitoring#alerts-heading"
+                    onClick={() => openAlert(alert.alert_id)}
+                    className="text-sm font-semibold text-emerald hover:underline"
+                  >
+                    View on timeline
+                  </Link>
+                  {!read && (
+                    <button
+                      type="button"
+                      onClick={() => openAlert(alert.alert_id)}
+                      className="min-h-10 rounded-full bg-sprout px-3 text-xs font-semibold text-emerald hover:bg-chartreuse"
+                    >
+                      Mark read
+                    </button>
+                  )}
+                </div>
+              </li>
+            );
+          })}
         </ul>
+      )}
+
+      {totalPages > 1 && (
+        <nav
+          aria-label="Alert pagination"
+          className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-pine/10 pt-4 text-sm"
+        >
+          <button
+            type="button"
+            disabled={safePage === 1}
+            onClick={() => setPage((value) => Math.max(1, value - 1))}
+            className="btn btn--quiet min-h-11 disabled:opacity-40"
+          >
+            Previous
+          </button>
+          <p className="font-mono text-xs text-moss">
+            Page {safePage} of {totalPages} · Showing {filtered.length ? from + 1 : 0} to {Math.min(from + PAGE_SIZE, filtered.length)}
+          </p>
+          <button
+            type="button"
+            disabled={safePage === totalPages}
+            onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+            className="btn btn--quiet min-h-11 disabled:opacity-40"
+          >
+            Next
+          </button>
+        </nav>
       )}
     </div>
   );

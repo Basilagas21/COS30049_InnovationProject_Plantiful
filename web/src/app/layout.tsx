@@ -97,16 +97,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [officer, admin] = await Promise.all([isOfficer(), isAdmin()]);
   const navGroups = [
     { label: "Home", links: [{ href: "/", label: "Home" }] },
+    { label: "Discover", links: [{ href: "/discover", label: "Discover" }] },
     {
-      label: "Explore",
+      label: "Plants",
       links: [
-        { href: "/explore", label: "Explore overview" },
         { href: "/species", label: "Species catalogue" },
         { href: "/map", label: "Species map" },
+        { href: "/records", label: "Plant records" },
       ],
     },
-    { label: "Learn", links: [{ href: "/learn", label: "Learn" }] },
-    { label: "Records", links: [{ href: "/records", label: "Records" }] },
     ...(officer
       ? [
           {
@@ -192,8 +191,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   </div>
                   <nav className="footer-col" aria-label="Browse">
                     <h3>Browse</h3>
-                    <Link href="/explore">Explore plants</Link>
-                    <Link href="/learn">Learning guide</Link>
+                    <Link href="/discover">Discover</Link>
                     <Link href="/species">Species catalogue</Link>
                     <Link href="/map">Species map</Link>
                     <Link href="/records">Plant records</Link>
@@ -203,6 +201,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                     <Link href="/signin">Sign in</Link>
                     <Link href="/register">Create your account</Link>
                     <Link href="/profile">Your profile</Link>
+                    <Link href="/inquiry">Send an inquiry</Link>
                   </nav>
                   <div className="footer-col">
                     <h3>Partners</h3>

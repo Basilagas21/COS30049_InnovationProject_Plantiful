@@ -8,7 +8,7 @@ import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
-const roles: Record<string, string> = { botanist: "Botanist", conservation_officer: "Conservation officer", admin: "Admin" };
+const roles: Record<string, string> = { visitor: "Visitor", botanist: "Botanist", conservation_officer: "Conservation officer", admin: "Admin" };
 
 export function NavAuth() {
   const router = useRouter();
@@ -121,6 +121,9 @@ export function NavAuth() {
         </div>
         <div className="space-y-1 p-2">
           <Link href="/profile" onClick={() => setOpenedOn(null)} className="flex min-h-11 items-center justify-between rounded-xl px-3 hover:bg-sprout">Profile & settings <span aria-hidden="true"><Arrow direction="up-right" size="1em" /></span></Link>
+          {(!currentProfile || currentProfile.role === "visitor") && (
+            <Link href="/inquiry" onClick={() => setOpenedOn(null)} className="flex min-h-11 items-center justify-between rounded-xl px-3 hover:bg-sprout">Send an inquiry <span aria-hidden="true"><Arrow direction="up-right" size="1em" /></span></Link>
+          )}
           {currentProfile?.role === "admin" && (
             <>
               <Link href="/admin/staff" onClick={() => setOpenedOn(null)} className="flex min-h-11 items-center justify-between rounded-xl px-3 hover:bg-sprout">Staff allowlist <span aria-hidden="true"><Arrow direction="up-right" size="1em" /></span></Link>

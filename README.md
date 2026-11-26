@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
   <img src="Docs/Assets/plantiful_logo.png" alt="Plantiful Logo" width="400"/>
 </p>
 
@@ -78,32 +78,32 @@ The platform can also run an optional AI Field Assist workflow. It requests plan
 
 ```text
 COS30049_InnovationProject_Plantiful/
-├── mobile/                # React Native / Expo app (offline field capture)
-│   └── src/app/           # Expo Router screens (scan, capture, records, sync, profile)
-├── web/                   # Next.js web knowledge system
-│   ├── scripts/           # evaluation and maintenance scripts
-│   └── src/app/           # App Router pages (explore, species, map, records, reports, alerts, profile)
-├── backend/               # Supabase SQL and local checks (partly local-only)
-│   ├── supabase/
-│   │   ├── migrations/    # 001_schema.sql, apply_project.sql (002-011), 012-015
-│   │   ├── seed.sql       # officer/admin roles, staff allowlist and sample species
-│   │   └── verification/  # manual SQL checks for RLS, photo writes and monitoring history
-│   └── tests/local/       # pgTAP and isolated AI Field Assist checks
-├── Ai/                    # research notebooks, datasets, training and evaluation workspace
-├── iot/                   # ESP32 firmware, USB bridge, simulator and threat-rule evaluator
-├── Docs/
-│   ├── README.md          # documentation index and filing conventions
-│   ├── Archive/           # historical notes and superseded material
-│   ├── Assets/            # logo, diagrams and QR tag samples
-│   ├── Design/            # design proposals and optional workflows
-│   ├── Guides/            # deployment, maintenance and AI Field Assist guides
-│   ├── Reports/           # shared reports, Sprint 1 and Sprint 2 folders
-│   ├── Security/          # local-only security pack (gitignored)
-│   ├── Templates/         # reusable docx and markdown templates
-│   ├── Testing/           # historical verification records
-│   └── Marking_Rubric.md  # assessment reference
-├── .gitignore
-└── README.md
+â”œâ”€â”€ mobile/                # React Native / Expo app (offline field capture)
+â”‚   â””â”€â”€ src/app/           # Expo Router screens (scan, capture, records, sync, profile)
+â”œâ”€â”€ web/                   # Next.js web knowledge system
+â”‚   â”œâ”€â”€ scripts/           # evaluation and maintenance scripts
+â”‚   â””â”€â”€ src/app/           # App Router pages (explore, species, map, records, reports, alerts, profile)
+â”œâ”€â”€ backend/               # Supabase SQL and local checks (partly local-only)
+â”‚   â”œâ”€â”€ supabase/
+â”‚   â”‚   â”œâ”€â”€ migrations/    # 001_schema.sql, apply_project.sql (002-011), 012-016
+â”‚   â”‚   â”œâ”€â”€ seed.sql       # officer/admin roles, staff allowlist and sample species
+â”‚   â”‚   â””â”€â”€ verification/  # manual SQL checks for RLS, photo writes and monitoring history
+â”‚   â””â”€â”€ tests/local/       # pgTAP and isolated AI Field Assist checks
+â”œâ”€â”€ Ai/                    # research notebooks, datasets, training and evaluation workspace
+â”œâ”€â”€ iot/                   # ESP32 firmware, USB bridge, simulator and threat-rule evaluator
+â”œâ”€â”€ Docs/
+â”‚   â”œâ”€â”€ README.md          # documentation index and filing conventions
+â”‚   â”œâ”€â”€ Archive/           # historical notes and superseded material
+â”‚   â”œâ”€â”€ Assets/            # logo, diagrams and QR tag samples
+â”‚   â”œâ”€â”€ Design/            # design proposals and optional workflows
+â”‚   â”œâ”€â”€ Guides/            # deployment, maintenance and AI Field Assist guides
+â”‚   â”œâ”€â”€ Reports/           # shared reports, Sprint 1 and Sprint 2 folders
+â”‚   â”œâ”€â”€ Security/          # local-only security pack (gitignored)
+â”‚   â”œâ”€â”€ Templates/         # reusable docx and markdown templates
+â”‚   â”œâ”€â”€ Testing/           # historical verification records
+â”‚   â””â”€â”€ Marking_Rubric.md  # assessment reference
+â”œâ”€â”€ .gitignore
+â””â”€â”€ README.md
 ```
 
 `backend/supabase` and most local environment files are intentionally gitignored. A fresh clone may not contain the live database SQL or local environment examples. Ask the project owner for the current local backend bundle if you need to create a new Supabase project.
@@ -196,6 +196,7 @@ This is the normal path for a teammate or marker.
    - `backend/supabase/migrations/013_field_assist.sql` (optional, only for AI Field Assist)
    - `backend/supabase/migrations/014_public_record_visibility.sql` (required for the public portal and raw REST visibility)
    - `backend/supabase/migrations/015_staff_allowlist.sql` (automatic staff roles from an admin-managed email allowlist)
+   - `backend/supabase/migrations/016_visitor_role.sql` (signed in visitor role, published-only reads and inquiry access)
 5. Edit the two email addresses in `backend/supabase/seed.sql`, then run it to assign officer/admin roles, add the same emails to the staff allowlist and add sample species.
 6. Invite test users in Dashboard > Authentication > Users, or register through the app. If registration says "Email not confirmed", disable confirmation under Authentication > Emails or confirm the account manually.
 7. Run the verification SQL in `backend/supabase/verification/`:
@@ -269,7 +270,9 @@ only after installing a development build.
 not `localhost` or `127.0.0.1`.
 - **Registration says email not confirmed:** confirm the account in Supabase or disable email confirmation for the test project.
 - **Password reset link is rejected:** add `http://localhost:3000/auth/callback` to Supabase Authentication > URL Configuration and check the public Supabase URL in `web/.env.local`.
-- **Staff allowlist page reports a missing relation:** apply `backend/supabase/migrations/015_staff_allowlist.sql`.
+- **Staff allowlist page reports a missing relation:** apply 
+`backend/supabase/migrations/015_staff_allowlist.sql` and then 
+`backend/supabase/migrations/016_visitor_role.sql`.
 - **Approved record is not public:** confirm the species is published and migration `014_public_record_visibility.sql` has been applied.
 - **IoT bridge says environment variables are missing:** create `iot/.env` or check the Supabase URL and service-role key in `web/.env.local`.
 - **A key was exposed:** rotate it in Supabase Dashboard > Project Settings > API Keys, update the local environment file, and do not commit it.

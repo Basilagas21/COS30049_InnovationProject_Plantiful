@@ -91,13 +91,9 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
     };
   }, [filterOpen]);
 
-  // Pagination is visitor-only: the officer catalogue renders every record so
-  // management workflows and the lifecycle suite always see the full list.
-  const totalPages = visitor ? Math.max(1, Math.ceil(visible.length / pageSize)) : 1;
+  const totalPages = Math.max(1, Math.ceil(visible.length / pageSize));
   const safePage = Math.min(page, totalPages);
-  const pageItems = visitor
-    ? visible.slice((safePage - 1) * pageSize, safePage * pageSize)
-    : visible;
+  const pageItems = visible.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   const clearFilters = () => {
     setQuery("");
@@ -323,49 +319,47 @@ export function SpeciesBrowser({ species, officer, visitor = false }: Props) {
           ))}
         </div>
 
-        {visitor && (
-          <div className="species-browser-pagination">
-            <span className="species-browser-pageof">
-              Page {safePage} of {totalPages}
-            </span>
-            <div className="species-browser-pagenav">
-              <button
-                type="button"
-                className="btn btn--ghost btn--sm"
-                disabled={safePage <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-              >
-                Previous
-              </button>
-              <button
-                type="button"
-                className="btn btn--ghost btn--sm"
-                disabled={safePage >= totalPages}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              >
-                Next
-              </button>
-            </div>
-            <label htmlFor="species-pagesize" className="sr-only">
-              Species per page
-            </label>
-            <select
-              id="species-pagesize"
-              value={pageSize}
-              onChange={(event) => {
-                setPageSize(Number(event.target.value));
-                setPage(1);
-              }}
-              className="species-browser-select"
+        <div className="species-browser-pagination">
+          <span className="species-browser-pageof">
+            Page {safePage} of {totalPages}
+          </span>
+          <div className="species-browser-pagenav">
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm"
+              disabled={safePage <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
-              {PAGE_SIZES.map((size) => (
-                <option key={size} value={size}>
-                  {size} per page
-                </option>
-              ))}
-            </select>
+              Previous
+            </button>
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm"
+              disabled={safePage >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Next
+            </button>
           </div>
-        )}
+          <label htmlFor="species-pagesize" className="sr-only">
+            Species per page
+          </label>
+          <select
+            id="species-pagesize"
+            value={pageSize}
+            onChange={(event) => {
+              setPageSize(Number(event.target.value));
+              setPage(1);
+            }}
+            className="species-browser-select"
+          >
+            {PAGE_SIZES.map((size) => (
+              <option key={size} value={size}>
+                {size} per page
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );

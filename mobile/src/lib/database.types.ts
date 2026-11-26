@@ -14,14 +14,14 @@ export interface Database {
           user_id: string;
           name: string;
           email: string;
-          role: "botanist" | "conservation_officer" | "admin";
+          role: "visitor" | "botanist" | "conservation_officer" | "admin";
           created_at: string;
         };
         Insert: {
           user_id: string;
           name: string;
           email: string;
-          role: "botanist" | "conservation_officer" | "admin";
+          role: "visitor" | "botanist" | "conservation_officer" | "admin";
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["user_profiles"]["Insert"]>;

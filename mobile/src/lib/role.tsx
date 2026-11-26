@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 
-export type Role = 'botanist' | 'conservation_officer' | 'admin';
+export type Role = 'visitor' | 'botanist' | 'conservation_officer' | 'admin';
 
 export type RoleContextValue = {
   role: Role | null;
@@ -120,6 +120,8 @@ export function useRole(): RoleContextValue {
 
 export function roleLabel(role: Role | null): string {
   switch (role) {
+    case 'visitor':
+      return 'Visitor';
     case 'botanist':
       return 'Botanist';
     case 'conservation_officer':

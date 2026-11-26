@@ -1,7 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
-export type UserRole = "botanist" | "conservation_officer" | "admin";
+export type UserRole =
+  | "visitor"
+  | "botanist"
+  | "conservation_officer"
+  | "admin";
 
 export async function getCurrentRole(): Promise<UserRole | null> {
   if (!isSupabaseConfigured) return null;

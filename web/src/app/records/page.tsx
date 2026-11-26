@@ -1,10 +1,15 @@
 import { fetchRecords } from "@/lib/records";
-import { isAuthenticated, isOfficer } from "@/lib/auth";
+import { getCurrentRole, isAuthenticated, isOfficer } from "@/lib/auth";
 import { RecordsBrowser } from "@/components/records-browser";
 
 export default async function RecordsPage() {
   const { records, error, usingSampleData } = await fetchRecords();
-  const [officer, authenticated] = await Promise.all([isOfficer(), isAuthenticated()]);
+  const [officer, authenticated, role] = await Promise.all([
+    isOfficer(),
+    isAuthenticated(),
+    getCurrentRole(),
+  ]);
+  const publicView = !authenticated || role === "visitor";
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
@@ -18,6 +23,11 @@ export default async function RecordsPage() {
               ? "Records unavailable"
               : `${records.length} field observation${records.length === 1 ? "" : "s"} synced from the mobile app`}
           </p>
+          {publicView && (
+            <p className="mt-2 text-sm text-moss">
+              Visitors can see approved observations linked to published species only.
+            </p>
+          )}
         </div>
         {officer && (
           <span className="inline-flex w-fit rounded-full bg-sprout px-3 py-1 text-sm font-semibold text-emerald">
@@ -38,7 +48,7 @@ export default async function RecordsPage() {
           Could not load records from the database: {error}
         </div>
       ) : (
-        <RecordsBrowser records={records} officer={officer} visitor={!authenticated} />
+        <RecordsBrowser records={records} officer={officer} visitor={publicView} />
       )}
     </div>
   );

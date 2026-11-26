@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Arrow } from "@/components/arrow";
 import QRCode from "qrcode";
@@ -7,6 +7,7 @@ import { isAuthenticated, isOfficer } from "@/lib/auth";
 import { ApproveRejectButtons } from "@/components/approve-reject";
 import { PhotoImg } from "@/components/photo-img";
 import { FieldAssistReview } from "@/components/field-assist-review";
+import { RecordMiniMap } from "@/components/record-mini-map";
 
 const PHENOLOGY_LABELS: Record<string, string> = {
   vegetative: "Vegetative",
@@ -50,12 +51,27 @@ export default async function RecordDetailPage({
       {officer && <FieldAssistReview recordId={id} />}
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         <div>
-          <div className="relative">
-            <PhotoImg
-              src={record.photoUrl}
-              alt={record.scientificName}
-              className="aspect-[4/5] w-full rounded-3xl object-cover"
+          <div className="flex flex-col gap-4">
+            <div className="relative">
+              <PhotoImg
+                src={record.photoUrl}
+                alt={record.scientificName}
+                className="aspect-[4/5] w-full rounded-3xl object-cover"
+              />
+            </div>
+            <RecordMiniMap
+              lat={record.gpsLat}
+              lng={record.gpsLng}
+              label={record.scientificName}
             />
+            <div className="rounded-2xl border border-pine/10 bg-white p-5 text-sm leading-6 text-moss">
+              <p className="font-semibold text-pine">What this page shows</p>
+              <p className="mt-2">
+                A record is one field observation. The species catalogue holds the
+                verified knowledge about the plant. Missing field measurements are
+                shown as Unknown rather than hidden.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -102,12 +118,12 @@ export default async function RecordDetailPage({
             <h1 className="mt-3 text-4xl font-bold tracking-tight text-pine">
               {record.scientificName}
             </h1>
-            <p className="mt-1 text-lg italic text-moss">{record.commonName}</p>
-            {record.conservationStatus && (
-              <p className="mt-2 text-sm font-medium uppercase tracking-wide text-emerald">
-                {record.conservationStatus}
-              </p>
-            )}
+            <p className="mt-1 text-lg italic text-moss">
+              {record.commonName ?? "Unknown common name"}
+            </p>
+            <p className="mt-2 text-sm font-medium uppercase tracking-wide text-emerald">
+              {record.conservationStatus ?? "Conservation status unknown"}
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -132,7 +148,7 @@ export default async function RecordDetailPage({
                           </>
                         ) : (
                           <span className="text-sm font-semibold text-pine">
-                            {record.qrCode ?? "—"}
+                            {record.qrCode ?? "Unknown"}
                           </span>
                         )}
                       </div>
@@ -145,11 +161,11 @@ export default async function RecordDetailPage({
                   ? `${Math.abs(record.gpsLat).toFixed(4)}° ${record.gpsLat >= 0 ? "N" : "S"}, ${Math.abs(record.gpsLng).toFixed(4)}° ${record.gpsLng >= 0 ? "E" : "W"}${
                       record.gpsAccuracyM != null ? ` (±${record.gpsAccuracyM.toFixed(1)} m)` : ""
                     }`
-                  : "—",
+                  : "Unknown",
               },
               {
                 label: "Height",
-                value: record.heightCm != null ? `${record.heightCm.toFixed(1)} cm` : "—",
+                value: record.heightCm != null ? `${record.heightCm.toFixed(1)} cm` : "Unknown",
               },
               {
                 label: authenticated ? "Captured" : "Observed",
@@ -163,54 +179,60 @@ export default async function RecordDetailPage({
             ))}
           </div>
 
-          {record.description && (
-            <div className="rounded-2xl border border-pine/10 bg-white p-5">
-              <h2 className="font-semibold text-pine">Species notes</h2>
-              <p className="mt-2 text-sm leading-7 text-moss">{record.description}</p>
-            </div>
-          )}
+          <div className="rounded-2xl border border-pine/10 bg-white p-5">
+            <h2 className="font-semibold text-pine">Species notes</h2>
+            <p className="mt-2 text-sm leading-7 text-moss">
+              {record.description ?? "Unknown"}
+            </p>
+          </div>
 
-          {record.morphology && (
-            <div className="rounded-2xl border border-pine/10 bg-white p-5">
-              <h2 className="font-semibold text-pine">Morphology</h2>
-              <p className="mt-2 text-sm leading-7 text-moss">{record.morphology}</p>
-            </div>
-          )}
+          <div className="rounded-2xl border border-pine/10 bg-white p-5">
+            <h2 className="font-semibold text-pine">Morphology</h2>
+            <p className="mt-2 text-sm leading-7 text-moss">
+              {record.morphology ?? "Unknown"}
+            </p>
+          </div>
 
-          {(record.recordTaxonomy || record.phenology || record.dbhCm != null) && (
-            <div className="rounded-2xl border border-pine/10 bg-white p-5">
-              <h2 className="font-semibold text-pine">Field attributes</h2>
-              <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
-                {record.recordTaxonomy && (
-                  <div>
-                    <dt className="text-xs uppercase tracking-wide text-moss">Taxonomy</dt>
-                    <dd className="mt-1 font-semibold text-pine">{record.recordTaxonomy}</dd>
-                  </div>
-                )}
-                {record.phenology && (
-                  <div>
-                    <dt className="text-xs uppercase tracking-wide text-moss">Phenology</dt>
-                    <dd className="mt-1 font-semibold text-pine">
-                      {PHENOLOGY_LABELS[record.phenology] ?? record.phenology}
-                    </dd>
-                  </div>
-                )}
-                {record.dbhCm != null && (
-                  <div>
-                    <dt className="text-xs uppercase tracking-wide text-moss">Stem diameter (DBH)</dt>
-                    <dd className="mt-1 font-semibold text-pine">{record.dbhCm} cm</dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-          )}
+          <div className="rounded-2xl border border-pine/10 bg-white p-5">
+            <h2 className="font-semibold text-pine">Field attributes</h2>
+            <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-moss">Taxonomy</dt>
+                <dd className="mt-1 font-semibold text-pine">
+                  {record.recordTaxonomy ?? "Unknown"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-moss">Phenology</dt>
+                <dd className="mt-1 font-semibold text-pine">
+                  {record.phenology
+                    ? PHENOLOGY_LABELS[record.phenology] ?? record.phenology
+                    : "Unknown"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-moss">Stem diameter (DBH)</dt>
+                <dd className="mt-1 font-semibold text-pine">
+                  {record.dbhCm != null ? `${record.dbhCm} cm` : "Unknown"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-moss">Coordinates</dt>
+                <dd className="mt-1 font-semibold text-pine">
+                  {record.gpsLat != null && record.gpsLng != null
+                    ? `${record.gpsLat.toFixed(4)}, ${record.gpsLng.toFixed(4)}`
+                    : "Unknown"}
+                </dd>
+              </div>
+            </dl>
+          </div>
 
-          {record.notes && (
-            <div className="rounded-2xl border border-pine/10 bg-white p-5">
-              <h2 className="font-semibold text-pine">Field notes</h2>
-              <p className="mt-2 text-sm leading-7 text-moss">{record.notes}</p>
-            </div>
-          )}
+          <div className="rounded-2xl border border-pine/10 bg-white p-5">
+            <h2 className="font-semibold text-pine">Field notes</h2>
+            <p className="mt-2 text-sm leading-7 text-moss">
+              {record.notes ?? "Unknown"}
+            </p>
+          </div>
 
           {officer && conflicts.length > 0 && (
             <div className="rounded-2xl border border-danger/40 bg-danger/5 p-5">

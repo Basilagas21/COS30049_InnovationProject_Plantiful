@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { RANGES, STALE_AFTER_MS, overallStatus, readingStatus, type LiveTelemetry, type TelemetryHistory, type TelemetryRange } from "@/lib/telemetry";
 import { EventStrips, monitoringTime, TrendChart } from "./monitoring-charts";
 import { RefreshIcon } from "@/components/icons";
+import { IotSimulatorControls } from "@/components/iot-simulator-controls";
 
 // Separate live/history clocks; abort old filter requests and never overlap polls.
 function useTelemetry<T>(url: string, interval: number, enabled: boolean, refresh: number) {
@@ -86,6 +87,8 @@ export function MonitoringDashboard() {
         <button onClick={() => setRefresh((n) => n + 1)} disabled={live.busy || history.busy} className="btn btn--quiet">{live.busy ? "Checking…" : <>Refresh now <RefreshIcon size="1em" /></>}</button>
       </div>
     </header>
+
+    <IotSimulatorControls onTriggered={() => setRefresh((value) => value + 1)} />
 
     <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-y border-pine/10 py-3 text-xs text-moss" aria-live="polite">
       <span>{auto ? "Auto-refresh: readings / alerts 10s · charts 60s · pauses in hidden tabs" : "Auto-refresh paused — use Refresh now"}</span>

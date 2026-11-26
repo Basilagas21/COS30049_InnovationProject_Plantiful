@@ -105,7 +105,7 @@ export default function RegisterScreen() {
         <View style={styles.card}>
           <Text style={styles.title}>Create your account</Text>
           <Text style={styles.hint}>
-            New botanists start here. You will need to confirm your email before signing in.
+            New accounts start as visitors. Staff roles are assigned by an administrator.
           </Text>
 
           <View style={styles.form}>

@@ -91,7 +91,7 @@ export default function ProfileScreen() {
           <Ionicons name="person-circle-outline" size={40} color={colors.emerald} />
           <Text style={styles.title}>Sign in to sync</Text>
           <Text style={styles.hint}>
-            Authenticate to push offline captures to the central database as a botanist.
+            Sign in to view your profile and role. Field capture is available to botanists.
           </Text>
           <Pressable style={styles.button} onPress={() => router.replace('/signin')}>
             <Text style={styles.buttonText}>Sign in</Text>

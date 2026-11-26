@@ -86,7 +86,7 @@ export default function SignInScreen() {
         <View style={styles.card}>
           <Text style={styles.title}>Welcome back</Text>
           <Text style={styles.hint}>
-            Authenticate to capture and sync plant observations as a botanist.
+            Sign in to access your Plantiful role and synced records.
           </Text>
 
           <View style={styles.form}>

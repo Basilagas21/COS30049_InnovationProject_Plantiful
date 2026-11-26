@@ -2,13 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRole } from "@/lib/auth";
 import { fetchInquiries, INQUIRIES_PAGE_SIZE } from "@/lib/inquiries";
-import { InquiryStatusButtons } from "@/components/inquiry-status-buttons";
-
-const STATUS_BADGE: Record<string, string> = {
-  new: "bg-chartreuse text-pine",
-  read: "bg-sprout text-emerald",
-  archived: "bg-sand text-moss",
-};
+import { InquiryInbox } from "@/components/inquiry-inbox";
 
 function firstValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
@@ -90,53 +84,7 @@ export default async function AdminInquiriesPage({
             </p>
           </div>
 
-          <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {inquiries.map((inquiry) => (
-              <li
-                key={inquiry.id}
-                className="flex h-full flex-col rounded-2xl border border-pine/10 bg-white p-5"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <p className="min-w-0 break-words font-semibold leading-snug text-pine">
-                    {inquiry.subject}
-                  </p>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                      STATUS_BADGE[inquiry.status] ?? "bg-sand text-moss"
-                    }`}
-                  >
-                    {inquiry.status}
-                  </span>
-                </div>
-
-                <div className="mt-3 border-t border-pine/10 pt-3 text-sm">
-                  <p className="font-medium text-pine">{inquiry.name}</p>
-                  <a
-                    href={`mailto:${inquiry.email}`}
-                    className="mt-0.5 block break-all text-xs text-emerald hover:underline"
-                  >
-                    {inquiry.email}
-                  </a>
-                </div>
-
-                <p className="mt-3 line-clamp-6 flex-1 whitespace-pre-wrap text-sm leading-6 text-moss">
-                  {inquiry.message}
-                </p>
-
-                <div className="mt-4 border-t border-pine/10 pt-3">
-                  <p className="text-xs text-moss/70">
-                    {new Date(inquiry.createdAt).toLocaleString()}
-                  </p>
-                  <div className="mt-3">
-                    <InquiryStatusButtons
-                      inquiryId={inquiry.id}
-                      status={inquiry.status}
-                    />
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <InquiryInbox inquiries={inquiries} />
 
           {totalPages > 1 && (
             <nav

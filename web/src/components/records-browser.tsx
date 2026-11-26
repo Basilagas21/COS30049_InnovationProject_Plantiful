@@ -18,6 +18,8 @@ type SortKey = "newest" | "oldest";
 type StatusKey = "all" | "pending" | "approved" | "rejected";
 type RangeKey = "all" | "7d" | "30d" | "year";
 
+const PAGE_SIZES = [12, 24, 48];
+
 const STATUS_OPTIONS: { key: StatusKey; label: string }[] = [
   { key: "all", label: "All" },
   { key: "pending", label: "Pending" },
@@ -51,6 +53,8 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
   const [conservation, setConservation] = useState<string>("all");
   const [range, setRange] = useState<RangeKey>("all");
   const [photoOnly, setPhotoOnly] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
 
   const speciesOptions = useMemo(() => {
     const seen = new Map<string, { key: string; label: string; match: string }>();
@@ -110,10 +114,18 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
     return list;
   }, [records, selected, status, conservation, range, photoOnly, sort]);
 
+  const totalPages = Math.max(1, Math.ceil(visibleRecords.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pageRecords = visibleRecords.slice(
+    (safePage - 1) * pageSize,
+    safePage * pageSize,
+  );
+
   function pick(option: { key: string; label: string }) {
     setSelected(option.key);
     setQuery(option.label);
     setOpen(false);
+    setPage(1);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -129,6 +141,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
     setQuery("");
     setSelected(null);
     setOpen(false);
+    setPage(1);
     inputRef.current?.focus();
   }
 
@@ -138,6 +151,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
     setConservation("all");
     setRange("all");
     setPhotoOnly(false);
+    setPage(1);
   }
 
   return (
@@ -155,6 +169,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
               setQuery(e.target.value);
               setSelected(null);
               setOpen(true);
+              setPage(1);
             }}
             onFocus={() => setOpen(true)}
             onKeyDown={handleKeyDown}
@@ -227,7 +242,10 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
           <select
             aria-label="Sort records"
             value={sort}
-            onChange={(e) => setSort(e.target.value as SortKey)}
+            onChange={(e) => {
+              setSort(e.target.value as SortKey);
+              setPage(1);
+            }}
             className="h-full rounded-full bg-transparent pr-2 font-semibold outline-none"
           >
             <option value="newest">Newest first</option>
@@ -240,7 +258,10 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
             <button
               key={option.key}
               type="button"
-              onClick={() => setStatus(option.key)}
+              onClick={() => {
+                setStatus(option.key);
+                setPage(1);
+              }}
               className={`h-8 min-h-11 rounded-full px-3.5 text-xs font-semibold transition-colors sm:min-h-0 ${
                 status === option.key
                   ? "bg-emerald text-cream"
@@ -258,7 +279,10 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
             <select
               aria-label="Filter by conservation status"
               value={conservation}
-              onChange={(e) => setConservation(e.target.value)}
+              onChange={(e) => {
+                setConservation(e.target.value);
+                setPage(1);
+              }}
               className="h-full rounded-full bg-transparent pr-2 font-semibold outline-none"
             >
               <option value="all">Any</option>
@@ -276,7 +300,10 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
           <select
             aria-label="Filter by date range"
             value={range}
-            onChange={(e) => setRange(e.target.value as RangeKey)}
+            onChange={(e) => {
+              setRange(e.target.value as RangeKey);
+              setPage(1);
+            }}
             className="h-full rounded-full bg-transparent pr-2 font-semibold outline-none"
           >
             {RANGE_OPTIONS.map((option) => (
@@ -289,7 +316,10 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
 
         <button
           type="button"
-          onClick={() => setPhotoOnly((value) => !value)}
+          onClick={() => {
+            setPhotoOnly((value) => !value);
+            setPage(1);
+          }}
           aria-pressed={photoOnly}
           className={`inline-flex h-10 min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors sm:min-h-0 ${
             photoOnly
@@ -327,7 +357,7 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
             )}
           </div>
         )}
-        {visibleRecords.map((record) => (
+        {pageRecords.map((record) => (
           <div
             key={record.id}
             className="group flex flex-col overflow-hidden rounded-2xl border border-pine/10 bg-white transition-shadow hover:shadow-lg"
@@ -391,6 +421,48 @@ export function RecordsBrowser({ records, officer, visitor = false }: Props) {
           </div>
         ))}
       </div>
+
+      <nav
+        aria-label="Record pagination"
+        className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-pine/10 pt-4 text-sm"
+      >
+        <button
+          type="button"
+          disabled={safePage <= 1}
+          onClick={() => setPage((value) => Math.max(1, value - 1))}
+          className="btn btn--quiet min-h-11 disabled:opacity-40"
+        >
+          Previous
+        </button>
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-xs text-moss">
+            Page {safePage} of {totalPages}
+          </span>
+          <select
+            aria-label="Records per page"
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPage(1);
+            }}
+            className="min-h-11 rounded-full border border-pine/15 bg-white px-3 font-semibold text-pine outline-none"
+          >
+            {PAGE_SIZES.map((size) => (
+              <option key={size} value={size}>
+                {size} per page
+              </option>
+            ))}
+          </select>
+        </div>
+        <button
+          type="button"
+          disabled={safePage >= totalPages}
+          onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+          className="btn btn--quiet min-h-11 disabled:opacity-40"
+        >
+          Next
+        </button>
+      </nav>
     </>
   );
 }

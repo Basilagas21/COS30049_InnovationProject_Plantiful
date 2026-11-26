@@ -1,13 +1,14 @@
 """Simulated sensor feed for the Plantiful IoT monitoring feature.
 
 Registers two fixed sensors in Supabase and pushes synthetic readings
-(temperature, humidity, movement) on a timer. No physical hardware is
-attached: values are a seeded random walk chosen to look like tropical
-field conditions at Niah National Park.
+(temperature, humidity, movement, soil moisture and rain) on a timer.
+No physical hardware is attached. Scenario flags make threshold testing
+repeatable during the demo.
 
 Usage:
     python iot/publisher.py --once
     python iot/publisher.py --interval 30
+    python iot/publisher.py --once --scenario heat
 """
 
 import argparse
@@ -39,6 +40,18 @@ TEMP_RANGE = (24.0, 34.0)
 HUM_BASE = 86.0
 HUM_RANGE = (62.0, 96.0)
 MOVEMENT_CHANCE = 0.03
+RAIN_CHANCE = 0.04
+
+SCENARIOS = (
+    "normal",
+    "heat",
+    "critical_heat",
+    "drought",
+    "severe_drought",
+    "movement",
+    "rain",
+    "soil_dry",
+)
 
 
 def register_sensors(client):
@@ -68,12 +81,34 @@ class Walk:
         return round(self.value, 1)
 
 
-def build_reading(rng, walks, recorded_at):
+def build_reading(rng, walks, recorded_at, scenario="normal"):
+    temperature = walks["temperature"].next()
+    humidity = walks["humidity"].next()
     movement = rng.random() < MOVEMENT_CHANCE
+    rain = rng.random() < RAIN_CHANCE
+    soil_moisture = round(rng.uniform(38, 62), 1)
+
+    if scenario == "heat":
+        temperature = 37.5
+    elif scenario == "critical_heat":
+        temperature = 41.0
+    elif scenario == "drought":
+        humidity = 22.0
+    elif scenario == "severe_drought":
+        humidity = 15.0
+    elif scenario == "movement":
+        movement = True
+    elif scenario == "rain":
+        rain = True
+    elif scenario == "soil_dry":
+        soil_moisture = 8.0
+
     return {
-        "temperature": walks["temperature"].next(),
-        "humidity": walks["humidity"].next(),
+        "temperature": temperature,
+        "humidity": humidity,
         "movement": movement,
+        "soil_moisture": soil_moisture,
+        "rain": rain,
         "recorded_at": recorded_at,
     }
 
@@ -86,6 +121,8 @@ def main():
                         help="push a single batch and exit")
     parser.add_argument("--seed", type=int, default=None,
                         help="random seed for a reproducible demo run")
+    parser.add_argument("--scenario", choices=SCENARIOS, default="normal",
+                        help="reading pattern to push")
     args = parser.parse_args()
 
     client = SupabaseRest()
@@ -98,17 +135,21 @@ def main():
     register_sensors(client)
     registered = ", ".join(s["sensor_id"][:8] for s in SENSORS)
     print(f"Registered {len(SENSORS)} simulated sensors: {registered}")
+    print(f"Scenario: {args.scenario}")
 
     try:
         while True:
             recorded_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
             readings = [
-                dict(build_reading(rng, walks, recorded_at), sensor_id=s["sensor_id"])
+                dict(
+                    build_reading(rng, walks, recorded_at, args.scenario),
+                    sensor_id=s["sensor_id"],
+                )
                 for s in SENSORS
             ]
             client.insert("sensor_readings", readings)
             summary = ", ".join(
-                f"{r['sensor_id'][:8]} {r['temperature']}°C {r['humidity']}% "
+                f"{r['sensor_id'][:8]} {r['temperature']}C {r['humidity']}% "
                 f"movement={'yes' if r['movement'] else 'no'}"
                 for r in readings
             )

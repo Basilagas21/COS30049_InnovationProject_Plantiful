@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { fetchSpecies } from "@/lib/species";
-import { isAuthenticated, isOfficer } from "@/lib/auth";
+import { getCurrentRole, isAuthenticated, isOfficer } from "@/lib/auth";
 import { SpeciesBrowser } from "@/components/species-browser";
 
 export default async function SpeciesPage() {
-  const [species, officer, authenticated] = await Promise.all([
-    fetchSpecies(),
+  const [officer, authenticated, role] = await Promise.all([
     isOfficer(),
     isAuthenticated(),
+    getCurrentRole(),
   ]);
+  const publicView = !authenticated || role === "visitor";
+  const species = await fetchSpecies({ publishedOnly: publicView });
 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
@@ -22,6 +24,11 @@ export default async function SpeciesPage() {
               ? "No published species yet. Published species will appear here once a conservation officer approves a linked observation."
               : `${species.length} plant species · taxonomy, conservation status and descriptions`}
           </p>
+          {publicView && (
+            <p className="mt-2 text-sm text-moss">
+              Visitors can see published species only. Unpublished catalogue entries and pending observations stay private.
+            </p>
+          )}
         </div>
         {officer ? (
           <Link
@@ -35,7 +42,7 @@ export default async function SpeciesPage() {
         )}
       </div>
 
-      <SpeciesBrowser species={species} officer={officer} visitor={!authenticated} />
+      <SpeciesBrowser species={species} officer={officer} visitor={publicView} />
     </div>
   );
 }

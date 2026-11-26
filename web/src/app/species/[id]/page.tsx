@@ -6,6 +6,8 @@ import { isOfficer } from "@/lib/auth";
 import { plantQuestionsForSpecies } from "@/lib/plant-learning";
 import { PhotoGallery } from "@/components/species-photos";
 import { SpeciesDeleteButton } from "@/components/species-delete-button";
+import { RecordMiniMap } from "@/components/record-mini-map";
+import { fetchMapPoints } from "@/lib/map";
 
 export default async function SpeciesDetailPage({
   params,
@@ -13,9 +15,14 @@ export default async function SpeciesDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [entry, officer] = await Promise.all([fetchSpeciesById(id), isOfficer()]);
+  const [entry, officer, points] = await Promise.all([
+    fetchSpeciesById(id),
+    isOfficer(),
+    fetchMapPoints(id),
+  ]);
   if (!entry) notFound();
 
+  const firstPoint = points[0] ?? null;
   const questions = plantQuestionsForSpecies(entry.scientificName);
 
   return (
@@ -24,7 +31,44 @@ export default async function SpeciesDetailPage({
         <Arrow direction="left" size="1em" /> Back to species
       </Link>
 
-      <div className="mt-6 max-w-3xl">
+      <div className="mt-6 grid gap-8 lg:grid-cols-2">
+        <div className="flex flex-col gap-6">
+          <div className="relative overflow-hidden rounded-3xl border border-pine/10 bg-sprout">
+            {entry.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={entry.photoUrl}
+                alt={`${entry.scientificName} botanical photo`}
+                className="aspect-[4/3] w-full object-cover"
+              />
+            ) : (
+              <div
+                role="img"
+                aria-label="Botanical illustration"
+                className="aspect-[4/3] w-full bg-[url('/botanical.svg')] bg-contain bg-center bg-no-repeat"
+              />
+            )}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-pine/55 via-transparent to-transparent" />
+            <p className="absolute bottom-4 left-5 text-sm font-semibold italic text-white">
+              {entry.scientificName}
+            </p>
+          </div>
+
+          <div>
+            <p className="eyebrow text-emerald">Distribution</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-pine">
+              Observed location
+            </h2>
+            <div className="mt-4">
+              <RecordMiniMap
+                lat={firstPoint?.lat}
+                lng={firstPoint?.lng}
+                label={entry.scientificName}
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="flex flex-col gap-6">
           <div>
             <span
@@ -108,27 +152,6 @@ export default async function SpeciesDetailPage({
             </div>
           )}
         </div>
-      </div>
-
-      <div className="relative mt-12 overflow-hidden rounded-3xl border border-pine/10 bg-sprout">
-        {entry.photoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={entry.photoUrl}
-            alt={`${entry.scientificName} botanical photo`}
-            className="aspect-[16/6] w-full object-cover"
-          />
-        ) : (
-          <div
-            role="img"
-            aria-label="Botanical illustration"
-            className="aspect-[16/6] w-full bg-[url('/botanical.svg')] bg-contain bg-center bg-no-repeat"
-          />
-        )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-pine/55 via-transparent to-transparent" />
-        <p className="absolute bottom-4 left-5 text-sm font-semibold italic text-white">
-          {entry.scientificName}
-        </p>
       </div>
 
       {questions.length > 0 && (

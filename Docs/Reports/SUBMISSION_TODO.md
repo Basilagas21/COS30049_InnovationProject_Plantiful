@@ -23,7 +23,7 @@
 | IoT tests | 36 passed | Re-run and record the final result |
 | Web build | Latest local build passed and included `/admin/staff` | Re-run and record the final route count |
 | Security assessment | 12 findings, 11 fixed, 1 mitigation recorded | Final ZAP and RLS retest outstanding |
-| Credential exposure | Unresolved | Rotation and revocation record required |
+| Credential exposure | Owner decision | Rotation retained as the owner's decision and not claimed as completed |
 | Independent usability study | Not completed | Run sessions or report the gap honestly |
 | Official cover sheet and signed contribution form | Not inserted | Required before export |
 
@@ -175,14 +175,15 @@
 ### 6.1 Database and access control
 
 - [ ] Confirm the live Supabase project and migration order.
-- [ ] Apply `backend/supabase/migrations/015_staff_allowlist.sql` to the live project. **[ACTION REQUIRED: Basill]**
+- [x] Apply `backend/supabase/migrations/015_staff_allowlist.sql` to the live project. Completed successfully.
 - [ ] Verify the email normalisation trigger with mixed-case and whitespace test inputs.
 - [ ] Verify that an allowlisted email receives the approved role on signup.
 - [ ] Verify that a non-allowlisted email is blocked from receiving a managed role.
 - [ ] Verify that an existing account role changes when the allowlist role changes.
 - [ ] Verify that only admins can read or write the staff allowlist.
 - [ ] Verify that a user cannot remove or change their own entry in a way that breaks access.
-- [ ] Confirm `014_public_record_visibility.sql` is applied and matches the intended policy.
+- [x] Confirm `014_public_record_visibility.sql` is applied and matches the intended policy. Completed successfully and anonymous reads verified.
+- [ ] Apply `backend/supabase/migrations/016_visitor_role.sql` to enable the signed in visitor role and inquiry access.
 - [ ] Re-run the live RLS and storage policy checks.
 - [ ] Record the result with date, commit and environment.
 

@@ -113,7 +113,7 @@ export default function RegisterPage() {
           Create your account
         </h1>
         <p className="mt-1 text-sm text-moss">
-          New botanists start here. Confirm your email before signing in.
+          New accounts start as visitors. Staff roles are assigned by an administrator.
         </p>
 
         <form className="mt-8 flex flex-col gap-4" onSubmit={handleSubmit}>

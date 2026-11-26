@@ -56,7 +56,7 @@ export default function SignInPage() {
           Sign in to Plantiful
         </h1>
         <p className="mt-1 text-sm text-moss">
-          Staff access for botanists, conservation officers and administrators.
+          Sign in to send inquiries, manage your profile or access your role based workspace.
         </p>
 
         <form className="mt-8 flex flex-col gap-4" onSubmit={handleSubmit}>

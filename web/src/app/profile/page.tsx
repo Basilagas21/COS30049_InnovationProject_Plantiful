@@ -9,8 +9,10 @@ import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import type { UserRole } from "@/lib/auth";
 import { ThemeControl } from "@/components/theme-control";
+import { NotificationPreferences } from "@/components/notification-preferences";
 
 const roleLabels: Record<UserRole, string> = {
+  visitor: "Visitor",
   botanist: "Botanist",
   conservation_officer: "Conservation officer",
   admin: "Admin",
@@ -157,6 +159,12 @@ export default function ProfilePage() {
             </span>
             <span className="text-emerald"><Arrow direction="right" size="1em" /></span>
           </Link>
+        )}
+
+        {(role === "admin" || role === "conservation_officer") && (
+          <div className="mt-6 border-t border-pine/10 pt-6">
+            <NotificationPreferences />
+          </div>
         )}
 
         <div className="mt-6 border-t border-pine/10 pt-6">
